@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>read.crx 2</title>
+    <script>
+(function() {
+  var reg_res, query;
+
+  reg_res = /[\?&]q=([^&]+)/.exec(location.search);
+  query = reg_res ? reg_res[1] : 'app';
+
+  chrome.tabs.getCurrent(function(current_tab) {
+    console.assert(typeof current_tab === 'object');
+
+    chrome.windows.getAll({populate: true}, function(windows) {
+        var win, win_key, tab, tab_key, app_path;
+
+        app_path = chrome.extension.getURL('app.html');
+        for (win_key = 0; win = windows[win_key]; win_key++) {
+          for (tab_key = 0; tab = win.tabs[tab_key]; tab_key++) {
+            if (tab.id !== current_tab.id && tab.url === app_path) {
+              chrome.windows.update(win.id, {focused: true});
+              chrome.tabs.update(tab.id, {selected: true});
+              if (query !== 'app') {
+                chrome.tabs.sendRequest(tab.id, {type: 'open', query: query});
+              }
+              chrome.tabs.remove(current_tab.id);
+              return;
+            }
+          }
+        }
+
+        history.pushState(null, null, '/app.html');
+        window.addEventListener('load', function() {
+          main();
+          if (query !== 'app') {
+            //Message.send('open', {query: query});
+          }
+        }, false);
+      });
+  });
+})();
+
+function main() {
+}
+    </script>
+    <script src="/lib/jquery/jquery-1.5.1.min.js"></script>
+  </head>
+  <body>
+  </body>
+</html>
