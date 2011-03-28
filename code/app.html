@@ -33,7 +33,7 @@
 
         history.pushState(null, null, '/app.html');
         window.addEventListener('load', function() {
-          main();
+          app.main();
           if (query !== 'app') {
             //Message.send('open', {query: query});
           }
@@ -41,11 +41,9 @@
       });
   });
 })();
-
-function main() {
-}
     </script>
     <script src="/lib/jquery/jquery-1.5.1.min.js"></script>
+    <script src="/app.js"></script>
   </head>
   <body>
   </body>
