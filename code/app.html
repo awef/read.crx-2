@@ -35,7 +35,7 @@
         window.addEventListener('load', function() {
           app.main();
           if (query !== 'app') {
-            //Message.send('open', {query: query});
+            app.message.send('open', {query: query});
           }
         }, false);
       });

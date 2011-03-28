@@ -36,3 +36,23 @@ test('test', 7, function() {
       'ディープコピーはオリジナルとstrictEqualにならない２');
   deepEqual(copy, original, 'ディープコピーはオリジナルと構造は一緒２');
 });
+
+
+module('app.message');
+
+test('test', 3, function() {
+  app.message.add_listener('__test1', function(message) {
+    strictEqual(message, 'test', '基本送信テスト');
+  });
+  app.message.send('__test1', 'test');
+
+  app.message.add_listener('__test2', function(message) {
+    deepEqual(message, {test: 123}, 'メッセージの編集テスト');
+    message.hoge = 345;
+  });
+  app.message.add_listener('__test2', function(message) {
+    deepEqual(message, {test: 123}, 'メッセージの編集テスト');
+    message.hoge = 345;
+  });
+  app.message.send('__test2', {test: 123});
+});
