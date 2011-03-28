@@ -1,6 +1,6 @@
 module('app.deep_copy');
 
-test('test', function() {
+test('test', 7, function() {
   var original, copy;
 
   original = {test: 123};
