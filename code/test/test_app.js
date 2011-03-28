@@ -5,18 +5,18 @@ test('test', function() {
 
   original = {test: 123};
   copy = original;
-  strictEqual(original, copy, 'シャローコピーはオリジナルとstrictEqual');
+  strictEqual(copy, original, 'シャローコピーはオリジナルとstrictEqual');
   copy.test = 321;
-  deepEqual(original, copy,
+  deepEqual(copy, original,
       'シャローコピーはただの別名なので、変更も共有される');
 
   original = {test: 123};
   copy = app.deep_copy(original);
-  notStrictEqual(original, copy,
+  notStrictEqual(copy, original,
       'ディープコピーはオリジナルとstrictEqualにならない');
-  deepEqual(original, copy, 'ディープコピーはオリジナルと構造は一緒');
+  deepEqual(copy, original, 'ディープコピーはオリジナルと構造は一緒');
   copy.test = 321;
-  notDeepEqual(original, copy,
+  notDeepEqual(copy, original,
       'ディープコピーの編集はオリジナルに影響しない');
 
   original = {
@@ -32,7 +32,7 @@ test('test', function() {
     }
   };
   copy = app.deep_copy(original);
-  notStrictEqual(original, copy,
+  notStrictEqual(copy, original,
       'ディープコピーはオリジナルとstrictEqualにならない２');
-  deepEqual(original, copy, 'ディープコピーはオリジナルと構造は一緒２');
+  deepEqual(copy, original, 'ディープコピーはオリジナルと構造は一緒２');
 });
