@@ -30,3 +30,23 @@ app.message = {};
   };
 })();
 
+app.notice = {};
+app.notice.push = function(text) {
+  var $container;
+
+  $container = $('<div>');
+  $('<div>')
+    .text(text)
+    .appendTo($container);
+  $('<button>')
+    .bind('click', function() {
+        $(this)
+          .parent()
+            .slideUp(function() {
+              $(this).remove();
+            });
+      })
+    .appendTo($container);
+  $container
+    .appendTo('#app_notice_container');
+};
