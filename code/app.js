@@ -5,6 +5,17 @@ app = {};
 app.main = function() {
 };
 
+app.log = function(level) {
+  level = level || 'log';
+
+  if (['log', 'debug', 'info', 'warn', 'error'].indexOf(level) !== -1) {
+    console[level].apply(console, Array.prototype.slice.call(arguments, 1));
+  }
+  else {
+    app.log('error', 'app.log: 引数levelが未知の値 %s です', level);
+  }
+};
+
 app.deep_copy = function(data) {
   return JSON.parse(JSON.stringify(data));
 };
