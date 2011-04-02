@@ -22,7 +22,12 @@ app.cache.get = function(url, callback) {
       objectStore = tra.objectStore('cache');
       req = objectStore.get(url);
       req.onsuccess = function(e) {
-        callback({status: 'success', data: this.result})
+        if (typeof req.result === 'object') {
+          callback({status: 'success', data: req.result})
+        }
+        else {
+          callback({status: 'not_found'});
+        }
       };
       req.onerror = function() {
         callback({status: 'error'});
