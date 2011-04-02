@@ -4,7 +4,7 @@ app.cache.get = function(url, callback) {
   var db, req, tra, objectStore;
 
   req = webkitIndexedDB.open('cache');
-  req.onerror= function() {
+  req.onerror = function() {
     callback({status: 'error'});
     app.log('error', 'app.cache.get: indexedDB.openに失敗');
   };
@@ -23,7 +23,7 @@ app.cache.get = function(url, callback) {
       req = objectStore.get(url);
       req.onsuccess = function(e) {
         if (typeof req.result === 'object') {
-          callback({status: 'success', data: req.result})
+          callback({status: 'success', data: req.result});
         }
         else {
           callback({status: 'not_found'});
@@ -47,18 +47,18 @@ app.cache.set = function(data, callback) {
   callback = callback || function() {};
 
   if (!(
-    typeof data.url === 'string' &&
-    typeof data.data === 'string' &&
-    typeof data.last_modified === 'number' &&
-    typeof data.last_updated === 'number'
-  )) {
+      typeof data.url === 'string' &&
+      typeof data.data === 'string' &&
+      typeof data.last_modified === 'number' &&
+      typeof data.last_updated === 'number'
+      )) {
     app.log('error', 'app.cache.set: 引数が不正です');
     callback({status: 'error'});
     return;
   }
 
   req = webkitIndexedDB.open('cache');
-  req.onerror= function() {
+  req.onerror = function() {
     callback({status: 'error'});
     app.log('error', 'app.cache.set: indexedDB.openに失敗');
   };
@@ -73,20 +73,20 @@ app.cache.set = function(data, callback) {
       req.onerror = function() {
         callback({status: 'error'});
         app.log(
-          'error',
-          'app.cache.set: db.setVersion失敗(%s -> %s)',
-          db.version,
-          '1'
+            'error',
+            'app.cache.set: db.setVersion失敗(%s -> %s)',
+            db.version,
+            '1'
         );
         db.close();
       };
       req.onsuccess = function(e) {
         db.createObjectStore('cache', {keyPath: 'url'});
         app.log(
-          'info',
-          'app.cache.set: db.setVersion成功(%s -> %s)',
-          db.version,
-          '1'
+            'info',
+            'app.cache.set: db.setVersion成功(%s -> %s)',
+            db.version,
+            '1'
         );
       };
     }
