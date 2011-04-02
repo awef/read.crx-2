@@ -44,6 +44,8 @@ app.cache.get = function(url, callback) {
 app.cache.set = function(data, callback) {
   var db, req, tra, objectStore;
 
+  callback = callback || function() {};
+
   if (!(
     typeof data.url === 'string' &&
     typeof data.data === 'string' &&
