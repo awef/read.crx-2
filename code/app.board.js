@@ -9,7 +9,16 @@ app.board.parse = function(url, text) {
       board;
 
   tmp = /^http:\/\/(\w+\.(\w+\.\w+))\/(\w+)\/(\w+)?/.exec(url);
-  if (tmp[2] === 'livedoor.jp') {
+  if (tmp[2] === 'machi.to') {
+    bbs_type = 'machi';
+    reg = /^\d+<>(\d+)<>(.+)\((\d+)\)$/gm;
+    base_url = 'http://' +
+        tmp[1] +
+        '/bbs/read.cgi/' +
+        tmp[3] +
+        '/';
+  }
+  else if (tmp[2] === 'livedoor.jp') {
     bbs_type = 'jbbs';
     reg = /^(\d+)\.cgi,(.+)\((\d+)\)$/gm;
     base_url = 'http://jbbs.livedoor.jp/bbs/read.cgi/' +
