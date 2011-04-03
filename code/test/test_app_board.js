@@ -1,5 +1,32 @@
 module('app.board');
 
+test('app.board._get_xhr_info', function() {
+  deepEqual(app.board._get_xhr_info('http://qb5.2ch.net/operate/'), {
+    path: 'http://qb5.2ch.net/operate/subject.txt',
+    charset: 'Shift_JIS'
+  });
+
+  deepEqual(app.board._get_xhr_info('http://www.machi.to/tawara/'), {
+    path: 'http://www.machi.to/bbs/offlaw.cgi/tawara/',
+    charset: 'Shift_JIS'
+  });
+
+  deepEqual(app.board._get_xhr_info('http://jbbs.livedoor.jp/computer/42710/'), {
+    path: 'http://jbbs.livedoor.jp/computer/42710/subject.txt',
+    charset: 'EUC-JP'
+  });
+
+  deepEqual(app.board._get_xhr_info('http://pele.bbspink.com/erobbs/'), {
+    path: 'http://pele.bbspink.com/erobbs/subject.txt',
+    charset: 'Shift_JIS'
+  });
+
+  deepEqual(app.board._get_xhr_info('http://ex14.vip2ch.com/part4vip/'), {
+    path: 'http://ex14.vip2ch.com/part4vip/subject.txt',
+    charset: 'Shift_JIS'
+  });
+});
+
 (function() {
   var ch_url, ch_text, ch_expected,
       machi_url, machi_text, machi_expected,
