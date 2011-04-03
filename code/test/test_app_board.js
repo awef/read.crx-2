@@ -4,7 +4,8 @@ module('app.board');
   var ch_url, ch_text, ch_expected,
       machi_url, machi_text, machi_expected,
       jbbs_url, jbbs_text, jbbs_expected,
-      pink_url, pink_text, pink_expected;
+      pink_url, pink_text, pink_expected,
+      pvip_url, pvip_text, pvip_expected;
 
   ch_url = 'http://qb5.2ch.net/operate/';
   ch_text = [
@@ -151,10 +152,47 @@ module('app.board');
     }
   ];
 
+  pvip_url = 'http://ex14.vip2ch.com/part4vip/';
+  pvip_text = [
+    '1301741923.dat<>バイト先の好きな子にプレゼントあげたんだが (128)',
+    '1301054675.dat<>住ックス (912)',
+    '1300609713.dat<>VIPでエバープラネット避難所 (134)',
+    '1301596001.dat<>【避難所】VIPSPo2iファンタシースターポータブル2インフィニティ (524)',
+    '1300631086.dat<>ここだけ魔法世界　792回のどんでん返し (602)'
+  ].join('\n');
+  pvip_expected = [
+    {
+      url: 'http://ex14.vip2ch.com/test/read.cgi/part4vip/1301741923/',
+      title: 'バイト先の好きな子にプレゼントあげたんだが',
+      res_count: 128
+    },
+    {
+      url: 'http://ex14.vip2ch.com/test/read.cgi/part4vip/1301054675/',
+      title: '住ックス',
+      res_count: 912
+    },
+    {
+      url: 'http://ex14.vip2ch.com/test/read.cgi/part4vip/1300609713/',
+      title: 'VIPでエバープラネット避難所',
+      res_count: 134
+    },
+    {
+      url: 'http://ex14.vip2ch.com/test/read.cgi/part4vip/1301596001/',
+      title: '【避難所】VIPSPo2iファンタシースターポータブル2インフィニティ',
+      res_count: 524
+    },
+    {
+      url: 'http://ex14.vip2ch.com/test/read.cgi/part4vip/1300631086/',
+      title: 'ここだけ魔法世界　792回のどんでん返し',
+      res_count: 602
+    },
+  ];
+
   test('実例パーステスト', function() {
     deepEqual(app.board.parse(ch_url, ch_text), ch_expected);
     deepEqual(app.board.parse(machi_url, machi_text), machi_expected);
     deepEqual(app.board.parse(jbbs_url, jbbs_text), jbbs_expected);
     deepEqual(app.board.parse(pink_url, pink_text), pink_expected);
+    deepEqual(app.board.parse(pvip_url, pvip_text), pvip_expected);
   });
 })();
