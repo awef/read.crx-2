@@ -1,8 +1,45 @@
 module('app.board');
 
 (function() {
-  var machi_url, machi_text, machi_expected,
+  var ch_url, ch_text, ch_expected,
+      machi_url, machi_text, machi_expected,
       jbbs_url, jbbs_text, jbbs_expected;
+
+  ch_url = 'http://qb5.2ch.net/operate/';
+  ch_text = [
+    '1301664644.dat<>【粛々と】シークレット★忍法帖巻物 8【情報収集、集約スレ】 (174)',
+    '1301751706.dat<>【news】ニュース速報運用情報759【ν】 (221)',
+    '1301761019.dat<>[test] 書き込みテスト 専用スレッド 240 [ﾃｽﾄ] (401)',
+    '1295975106.dat<>重い重い重い重い重い重い重い×70＠運用情報 (668)',
+    '1294363063.dat<>【お止め組。】出動予定＆連絡 詰所◆13 (312)'
+  ].join('\n');
+  ch_expected = [
+    {
+      url: 'http://qb5.2ch.net/test/read.cgi/operate/1301664644/',
+      title: '【粛々と】シークレット★忍法帖巻物 8【情報収集、集約スレ】',
+      res_count: 174
+    },
+    {
+      url: 'http://qb5.2ch.net/test/read.cgi/operate/1301751706/',
+      title: '【news】ニュース速報運用情報759【ν】',
+      res_count: 221
+    },
+    {
+      url: 'http://qb5.2ch.net/test/read.cgi/operate/1301761019/',
+      title: '[test] 書き込みテスト 専用スレッド 240 [ﾃｽﾄ]',
+      res_count: 401
+    },
+    {
+      url: 'http://qb5.2ch.net/test/read.cgi/operate/1295975106/',
+      title: '重い重い重い重い重い重い重い×70＠運用情報',
+      res_count: 668
+    },
+    {
+      url: 'http://qb5.2ch.net/test/read.cgi/operate/1294363063/',
+      title: '【お止め組。】出動予定＆連絡 詰所◆13',
+      res_count: 312
+    },
+  ];
 
   machi_url = 'http://www.machi.to/tawara/';
   machi_text = [
@@ -78,6 +115,7 @@ module('app.board');
   ];
 
   test('実例パーステスト', function() {
+    deepEqual(app.board.parse(ch_url, ch_text), ch_expected);
     deepEqual(app.board.parse(machi_url, machi_text), machi_expected);
     deepEqual(app.board.parse(jbbs_url, jbbs_text), jbbs_expected);
   });
