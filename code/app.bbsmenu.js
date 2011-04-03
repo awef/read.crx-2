@@ -7,8 +7,7 @@ app.bbsmenu.get = function(callback) {
 
   app.cache.get(url, function(cache) {
     if (cache.status === 'success' &&
-        //Date.now() - cache.data.last_updated < 1000 * 60 * 60 * 12) {
-        Date.now() - cache.data.last_updated < 1000 * 60) {
+        Date.now() - cache.data.last_updated < 1000 * 60 * 60 * 12) {
       menu = app.bbsmenu.parse(cache.data.data);
       callback({status: 'success', data: menu});
     }
