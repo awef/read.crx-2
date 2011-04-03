@@ -40,10 +40,20 @@ app.bbsmenu.get = function(callback) {
             }
           }
           else if (cache.status === 'success') {
-            callback({
-              status: xhr.status === 304 ? 'success' : 'error',
-              data: app.bbsmenu.parse(cache.data.data)
-            });
+            if (xhr.status === 304) {
+              callback({
+                status: 'success',
+                data: app.bbsmenu.parse(cache.data.data)
+              });
+              cache.data.last_updated = Date.now();
+              app.cache.set(cache.data);
+            }
+            else {
+              callback({
+                status: 'error',
+                data: app.bbsmenu.parse(cache.data.data)
+              });
+            }
           }
           else {
             callback({status: 'error'});
