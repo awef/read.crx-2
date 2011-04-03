@@ -3,7 +3,8 @@ module('app.board');
 (function() {
   var ch_url, ch_text, ch_expected,
       machi_url, machi_text, machi_expected,
-      jbbs_url, jbbs_text, jbbs_expected;
+      jbbs_url, jbbs_text, jbbs_expected,
+      pink_url, pink_text, pink_expected;
 
   ch_url = 'http://qb5.2ch.net/operate/';
   ch_text = [
@@ -114,9 +115,46 @@ module('app.board');
     }
   ];
 
+  pink_url = 'http://pele.bbspink.com/erobbs/';
+  pink_text = [
+    '9241103704.dat<>■　現在の電力情況(東電)、節電する? いつまで続く? (13)',
+    '9241103901.dat<>■東北地方太平洋沖地震 (3)',
+    '1299998629.dat<>Let\'s talk with ***-san. Part18 (157)',
+    '1246751830.dat<>チラシの裏 (714)',
+    '1202732336.dat<>削除人さんと案内人さんと、酢豚の★さんを募集 (227)'
+  ].join('\n');
+  pink_expected = [
+    {
+      url: 'http://pele.bbspink.com/test/read.cgi/erobbs/9241103704/',
+      title: '■　現在の電力情況(東電)、節電する? いつまで続く?',
+      res_count: 13
+    },
+    {
+      url: 'http://pele.bbspink.com/test/read.cgi/erobbs/9241103901/',
+      title: '■東北地方太平洋沖地震',
+      res_count: 3
+    },
+    {
+      url: 'http://pele.bbspink.com/test/read.cgi/erobbs/1299998629/',
+      title: 'Let\'s talk with ***-san. Part18',
+      res_count: 157
+    },
+    {
+      url: 'http://pele.bbspink.com/test/read.cgi/erobbs/1246751830/',
+      title: 'チラシの裏',
+      res_count: 714
+    },
+    {
+      url: 'http://pele.bbspink.com/test/read.cgi/erobbs/1202732336/',
+      title: '削除人さんと案内人さんと、酢豚の★さんを募集',
+      res_count: 227
+    }
+  ];
+
   test('実例パーステスト', function() {
     deepEqual(app.board.parse(ch_url, ch_text), ch_expected);
     deepEqual(app.board.parse(machi_url, machi_text), machi_expected);
     deepEqual(app.board.parse(jbbs_url, jbbs_text), jbbs_expected);
+    deepEqual(app.board.parse(pink_url, pink_text), pink_expected);
   });
 })();

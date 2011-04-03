@@ -9,16 +9,7 @@ app.board.parse = function(url, text) {
       board;
 
   tmp = /^http:\/\/(\w+\.(\w+\.\w+))\/(\w+)\/(\w+)?/.exec(url);
-  if (tmp[2] === '2ch.net') {
-    bbs_type = '2ch';
-    reg = /^(\d+)\.dat<>(.+) \((\d+)\)$/gm;
-    base_url = 'http://' +
-        tmp[1] +
-        '/test/read.cgi/' +
-        tmp[3] +
-        '/';
-  }
-  else if (tmp[2] === 'machi.to') {
+  if (tmp[2] === 'machi.to') {
     bbs_type = 'machi';
     reg = /^\d+<>(\d+)<>(.+)\((\d+)\)$/gm;
     base_url = 'http://' +
@@ -37,7 +28,13 @@ app.board.parse = function(url, text) {
         '/';
   }
   else {
-    return null;
+    bbs_type = '2ch';
+    reg = /^(\d+)\.dat<>(.+) \((\d+)\)$/gm;
+    base_url = 'http://' +
+        tmp[1] +
+        '/test/read.cgi/' +
+        tmp[3] +
+        '/';
   }
 
   board = [];
