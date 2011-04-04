@@ -67,7 +67,7 @@ test('app.board._get_xhr_info', function() {
       url: 'http://qb5.2ch.net/test/read.cgi/operate/1294363063/',
       title: '【お止め組。】出動予定＆連絡 詰所◆13',
       res_count: 312
-    },
+    }
   ];
 
   machi_url = 'http://www.machi.to/tawara/';
@@ -212,7 +212,7 @@ test('app.board._get_xhr_info', function() {
       url: 'http://ex14.vip2ch.com/test/read.cgi/part4vip/1300631086/',
       title: 'ここだけ魔法世界　792回のどんでん返し',
       res_count: 602
-    },
+    }
   ];
 
   test('実例パーステスト', function() {
