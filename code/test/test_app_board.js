@@ -4,27 +4,27 @@ test('app.board._get_xhr_info', function() {
   deepEqual(app.board._get_xhr_info('http://qb5.2ch.net/operate/'), {
     path: 'http://qb5.2ch.net/operate/subject.txt',
     charset: 'Shift_JIS'
-  });
+  }, '2ch');
 
   deepEqual(app.board._get_xhr_info('http://www.machi.to/tawara/'), {
     path: 'http://www.machi.to/bbs/offlaw.cgi/tawara/',
     charset: 'Shift_JIS'
-  });
+  }, 'まちBBS');
 
   deepEqual(app.board._get_xhr_info('http://jbbs.livedoor.jp/computer/42710/'), {
     path: 'http://jbbs.livedoor.jp/computer/42710/subject.txt',
     charset: 'EUC-JP'
-  });
+  }, 'したらば');
 
   deepEqual(app.board._get_xhr_info('http://pele.bbspink.com/erobbs/'), {
     path: 'http://pele.bbspink.com/erobbs/subject.txt',
     charset: 'Shift_JIS'
-  });
+  }, 'BBSPINK');
 
   deepEqual(app.board._get_xhr_info('http://ex14.vip2ch.com/part4vip/'), {
     path: 'http://ex14.vip2ch.com/part4vip/subject.txt',
     charset: 'Shift_JIS'
-  });
+  }, 'パー速VIP');
 });
 
 (function() {
@@ -216,10 +216,10 @@ test('app.board._get_xhr_info', function() {
   ];
 
   test('実例パーステスト', function() {
-    deepEqual(app.board.parse(ch_url, ch_text), ch_expected);
-    deepEqual(app.board.parse(machi_url, machi_text), machi_expected);
-    deepEqual(app.board.parse(jbbs_url, jbbs_text), jbbs_expected);
-    deepEqual(app.board.parse(pink_url, pink_text), pink_expected);
-    deepEqual(app.board.parse(pvip_url, pvip_text), pvip_expected);
+    deepEqual(app.board.parse(ch_url, ch_text), ch_expected, '2ch');
+    deepEqual(app.board.parse(machi_url, machi_text), machi_expected, 'まちBBS');
+    deepEqual(app.board.parse(jbbs_url, jbbs_text), jbbs_expected, 'したらば');
+    deepEqual(app.board.parse(pink_url, pink_text), pink_expected, 'BBSPINK');
+    deepEqual(app.board.parse(pvip_url, pvip_text), pvip_expected, 'パー速VIP');
   });
 })();
