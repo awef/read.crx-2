@@ -13,8 +13,8 @@ app.board._get_xhr_info = function(board_url) {
   else if (tmp[2] === 'livedoor.jp') {
     return {
       path: 'http://jbbs.livedoor.jp/' +
-        tmp[3] + '/' +
-        tmp[4] + '/subject.txt',
+          tmp[3] + '/' +
+          tmp[4] + '/subject.txt',
       charset: 'EUC-JP'
     };
   }
