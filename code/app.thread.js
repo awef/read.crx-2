@@ -1,5 +1,31 @@
 app.thread = {};
 
+app.thread._get_xhr_info = function(thread_url) {
+  var tmp;
+
+  tmp = /^http:\/\/(\w+\.(\w+\.\w+))\/(?:test|bbs)\/read\.cgi\/(\w+)\/(\d+)\/(?:(\d+)\/)?$/.exec(thread_url);
+  switch (tmp[2]) {
+    case 'machi.to':
+      return {
+        path: 'http://' + tmp[1] + '/bbs/offlaw.cgi/' +
+            tmp[3] + '/' + tmp[4] + '/',
+        charset: 'Shift_JIS'
+      };
+    case 'livedoor.jp':
+      return {
+        path: 'http://jbbs.livedoor.jp/bbs/rawmode.cgi/' +
+            tmp[3] + '/' + tmp[4] + '/' + tmp[5] + '/',
+        charset: 'EUC-JP'
+      };
+    default:
+      return {
+        path: 'http://' + tmp[1] + '/' + tmp[3] + '/dat/' +
+            tmp[4] + '.dat',
+        charset: 'Shift_JIS'
+      };
+  }
+};
+
 app.thread.parse = function(url, text) {
   var tmp;
 

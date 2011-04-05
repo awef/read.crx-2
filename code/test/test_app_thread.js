@@ -1,5 +1,53 @@
 module('app.thread');
 
+test('app.thread._get_xhr_info', function() {
+  deepEqual(
+      app.thread._get_xhr_info('http://qb5.2ch.net/test/read.cgi/operate/1234567890/'),
+      {
+        path: 'http://qb5.2ch.net/operate/dat/1234567890.dat',
+        charset: 'Shift_JIS'
+      },
+      '2ch'
+  );
+
+  deepEqual(
+      app.thread._get_xhr_info('http://www.machi.to/bbs/read.cgi/tawara/511234524356/'),
+      {
+        path: 'http://www.machi.to/bbs/offlaw.cgi/tawara/511234524356/',
+        charset: 'Shift_JIS'
+      },
+      'まちBBS'
+  );
+
+
+  deepEqual(
+      app.thread._get_xhr_info('http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273732874/'),
+      {
+        path: 'http://jbbs.livedoor.jp/bbs/rawmode.cgi/computer/42710/1273732874/',
+        charset: 'EUC-JP'
+      },
+      'したらば'
+  );
+
+  deepEqual(
+      app.thread._get_xhr_info('http://pele.bbspink.com/test/read.cgi/erobbs/1297500876/'),
+      {
+        path: 'http://pele.bbspink.com/erobbs/dat/1297500876.dat',
+        charset: 'Shift_JIS'
+      },
+      'BBSPINK'
+  );
+
+  deepEqual(
+      app.thread._get_xhr_info('http://ex14.vip2ch.com/test/read.cgi/part4vip/1289640497/'),
+      {
+        path: 'http://ex14.vip2ch.com/part4vip/dat/1289640497.dat',
+        charset: 'Shift_JIS'
+      },
+      'パー速'
+  );
+});
+
 (function() {
   var ch_url, ch_text, ch_expected,
       machi_url, machi_text, machi_expected,
