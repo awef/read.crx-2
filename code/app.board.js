@@ -4,25 +4,24 @@ app.board._get_xhr_info = function(board_url) {
   var tmp;
 
   tmp = /^http:\/\/(\w+\.(\w+\.\w+))\/(\w+)\/(\w+)?/.exec(board_url);
-  if (tmp[2] === 'machi.to') {
-    return {
-      path: 'http://' + tmp[1] + '/bbs/offlaw.cgi/' + tmp[3] + '/',
-      charset: 'Shift_JIS'
-    };
-  }
-  else if (tmp[2] === 'livedoor.jp') {
-    return {
-      path: 'http://jbbs.livedoor.jp/' +
-          tmp[3] + '/' +
-          tmp[4] + '/subject.txt',
-      charset: 'EUC-JP'
-    };
-  }
-  else {
-    return {
-      path: 'http://' + tmp[1] + '/' + tmp[3] + '/subject.txt',
-      charset: 'Shift_JIS'
-    };
+  switch (tmp[2]) {
+    case 'machi.to':
+      return {
+        path: 'http://' + tmp[1] + '/bbs/offlaw.cgi/' + tmp[3] + '/',
+        charset: 'Shift_JIS'
+      };
+    case 'livedoor.jp':
+      return {
+        path: 'http://jbbs.livedoor.jp/' +
+            tmp[3] + '/' +
+            tmp[4] + '/subject.txt',
+        charset: 'EUC-JP'
+      };
+    default:
+      return {
+        path: 'http://' + tmp[1] + '/' + tmp[3] + '/subject.txt',
+        charset: 'Shift_JIS'
+      };
   }
 };
 
