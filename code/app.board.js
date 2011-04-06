@@ -150,5 +150,5 @@ app.board.parse = function(url, text) {
     board.splice(-1, 1);
   }
 
-  return board;
+  return board.length > 0 ? board : null;
 };

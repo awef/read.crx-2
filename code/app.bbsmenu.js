@@ -103,5 +103,5 @@ app.bbsmenu.parse = function(html) {
     }
   }
 
-  return menu;
+  return menu.length > 0 ? menu : null;
 };

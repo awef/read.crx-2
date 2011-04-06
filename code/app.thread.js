@@ -136,7 +136,7 @@ app.thread._parse_ch = function(text) {
       other: reg_res[3]
     });
   }
-  return thread;
+  return thread.res.length > 0 ? thread : null;
 };
 
 app.thread._parse_machi = function(text) {
@@ -167,7 +167,7 @@ app.thread._parse_machi = function(text) {
       other: reg_res[4]
     });
   }
-  return thread;
+  return thread.res.length > 0 ? thread : null;
 };
 
 app.thread._parse_jbbs = function(text) {
@@ -198,5 +198,5 @@ app.thread._parse_jbbs = function(text) {
       other: reg_res[4] + ' ID:' + reg_res[7]
     });
   }
-  return thread;
+  return thread.res.length > 0 ? thread : null;
 };

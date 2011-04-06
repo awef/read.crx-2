@@ -222,4 +222,12 @@ test('app.board._get_xhr_info', function() {
     deepEqual(app.board.parse(pink_url, pink_text), pink_expected, 'BBSPINK');
     deepEqual(app.board.parse(pvip_url, pvip_text), pvip_expected, 'パー速VIP');
   });
+
+  test('パースエラーテスト', function() {
+    strictEqual(app.board.parse(ch_url, ''), null, '2ch URL + 空文字列');
+    strictEqual(app.board.parse(machi_url, ''), null, 'まちBBS URL + 空文字列');
+    strictEqual(app.board.parse(jbbs_url, ''), null, 'したらばURL + 空文字列');
+    strictEqual(app.board.parse(pink_url, ''), null, 'BBSPINK URL + 空文字列');
+    strictEqual(app.board.parse(pvip_url, ''), null, 'パー速URL + 空文字列');
+  });
 })();

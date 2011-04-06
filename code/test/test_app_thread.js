@@ -194,5 +194,11 @@ test('app.thread._get_xhr_info', function() {
     deepEqual(app.thread.parse(machi_url, machi_text), machi_expected, 'まちBBS');
     deepEqual(app.thread.parse(jbbs_url, jbbs_text), jbbs_expected, 'したらば');
   });
+
+  test('パースエラーテスト', function() {
+    strictEqual(app.thread.parse(ch_url, ''), null, '2ch系URL + 空dat');
+    strictEqual(app.thread.parse(machi_url, ''), null, 'まちBBS系URL + 空dat');
+    strictEqual(app.thread.parse(jbbs_url, ''), null, 'したらば系URL + 空dat');
+  });
 })();
 
