@@ -22,8 +22,7 @@ app.bbsmenu.get = function(callback) {
 
           if (
               xhr.status === 200 &&
-              (menu = app.bbsmenu.parse(this.responseText)) &&
-              menu.length > 0
+              (menu = app.bbsmenu.parse(this.responseText))
           ) {
             callback({status: 'success', data: menu});
 

@@ -50,8 +50,7 @@ app.thread.get = function(url, callback) {
 
           if (
               xhr.status === 200 &&
-              (thread = app.thread.parse(url, xhr.responseText)) &&
-              thread.res.length > 0
+              (thread = app.thread.parse(url, xhr.responseText))
           ) {
             callback({status: 'success', data: thread});
 

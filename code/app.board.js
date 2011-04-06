@@ -49,8 +49,7 @@ app.board.get = function(url, callback) {
 
           if (
               xhr.status === 200 &&
-              (board = app.board.parse(url, xhr.responseText)) &&
-              board.length > 0
+              (board = app.board.parse(url, xhr.responseText))
           ) {
             callback({success: 'success', data: board});
 
