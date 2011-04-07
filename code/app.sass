@@ -1,6 +1,33 @@
 body
+  margin: 0
+
+html, body, #body
+  width: 100%
+  height: 100%
+
+#body
   background-color: #eee
   color: #222
+  display: -webkit-box
+
+  #left-pane
+    width: 100px
+    background-color: red
+
+  #right-pane
+    -webkit-box-flex: 1
+    height: 100%
+
+#body.pane-3
+  #right-pane
+    display: -webkit-box
+    -webkit-box-orient: vertical
+    #tab-a
+      background-color: green
+      height: 50%
+    #tab-b
+      -webkit-box-flex: 1
+      background-color: blue
 
 #app_notice_container
   position: fixed

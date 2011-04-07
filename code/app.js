@@ -39,6 +39,8 @@ var app;
 app = {};
 
 app.main = function() {
+  $('#body')
+    .addClass('pane-3');
 };
 
 app.log = function(level) {
