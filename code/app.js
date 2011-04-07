@@ -1,5 +1,15 @@
 (function() {
-  var reg_res, query;
+  var xhr, manifest, reg_res, query;
+
+  xhr = new XMLHttpRequest();
+  xhr.open('GET', '/manifest.json', false);
+  xhr.send(null);
+  manifest = JSON.parse(xhr.responseText);
+
+  if (manifest.version !==
+      document.documentElement.getAttribute('data-app-version')) {
+    location.reload(true);
+  }
 
   reg_res = /[\?&]q=([^&]+)/.exec(location.search);
   query = reg_res ? reg_res[1] : 'app';
