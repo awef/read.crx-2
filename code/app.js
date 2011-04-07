@@ -53,11 +53,13 @@ app.notice.push = function(text) {
     .bind('click', function() {
         $(this)
           .parent()
-            .slideUp(function() {
+            .slideUp('fast', function() {
               $(this).remove();
             });
       })
     .appendTo($container);
   $container
-    .appendTo('#app_notice_container');
+    .hide()
+    .appendTo('#app_notice_container')
+    .fadeIn();
 };
