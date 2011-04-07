@@ -3,7 +3,10 @@ app.board = {};
 app.board._get_xhr_info = function(board_url) {
   var tmp;
 
-  tmp = /^http:\/\/(\w+\.(\w+\.\w+))\/(\w+)\/(\w+)?/.exec(board_url);
+  tmp = /^http:\/\/(\w+\.(\w+\.\w+))\/(\w+)\/(?:(\d+)\/)?$/.exec(board_url);
+  if (!tmp) {
+    return null;
+  }
   switch (tmp[2]) {
     case 'machi.to':
       return {
@@ -29,6 +32,10 @@ app.board.get = function(url, callback) {
   var xhr, xhr_timer, xhr_path, xhr_charset, last_modified, board, tmp;
 
   tmp = app.board._get_xhr_info(url);
+  if (!tmp) {
+    callback({status: 'error'});
+    return;
+  }
   xhr_path = tmp.path;
   xhr_charset = tmp.charset;
 

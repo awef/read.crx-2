@@ -25,6 +25,11 @@ test('app.board._get_xhr_info', function() {
     path: 'http://ex14.vip2ch.com/part4vip/subject.txt',
     charset: 'Shift_JIS'
   }, 'パー速VIP');
+
+  strictEqual(app.board._get_xhr_info(''), null, '空URL');
+  strictEqual(app.board._get_xhr_info('awsedtfgyuhjikolp;'), null, 'ダミー文字列');
+  strictEqual(app.board._get_xhr_info('http://example.com/'), null, 'いずれのタイプの掲示板にも当てはまらないURL');
+  strictEqual(app.board._get_xhr_info('http://example.com/test/hogehoge/fugafuga/'), null, 'いずれのタイプの掲示板にも当てはまらないURL 2');
 });
 
 (function() {

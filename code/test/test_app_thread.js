@@ -46,6 +46,11 @@ test('app.thread._get_xhr_info', function() {
       },
       'パー速'
   );
+
+  strictEqual(app.thread._get_xhr_info(''), null, '空URL');
+  strictEqual(app.thread._get_xhr_info('awsedtfgyuhjikolp;'), null, 'ダミー文字列');
+  strictEqual(app.thread._get_xhr_info('http://example.com/'), null, 'いずれのタイプの掲示板にも当てはまらないURL');
+  strictEqual(app.thread._get_xhr_info('http://example.com/test/hogehoge/fugafuga/'), null, 'いずれのタイプの掲示板にも当てはまらないURL 2');
 });
 
 (function() {

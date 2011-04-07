@@ -4,6 +4,9 @@ app.thread._get_xhr_info = function(thread_url) {
   var tmp;
 
   tmp = /^http:\/\/(\w+\.(\w+\.\w+))\/(?:test|bbs)\/read\.cgi\/(\w+)\/(\d+)\/(?:(\d+)\/)?$/.exec(thread_url);
+  if (!tmp) {
+    return null;
+  }
   switch (tmp[2]) {
     case 'machi.to':
       return {
@@ -30,6 +33,10 @@ app.thread.get = function(url, callback) {
   var xhr, xhr_timer, xhr_path, xhr_charset, last_modified, thread, tmp;
 
   tmp = app.thread._get_xhr_info(url);
+  if (!tmp) {
+    callback({status: 'error'});
+    return;
+  }
   xhr_path = tmp.path;
   xhr_charset = tmp.charset;
 
@@ -104,6 +111,9 @@ app.thread.parse = function(url, text) {
   var tmp;
 
   tmp = /^http:\/\/\w+\.(\w+\.\w+)\//.exec(url);
+  if (!tmp) {
+    return null;
+  }
   if (tmp[1] === 'machi.to') {
     return app.thread._parse_machi(text);
   }
