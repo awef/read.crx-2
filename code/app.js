@@ -16,31 +16,31 @@
 
   chrome.tabs.getCurrent(function(current_tab) {
     chrome.windows.getAll({populate: true}, function(windows) {
-        var win, win_key, tab, tab_key, app_path;
+      var win, win_key, tab, tab_key, app_path;
 
-        app_path = chrome.extension.getURL('app.html');
-        for (win_key = 0; win = windows[win_key]; win_key++) {
-          for (tab_key = 0; tab = win.tabs[tab_key]; tab_key++) {
-            if (tab.id !== current_tab.id && tab.url === app_path) {
-              chrome.windows.update(win.id, {focused: true});
-              chrome.tabs.update(tab.id, {selected: true});
-              if (query !== 'app') {
-                chrome.tabs.sendRequest(tab.id, {type: 'open', query: query});
-              }
-              chrome.tabs.remove(current_tab.id);
-              return;
+      app_path = chrome.extension.getURL('app.html');
+      for (win_key = 0; win = windows[win_key]; win_key++) {
+        for (tab_key = 0; tab = win.tabs[tab_key]; tab_key++) {
+          if (tab.id !== current_tab.id && tab.url === app_path) {
+            chrome.windows.update(win.id, {focused: true});
+            chrome.tabs.update(tab.id, {selected: true});
+            if (query !== 'app') {
+              chrome.tabs.sendRequest(tab.id, {type: 'open', query: query});
             }
+            chrome.tabs.remove(current_tab.id);
+            return;
           }
         }
+      }
 
-        history.pushState(null, null, '/app.html');
-        $(function() {
-          app.main();
-          if (query !== 'app') {
-            app.message.send('open', {query: query});
-          }
-        });
+      history.pushState(null, null, '/app.html');
+      $(function() {
+        app.main();
+        if (query !== 'app') {
+          app.message.send('open', {query: query});
+        }
       });
+    });
   });
 })();
 
