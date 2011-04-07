@@ -12,7 +12,7 @@ app.log = function(level) {
     console[level].apply(console, Array.prototype.slice.call(arguments, 1));
   }
   else {
-    app.log('error', 'app.log: 引数levelが未知の値 %s です', level);
+    app.log('error', 'app.log: 引数levelが不正な値です', arguments);
   }
 };
 

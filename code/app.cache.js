@@ -35,7 +35,7 @@ app.cache.get = function(url, callback) {
     }
     else {
       callback({status: 'error'});
-      app.log('warn', 'app.cache.get: 予期せぬdb.version %s', db.version);
+      app.log('error', 'app.cache.get: 予期せぬdb.version', db.version);
       db.close();
     }
   };
@@ -52,7 +52,7 @@ app.cache.set = function(data, callback) {
       typeof data.last_modified === 'number' &&
       typeof data.last_updated === 'number'
       )) {
-    app.log('error', 'app.cache.set: 引数が不正です');
+    app.log('error', 'app.cache.set: 引数が不正です', arguments);
     callback({status: 'error'});
     return;
   }
