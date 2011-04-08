@@ -35,7 +35,7 @@ app.cache.get = function(url, callback) {
     }
     else {
       callback({status: 'error'});
-      app.log('error', 'app.cache.get: 予期せぬdb.version', db.version);
+      app.log('warn', 'app.cache.get: 予期せぬdb.version', db.version);
       db.close();
     }
   };
