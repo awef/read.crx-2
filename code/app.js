@@ -126,20 +126,18 @@ app.notice = {};
 app.notice.push = function(text) {
   var $container;
 
-  $container = $('<div>');
   $('<div>')
-    .text(text)
-    .appendTo($container);
-  $('<button>')
-    .bind('click', function() {
-        $(this)
-          .parent()
-            .slideUp('fast', function() {
-              $(this).remove();
-            });
-      })
-    .appendTo($container);
-  $container
+    .append(
+      $('<div>', {text: text}),
+      $('<button>')
+        .bind('click', function() {
+            $(this)
+              .parent()
+                .slideUp('fast', function() {
+                  $(this).remove();
+                });
+            })
+      )
     .hide()
     .appendTo('#app_notice_container')
     .fadeIn();
