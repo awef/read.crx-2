@@ -91,3 +91,28 @@ test('app.url.fix', function() {
   test_board_url('http://ex14.vip2ch.com/part4vip/', 'パー速');
   test_thread_url('http://ex14.vip2ch.com/test/read.cgi/part4vip/1291628400/', 'パー速');
 });
+
+test('app.url.guess_type', function() {
+  var hoge;
+
+  hoge = function(url, expected) {
+    deepEqual(app.url.guess_type(url), expected, url);
+  };
+
+  hoge('http://qb5.2ch.net/operate/', {type: 'board', bbs_type: '2ch'});
+  hoge('http://pc11.2ch.net/test/read.cgi/hp/1277348045/', {type: 'thread', bbs_type: '2ch'});
+
+  hoge('http://www.machi.to/tawara/', {type: 'board', bbs_type: 'machi'});
+  hoge('http://www.machi.to/bbs/read.cgi/tawara/511234524356/', {type: 'thread', bbs_type: 'machi'});
+
+  hoge('http://jbbs.livedoor.jp/computer/42710/', {type: 'board', bbs_type: 'jbbs'});
+  hoge('http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273802908/', {type: 'thread', bbs_type: 'jbbs'});
+
+  hoge('http://pele.bbspink.com/erobbs/', {type: 'board', bbs_type: '2ch'});
+  hoge('http://pele.bbspink.com/test/read.cgi/erobbs/9241103704/', {type: 'thread', bbs_type: '2ch'});
+
+  hoge('http://ex14.vip2ch.com/part4vip/', {type: 'board', bbs_type: '2ch'});
+  hoge('http://ex14.vip2ch.com/test/read.cgi/part4vip/1291628400/', {type: 'thread', bbs_type: '2ch'});
+
+  hoge('http://example.com/', {type: 'unknown', bbs_type: 'unknown'});
+});

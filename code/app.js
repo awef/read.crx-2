@@ -153,3 +153,23 @@ app.url.fix = function(url) {
    .replace(/^(http:\/\/jbbs\.livedoor\.jp\/bbs\/read\.cgi\/\w+\/\d+\/\d+).*?$/, '$1/')
    .replace(/^(http:\/\/[\w\.]+\/\w+\/(?:\d+\/)?)(?:#.*)?$/, '$1');
 };
+app.url.guess_type = function(url) {
+  url = app.url.fix(url);
+  switch (true) {
+    case /^http:\/\/jbbs\.livedoor\.jp\/bbs\/read\.cgi\/\w+\/\d+\/\d+\/$/
+      .test(url):
+      return {type: 'thread', bbs_type: 'jbbs'};
+    case /^http:\/\/jbbs\.livedoor\.jp\/\w+\/\d+\/$/.test(url):
+      return {type: 'board', bbs_type: 'jbbs'};
+    case /^http:\/\/\w+\.machi\.to\/bbs\/read\.cgi\/\w+\/\d+\/$/.test(url):
+      return {type: 'thread', bbs_type: 'machi'};
+    case /^http:\/\/\w+\.machi\.to\/\w+\/$/.test(url):
+      return {type: 'board', bbs_type: 'machi'};
+    case /^http:\/\/[\w\.]+\/test\/read\.cgi\/\w+\/\d+\/$/.test(url):
+      return {type: 'thread', bbs_type: '2ch'};
+    case /^http:\/\/[\w\.]+\/\w+\/$/.test(url):
+      return {type: 'board', bbs_type: '2ch'};
+    default:
+      return {type: 'unknown', bbs_type: 'unknown'};
+  }
+};
