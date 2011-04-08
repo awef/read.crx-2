@@ -55,6 +55,35 @@ app = {};
 app.main = function() {
   $('#body')
     .addClass('pane-3');
+
+  app.bbsmenu.get(function(res) {
+    var menu,
+        h3, ul, li, a,
+        c_key, category, b_key, board;
+
+    menu = document.getElementById('left-pane');
+
+    if ('data' in res) {
+      for (c_key = 0; category = res.data[c_key]; c_key++) {
+        h3 = document.createElement('h3');
+        h3.innerText = category.title;
+        menu.appendChild(h3);
+
+        ul = document.createElement('ul');
+        for (b_key = 0; board = category.board[b_key]; b_key++) {
+          li = document.createElement('li');
+          a = document.createElement('a');
+          a.innerText = board.title;
+          a.href = board.url;
+          li.appendChild(a);
+          ul.appendChild(li);
+        }
+        menu.appendChild(ul);
+      }
+    }
+
+    $(menu).accordion();
+  });
 };
 
 app.log = function(level) {
