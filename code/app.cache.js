@@ -42,7 +42,8 @@ app.cache.get = function(url, callback) {
 };
 
 app.cache.set = function(data, callback) {
-  var db, req, tra, objectStore;
+  var db, req, tra, objectStore,
+      idb_setversion, idb_putdata;
 
   callback = callback || function() {};
 
@@ -57,40 +58,30 @@ app.cache.set = function(data, callback) {
     return;
   }
 
-  req = webkitIndexedDB.open('cache');
-  req.onerror = function() {
-    callback({status: 'error'});
-    app.log('error', 'app.cache.set: indexedDB.openに失敗');
+  idb_setversion = function() {
+    req = db.setVersion('1');
+    req.onerror = function() {
+      callback({status: 'error'});
+      app.log(
+          'error',
+          'app.cache.set: db.setVersion失敗(%s -> %s)',
+          db.version,
+          '1'
+      );
+      db.close();
+    };
+    req.onsuccess = function(e) {
+      db.createObjectStore('cache', {keyPath: 'url'});
+      app.log(
+          'info',
+          'app.cache.set: db.setVersion成功(%s -> %s)',
+          db.version,
+          '1'
+      );
+      idb_putdata();
+    };
   };
-  req.onsuccess = function(e) {
-    var version;
-
-    db = req.result;
-
-    version = parseInt(db.version, 10);
-    if (isNaN(version) || version < 1) {
-      req = db.setVersion('1');
-      req.onerror = function() {
-        callback({status: 'error'});
-        app.log(
-            'error',
-            'app.cache.set: db.setVersion失敗(%s -> %s)',
-            db.version,
-            '1'
-        );
-        db.close();
-      };
-      req.onsuccess = function(e) {
-        db.createObjectStore('cache', {keyPath: 'url'});
-        app.log(
-            'info',
-            'app.cache.set: db.setVersion成功(%s -> %s)',
-            db.version,
-            '1'
-        );
-      };
-    }
-
+  idb_putdata = function() {
     tra = db.transaction(['cache'], webkitIDBTransaction.READ_WRITE);
     tra.oncomplete = function() {
       callback({status: 'success'});
@@ -103,5 +94,24 @@ app.cache.set = function(data, callback) {
 
     objectStore = tra.objectStore('cache');
     req = objectStore.put(data);
+  };
+
+  req = webkitIndexedDB.open('cache');
+  req.onerror = function() {
+    callback({status: 'error'});
+    app.log('error', 'app.cache.set: indexedDB.openに失敗');
+  };
+  req.onsuccess = function(e) {
+    var version;
+
+    db = req.result;
+
+    version = parseInt(db.version, 10);
+    if (isNaN(version) || version < 1) {
+      idb_setversion();
+    }
+    else {
+      idb_putdata();
+    }
   };
 };
