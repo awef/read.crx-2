@@ -56,3 +56,38 @@ test('test', 3, function() {
   });
   app.message.send('__test2', {test: 123});
 });
+
+module('app.url');
+
+test('app.url.fix', function() {
+  var test_board_url, test_thread_url;
+
+  test_board_url = function(fixed_url, service) {
+    strictEqual(app.url.fix(fixed_url), fixed_url, service + ' 板URL');
+    strictEqual(app.url.fix(fixed_url + '#5'), fixed_url, service + ' 板URL');
+  };
+
+  test_thread_url = function(fixed_url, service) {
+    strictEqual(app.url.fix(fixed_url), fixed_url, service + ' スレッドURL');
+    strictEqual(app.url.fix(fixed_url.slice(0, -1)), fixed_url, service + ' スレッドURL');
+    strictEqual(app.url.fix(fixed_url + 'l50'), fixed_url, service + ' スレッドURL');
+    strictEqual(app.url.fix(fixed_url + '50'), fixed_url, service + ' スレッドURL');
+    strictEqual(app.url.fix(fixed_url + '50/'), fixed_url, service + ' スレッドURL');
+    strictEqual(app.url.fix(fixed_url + '50-100'), fixed_url, service + ' スレッドURL');
+  }
+
+  test_board_url('http://qb5.2ch.net/operate/', '2ch');
+  test_thread_url('http://pc11.2ch.net/test/read.cgi/hp/1277348045/', '2ch');
+
+  test_board_url('http://www.machi.to/tawara/', 'まちBBS');
+  test_thread_url('http://www.machi.to/bbs/read.cgi/tawara/511234524356/', 'まちBBS');
+
+  test_board_url('http://jbbs.livedoor.jp/computer/42710/', 'したらば');
+  test_thread_url('http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273802908/', 'したらば');
+
+  test_board_url('http://pele.bbspink.com/erobbs/', 'BBSPINK');
+  test_thread_url('http://pele.bbspink.com/test/read.cgi/erobbs/9241103704/', 'BBSPINK');
+
+  test_board_url('http://ex14.vip2ch.com/part4vip/', 'パー速');
+  test_thread_url('http://ex14.vip2ch.com/test/read.cgi/part4vip/1291628400/', 'パー速');
+});

@@ -144,3 +144,12 @@ app.notice.push = function(text) {
     .appendTo('#app_notice_container')
     .fadeIn();
 };
+
+app.url = {};
+app.url.fix = function(url) {
+  return url
+   .replace(/^(http:\/\/[\w\.]+\/test\/read\.cgi\/\w+\/\d+).*?$/, '$1/')
+   .replace(/^(http:\/\/\w+\.machi\.to\/bbs\/read\.cgi\/\w+\/\d+).*?$/, '$1/')
+   .replace(/^(http:\/\/jbbs\.livedoor\.jp\/bbs\/read\.cgi\/\w+\/\d+\/\d+).*?$/, '$1/')
+   .replace(/^(http:\/\/[\w\.]+\/\w+\/(?:\d+\/)?)(?:#.*)?$/, '$1');
+};
