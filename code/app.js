@@ -1,6 +1,10 @@
 (function() {
   var xhr, manifest, reg_res, query;
 
+  if (location.pathname !== '/app.html') {
+    return;
+  }
+
   xhr = new XMLHttpRequest();
   xhr.open('GET', '/manifest.json', false);
   xhr.send(null);
