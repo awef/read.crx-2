@@ -1,40 +1,4 @@
-@mixin sidemenu-1
-  :-webkit-user-select none
-  :font-size 14px
-  h3
-    :cursor pointer
-    :background-image -webkit-linear-gradient(#f0f0f0, #e0e0e0)
-    :font
-      :size inherit
-      :weight inherit
-    :margin 0
-    :padding 0 0 0 10px
-    :line-height 1.3em
-    &:hover
-      :background-image -webkit-linear-gradient(#e0e0e0, #d0d0d0)
-      :box-shadow 0 0 4px #333 inset
-    &:active
-      :background-image -webkit-linear-gradient(#d0d0d0, #e0e0e0)
-      :box-shadow 0 0 6px #333 inset
-    &.accordion_open
-      :background-image -webkit-linear-gradient(#606060, #707070)
-      :box-shadow 0 0 4px #333 inset
-      :color #fff
-  ul
-    :margin 0
-    :padding 5px 0
-    :box-shadow 0 2px 5px #999 inset, 0 0 5px #999 inset
-  a
-    :display block
-    :color inherit
-    :text-decoration none
-    :margin 0 5px
-    :padding 0 5px
-    &:hover
-      :background-color #ccc
-      :border-radius 4px
-
-@mixin sidemenu-2
+@mixin ui_accordion
   :-webkit-user-select none
   :font-size 14px
   :background-color #ddd
@@ -160,7 +124,7 @@ html, body, #body
     :width 135px
     :height 100%
     :overflow-y auto
-    @include sidemenu-2
+    @include ui_accordion
   #right-pane
     :-webkit-box-flex 1
     :height 100%
