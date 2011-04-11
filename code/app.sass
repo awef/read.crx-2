@@ -110,6 +110,39 @@
         :z-index 1
         :visibility visible
 
+@mixin view_board
+  :font-size 13px
+  :overflow-y auto
+  table
+    :border-collapse collapse
+  thead
+    :background-color #f9f9f9
+  tr
+    :border-bottom 1px solid #ddd
+  th
+    :padding 3px
+    :font-size 12px
+    :font-weight normal
+    :border-right 1px solid #ddd
+    :white-space nowrap
+    &:nth-child(1)
+      :width 1em
+    &:nth-child(3)
+      :width 4em
+    &:nth-child(4)
+      :width 3em
+    &:nth-child(5)
+      :width 4em
+    &:nth-child(6)
+      :width 16em
+    &:hover
+      background-color: #e8e8e8
+  tbody tr:hover
+    :background-color #e8e8e8
+  td
+    :padding 2px
+    :white-space nowrap
+
 body
   :margin 0
 
@@ -128,6 +161,8 @@ html, body, #body
   #right-pane
     :-webkit-box-flex 1
     :height 100%
+    .view-board
+      @include view_board
 
 #body.pane-3
   #right-pane

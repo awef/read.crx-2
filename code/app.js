@@ -56,6 +56,53 @@ app.main = function() {
   $('#body')
     .addClass('pane-3');
 
+  $('#tab-a, #tab-b').tab();
+
+  app.message.add_listener('open', function(message) {
+    var tmp;
+
+    tmp = app.url.guess_type(message.url);
+    if (tmp.type === 'board') {
+      app.board.get(message.url, function(res) {
+        var $container, tbody, tr, td;
+
+        if ('data' in res) {
+          $container = $('#template > .view-board').clone();
+          tbody = $container.find('tbody')[0];
+          res.data.forEach(function(thread) {
+            tr = document.createElement('tr');
+            td = document.createElement('td');
+            tr.appendChild(td);
+            td = document.createElement('td');
+            td.innerText = thread.title;
+            tr.appendChild(td);
+            td = document.createElement('td');
+            td.innerText = thread.res_count;
+            tr.appendChild(td);
+            td = document.createElement('td');
+            tr.appendChild(td);
+            td = document.createElement('td');
+            tr.appendChild(td);
+            td = document.createElement('td');
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+          });
+          $container.appendTo('#tab-a');
+          $('#tab-a').tab('add', {element: $container[0], title: message.url});
+        }
+        else {
+          alert('error');
+        }
+      });
+    }
+  });
+
+  $(document.documentElement)
+    .delegate('.open_in_rcrx', 'click', function(e) {
+        e.preventDefault();
+        app.message.send('open', {url: this.href});
+      });
+
   app.bbsmenu.get(function(res) {
     var frag, category, board, h3, ul, li, a;
 
@@ -70,6 +117,7 @@ app.main = function() {
         category.board.forEach(function(board) {
           li = document.createElement('li');
           a = document.createElement('a');
+          a.className = 'open_in_rcrx';
           a.innerText = board.title;
           a.href = board.url;
           li.appendChild(a);
