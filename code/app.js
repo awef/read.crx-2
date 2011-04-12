@@ -197,8 +197,9 @@ app.view.load_sidemenu = function(url) {
 };
 app.view.open_board = function(url) {
   app.board.get(url, function(res) {
-    var $container, tbody, tr, td, fn, date;
+    var $container, tbody, tr, td, fn, date, now, thread_how_old;
     fn = function(a) { return (a < 10 ? '0' : '') + a; };
+    now = Date.now();
 
     if ('data' in res) {
       $container = $('#template > .view-board').clone();
@@ -216,6 +217,8 @@ app.view.open_board = function(url) {
         td = document.createElement('td');
         tr.appendChild(td);
         td = document.createElement('td');
+        thread_how_old = (now - thread.created_at) / (24 * 60 * 60 * 1000);
+        td.innerText = (thread.res_count / thread_how_old).toFixed(1);
         tr.appendChild(td);
         td = document.createElement('td');
         date = new Date(thread.created_at);
