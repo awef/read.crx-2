@@ -232,20 +232,26 @@ app.view.open_board = function(url) {
       tbody = $container.find('tbody')[0];
       res.data.forEach(function(thread) {
         tr = document.createElement('tr');
+
         td = document.createElement('td');
         tr.appendChild(td);
+
         td = document.createElement('td');
         td.innerText = thread.title;
         tr.appendChild(td);
+
         td = document.createElement('td');
         td.innerText = thread.res_count;
         tr.appendChild(td);
+
         td = document.createElement('td');
         tr.appendChild(td);
+
         td = document.createElement('td');
         thread_how_old = (now - thread.created_at) / (24 * 60 * 60 * 1000);
         td.innerText = (thread.res_count / thread_how_old).toFixed(1);
         tr.appendChild(td);
+
         td = document.createElement('td');
         date = new Date(thread.created_at);
         td.innerText = date.getFullYear() +
@@ -254,6 +260,7 @@ app.view.open_board = function(url) {
             ' ' + fn(date.getHours()) +
             ':' + fn(date.getMinutes());
         tr.appendChild(td);
+
         tbody.appendChild(tr);
       });
       $container.appendTo('#tab-a');
