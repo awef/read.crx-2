@@ -51,27 +51,32 @@ test('app.board._get_xhr_info', function() {
     {
       url: 'http://qb5.2ch.net/test/read.cgi/operate/1301664644/',
       title: '【粛々と】シークレット★忍法帖巻物 8【情報収集、集約スレ】',
-      res_count: 174
+      res_count: 174,
+      created_at: 1301664644000
     },
     {
       url: 'http://qb5.2ch.net/test/read.cgi/operate/1301751706/',
       title: '【news】ニュース速報運用情報759【ν】',
-      res_count: 221
+      res_count: 221,
+      created_at: 1301751706000
     },
     {
       url: 'http://qb5.2ch.net/test/read.cgi/operate/1301761019/',
       title: '[test] 書き込みテスト 専用スレッド 240 [ﾃｽﾄ]',
-      res_count: 401
+      res_count: 401,
+      created_at: 1301761019000
     },
     {
       url: 'http://qb5.2ch.net/test/read.cgi/operate/1295975106/',
       title: '重い重い重い重い重い重い重い×70＠運用情報',
-      res_count: 668
+      res_count: 668,
+      created_at: 1295975106000
     },
     {
       url: 'http://qb5.2ch.net/test/read.cgi/operate/1294363063/',
       title: '【お止め組。】出動予定＆連絡 詰所◆13',
-      res_count: 312
+      res_count: 312,
+      created_at: 1294363063000
     }
   ];
 
@@ -87,27 +92,32 @@ test('app.board._get_xhr_info', function() {
     {
       url: 'http://www.machi.to/bbs/read.cgi/tawara/1269441710/',
       title: '～削除依頼はこちらから～',
-      res_count: 1
+      res_count: 1,
+      created_at: 1269441710000
     },
     {
       url: 'http://www.machi.to/bbs/read.cgi/tawara/1299160555/',
       title: '関東板削除依頼スレッド54',
-      res_count: 134
+      res_count: 134,
+      created_at: 1299160555000
     },
     {
       url: 'http://www.machi.to/bbs/read.cgi/tawara/1239604919/',
       title: '●ホスト規制中第32巻●',
-      res_count: 973
+      res_count: 973,
+      created_at: 1239604919000
     },
     {
       url: 'http://www.machi.to/bbs/read.cgi/tawara/1300530242/',
       title: '東北板　削除依頼スレッド【Part38】',
-      res_count: 210
+      res_count: 210,
+      created_at: 1300530242000
     },
     {
       url: 'http://www.machi.to/bbs/read.cgi/tawara/1187437274/',
       title: '東北板管理人**********不信任スレ',
-      res_count: 350
+      res_count: 350,
+      created_at: 1187437274000
     }
   ];
 
@@ -124,27 +134,32 @@ test('app.board._get_xhr_info', function() {
     {
       url: 'http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1290070091/',
       title: 'read.crx総合 part2',
-      res_count: 354
+      res_count: 354,
+      created_at: 1290070091000
     },
     {
       url: 'http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1290070123/',
       title: 'read.crx CSSスレ',
-      res_count: 31
+      res_count: 31,
+      created_at: 1290070123000
     },
     {
       url: 'http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273802908/',
       title: 'read.crx総合',
-      res_count: 1000
+      res_count: 1000,
+      created_at: 1273802908000
     },
     {
       url: 'http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273732874/',
       title: 'テストスレ',
-      res_count: 413
+      res_count: 413,
+      created_at: 1273732874000
     },
     {
       url: 'http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273734819/',
       title: 'スレスト',
-      res_count: 1
+      res_count: 1,
+      created_at: 1273734819000
     }
   ];
 
@@ -160,27 +175,32 @@ test('app.board._get_xhr_info', function() {
     {
       url: 'http://pele.bbspink.com/test/read.cgi/erobbs/9241103704/',
       title: '■　現在の電力情況(東電)、節電する? いつまで続く?',
-      res_count: 13
+      res_count: 13,
+      created_at: 9241103704000
     },
     {
       url: 'http://pele.bbspink.com/test/read.cgi/erobbs/9241103901/',
       title: '■東北地方太平洋沖地震',
-      res_count: 3
+      res_count: 3,
+      created_at: 9241103901000
     },
     {
       url: 'http://pele.bbspink.com/test/read.cgi/erobbs/1299998629/',
       title: 'Let\'s talk with ***-san. Part18',
-      res_count: 157
+      res_count: 157,
+      created_at: 1299998629000
     },
     {
       url: 'http://pele.bbspink.com/test/read.cgi/erobbs/1246751830/',
       title: 'チラシの裏',
-      res_count: 714
+      res_count: 714,
+      created_at: 1246751830000
     },
     {
       url: 'http://pele.bbspink.com/test/read.cgi/erobbs/1202732336/',
       title: '削除人さんと案内人さんと、酢豚の★さんを募集',
-      res_count: 227
+      res_count: 227,
+      created_at: 1202732336000
     }
   ];
 
@@ -196,27 +216,32 @@ test('app.board._get_xhr_info', function() {
     {
       url: 'http://ex14.vip2ch.com/test/read.cgi/part4vip/1301741923/',
       title: 'バイト先の好きな子にプレゼントあげたんだが',
-      res_count: 128
+      res_count: 128,
+      created_at: 1301741923000
     },
     {
       url: 'http://ex14.vip2ch.com/test/read.cgi/part4vip/1301054675/',
       title: '住ックス',
-      res_count: 912
+      res_count: 912,
+      created_at: 1301054675000
     },
     {
       url: 'http://ex14.vip2ch.com/test/read.cgi/part4vip/1300609713/',
       title: 'VIPでエバープラネット避難所',
-      res_count: 134
+      res_count: 134,
+      created_at: 1300609713000
     },
     {
       url: 'http://ex14.vip2ch.com/test/read.cgi/part4vip/1301596001/',
       title: '【避難所】VIPSPo2iファンタシースターポータブル2インフィニティ',
-      res_count: 524
+      res_count: 524,
+      created_at: 1301596001000
     },
     {
       url: 'http://ex14.vip2ch.com/test/read.cgi/part4vip/1300631086/',
       title: 'ここだけ魔法世界　792回のどんでん返し',
-      res_count: 602
+      res_count: 602,
+      created_at: 1300631086000
     }
   ];
 

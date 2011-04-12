@@ -148,7 +148,8 @@ app.board.parse = function(url, text) {
     board.push({
       url: base_url + reg_res[1] + '/',
       title: reg_res[2],
-      res_count: +reg_res[3]
+      res_count: +reg_res[3],
+      created_at: +reg_res[1] * 1000
     });
   }
 

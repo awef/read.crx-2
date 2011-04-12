@@ -197,7 +197,8 @@ app.view.load_sidemenu = function(url) {
 };
 app.view.open_board = function(url) {
   app.board.get(url, function(res) {
-    var $container, tbody, tr, td;
+    var $container, tbody, tr, td, fn, date;
+    fn = function(a) { return (a < 10 ? '0' : '') + a; };
 
     if ('data' in res) {
       $container = $('#template > .view-board').clone();
@@ -217,6 +218,12 @@ app.view.open_board = function(url) {
         td = document.createElement('td');
         tr.appendChild(td);
         td = document.createElement('td');
+        date = new Date(thread.created_at);
+        td.innerText = date.getFullYear() +
+            '/' + fn(date.getMonth() + 1) +
+            '/' + fn(date.getDate()) +
+            ' ' + fn(date.getHours()) +
+            ':' + fn(date.getMinutes());
         tr.appendChild(td);
         tbody.appendChild(tr);
       });
