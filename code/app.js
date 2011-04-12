@@ -53,83 +53,16 @@ var app;
 app = {};
 
 app.main = function() {
-  $('#body')
-    .addClass('pane-3');
-
-  $('#tab-a, #tab-b').tab();
+  app.view.init();
+  app.view.load_sidemenu();
 
   app.message.add_listener('open', function(message) {
     var tmp;
 
     tmp = app.url.guess_type(message.url);
     if (tmp.type === 'board') {
-      app.board.get(message.url, function(res) {
-        var $container, tbody, tr, td;
-
-        if ('data' in res) {
-          $container = $('#template > .view-board').clone();
-          tbody = $container.find('tbody')[0];
-          res.data.forEach(function(thread) {
-            tr = document.createElement('tr');
-            td = document.createElement('td');
-            tr.appendChild(td);
-            td = document.createElement('td');
-            td.innerText = thread.title;
-            tr.appendChild(td);
-            td = document.createElement('td');
-            td.innerText = thread.res_count;
-            tr.appendChild(td);
-            td = document.createElement('td');
-            tr.appendChild(td);
-            td = document.createElement('td');
-            tr.appendChild(td);
-            td = document.createElement('td');
-            tr.appendChild(td);
-            tbody.appendChild(tr);
-          });
-          $container.appendTo('#tab-a');
-          $('#tab-a').tab('add', {element: $container[0], title: message.url});
-        }
-        else {
-          alert('error');
-        }
-      });
+      app.view.open_board(message.url);
     }
-  });
-
-  $(document.documentElement)
-    .delegate('.open_in_rcrx', 'click', function(e) {
-        e.preventDefault();
-        app.message.send('open', {url: this.href});
-      });
-
-  app.bbsmenu.get(function(res) {
-    var frag, category, board, h3, ul, li, a;
-
-    if ('data' in res) {
-      frag = document.createDocumentFragment();
-      res.data.forEach(function(category) {
-        h3 = document.createElement('h3');
-        h3.innerText = category.title;
-        frag.appendChild(h3);
-
-        ul = document.createElement('ul');
-        category.board.forEach(function(board) {
-          li = document.createElement('li');
-          a = document.createElement('a');
-          a.className = 'open_in_rcrx';
-          a.innerText = board.title;
-          a.href = board.url;
-          li.appendChild(a);
-          ul.appendChild(li);
-        });
-        frag.appendChild(ul);
-      });
-    }
-
-    $('#left-pane')
-      .append(frag)
-      .accordion();
   });
 };
 
@@ -217,4 +150,82 @@ app.url.guess_type = function(url) {
     default:
       return {type: 'unknown', bbs_type: 'unknown'};
   }
+};
+
+app.view = {};
+app.view.init = function() {
+  $('#body')
+    .addClass('pane-3');
+
+  $('#tab-a, #tab-b').tab();
+
+  $(document.documentElement)
+    .delegate('.open_in_rcrx', 'click', function(e) {
+        e.preventDefault();
+        app.message.send('open', {url: this.href});
+      });
+};
+app.view.load_sidemenu = function(url) {
+  app.bbsmenu.get(function(res) {
+    var frag, category, board, h3, ul, li, a;
+
+    if ('data' in res) {
+      frag = document.createDocumentFragment();
+      res.data.forEach(function(category) {
+        h3 = document.createElement('h3');
+        h3.innerText = category.title;
+        frag.appendChild(h3);
+
+        ul = document.createElement('ul');
+        category.board.forEach(function(board) {
+          li = document.createElement('li');
+          a = document.createElement('a');
+          a.className = 'open_in_rcrx';
+          a.innerText = board.title;
+          a.href = board.url;
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+        frag.appendChild(ul);
+      });
+    }
+
+    $('#left-pane')
+      .append(frag)
+      .accordion();
+  });
+};
+app.view.open_board = function(url) {
+  app.board.get(url, function(res) {
+    var $container, tbody, tr, td;
+
+    if ('data' in res) {
+      $container = $('#template > .view-board').clone();
+      tbody = $container.find('tbody')[0];
+      res.data.forEach(function(thread) {
+        tr = document.createElement('tr');
+        td = document.createElement('td');
+        tr.appendChild(td);
+        td = document.createElement('td');
+        td.innerText = thread.title;
+        tr.appendChild(td);
+        td = document.createElement('td');
+        td.innerText = thread.res_count;
+        tr.appendChild(td);
+        td = document.createElement('td');
+        tr.appendChild(td);
+        td = document.createElement('td');
+        tr.appendChild(td);
+        td = document.createElement('td');
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+      });
+      $container.appendTo('#tab-a');
+
+      $('#tab-a').tab('add', {element: $container[0], title: url});
+    }
+    else {
+      alert('error');
+    }
+  });
 };
