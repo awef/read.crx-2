@@ -144,6 +144,7 @@
     :white-space nowrap
 
 body
+  :position relative
   :margin 0
 
 html, body, #body
@@ -180,6 +181,11 @@ html, body, #body
 
 #tab-a, #tab-b
   @include ui_tab
+
+#tab-resizer
+  :cursor row-resize
+  :height 5px
+  :background-color #ddd
 
 #app_notice_container
   :position fixed
