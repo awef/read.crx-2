@@ -161,13 +161,13 @@ app.view.init = function() {
 
   $('#tab-resizer')
     .bind('mousedown', function(e) {
-      var tab_a = document.getElementById('tab-a'),
-          min_height = 50,
-          max_height = document.body.offsetHeight - 50;
+        var tab_a = document.getElementById('tab-a'),
+            min_height = 50,
+            max_height = document.body.offsetHeight - 50;
 
-      e.preventDefault();
-      $('<div>', {css: {
-          position : 'absolute',
+        e.preventDefault();
+        $('<div>', {css: {
+          position: 'absolute',
           left: 0,
           top: 0,
           width: '100%',
@@ -175,15 +175,16 @@ app.view.init = function() {
           'z-index': 999,
           cursor: 'row-resize'
         }})
-        .bind('mousemove', function(e) {
-          tab_a.style['height'] =
-            Math.max(Math.min(e.pageY, max_height), min_height) + 'px';
-        })
-        .bind('mouseup', function() {
-          $(this).remove();
-        })
-        .appendTo('body');
-    });
+          .bind('mousemove', function(e) {
+              tab_a.style['height'] =
+                  Math.max(Math.min(e.pageY, max_height), min_height) +
+                  'px';
+            })
+          .bind('mouseup', function() {
+              $(this).remove();
+            })
+          .appendTo('body');
+      });
 
   $(document.documentElement)
     .delegate('.open_in_rcrx', 'click', function(e) {
