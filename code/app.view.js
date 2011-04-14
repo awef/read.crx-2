@@ -4,11 +4,11 @@ app.view.init = function() {
   $('#body')
     .addClass('pane-3');
 
-  $('#tab-a, #tab-b').tab();
+  $('#tab_a, #tab_b').tab();
 
-  $('#tab-resizer')
+  $('#tab_resizer')
     .bind('mousedown', function(e) {
-        var tab_a = document.getElementById('tab-a'),
+        var tab_a = document.getElementById('tab_a'),
             min_height = 50,
             max_height = document.body.offsetHeight - 50;
 
@@ -67,7 +67,7 @@ app.view.load_sidemenu = function(url) {
       });
     }
 
-    $('#left-pane')
+    $('#left_pane')
       .append(frag)
       .accordion();
   });
@@ -80,7 +80,7 @@ app.view.open_board = function(url) {
     now = Date.now();
 
     if ('data' in res) {
-      $container = $('#template > .view-board').clone();
+      $container = $('#template > .view_board').clone();
       tbody = $container.find('tbody')[0];
       res.data.forEach(function(thread) {
         tr = document.createElement('tr');
@@ -117,9 +117,9 @@ app.view.open_board = function(url) {
 
         tbody.appendChild(tr);
       });
-      $container.appendTo('#tab-a');
+      $container.appendTo('#tab_a');
 
-      $('#tab-a').tab('add', {element: $container[0], title: url});
+      $('#tab_a').tab('add', {element: $container[0], title: url});
     }
     else {
       alert('error');
@@ -132,7 +132,7 @@ app.view.open_thread = function(url) {
     var $container;
 
     if ('data' in res) {
-      $container = $('<div class="view-thread">');
+      $container = $('<div class="view_thread">');
       res.data.res.forEach(function(res) {
         var article, header, name, mail, other, message;
 
@@ -170,7 +170,7 @@ app.view.open_thread = function(url) {
 
         $container[0].appendChild(article);
       });
-      $('#tab-b').tab('add', {
+      $('#tab_b').tab('add', {
         element: $container[0],
         title: res.data.title
       });

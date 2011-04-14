@@ -171,37 +171,37 @@ html, body, #body
 #body
   :position relative
   :color #222
-  #left-pane
+  #left_pane
     :position absolute
     :width 135px
     :height 100%
     :overflow-y auto
     :z-index 1
     @include ui_accordion
-  #right-pane
+  #right_pane
     :box-sizing border-box
     :position absolute
     :padding-left 135px
     :width 100%
     :height 100%
-    .view-board
+    .view_board
       @include view_board
-    .view-thread
+    .view_thread
       @include view_thread
 
 #body.pane-3
-  #right-pane
+  #right_pane
     :display -webkit-box
     :-webkit-box-orient vertical
-    #tab-a
+    #tab_a
       :height 50%
-    #tab-b
+    #tab_b
       :-webkit-box-flex 1
 
-#tab-a, #tab-b
+#tab_a, #tab_b
   @include ui_tab
 
-#tab-resizer
+#tab_resizer
   :cursor row-resize
   :height 5px
   :background-color #ddd
