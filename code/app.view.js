@@ -121,6 +121,7 @@ app.view.open_board = function(url) {
 
         tbody.appendChild(tr);
       });
+      $container.find('table').tablesorter();
 
       $('#tab_a').tab('add', {element: $container[0], title: url});
     }
