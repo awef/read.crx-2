@@ -137,11 +137,28 @@
       :width 16em
     &:hover
       background-color: #e8e8e8
-  tbody tr:hover
-    :background-color #e8e8e8
+  tbody tr
+    :cursor pointer
+    &:hover
+      :background-color #e8e8e8
   td
     :padding 2px
     :white-space nowrap
+
+@mixin view_thread
+  :font-size 14px
+  :overflow-y auto
+  article
+    :margin 5px
+    .name
+      :color #008000
+    .mail
+      &:before
+        :content ' ['
+      &:after
+        :content '] '
+    .other
+      :color #333
 
 body
   :position relative
@@ -169,6 +186,8 @@ html, body, #body
     :height 100%
     .view-board
       @include view_board
+    .view-thread
+      @include view_thread
 
 #body.pane-3
   #right-pane

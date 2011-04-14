@@ -63,6 +63,9 @@ app.main = function() {
     if (tmp.type === 'board') {
       app.view.open_board(message.url);
     }
+    else if (tmp.type === 'thread') {
+      app.view.open_thread(message.url);
+    }
   });
 };
 
@@ -189,7 +192,9 @@ app.view.init = function() {
   $(document.documentElement)
     .delegate('.open_in_rcrx', 'click', function(e) {
         e.preventDefault();
-        app.message.send('open', {url: this.href});
+        app.message.send('open', {
+          url: this.href || this.getAttribute('data-href')
+        });
       });
 };
 app.view.load_sidemenu = function(url) {
@@ -233,6 +238,8 @@ app.view.open_board = function(url) {
       tbody = $container.find('tbody')[0];
       res.data.forEach(function(thread) {
         tr = document.createElement('tr');
+        tr.className = 'open_in_rcrx';
+        tr.setAttribute('data-href', thread.url);
 
         td = document.createElement('td');
         tr.appendChild(td);
@@ -267,6 +274,59 @@ app.view.open_board = function(url) {
       $container.appendTo('#tab-a');
 
       $('#tab-a').tab('add', {element: $container[0], title: url});
+    }
+    else {
+      alert('error');
+    }
+  });
+};
+app.view.open_thread = function(url) {
+  app.thread.get(url, function(res) {
+    var $container;
+
+    if ('data' in res) {
+      $container = $('<div class="view-thread">');
+      res.data.res.forEach(function(res) {
+        var article, header, name, mail, other, message;
+
+        article = document.createElement('article');
+
+        header = document.createElement('header');
+        article.appendChild(header);
+
+        name = document.createElement('span');
+        name.className = 'name';
+        name.innerHTML = res.name
+          .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, '&lt;')
+          .replace(/<\/b>(.*?)<b>/g, '<span class="ob">$1</span>');
+        header.appendChild(name);
+
+        mail = document.createElement('span');
+        mail.className = 'mail';
+        mail.innerText = res.mail;
+        header.appendChild(mail);
+
+        other = document.createElement('span');
+        other.className = 'other';
+        other.innerText = res.other;
+        header.appendChild(other);
+
+        message = document.createElement('div');
+        message.className = 'message';
+        message.innerHTML = res.message
+          .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, '')
+          .replace(/(h)?(ttps?:\/\/[\w\-.!~*'();/?:@&=+$,%#]+)/g,
+            '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
+          .replace(/^\s*sssp:\/\/(img\.2ch\.net\/ico\/[\w\-_]+\.gif)\s*<br>/,
+            '<img class="beicon" src="http://$1" /><br />');
+        article.appendChild(message);
+
+        $container[0].appendChild(article);
+      });
+      $('#tab-b').tab('add', {
+        element: $container[0],
+        title: res.data.title
+      });
     }
     else {
       alert('error');
