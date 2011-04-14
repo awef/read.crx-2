@@ -117,7 +117,6 @@ app.view.open_board = function(url) {
 
         tbody.appendChild(tr);
       });
-      $container.appendTo('#tab_a');
 
       $('#tab_a').tab('add', {element: $container[0], title: url});
     }
