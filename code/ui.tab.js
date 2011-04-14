@@ -81,12 +81,15 @@
   };
 
   $.fn.tab = function(method, prop) {
-    ({
-      init: tab_init,
-      add: tab_add,
-      remove: tab_remove,
-      select: tab_select
-    })[method || 'init'].call(this, prop || {});
+    $(this)
+      .each(function(key, val) {
+          ({
+            init: tab_init,
+            add: tab_add,
+            remove: tab_remove,
+            select: tab_select
+          })[method || 'init'].call(val, prop || {});
+        });
     return this;
   };
 })(jQuery);
