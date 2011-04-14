@@ -136,6 +136,9 @@ app.view.open_thread = function(url) {
         var article, header, name, mail, other, message;
 
         article = document.createElement('article');
+        if (/　 (?!<br>|$)/i.test(res.message)) {
+          article.className = 'aa';
+        }
 
         header = document.createElement('header');
         article.appendChild(header);

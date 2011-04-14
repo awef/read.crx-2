@@ -1,3 +1,9 @@
+@mixin ascii_art
+  :font
+    :size 16px
+    :family "ＭＳ Ｐゴシック","konatu"
+  :line-height 18px
+
 @mixin ui_accordion
   :-webkit-user-select none
   :font-size 14px
@@ -159,6 +165,9 @@
         :content '] '
     .other
       :color #333
+    &.aa
+      .message
+        @include ascii_art
 
 body
   :position relative
