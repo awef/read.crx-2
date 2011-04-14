@@ -27,7 +27,6 @@
             .call(that, {tab_id: $(this).attr('data-tab_id')});
         })
       .delegate('.tab_tabbar img', 'click', function() {
-        console.log(this);
           tab_remove.call(
               that,
               {tab_id: $(this).parent().attr('data-tab_id')}
