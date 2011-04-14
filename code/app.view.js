@@ -133,12 +133,14 @@ app.view.open_board = function(url) {
 
 app.view.open_thread = function(url) {
   app.thread.get(url, function(res) {
-    var $container;
+    var $container, res_num = 0;
 
     if ('data' in res) {
       $container = $('<div class="view_thread">');
       res.data.res.forEach(function(res) {
-        var article, header, name, mail, other, message;
+        var article, header, num, name, mail, other, message;
+
+        res_num++;
 
         article = document.createElement('article');
         if (/　 (?!<br>|$)/i.test(res.message)) {
@@ -147,6 +149,11 @@ app.view.open_thread = function(url) {
 
         header = document.createElement('header');
         article.appendChild(header);
+
+        num = document.createElement('span');
+        num.className = 'num';
+        num.innerText = res_num;
+        header.appendChild(num);
 
         name = document.createElement('span');
         name.className = 'name';
