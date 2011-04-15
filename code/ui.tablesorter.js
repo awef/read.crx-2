@@ -1,6 +1,6 @@
 (function($) {
   $.fn.tablesorter = function() {
-    $(this).delegate('th', 'click', function() {
+    $(this).find('th').bind('click', function() {
       var $table, $th, tbody,
           sort_index, sort_type, sort_order,
           data, data_keys;
@@ -34,8 +34,12 @@
       );
 
       data_keys = Object.keys(data);
-      data_keys.sort(sort_type === 'num' ?
-          function(a, b) { return a - b; } : undefined);
+      if (sort_type === 'num') {
+        data_keys.sort(function(a, b) { return a - b; });
+      }
+      else {
+        data_keys.sort();
+      }
 
       if (sort_order === 'desc') {
         data_keys.reverse();
