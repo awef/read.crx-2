@@ -57,13 +57,12 @@ app.main = function() {
   app.view.load_sidemenu();
 
   app.message.add_listener('open', function(message) {
-    var tmp;
+    var guess_result = app.url.guess_type(message.url);
 
-    tmp = app.url.guess_type(message.url);
-    if (tmp.type === 'board') {
+    if (guess_result.type === 'board') {
       app.view.open_board(message.url);
     }
-    else if (tmp.type === 'thread') {
+    else if (guess_result.type === 'thread') {
       app.view.open_thread(message.url);
     }
   });
