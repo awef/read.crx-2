@@ -41,11 +41,9 @@ app.cache.get = function(url, callback) {
   };
 };
 
-app.cache.set = function(data, callback) {
+app.cache.set = function(data) {
   var db, req, tra, objectStore,
       idb_setversion, idb_putdata;
-
-  callback = callback || function() {};
 
   if (!(
       typeof data.url === 'string' &&
@@ -54,14 +52,12 @@ app.cache.set = function(data, callback) {
       typeof data.last_updated === 'number'
       )) {
     app.log('error', 'app.cache.set: 引数が不正です', arguments);
-    callback({status: 'error'});
     return;
   }
 
   idb_setversion = function() {
     req = db.setVersion('1');
     req.onerror = function() {
-      callback({status: 'error'});
       app.log(
           'error',
           'app.cache.set: db.setVersion失敗(%s -> %s)',
@@ -84,11 +80,9 @@ app.cache.set = function(data, callback) {
   idb_putdata = function() {
     tra = db.transaction(['cache'], webkitIDBTransaction.READ_WRITE);
     tra.oncomplete = function() {
-      callback({status: 'success'});
       db.close();
     };
     tra.onerror = function() {
-      callback({status: 'error'});
       db.close();
     };
 
@@ -98,7 +92,6 @@ app.cache.set = function(data, callback) {
 
   req = webkitIndexedDB.open('cache');
   req.onerror = function() {
-    callback({status: 'error'});
     app.log('error', 'app.cache.set: indexedDB.openに失敗');
   };
   req.onsuccess = function(e) {
