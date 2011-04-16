@@ -95,12 +95,9 @@ app.cache.set = function(data) {
     app.log('error', 'app.cache.set: indexedDB.openに失敗');
   };
   req.onsuccess = function(e) {
-    var version;
-
     db = req.result;
 
-    version = parseInt(db.version, 10);
-    if (isNaN(version) || version < 1) {
+    if (db.version !== '1') {
       idb_setversion();
     }
     else {
