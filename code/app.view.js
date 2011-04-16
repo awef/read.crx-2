@@ -85,6 +85,7 @@ app.view.open_board = function(url) {
 
     if ('data' in res) {
       $container = $('#template > .view_board').clone();
+      $container.attr('data-url', app.url.fix(url));
       tbody = $container.find('tbody')[0];
       res.data.forEach(function(thread) {
         tr = document.createElement('tr');
@@ -137,6 +138,7 @@ app.view.open_thread = function(url) {
 
     if ('data' in res) {
       $container = $('<div class="view_thread">');
+      $container.attr('data-url', app.url.fix(url));
       res.data.res.forEach(function(res) {
         var article, header, num, name, mail, other, message;
 

@@ -57,9 +57,19 @@ app.main = function() {
   app.view.load_sidemenu();
 
   app.message.add_listener('open', function(message) {
-    var guess_result = app.url.guess_type(message.url);
+    var $container, guess_result;
 
-    if (guess_result.type === 'board') {
+    $container = $('.tab_container')
+        .find('> [data-url="' + app.url.fix(message.url) + '"]');
+
+    guess_result = app.url.guess_type(message.url);
+
+    if ($container.length === 1) {
+      $container
+        .closest('.tab')
+          .tab('select', {tab_id: $container.attr('data-tab_id')});
+    }
+    else if (guess_result.type === 'board') {
       app.view.open_board(message.url);
     }
     else if (guess_result.type === 'thread') {
