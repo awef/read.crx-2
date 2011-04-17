@@ -129,6 +129,8 @@ app.view.open_board = function(url) {
     else {
       alert('error');
     }
+
+    app.history.add(url, url);
   });
 };
 
@@ -194,6 +196,8 @@ app.view.open_thread = function(url) {
     else {
       alert('error');
     }
+
+    app.history.add(url, 'data' in res ? res.data.title : url);
   });
 };
 
