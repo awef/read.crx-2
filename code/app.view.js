@@ -204,9 +204,9 @@ app.view.open_config = function() {
   $container
     .find('> div > .close_button')
     .bind('click', function() {
-      $container.fadeOut('fast', function() {
-        $container.remove();
+        $container.fadeOut('fast', function() {
+          $container.remove();
+        });
       });
-    });
   $container.hide().appendTo(document.body).fadeIn('fast');
 };
