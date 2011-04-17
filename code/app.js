@@ -125,10 +125,12 @@ app.notice.push = function(text) {
         .bind('click', function() {
             $(this)
               .parent()
-                .slideUp('fast', function() {
+              .animate({opacity: 0}, 'fast')
+              .delay('fast')
+              .slideUp('fast', function() {
                   $(this).remove();
-                });
-            })
+              });
+          })
       )
     .hide()
     .appendTo('#app_notice_container')
