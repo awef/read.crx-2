@@ -1,6 +1,7 @@
 $z-index_left_pane: 1
 $z-index_tab_content: 0
 $z-index_selected_tab_content: 1
+$z-index_notification: 2
 
 @mixin ascii_art
   :font
@@ -228,6 +229,7 @@ html, body, #body
   :left 5%
   :top 5px
   :width 80%
+  :z-index $z-index_notification
 
   > div
     :background-color #222
