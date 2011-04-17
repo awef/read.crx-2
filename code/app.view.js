@@ -196,3 +196,17 @@ app.view.open_thread = function(url) {
     }
   });
 };
+
+app.view.open_config = function() {
+  var $container;
+
+  $container = $('#template > .view_config').clone();
+  $container
+    .find('> div > .close_button')
+    .bind('click', function() {
+      $container.fadeOut('fast', function() {
+        $container.remove();
+      });
+    });
+  $container.hide().appendTo(document.body).fadeIn('fast');
+};

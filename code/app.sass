@@ -1,7 +1,12 @@
 $z-index_left_pane: 1
 $z-index_tab_content: 0
 $z-index_selected_tab_content: 1
-$z-index_notification: 2
+
+$z-index_view_config: 2
+
+$z-index_notification: 3
+
+
 
 @mixin ascii_art
   :font
@@ -181,6 +186,41 @@ $z-index_notification: 2
       .message
         @include ascii_art
 
+@mixin view_config
+  :position absolute
+  :left 0
+  :top 0
+  :width 100%
+  :height 100%
+  :z-index $z-index_view_config
+  :background-color rgba(#000, 0.3)
+  :color #fff
+  > div
+    :position relative
+    :margin 10px
+    :background-color rgba(#000, 0.8)
+    :border-radius 4px
+    @include drop_shadow
+    .close_button
+      :position absolute
+      :right 5px
+      :top 5px
+      :border 2px solid #fff
+        :radius 3px
+      :opacity 0.8
+      :-webkit-transition opacity 200ms
+      :cursor pointer
+      &:hover
+        :opacity 0.9
+  h2
+    :margin 5px
+    :padding 5px
+    :font-size 18px
+    :color #eee
+    :border-bottom 2px solid #eee
+  label
+    :cursor pointer
+
 body
   :position relative
   :margin 0
@@ -188,6 +228,9 @@ body
 html, body, #body
   :width 100%
   :height 100%
+
+.view_config
+  @include view_config
 
 #body
   :position relative
