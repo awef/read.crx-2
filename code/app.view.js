@@ -130,14 +130,22 @@ app.view.open_board = function(url) {
       if (res.status === 'error') {
         $container
           .find('.message_bar')
+            .removeClass('loading')
             .addClass('error')
             .text('板の読み込みに失敗しました。' +
                 'キャッシュに残っていたデータを表示します。');
+      }
+      else {
+        $container
+          .find('.message_bar')
+            .removeClass('loading')
+            .text('');
       }
     }
     else {
       $container
         .find('.message_bar')
+          .removeClass('loading')
           .addClass('error')
           .text('板の読み込みに失敗しました。');
     }
@@ -211,14 +219,22 @@ app.view.open_thread = function(url) {
       if (res.status === 'error') {
         $container
           .find('.message_bar')
+            .removeClass('loading')
             .addClass('error')
             .text('スレッドの読み込みに失敗しました。' +
                 'キャッシュに残っていたデータを表示します。');
+      }
+      else {
+        $container
+          .find('.message_bar')
+            .removeClass('loading')
+            .text('');
       }
     }
     else {
       $container
         .find('.message_bar')
+          .removeClass('loading')
           .addClass('error')
           .text('スレッドの読み込みに失敗しました。');
     }
