@@ -256,15 +256,24 @@ app.view.open_history = function() {
 };
 
 app.view.open_config = function() {
-  var $container;
+  var $container, container_close;
+
+  container_close = function() {
+    $container.fadeOut('fast', function() {
+      $container.remove();
+    });
+  };
 
   $container = $('#template > .view_config').clone();
   $container
+    .bind('click', function(e) {
+        if (e.target.webkitMatchesSelector('.view_config')) {
+          container_close();
+        }
+      })
     .find('> div > .close_button')
-    .bind('click', function() {
-        $container.fadeOut('fast', function() {
-          $container.remove();
-        });
+      .bind('click', function() {
+        container_close();
       });
   $container.hide().appendTo(document.body).fadeIn('fast');
 };
