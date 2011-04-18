@@ -1,6 +1,6 @@
 (function($) {
   var uid,
-      tab_init, tab_add, tab_remove, tab_select;
+      tab_init, tab_add, tab_remove, tab_select, tab_update_title;
 
   uid = (function() {
     var count = 0;
@@ -79,6 +79,13 @@
         .filter('.tab_container *')
           .trigger('tab_selected');
   };
+  // prop.tab_id, prop.title
+  tab_update_title = function(prop) {
+    $(this)
+      .find('> .tab_tabbar')
+        .find('[data-tab_id="' + prop.tab_id + '"] span')
+          .text(prop.title);
+  };
 
   $.fn.tab = function(method, prop) {
     $(this)
@@ -87,7 +94,8 @@
             init: tab_init,
             add: tab_add,
             remove: tab_remove,
-            select: tab_select
+            select: tab_select,
+            update_title: tab_update_title
           })[method || 'init'].call(val, prop || {});
         });
     return this;
