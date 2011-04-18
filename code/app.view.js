@@ -227,6 +227,34 @@ app.view.open_thread = function(url) {
   });
 };
 
+app.view.open_history = function() {
+  var $container;
+
+  $container = $('#template > .view_history').clone();
+  $('#tab_a').tab('add', {element: $container[0], title: '閲覧履歴'});
+
+  app.history.get(undefined, undefined, function(res) {
+    var frag, tr, td;
+
+    if ('data' in res) {
+      frag = document.createDocumentFragment();
+      res.data.forEach(function(val) {
+        tr = document.createElement('tr');
+        tr.setAttribute('data-href', val.url);
+        tr.className = 'open_in_rcrx';
+        td = document.createElement('td');
+        td.innerText = val.title;
+        tr.appendChild(td);
+        td = document.createElement('td');
+        td.innerText = val.date;
+        tr.appendChild(td);
+        frag.appendChild(tr);
+      });
+      $container.find('tbody').append(frag);
+    }
+  });
+};
+
 app.view.open_config = function() {
   var $container;
 

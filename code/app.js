@@ -72,6 +72,9 @@ app.main = function() {
     else if (message.url === 'config') {
       app.view.open_config();
     }
+    else if (message.url === 'history') {
+      app.view.open_history();
+    }
     else if (guess_result.type === 'board') {
       app.view.open_board(message.url);
     }

@@ -137,6 +137,7 @@ $z-index_notification: 3
 
 @mixin message_bar
   .message_bar
+    :font-size 13px
     &.info
       :padding 3px
       :background-color #eef
@@ -146,12 +147,9 @@ $z-index_notification: 3
       :background-color #ecc
       :border 1px solid #ebb
 
-@mixin view_board
-  @include ui_tablesorter
-  @include message_bar
-  :font-size 13px
-  :overflow-y auto
+@mixin content_table
   table
+    :font-size 13px
     :border-collapse collapse
   thead
     :background-color #f9f9f9
@@ -164,6 +162,20 @@ $z-index_notification: 3
     :border-right 1px solid #ddd
     :white-space nowrap
     :cursor pointer
+  tbody tr
+    :cursor pointer
+    &:hover
+      :background-color #e8e8e8
+  td
+    :padding 2px
+    :white-space nowrap
+
+@mixin view_board
+  @include ui_tablesorter
+  @include message_bar
+  @include content_table
+  :overflow-y auto
+  th
     &:nth-child(1)
       :width 1em
     &:nth-child(3)
@@ -176,13 +188,10 @@ $z-index_notification: 3
       :width 16em
     &:hover
       background-color: #e8e8e8
-  tbody tr
-    :cursor pointer
-    &:hover
-      :background-color #e8e8e8
-  td
-    :padding 2px
-    :white-space nowrap
+
+@mixin view_history
+  @include content_table
+  :overflow-y auto
 
 @mixin view_thread
   @include message_bar
@@ -272,6 +281,8 @@ html, body, #body
       @include view_board
     .view_thread
       @include view_thread
+    .view_history
+      @include view_history
 
 #body.pane-3
   #right_pane
