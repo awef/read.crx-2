@@ -135,8 +135,20 @@ $z-index_notification: 3
   th.tablesorter_sort_desc:after
     :content "↓"
 
+@mixin message_bar
+  .message_bar
+    &.info
+      :padding 3px
+      :background-color #eef
+      :border 1px solid #ccd
+    &.error
+      :padding 3px
+      :background-color #ecc
+      :border 1px solid #ebb
+
 @mixin view_board
   @include ui_tablesorter
+  @include message_bar
   :font-size 13px
   :overflow-y auto
   table
@@ -173,6 +185,7 @@ $z-index_notification: 3
     :white-space nowrap
 
 @mixin view_thread
+  @include message_bar
   :font-size 14px
   :overflow-y auto
   article

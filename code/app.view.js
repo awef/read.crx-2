@@ -78,14 +78,17 @@ app.view.setup_resizer = function() {
 };
 
 app.view.open_board = function(url) {
+  var $container, tbody, tr, td, fn, date, now, thread_how_old;
+
+  $container = $('#template > .view_board').clone();
+  $container.attr('data-url', app.url.fix(url));
+  $('#tab_a').tab('add', {element: $container[0], title: url});
+
   app.board.get(url, function(res) {
-    var $container, tbody, tr, td, fn, date, now, thread_how_old;
     fn = function(a) { return (a < 10 ? '0' : '') + a; };
     now = Date.now();
 
     if ('data' in res) {
-      $container = $('#template > .view_board').clone();
-      $container.attr('data-url', app.url.fix(url));
       tbody = $container.find('tbody')[0];
       res.data.forEach(function(thread) {
         tr = document.createElement('tr');
@@ -124,10 +127,19 @@ app.view.open_board = function(url) {
       });
       $container.find('table').tablesorter();
 
-      $('#tab_a').tab('add', {element: $container[0], title: url});
+      if (res.status === 'error') {
+        $container
+          .find('.message_bar')
+            .addClass('error')
+            .text('板の読み込みに失敗しました。' +
+                'キャッシュに残っていたデータを表示します。');
+      }
     }
     else {
-      alert('error');
+      $container
+        .find('.message_bar')
+          .addClass('error')
+          .text('板の読み込みに失敗しました。');
     }
 
     app.history.add(url, url);
@@ -135,12 +147,14 @@ app.view.open_board = function(url) {
 };
 
 app.view.open_thread = function(url) {
-  app.thread.get(url, function(res) {
-    var $container, res_num = 0;
+  var $container, res_num = 0;
+  $container = $('<div class="view_thread">');
+  $container.append('<div class="message_bar">');
+  $container.attr('data-url', app.url.fix(url));
+  $('#tab_b').tab('add', {element: $container[0], title: url});
 
+  app.thread.get(url, function(res) {
     if ('data' in res) {
-      $container = $('<div class="view_thread">');
-      $container.attr('data-url', app.url.fix(url));
       res.data.res.forEach(function(res) {
         var article, header, num, name, mail, other, message;
 
@@ -188,13 +202,26 @@ app.view.open_thread = function(url) {
 
         $container[0].appendChild(article);
       });
-      $('#tab_b').tab('add', {
-        element: $container[0],
-        title: res.data.title
-      });
+
+      $('#tab_b')
+        .tab('update_title', {
+            tab_id: $container.attr('data-tab_id'),
+            title: res.data.title
+          });
+
+      if (res.status === 'error') {
+        $container
+          .find('.message_bar')
+            .addClass('error')
+            .text('スレッドの読み込みに失敗しました。' +
+                'キャッシュに残っていたデータを表示します。');
+      }
     }
     else {
-      alert('error');
+      $container
+        .find('.message_bar')
+          .addClass('error')
+          .text('スレッドの読み込みに失敗しました。');
     }
 
     app.history.add(url, 'data' in res ? res.data.title : url);
