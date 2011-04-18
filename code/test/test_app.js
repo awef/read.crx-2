@@ -91,6 +91,7 @@ test('app.url.fix', function() {
   test_board_url('http://ex14.vip2ch.com/part4vip/', 'パー速');
   test_thread_url('http://ex14.vip2ch.com/test/read.cgi/part4vip/1291628400/', 'パー速');
 
+  strictEqual(app.url.fix('config'), 'config', 'config');
   strictEqual(app.url.fix('bookmark'), 'bookmark', 'bookmark');
   strictEqual(app.url.fix('history'), 'history', 'history');
   strictEqual(app.url.fix('kakikomi_log'), 'kakikomi_log', 'kakikomi_log');

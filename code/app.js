@@ -69,6 +69,9 @@ app.main = function() {
         .closest('.tab')
           .tab('select', {tab_id: $container.attr('data-tab_id')});
     }
+    else if (message.url === 'config') {
+      app.view.open_config();
+    }
     else if (guess_result.type === 'board') {
       app.view.open_board(message.url);
     }
