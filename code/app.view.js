@@ -148,8 +148,7 @@ app.view.open_board = function(url) {
 
 app.view.open_thread = function(url) {
   var $container, res_num = 0;
-  $container = $('<div class="view_thread">');
-  $container.append('<div class="message_bar">');
+  $container = $('#template > .view_thread').clone();
   $container.attr('data-url', app.url.fix(url));
   $('#tab_b').tab('add', {element: $container[0], title: url});
 
