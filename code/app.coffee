@@ -32,43 +32,33 @@
         if query isnt "app"
           app.message.send("open", {query: query})
 )()
-`
-var app;
 
-app = {};
+app = {}
 
-app.main = function() {
-  app.view.init();
-  app.view.load_sidemenu();
+app.main = ->
+  app.view.init()
+  app.view.load_sidemenu()
 
-  app.message.add_listener('open', function(message) {
-    var $container, guess_result;
+  app.message.add_listener "open", (message) ->
+    $container = $(".tab_container")
+      .find("> [data-url=\"#{app.url.fix(message.url)}\"]")
 
-    $container = $('.tab_container')
-        .find('> [data-url="' + app.url.fix(message.url) + '"]');
+    guess_result = app.url.guess_type(message.url)
 
-    guess_result = app.url.guess_type(message.url);
-
-    if ($container.length === 1) {
+    if $container.length is 1
       $container
-        .closest('.tab')
-          .tab('select', {tab_id: $container.attr('data-tab_id')});
-    }
-    else if (message.url === 'config') {
-      app.view.open_config();
-    }
-    else if (message.url === 'history') {
-      app.view.open_history();
-    }
-    else if (guess_result.type === 'board') {
-      app.view.open_board(message.url);
-    }
-    else if (guess_result.type === 'thread') {
-      app.view.open_thread(message.url);
-    }
-  });
-};
+        .closest(".tab")
+          .tab "select", tab_id: $container.attr("data-tab_id")
+    else if message.url is "config"
+      app.view.open_config()
+    else if message.url is "history"
+      app.view.open_history()
+    else if guess_result.type is "board"
+      app.view.open_board(message.url)
+    else if guess_result.type is "thread"
+      app.view.open_thread(message.url)
 
+`
 app.log = function(level) {
   level = level || 'log';
 
