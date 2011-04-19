@@ -1,54 +1,38 @@
+(() ->
+  if location.pathname isnt "/app.html"
+    return
+
+  xhr = new XMLHttpRequest()
+  xhr.open("GET", "/manifest.json", false)
+  xhr.send(null)
+  manifest = JSON.parse(xhr.responseText)
+
+  html_version = document.documentElement.getAttribute('data-app-version')
+  if manifest.version isnt html_version
+    location.reload(true)
+
+  reg_res = /[\?&]q=([^&]+)/.exec(location.search)
+  query = reg_res?[1] or "app"
+
+  chrome.tabs.getCurrent (current_tab) ->
+    chrome.windows.getAll {populate: true}, (windows) ->
+      app_path = chrome.extension.getURL("app.html")
+      for win in windows
+        for tab in win.tabs
+          if tab.id isnt current_tab.id and tab.url is app_path
+            chrome.windows.update(win.id, {focused: true})
+            chrome.tabs.update(tab.id, {selected: true})
+            if query isnt "app"
+              chrome.tabs.sendRequest(tab.id, {type: 'open', query: query})
+            chrome.tabs.remove(current_tab.id)
+            return
+      history.pushState(null, null, "/app.html")
+      $ () ->
+        app.main()
+        if query isnt "app"
+          app.message.send("open", {query: query})
+)()
 `
-(function() {
-  var xhr, manifest, reg_res, query;
-
-  if (location.pathname !== '/app.html') {
-    return;
-  }
-
-  xhr = new XMLHttpRequest();
-  xhr.open('GET', '/manifest.json', false);
-  xhr.send(null);
-  manifest = JSON.parse(xhr.responseText);
-
-  if (manifest.version !==
-      document.documentElement.getAttribute('data-app-version')) {
-    location.reload(true);
-  }
-
-  reg_res = /[\?&]q=([^&]+)/.exec(location.search);
-  query = reg_res ? reg_res[1] : 'app';
-
-  chrome.tabs.getCurrent(function(current_tab) {
-    chrome.windows.getAll({populate: true}, function(windows) {
-      var win, win_key, tab, tab_key, app_path;
-
-      app_path = chrome.extension.getURL('app.html');
-      for (win_key = 0; win = windows[win_key]; win_key++) {
-        for (tab_key = 0; tab = win.tabs[tab_key]; tab_key++) {
-          if (tab.id !== current_tab.id && tab.url === app_path) {
-            chrome.windows.update(win.id, {focused: true});
-            chrome.tabs.update(tab.id, {selected: true});
-            if (query !== 'app') {
-              chrome.tabs.sendRequest(tab.id, {type: 'open', query: query});
-            }
-            chrome.tabs.remove(current_tab.id);
-            return;
-          }
-        }
-      }
-
-      history.pushState(null, null, '/app.html');
-      $(function() {
-        app.main();
-        if (query !== 'app') {
-          app.message.send('open', {query: query});
-        }
-      });
-    });
-  });
-})();
-
 var app;
 
 app = {};
