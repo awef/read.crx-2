@@ -1,3 +1,4 @@
+`
 (function() {
   var xhr, manifest, reg_res, query;
 
@@ -171,3 +172,4 @@ app.url.guess_type = function(url) {
       return {type: 'unknown', bbs_type: 'unknown'};
   }
 };
+`
