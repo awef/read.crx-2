@@ -2,7 +2,7 @@
   $.fn.tablesorter = ->
     $(this)
       .find("th")
-      .bind("click", ->
+      .bind "click", ->
         $th = $(this)
         $table = $th.closest("table")
         $table.hide()
@@ -37,7 +37,6 @@
             tbody.insertBefore(tr)
 
         $table.show()
-      )
 
       this
 )(jQuery)
