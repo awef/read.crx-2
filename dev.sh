@@ -19,7 +19,7 @@ all_update () {
 
   sass --style compressed --no-cache $SOURCE_DIR/app.sass $DEBUG_DIR/app.css
 
-  coffee -o ${TEMP_DIR}/ -c ${SOURCE_DIR}/
+  coffee -b -o ${TEMP_DIR}/ -c ${SOURCE_DIR}/
 
   cat $SOURCE_DIR/app.js $SOURCE_DIR/app.*.js $TEMP_DIR/app.*.js > $DEBUG_DIR/app.js
   cat $SOURCE_DIR/ui.*.js $TEMP_DIR/ui.*.js > $DEBUG_DIR/ui.js
