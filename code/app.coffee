@@ -58,18 +58,12 @@ app.main = ->
     else if guess_result.type is "thread"
       app.view.open_thread(message.url)
 
+app.log = (level) ->
+  if ["log", "debug", "info", "warn", "error"].indexOf(level) isnt -1
+    console[level].apply(console, Array.prototype.slice.call(arguments, 1))
+  else
+    app.log("error", "app.log: 引数levelが不正な値です", arguments)
 `
-app.log = function(level) {
-  level = level || 'log';
-
-  if (['log', 'debug', 'info', 'warn', 'error'].indexOf(level) !== -1) {
-    console[level].apply(console, Array.prototype.slice.call(arguments, 1));
-  }
-  else {
-    app.log('error', 'app.log: 引数levelが不正な値です', arguments);
-  }
-};
-
 app.deep_copy = function(data) {
   return JSON.parse(JSON.stringify(data));
 };
