@@ -7,7 +7,7 @@
   xhr.send(null)
   manifest = JSON.parse(xhr.responseText)
 
-  html_version = document.documentElement.getAttribute('data-app-version')
+  html_version = document.documentElement.getAttribute("data-app-version")
   if manifest.version isnt html_version
     location.reload(true)
 
@@ -23,14 +23,14 @@
             chrome.windows.update(win.id, {focused: true})
             chrome.tabs.update(tab.id, {selected: true})
             if query isnt "app"
-              chrome.tabs.sendRequest(tab.id, {type: 'open', query: query})
+              chrome.tabs.sendRequest(tab.id, {type: "open", query})
             chrome.tabs.remove(current_tab.id)
             return
       history.pushState(null, null, "/app.html")
-      $ () ->
+      $ ->
         app.main()
         if query isnt "app"
-          app.message.send("open", {query: query})
+          app.message.send("open", {query})
 )()
 
 app = {}
@@ -63,81 +63,69 @@ app.log = (level) ->
     console[level].apply(console, Array.prototype.slice.call(arguments, 1))
   else
     app.log("error", "app.log: 引数levelが不正な値です", arguments)
-`
-app.deep_copy = function(data) {
-  return JSON.parse(JSON.stringify(data));
-};
 
-app.message = {};
-(function() {
-  var listener_store = {};
+app.deep_copy = (data) ->
+  JSON.parse(JSON.stringify(data))
 
-  app.message.send = function(type, data) {
-    var key, val;
+app.message = {}
+(() ->
+  listener_store = {}
 
-    if (type in listener_store) {
-      for (key = 0; val = listener_store[type][key]; key++) {
-        val(app.deep_copy(data));
-      }
-    }
-  };
-  app.message.add_listener = function(type, fn) {
-    if (!(type in listener_store)) {
-      listener_store[type] = [];
-    }
-    listener_store[type].push(fn);
-  };
-})();
+  app.message.send = (type, data) ->
+    if type of listener_store
+      for listener in listener_store[type]
+        listener(app.deep_copy(data))
 
-app.notice = {};
-app.notice.push = function(text) {
-  var $container;
+  app.message.add_listener = (type, fn) ->
+    listener_store[type] or= []
+    listener_store[type].push(fn)
+)()
 
-  $('<div>')
+app.notice = {}
+app.notice.push = (text) ->
+  $("<div>")
     .append(
-      $('<div>', {text: text}),
-      $('<button>')
-        .bind('click', function() {
-            $(this)
-              .parent()
-              .animate({opacity: 0}, 'fast')
-              .delay('fast')
-              .slideUp('fast', function() {
-                  $(this).remove();
-              });
-          })
+      $("<div>", {text}),
+      $("<button>")
+        .bind("click", ->
+          $(this)
+            .parent()
+            .animate({opacity: 0}, "fast")
+            .delay("fast")
+            .slideUp("fast", -> $(this).remove())
+          )
       )
     .hide()
-    .appendTo('#app_notice_container')
-    .fadeIn();
-};
+    .appendTo("#app_notice_container")
+    .fadeIn()
 
-app.url = {};
-app.url.fix = function(url) {
-  return url
-   .replace(/^(http:\/\/[\w\.]+\/test\/read\.cgi\/\w+\/\d+).*?$/, '$1/')
-   .replace(/^(http:\/\/\w+\.machi\.to\/bbs\/read\.cgi\/\w+\/\d+).*?$/, '$1/')
-   .replace(/^(http:\/\/jbbs\.livedoor\.jp\/bbs\/read\.cgi\/\w+\/\d+\/\d+).*?$/, '$1/')
-   .replace(/^(http:\/\/[\w\.]+\/\w+\/(?:\d+\/)?)(?:#.*)?$/, '$1');
-};
-app.url.guess_type = function(url) {
-  url = app.url.fix(url);
-  switch (true) {
-    case /^http:\/\/jbbs\.livedoor\.jp\/bbs\/read\.cgi\/\w+\/\d+\/\d+\/$/
-      .test(url):
-      return {type: 'thread', bbs_type: 'jbbs'};
-    case /^http:\/\/jbbs\.livedoor\.jp\/\w+\/\d+\/$/.test(url):
-      return {type: 'board', bbs_type: 'jbbs'};
-    case /^http:\/\/\w+\.machi\.to\/bbs\/read\.cgi\/\w+\/\d+\/$/.test(url):
-      return {type: 'thread', bbs_type: 'machi'};
-    case /^http:\/\/\w+\.machi\.to\/\w+\/$/.test(url):
-      return {type: 'board', bbs_type: 'machi'};
-    case /^http:\/\/[\w\.]+\/test\/read\.cgi\/\w+\/\d+\/$/.test(url):
-      return {type: 'thread', bbs_type: '2ch'};
-    case /^http:\/\/[\w\.]+\/\w+\/$/.test(url):
-      return {type: 'board', bbs_type: '2ch'};
-    default:
-      return {type: 'unknown', bbs_type: 'unknown'};
-  }
-};
-`
+app.url = {}
+app.url.fix = (url) ->
+  url
+    .replace(///
+      ^(http://
+        (?:
+          [\w\.]+/test/read\.cgi/\w+/\d+
+        | \w+\.machi\.to/bbs/read\.cgi/\w+/\d+
+        | jbbs\.livedoor\.jp/bbs/read\.cgi/\w+/\d+/\d+
+        | [\w\.]+/\w+(?:/\d+)?
+        )
+      ).*?$
+      ///, "$1/")
+
+app.url.guess_type = (url) ->
+  url = app.url.fix(url)
+  if ///^http://jbbs\.livedoor\.jp/bbs/read\.cgi/\w+/\d+/\d+/$///.test(url)
+    {type: "thread", bbs_type: "jbbs"}
+  else if ///^http://jbbs\.livedoor\.jp/\w+/\d+/$///.test(url)
+    {type: "board", bbs_type: "jbbs"}
+  else if ///^http://\w+\.machi\.to/bbs/read\.cgi/\w+/\d+/$///.test(url)
+    {type: "thread", bbs_type: "machi"}
+  else if ///^http://\w+\.machi\.to/\w+/$///.test(url)
+    {type: "board", bbs_type: "machi"}
+  else if ///^http://[\w\.]+/test/read\.cgi/\w+/\d+/$///.test(url)
+    {type: "thread", bbs_type: "2ch"}
+  else if ///^http://[\w\.]+/\w+/$///.test(url)
+    {type: "board", bbs_type: "2ch"}
+  else
+    return {type: "unknown", bbs_type: "unknown"};
