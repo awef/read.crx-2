@@ -7,8 +7,12 @@ app.bbsmenu.get = (callback) ->
     if cache.status is "success" and
         Date.now() - cache.data.last_updated < 1000 * 60 * 60 * 12
       menu = app.bbsmenu.parse(cache.data.data)
+      app.log("debug", "app.bbsmenu.get:
+ 期限内のキャッシュが見つかりました。キャッシュを返します。")
       callback(status: "success", data: menu)
     else
+      app.log("debug", "app.bbsmenu.get:
+ 期限内のキャッシュが見つかりませんでした。bbsmenu.htmlの取得を試みます。")
       xhr = new XMLHttpRequest()
       xhr_timer = setTimeout((-> xhr.abort()), 1000 * 30)
       xhr.onreadystatechange = ->
@@ -16,6 +20,8 @@ app.bbsmenu.get = (callback) ->
           clearTimeout(xhr_timer)
           if xhr.status is 200 and
               (menu = app.bbsmenu.parse(this.responseText))
+            app.log("debug", "app.bbsmenu.get:
+ bbsmenu.htmlの取得に成功しました")
             callback(status: "success", data: menu)
             last_modified = new Date(
               xhr.getResponseHeader("Last-Modified") or "dummy"
@@ -29,6 +35,8 @@ app.bbsmenu.get = (callback) ->
               })
           else if cache.status is "success"
             if xhr.status is 304
+              app.log("debug", "app.bbsmenu.get:
+ bbsmenu.htmlの取得に成功しました（更新無し）")
               callback(
                 status: "success"
                 data: app.bbsmenu.parse(cache.data.data)
@@ -36,11 +44,15 @@ app.bbsmenu.get = (callback) ->
               cache.data.last_updated = Date.now()
               app.cache.set(cache.data)
             else
+              app.log("debug", "app.bbsmenu.get:
+ bbsmenu.htmlの取得に失敗しました。キャッシュを返します。")
               callback(
                 status: "error"
                 data: app.bbsmenu.parse(cache.data.data)
               )
           else
+            app.log("debug", "app.bbsmenu.get:
+ bbsmenu.htmlの取得に失敗しました。")
             callback(status: "error")
       xhr.overrideMimeType("text/plain; charset=Shift_JIS")
       xhr.open("GET", url + "?_=" + Date.now().toString(10))
