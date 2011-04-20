@@ -31,9 +31,8 @@ all_update () {
 
 watch () {
   all_update
-  while inotifywait -r -e create,delete,modify,move $SOURCE_DIR; do
-    all_update
-  done
+  inotifywait -r -e create,delete,modify,move $SOURCE_DIR
+  watch
 }
 
 case $1 in
