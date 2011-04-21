@@ -16,38 +16,31 @@ app.view.init = ->
       })
     )
 
-`
-app.view.load_sidemenu = function(url) {
-  app.bbsmenu.get(function(res) {
-    var frag, category, board, h3, ul, li, a;
+app.view.load_sidemenu = (url) ->
+  app.bbsmenu.get (res) ->
+    if "data" of res
+      frag = document.createDocumentFragment()
+      for category in res.data
+        h3 = document.createElement("h3")
+        h3.innerText = category.title
+        frag.appendChild(h3)
 
-    if ('data' in res) {
-      frag = document.createDocumentFragment();
-      res.data.forEach(function(category) {
-        h3 = document.createElement('h3');
-        h3.innerText = category.title;
-        frag.appendChild(h3);
+        ul = document.createElement("ul")
+        for board in category.board
+          li = document.createElement("li")
+          a = document.createElement("a")
+          a.className = "open_in_rcrx"
+          a.innerText = board.title
+          a.href = board.url
+          li.appendChild(a)
+          ul.appendChild(li)
+        frag.appendChild(ul)
 
-        ul = document.createElement('ul');
-        category.board.forEach(function(board) {
-          li = document.createElement('li');
-          a = document.createElement('a');
-          a.className = 'open_in_rcrx';
-          a.innerText = board.title;
-          a.href = board.url;
-          li.appendChild(a);
-          ul.appendChild(li);
-        });
-        frag.appendChild(ul);
-      });
-    }
-
-    $('#left_pane')
+    $("#left_pane")
       .append(frag)
-      .accordion();
-  });
-};
+      .accordion()
 
+`
 app.view.setup_resizer = function() {
   $('#tab_resizer')
     .bind('mousedown', function(e) {
