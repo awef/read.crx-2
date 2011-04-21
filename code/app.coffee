@@ -58,6 +58,10 @@ app.main = ->
     else if guess_result.type is "thread"
       app.view.open_thread(message.url)
 
+  chrome.extension.onRequest.addListener (request) ->
+    if request.type is "open"
+      app.message.send("open", {url: request.query})
+
 app.log = (level) ->
   if ["log", "debug", "info", "warn", "error"].indexOf(level) isnt -1
     console[level].apply(console, Array.prototype.slice.call(arguments, 1))
