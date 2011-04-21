@@ -263,27 +263,18 @@ app.view.open_history = ->
         tr.appendChild(td)
         frag.appendChild(tr)
       $container.find("tbody").append(frag)
-`
-app.view.open_config = function() {
-  var $container, container_close;
 
-  container_close = function() {
-    $container.fadeOut('fast', function() {
-      $container.remove();
-    });
-  };
+app.view.open_config = ->
+  container_close = ->
+    $container.fadeOut "fast", -> $container.remove()
 
-  $container = $('#template > .view_config').clone();
+  $container = $("#template > .view_config").clone()
   $container
-    .bind('click', function(e) {
-        if (e.target.webkitMatchesSelector('.view_config')) {
-          container_close();
-        }
-      })
-    .find('> div > .close_button')
-      .bind('click', function() {
-        container_close();
-      });
-  $container.hide().appendTo(document.body).fadeIn('fast');
-};
-`
+    .bind("click", (e) ->
+      if e.target.webkitMatchesSelector(".view_config")
+        container_close()
+    )
+    .find("> div > .close_button")
+      .bind("click", container_close)
+
+  $container.hide().appendTo(document.body).fadeIn("fast")
