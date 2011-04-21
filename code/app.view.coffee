@@ -71,7 +71,7 @@ app.view.open_board = (url) ->
   $("#tab_a").tab("add", {element: $container[0], title: url})
 
   app.board.get url, (res) ->
-    fn = (a) -> (if a < 10 then '0' else '') + a
+    fn = (a) -> (if a < 10 then "0" else "") + a
     now = Date.now()
 
     if "data" of res
@@ -134,96 +134,85 @@ app.view.open_board = (url) ->
 
     app.history.add(url, url)
 
-`
-app.view.open_thread = function(url) {
-  var $container, res_num = 0;
-  $container = $('#template > .view_thread').clone();
-  $container.attr('data-url', app.url.fix(url));
-  $('#tab_b').tab('add', {element: $container[0], title: url});
+app.view.open_thread = (url) ->
+  $container = $("#template > .view_thread").clone()
+  $container.attr("data-url", app.url.fix(url))
+  $("#tab_b").tab("add", {element: $container[0], title: url})
+  res_num = 0
 
-  app.thread.get(url, function(res) {
-    if ('data' in res) {
-      res.data.res.forEach(function(res) {
-        var article, header, num, name, mail, other, message;
+  app.thread.get url, (result) ->
+    if "data" of result
+      for res in result.data.res
+        res_num++
 
-        res_num++;
+        article = document.createElement("article")
+        if /\　\ (?!<br>|$)/i.test(res.message)
+          article.className = "aa"
 
-        article = document.createElement('article');
-        if (/　 (?!<br>|$)/i.test(res.message)) {
-          article.className = 'aa';
-        }
+        header = document.createElement("header")
+        article.appendChild(header)
 
-        header = document.createElement('header');
-        article.appendChild(header);
+        num = document.createElement("span")
+        num.className = "num"
+        num.innerText = res_num
+        header.appendChild(num)
 
-        num = document.createElement('span');
-        num.className = 'num';
-        num.innerText = res_num;
-        header.appendChild(num);
-
-        name = document.createElement('span');
-        name.className = 'name';
+        name = document.createElement("span")
+        name.className = "name"
         name.innerHTML = res.name
-          .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, '&lt;')
-          .replace(/<\/b>(.*?)<b>/g, '<span class="ob">$1</span>');
-        header.appendChild(name);
+          .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")
+          .replace(/<\/b>(.*?)<b>/g, '<span class="ob">$1</span>')
+        header.appendChild(name)
 
-        mail = document.createElement('span');
-        mail.className = 'mail';
-        mail.innerText = res.mail;
-        header.appendChild(mail);
+        mail = document.createElement("span")
+        mail.className = "mail"
+        mail.innerText = res.mail
+        header.appendChild(mail)
 
-        other = document.createElement('span');
-        other.className = 'other';
-        other.innerText = res.other;
-        header.appendChild(other);
+        other = document.createElement("span")
+        other.className = "other"
+        other.innerText = res.other
+        header.appendChild(other)
 
-        message = document.createElement('div');
-        message.className = 'message';
+        message = document.createElement("div")
+        message.className = "message"
         message.innerHTML = res.message
-          .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, '')
+          .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
           .replace(/(h)?(ttps?:\/\/[\w\-.!~*'();/?:@&=+$,%#]+)/g,
             '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
           .replace(/^\s*sssp:\/\/(img\.2ch\.net\/ico\/[\w\-_]+\.gif)\s*<br>/,
-            '<img class="beicon" src="http://$1" /><br />');
-        article.appendChild(message);
+            '<img class="beicon" src="http://$1" /><br />')
+        article.appendChild(message)
 
-        $container[0].appendChild(article);
-      });
+        $container[0].appendChild(article)
 
-      $('#tab_b')
-        .tab('update_title', {
-            tab_id: $container.attr('data-tab_id'),
-            title: res.data.title
-          });
+      $("#tab_b")
+        .tab("update_title", {
+          tab_id: $container.attr("data-tab_id"),
+          title: result.data.title
+        })
 
-      if (res.status === 'error') {
+      if result.status is "error"
         $container
-          .find('.message_bar')
-            .removeClass('loading')
-            .addClass('error')
-            .text('スレッドの読み込みに失敗しました。' +
-                'キャッシュに残っていたデータを表示します。');
-      }
-      else {
+          .find(".message_bar")
+            .removeClass("loading")
+            .addClass("error")
+            .text("スレッドの読み込みに失敗しました。" +
+              "キャッシュに残っていたデータを表示します。")
+      else
         $container
-          .find('.message_bar')
-            .removeClass('loading')
-            .text('');
-      }
-    }
-    else {
+          .find(".message_bar")
+            .removeClass("loading")
+            .text("")
+    else
       $container
-        .find('.message_bar')
-          .removeClass('loading')
-          .addClass('error')
-          .text('スレッドの読み込みに失敗しました。');
-    }
+        .find(".message_bar")
+          .removeClass("loading")
+          .addClass("error")
+          .text("スレッドの読み込みに失敗しました。")
 
-    app.history.add(url, 'data' in res ? res.data.title : url);
-  });
-};
-`
+    app.history.add(url, if "data" of result then result.data.title else url)
+
 app.view.open_history = ->
   $container = $("#template > .view_history").clone()
   $("#tab_a").tab("add", {element: $container[0], title: "閲覧履歴"})
