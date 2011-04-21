@@ -65,84 +65,76 @@ app.view.setup_resizer = ->
         .bind("mouseup", -> $(this).remove())
         .appendTo("body")
 
-`
-app.view.open_board = function(url) {
-  var $container, tbody, tr, td, fn, date, now, thread_how_old;
+app.view.open_board = (url) ->
+  $container = $("#template > .view_board").clone()
+  $container.attr("data-url", app.url.fix(url))
+  $("#tab_a").tab("add", {element: $container[0], title: url})
 
-  $container = $('#template > .view_board').clone();
-  $container.attr('data-url', app.url.fix(url));
-  $('#tab_a').tab('add', {element: $container[0], title: url});
+  app.board.get url, (res) ->
+    fn = (a) -> (if a < 10 then '0' else '') + a
+    now = Date.now()
 
-  app.board.get(url, function(res) {
-    fn = function(a) { return (a < 10 ? '0' : '') + a; };
-    now = Date.now();
+    if "data" of res
+      tbody = $container.find("tbody")[0]
+      for thread in res.data
+        tr = document.createElement("tr")
+        tr.className = "open_in_rcrx"
+        tr.setAttribute("data-href", thread.url)
 
-    if ('data' in res) {
-      tbody = $container.find('tbody')[0];
-      res.data.forEach(function(thread) {
-        tr = document.createElement('tr');
-        tr.className = 'open_in_rcrx';
-        tr.setAttribute('data-href', thread.url);
+        td = document.createElement("td")
+        tr.appendChild(td)
 
-        td = document.createElement('td');
-        tr.appendChild(td);
+        td = document.createElement("td")
+        td.innerText = thread.title
+        tr.appendChild(td)
 
-        td = document.createElement('td');
-        td.innerText = thread.title;
-        tr.appendChild(td);
+        td = document.createElement("td")
+        td.innerText = thread.res_count
+        tr.appendChild(td)
 
-        td = document.createElement('td');
-        td.innerText = thread.res_count;
-        tr.appendChild(td);
+        td = document.createElement("td")
+        tr.appendChild(td)
 
-        td = document.createElement('td');
-        tr.appendChild(td);
+        td = document.createElement("td")
+        thread_how_old = (now - thread.created_at) / (24 * 60 * 60 * 1000)
+        td.innerText = (thread.res_count / thread_how_old).toFixed(1)
+        tr.appendChild(td)
 
-        td = document.createElement('td');
-        thread_how_old = (now - thread.created_at) / (24 * 60 * 60 * 1000);
-        td.innerText = (thread.res_count / thread_how_old).toFixed(1);
-        tr.appendChild(td);
-
-        td = document.createElement('td');
-        date = new Date(thread.created_at);
+        td = document.createElement("td")
+        date = new Date(thread.created_at)
         td.innerText = date.getFullYear() +
-            '/' + fn(date.getMonth() + 1) +
-            '/' + fn(date.getDate()) +
-            ' ' + fn(date.getHours()) +
-            ':' + fn(date.getMinutes());
-        tr.appendChild(td);
+          "/" + fn(date.getMonth() + 1) +
+          "/" + fn(date.getDate()) +
+          " " + fn(date.getHours()) +
+          ":" + fn(date.getMinutes())
+        tr.appendChild(td)
+        tr.appendChild(td)
 
-        tbody.appendChild(tr);
-      });
-      $container.find('table').tablesorter();
+        tbody.appendChild(tr)
+      $container.find("table").tablesorter()
 
-      if (res.status === 'error') {
+      if res.status is "error"
         $container
-          .find('.message_bar')
-            .removeClass('loading')
-            .addClass('error')
-            .text('板の読み込みに失敗しました。' +
-                'キャッシュに残っていたデータを表示します。');
-      }
-      else {
+          .find(".message_bar")
+            .removeClass("loading")
+            .addClass("error")
+            .text("板の読み込みに失敗しました。" +
+              "キャッシュに残っていたデータを表示します。")
+      else
         $container
-          .find('.message_bar')
-            .removeClass('loading')
-            .text('');
-      }
-    }
-    else {
+          .find(".message_bar")
+            .removeClass("loading")
+            .text("")
+    else
       $container
-        .find('.message_bar')
-          .removeClass('loading')
-          .addClass('error')
-          .text('板の読み込みに失敗しました。');
-    }
+        .find(".message_bar")
+          .removeClass("loading")
+          .addClass("error")
+          .text("板の読み込みに失敗しました。")
 
-    app.history.add(url, url);
-  });
-};
+    app.history.add(url, url)
 
+`
 app.view.open_thread = function(url) {
   var $container, res_num = 0;
   $container = $('#template > .view_thread').clone();
