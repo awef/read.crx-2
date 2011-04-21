@@ -1,23 +1,22 @@
-`
-app.view = {};
+app.view = {}
 
-app.view.init = function() {
-  $('#body')
-    .addClass('pane-3');
+app.view.init = ->
+  $("#body")
+    .addClass("pane-3")
 
-  $('#tab_a, #tab_b').tab();
+  $("#tab_a, #tab_b").tab()
 
-  app.view.setup_resizer();
+  app.view.setup_resizer()
 
   $(document.documentElement)
-    .delegate('.open_in_rcrx', 'click', function(e) {
-        e.preventDefault();
-        app.message.send('open', {
-          url: this.href || this.getAttribute('data-href')
-        });
-      });
-};
+    .delegate(".open_in_rcrx", "click", (e) ->
+      e.preventDefault()
+      app.message.send("open", {
+        url: this.href or this.getAttribute("data-href")
+      })
+    )
 
+`
 app.view.load_sidemenu = function(url) {
   app.bbsmenu.get(function(res) {
     var frag, category, board, h3, ul, li, a;
