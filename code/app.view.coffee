@@ -40,36 +40,32 @@ app.view.load_sidemenu = (url) ->
       .append(frag)
       .accordion()
 
+app.view.setup_resizer = ->
+  $("#tab_resizer")
+    .bind "mousedown", (e) ->
+      e.preventDefault()
+
+      tab_a = document.getElementById("tab_a")
+      min_height = 50
+      max_height = document.body.offsetHeight - 50
+
+      $("<div>", {css: {
+        position: "absolute"
+        left: 0
+        top: 0
+        width: "100%"
+        height: "100%"
+        "z-index": 999
+        cursor: "row-resize"
+      }})
+        .bind("mousemove", (e) ->
+          tab_a.style["height"] =
+            Math.max(Math.min(e.pageY, max_height), min_height) + "px"
+        )
+        .bind("mouseup", -> $(this).remove())
+        .appendTo("body")
+
 `
-app.view.setup_resizer = function() {
-  $('#tab_resizer')
-    .bind('mousedown', function(e) {
-        var tab_a = document.getElementById('tab_a'),
-            min_height = 50,
-            max_height = document.body.offsetHeight - 50;
-
-        e.preventDefault();
-        $('<div>', {css: {
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          width: '100%',
-          height: '100%',
-          'z-index': 999,
-          cursor: 'row-resize'
-        }})
-          .bind('mousemove', function(e) {
-              tab_a.style['height'] =
-                  Math.max(Math.min(e.pageY, max_height), min_height) +
-                  'px';
-            })
-          .bind('mouseup', function() {
-              $(this).remove();
-            })
-          .appendTo('body');
-      });
-};
-
 app.view.open_board = function(url) {
   var $container, tbody, tr, td, fn, date, now, thread_how_old;
 
