@@ -1,3 +1,4 @@
+`
 jQuery.fn.accordion = function() {
   $(this)
     .addClass('accordion')
@@ -21,3 +22,4 @@ jQuery.fn.accordion = function() {
 
   return this;
 };
+`

@@ -1,3 +1,4 @@
+`
 app.history = {};
 
 app.history.add = function(url, title) {
@@ -96,3 +97,4 @@ app.history.get = function(offset, count, callback) {
     }
   };
 };
+`

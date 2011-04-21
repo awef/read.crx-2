@@ -1,3 +1,4 @@
+`
 app.board = {};
 
 app.board._get_xhr_info = function(board_url) {
@@ -159,3 +160,4 @@ app.board.parse = function(url, text) {
 
   return board.length > 0 ? board : null;
 };
+`

@@ -1,3 +1,4 @@
+`
 (function($) {
   var uid,
       tab_init, tab_add, tab_remove, tab_select, tab_update_title;
@@ -101,3 +102,4 @@
     return this;
   };
 })(jQuery);
+`

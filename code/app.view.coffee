@@ -1,3 +1,4 @@
+`
 app.view = {};
 
 app.view.init = function() {
@@ -293,3 +294,4 @@ app.view.open_config = function() {
       });
   $container.hide().appendTo(document.body).fadeIn('fast');
 };
+`

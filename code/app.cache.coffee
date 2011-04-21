@@ -1,3 +1,4 @@
+`
 app.cache = {};
 
 app.cache.get = function(url, callback) {
@@ -105,3 +106,4 @@ app.cache.set = function(data) {
     }
   };
 };
+`

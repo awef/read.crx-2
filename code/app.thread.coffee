@@ -1,3 +1,4 @@
+`
 app.thread = {};
 
 app.thread._get_xhr_info = function(thread_url) {
@@ -209,3 +210,4 @@ app.thread._parse_jbbs = function(text) {
   }
   return thread.res.length > 0 ? thread : null;
 };
+`
