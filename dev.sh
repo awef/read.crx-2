@@ -1,5 +1,6 @@
 SOURCE_DIR="code"
 DEBUG_DIR="debug"
+TEMP_DIR="temp"
 
 echo_red_bold () { echo -e "\e[1;31m$*\e[m"; }
 echo_green_bold () { echo -e "\e[1;32m$*\e[m"; }
@@ -7,8 +8,8 @@ echo_green_bold () { echo -e "\e[1;32m$*\e[m"; }
 all_update () {
   echo_red_bold "start"
 
-  mkdir -p $DEBUG_DIR
-  rm -rf $DEBUG_DIR/*
+  mkdir -p $DEBUG_DIR $TEMP_DIR
+  rm -rf $DEBUG_DIR/* $TEMP_DIR/*
 
   cp -r $SOURCE_DIR/lib/ $DEBUG_DIR/lib/
   cp -r $SOURCE_DIR/img/ $DEBUG_DIR/img/
@@ -18,9 +19,12 @@ all_update () {
 
   sass --style compressed --no-cache $SOURCE_DIR/app.sass $DEBUG_DIR/app.css
 
-  coffee -b -j -p -c ${SOURCE_DIR}/app.coffee ${SOURCE_DIR}/app.*.coffee > ${DEBUG_DIR}/app.js
-  coffee -b -j -p -c ${SOURCE_DIR}/ui.*.coffee > ${DEBUG_DIR}/ui.js
+  coffee -b -o ${TEMP_DIR}/ -c ${SOURCE_DIR}/
 
+  cat $TEMP_DIR/app.js $TEMP_DIR/app.*.js > $DEBUG_DIR/app.js
+  cat $TEMP_DIR/ui.*.js > $DEBUG_DIR/ui.js
+
+  rm -r $TEMP_DIR
   echo_green_bold "complete"
 }
 
