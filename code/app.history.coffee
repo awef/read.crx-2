@@ -48,6 +48,7 @@ app.history.get = (offset, count, callback) ->
   req_open.onsuccess = ->
     db = req_open.result
     data = []
+    data_length = 0
 
     if db.version is "1"
       transaction = db.transaction(["history"],
@@ -60,7 +61,8 @@ app.history.get = (offset, count, callback) ->
         cursor = req_cursor.result
         if cursor
           data.push(cursor.value)
-          cursor.continue()
+          if ++data_length < count
+            cursor.continue()
       transaction.onerror = ->
         db.close()
         app.log("error", "app.history.get: トランザクション中断")

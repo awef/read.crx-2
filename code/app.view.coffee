@@ -248,7 +248,7 @@ app.view.open_history = ->
   $container = $("#template > .view_history").clone()
   $("#tab_a").tab("add", {element: $container[0], title: "閲覧履歴"})
 
-  app.history.get undefined, undefined, (res) ->
+  app.history.get undefined, 500, (res) ->
     if "data" of res
       frag = document.createDocumentFragment()
       for val in res.data
