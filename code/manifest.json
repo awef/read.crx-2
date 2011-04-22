@@ -4,7 +4,7 @@
   "description" : "2chブラウザ",
   "minimum_chrome_version" : "10",
   "incognito" : "split",
-  "options_page" : "app.html?q=option",
+  "options_page" : "app.html?q=config",
   "permissions" : [
     "bookmarks",
     "tabs",
