@@ -133,3 +133,9 @@ app.url.guess_type = (url) ->
     {type: "board", bbs_type: "2ch"}
   else
     return {type: "unknown", bbs_type: "unknown"};
+
+app.config =
+  set: (key, val) ->
+    localStorage["config_#{key}"] = val
+  get: (key) ->
+    localStorage["config_#{key}"]
