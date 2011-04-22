@@ -237,6 +237,10 @@ app.view.open_config = ->
   container_close = ->
     $container.fadeOut "fast", -> $container.remove()
 
+  if $(".view_config:visible").length isnt 0
+    app.log("debug", "app.view.open_config: 既に設定パネルが開かれています")
+    return
+
   $container = $("#template > .view_config").clone()
   $container
     .bind("click", (e) ->
