@@ -1,3 +1,4 @@
+`
 module('app.board');
 
 test('app.board._get_xhr_info', function() {
@@ -261,3 +262,4 @@ test('app.board._get_xhr_info', function() {
     strictEqual(app.board.parse(pvip_url, ''), null, 'パー速URL + 空文字列');
   });
 })();
+`

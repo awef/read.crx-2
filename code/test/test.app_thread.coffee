@@ -1,3 +1,4 @@
+`
 module('app.thread');
 
 test('app.thread._get_xhr_info', function() {
@@ -206,4 +207,4 @@ test('app.thread._get_xhr_info', function() {
     strictEqual(app.thread.parse(jbbs_url, ''), null, 'したらば系URL + 空dat');
   });
 })();
-
+`

@@ -12,17 +12,24 @@ all_update () {
   rm -rf $DEBUG_DIR/* $TEMP_DIR/*
 
   cp -r $SOURCE_DIR/lib/ $DEBUG_DIR/lib/
+  
   cp -r $SOURCE_DIR/img/ $DEBUG_DIR/img/
-  cp -r $SOURCE_DIR/test/ $DEBUG_DIR/test/
+  
+  mkdir $DEBUG_DIR/test/
+  cp -r $SOURCE_DIR/test/qunit/ $DEBUG_DIR/test/qunit/
+  cp $SOURCE_DIR/test/test.html $DEBUG_DIR/test/test.html
+  
   cp $SOURCE_DIR/manifest.json $DEBUG_DIR/manifest.json
+  
   cp $SOURCE_DIR/app.html $DEBUG_DIR/app.html
 
   sass --style compressed --no-cache $SOURCE_DIR/app.sass $DEBUG_DIR/app.css
 
-  coffee -b -o ${TEMP_DIR}/ -c ${SOURCE_DIR}/
+  coffee -b -o ${TEMP_DIR}/ -c ${SOURCE_DIR}/ ${SOURCE_DIR}/test/
 
   cat $TEMP_DIR/app.js $TEMP_DIR/app.*.js > $DEBUG_DIR/app.js
   cat $TEMP_DIR/ui.*.js > $DEBUG_DIR/ui.js
+  cat $TEMP_DIR/test.*.js > $DEBUG_DIR/test/test.js
 
   rm -r $TEMP_DIR
   echo_green_bold "complete"

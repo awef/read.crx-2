@@ -1,3 +1,4 @@
+`
 module('app.deep_copy');
 
 test('test', 7, function() {
@@ -121,3 +122,4 @@ test('app.url.guess_type', function() {
 
   hoge('http://example.com/', {type: 'unknown', bbs_type: 'unknown'});
 });
+`
