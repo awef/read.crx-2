@@ -251,3 +251,49 @@ app.view.open_config = ->
       .bind("click", container_close)
 
   $container.hide().appendTo(document.body).fadeIn("fast")
+
+app.view.open_bookmark_source_selector = ->
+  $view = $("#template > .view_bookmark_source_selector")
+    .clone()
+      .delegate ".node", "click", ->
+        $(this)
+          .closest(".view_bookmark_source_selector")
+            .find(".selected")
+              .removeClass("selected")
+            .end()
+            .find(".submit")
+              .removeAttr("disabled")
+            .end()
+          .end()
+          .addClass("selected")
+      .find(".submit")
+        .bind "click", ->
+          bookmark_id = (
+            $(this)
+              .closest(".view_bookmark_source_selector")
+                .find(".node.selected")
+                  .attr("data-bookmark_id")
+          )
+          console.log bookmark_id
+      .end()
+      .appendTo(document.body)
+
+  fn = (array_of_tree, ul) ->
+    for tree in array_of_tree
+      if "children" of tree
+        li = document.createElement("li")
+        span = document.createElement("span")
+        span.className = "node"
+        span.innerText = tree.title
+        span.setAttribute("data-bookmark_id", tree.id)
+        li.appendChild(span)
+        ul.appendChild(li)
+
+        cul = document.createElement("ul")
+        li.appendChild(cul)
+
+        fn(tree.children, cul)
+
+  chrome.bookmarks.getTree (array_of_tree) ->
+    fn(array_of_tree[0].children, $view.find(".node_list > ul")[0])
+
