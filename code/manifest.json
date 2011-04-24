@@ -7,6 +7,7 @@
   "options_page" : "app.html?q=config",
   "permissions" : [
     "bookmarks",
+    "cookies",
     "tabs",
     "unlimitedStorage",
     "http://*/*"
