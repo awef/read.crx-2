@@ -6,20 +6,14 @@ app.board._get_xhr_info = (board_url) ->
     return null
   switch tmp[2]
     when "machi.to"
-      {
-        path: "http://#{tmp[1]}/bbs/offlaw.cgi/#{tmp[3]}/"
-        charset: "Shift_JIS"
-      }
+      path: "http://#{tmp[1]}/bbs/offlaw.cgi/#{tmp[3]}/"
+      charset: "Shift_JIS"
     when "livedoor.jp"
-      {
-        path: "http://jbbs.livedoor.jp/#{tmp[3]}/#{tmp[4]}/subject.txt"
-        charset: "EUC-JP"
-      }
+      path: "http://jbbs.livedoor.jp/#{tmp[3]}/#{tmp[4]}/subject.txt"
+      charset: "EUC-JP"
     else
-      {
-        path: "http://#{tmp[1]}/#{tmp[3]}/subject.txt"
-        charset: "Shift_JIS"
-      }
+      path: "http://#{tmp[1]}/#{tmp[3]}/subject.txt"
+      charset: "Shift_JIS"
 
 app.board.get = (url, callback) ->
   tmp = app.board._get_xhr_info(url)

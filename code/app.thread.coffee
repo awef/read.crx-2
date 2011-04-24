@@ -8,21 +8,15 @@ app.thread._get_xhr_info = (thread_url) ->
 
   switch tmp[2]
     when "machi.to"
-      return {
-        path: "http://#{tmp[1]}/bbs/offlaw.cgi/#{tmp[3]}/#{tmp[4]}/",
-        charset: "Shift_JIS"
-      }
+      path: "http://#{tmp[1]}/bbs/offlaw.cgi/#{tmp[3]}/#{tmp[4]}/",
+      charset: "Shift_JIS"
     when "livedoor.jp"
-      return {
-        path: "http://jbbs.livedoor.jp/" +
+      path: "http://jbbs.livedoor.jp/" +
           "bbs/rawmode.cgi/#{tmp[3]}/#{tmp[4]}/#{tmp[5]}/",
-        charset: "EUC-JP"
-      }
+      charset: "EUC-JP"
     else
-      return {
-        path: "http://#{tmp[1]}/#{tmp[3]}/dat/#{tmp[4]}.dat",
-        charset: "Shift_JIS"
-      }
+      path: "http://#{tmp[1]}/#{tmp[3]}/dat/#{tmp[4]}.dat",
+      charset: "Shift_JIS"
 
 app.thread.get = (url, callback) ->
   tmp = app.thread._get_xhr_info(url)
