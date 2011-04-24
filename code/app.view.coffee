@@ -253,6 +253,11 @@ app.view.open_config = ->
   $container.hide().appendTo(document.body).fadeIn("fast")
 
 app.view.open_bookmark_source_selector = ->
+  if $(".view_bookmark_source_selector:visible").length isnt 0
+    app.log("debug", "app.view.open_bookmark_source_selector: " +
+      "既にブックマークフォルダ選択ダイアログが開かれています")
+    return
+
   $view = $("#template > .view_bookmark_source_selector")
     .clone()
       .delegate ".node", "click", ->
