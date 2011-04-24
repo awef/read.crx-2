@@ -1,4 +1,4 @@
-(() ->
+(->
   if location.pathname isnt "/app.html"
     return
 
@@ -72,7 +72,7 @@ app.deep_copy = (data) ->
   JSON.parse(JSON.stringify(data))
 
 app.message = {}
-(() ->
+(->
   listener_store = {}
 
   app.message.send = (type, data) ->
