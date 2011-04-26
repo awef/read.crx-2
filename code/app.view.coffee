@@ -279,7 +279,11 @@ app.view.open_bookmark_source_selector = ->
                 .find(".node.selected")
                   .attr("data-bookmark_id")
           )
-          console.log bookmark_id
+          app.config.set("bookmark_id", bookmark_id)
+          $(this)
+            .closest(".view_bookmark_source_selector")
+              .fadeOut "fast", ->
+                $(this).remove()
       .end()
       .appendTo(document.body)
 
