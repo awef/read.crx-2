@@ -82,6 +82,8 @@ app.view.open_board = (url) ->
         tr.setAttribute("data-href", thread.url)
 
         td = document.createElement("td")
+        if app.bookmark.get(thread.url)
+          td.innerText = "★"
         tr.appendChild(td)
 
         td = document.createElement("td")
