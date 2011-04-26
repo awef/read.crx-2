@@ -27,9 +27,12 @@ app.bookmark = {}
   if typeof bookmark_id is "string"
     update_all()
 
+  app.bookmark.get = (url) ->
+    if url of bookmark_data_index_url
+      bookmark_data[bookmark_data_index_url[url]]
+    else
+      null
+
   app.bookmark.get_all = ->
     app.deep_copy(bookmark_data)
-
-  app.bookmark.is_bookmarked = (url) ->
-    url of bookmark_data_index_url
 )()
