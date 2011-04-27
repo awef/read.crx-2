@@ -13,7 +13,7 @@ app.bookmark = {}
           tmp = app.url.guess_type(tree.url)
           if tmp.type is "board" or tmp.type is "thread"
             url = app.url.fix(tree.url)
-            bookmark_data.push(
+            bookmark_data.push
               type: tmp.type
               bbs_type: tmp.bbs_type
               url: url
@@ -21,7 +21,6 @@ app.bookmark = {}
               res_count: null
               read: null
               last: null
-            )
             bookmark_data_index_url[url] = bookmark_data.length - 1
 
   if typeof bookmark_id is "string"
