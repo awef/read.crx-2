@@ -1,5 +1,5 @@
 (($) ->
-  $.fn.tablesorter = ->
+  $.fn.table_sort = ->
     $(this)
       .find("th")
       .bind "click", ->
@@ -9,14 +9,14 @@
         tbody = $table.find("tbody")[0]
 
         sort_index = $th.index()
-        sort_type = $th.data("tablesorter_sort_type") or "str"
-        sort_order = if $th.hasClass("tablesorter_sort_desc") then "asc" else "desc"
+        sort_type = $th.data("table_sort_type") or "str"
+        sort_order = if $th.hasClass("table_sort_desc") then "asc" else "desc"
 
         $th
           .siblings()
             .andSelf()
-              .removeClass("tablesorter_sort_asc tablesorter_sort_desc")
-        $th.addClass("tablesorter_sort_#{sort_order}")
+              .removeClass("table_sort_asc table_sort_desc")
+        $th.addClass("table_sort_#{sort_order}")
 
         data = {}
         for td in tbody.querySelectorAll("td:nth-child(#{sort_index + 1})")

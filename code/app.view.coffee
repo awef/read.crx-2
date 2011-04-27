@@ -123,7 +123,7 @@ app.view.open_board = (url) ->
         tr.appendChild(td)
 
         tbody.appendChild(tr)
-      $container.find("table").tablesorter()
+      $container.find("table").table_sort()
 
       if res.status is "error"
         $container
