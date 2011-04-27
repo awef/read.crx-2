@@ -141,6 +141,14 @@ $z-index_modal: 5
   th.tablesorter_sort_desc:after
     :content "↓"
 
+@mixin ui_table_search
+  .table_search
+    tbody
+      tr
+        :display none
+      tr.table_search_hit
+        :display table-row
+
 @mixin message_bar
   .message_bar
     :font-size 13px
@@ -180,6 +188,7 @@ $z-index_modal: 5
 
 @mixin view_board
   @include ui_tablesorter
+  @include ui_table_search
   @include message_bar
   @include content_table
   :overflow-y auto

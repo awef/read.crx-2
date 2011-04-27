@@ -67,7 +67,17 @@ app.view.setup_resizer = ->
 
 app.view.open_board = (url) ->
   $container = $("#template > .view_board").clone()
-  $container.attr("data-url", app.url.fix(url))
+  $container
+    .attr("data-url", app.url.fix(url))
+
+    .find(".searchbox_thread_title")
+      .bind "input", ->
+        $container.find("table").table_search("search", query: this.value, target_col: 1)
+      .bind "keyup", (e) ->
+        if e.which is 27 #Esc
+          this.value = ""
+          $container.find("table").table_search("clear")
+
   $("#tab_a").tab("add", {element: $container[0], title: url})
 
   app.board.get url, (res) ->
