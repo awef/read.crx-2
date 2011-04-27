@@ -1,3 +1,4 @@
+`/** @namespace */`
 app.history = {}
 
 app.history.add = (url, title) ->

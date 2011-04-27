@@ -1,3 +1,4 @@
+`/** @namespace */`
 app.view = {}
 
 app.view.init = ->

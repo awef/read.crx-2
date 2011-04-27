@@ -1,3 +1,4 @@
+`/** @namespace */`
 app.bbsmenu = {}
 
 app.bbsmenu.get = (callback) ->

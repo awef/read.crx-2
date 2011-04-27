@@ -1,3 +1,4 @@
+`/** @namespace */`
 app.bookmark = {}
 
 (->

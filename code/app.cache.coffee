@@ -1,3 +1,4 @@
+`/** @namespace */`
 app.cache = {}
 
 app.cache.get = (url, callback) ->

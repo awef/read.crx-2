@@ -33,6 +33,7 @@
           app.message.send("open", {query})
 )()
 
+`/** @namespace */`
 app = {}
 
 app.main = ->
@@ -71,6 +72,7 @@ app.log = (level) ->
 app.deep_copy = (data) ->
   JSON.parse(JSON.stringify(data))
 
+`/** @namespace */`
 app.message = {}
 (->
   listener_store = {}
@@ -85,6 +87,7 @@ app.message = {}
     listener_store[type].push(fn)
 )()
 
+`/** @namespace */`
 app.notice = {}
 app.notice.push = (text) ->
   $("<div>")
@@ -103,6 +106,7 @@ app.notice.push = (text) ->
     .appendTo("#app_notice_container")
     .fadeIn()
 
+`/** @namespace */`
 app.url = {}
 app.url.fix = (url) ->
   url
@@ -134,6 +138,7 @@ app.url.guess_type = (url) ->
   else
     return {type: "unknown", bbs_type: "unknown"};
 
+`/** @namespace */`
 app.config =
   set: (key, val) ->
     localStorage["config_#{key}"] = val

@@ -1,3 +1,4 @@
+`/** @namespace */`
 app.board = {}
 
 app.board._get_xhr_info = (board_url) ->
