@@ -311,7 +311,7 @@ app.view.open_bookmark_source_selector = ->
                 .find(".node.selected")
                   .attr("data-bookmark_id")
           )
-          app.config.set("bookmark_id", bookmark_id)
+          app.bookmark.change_source(bookmark_id)
           $(this)
             .closest(".view_bookmark_source_selector")
               .fadeOut "fast", ->

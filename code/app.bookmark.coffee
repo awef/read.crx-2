@@ -44,4 +44,8 @@ app.bookmark = {}
   `/** @return {array of bookmark} */`
   app.bookmark.get_all = ->
     app.deep_copy(bookmark_data)
+
+  app.bookmark.change_source = (bookmark_id) ->
+    app.config.set("bookmark_id", bookmark_id)
+    update_all(bookmark_id)
 )()
