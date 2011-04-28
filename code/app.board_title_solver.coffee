@@ -6,12 +6,10 @@ app.board_title_solver = {}
 
   update_dic_bbsmenu = ->
     app.bbsmenu.get (result) ->
-      console.log result
       if "data" of result
         for category in result.data
           for board in category.board
             dic_bbsmenu[board.url] = board.title
-        console.log(dic_bbsmenu)
 
   $(-> update_dic_bbsmenu())
 
