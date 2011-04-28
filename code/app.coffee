@@ -61,7 +61,7 @@ app.main = ->
 
   chrome.extension.onRequest.addListener (request) ->
     if request.type is "open"
-      app.message.send("open", {url: request.query})
+      app.message.send("open", url: request.query)
 
 app.log = (level) ->
   if ["log", "debug", "info", "warn", "error"].indexOf(level) isnt -1
