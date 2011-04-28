@@ -67,6 +67,7 @@ app.view.setup_resizer = ->
         .appendTo("body")
 
 app.view.open_board = (url) ->
+  opened_at = Date.now()
   $container = $("#template > .view_board").clone()
   $container
     .attr("data-url", app.url.fix(url))
@@ -89,6 +90,7 @@ app.view.open_board = (url) ->
           tab_id: $container.attr("data-tab_id")
           title: title
         )
+    app.history.add(url, title or url, opened_at)
 
   app.board.get url, (res) ->
     fn = (a) -> (if a < 10 then "0" else "") + a
@@ -154,9 +156,8 @@ app.view.open_board = (url) ->
           .addClass("error")
           .text("板の読み込みに失敗しました。")
 
-    app.history.add(url, url)
-
 app.view.open_thread = (url) ->
+  opened_at = Date.now()
   $container = $("#template > .view_thread").clone()
   $container.attr("data-url", app.url.fix(url))
   $("#tab_b").tab("add", {element: $container[0], title: url})
@@ -234,7 +235,7 @@ app.view.open_thread = (url) ->
           .addClass("error")
           .text("スレッドの読み込みに失敗しました。")
 
-    app.history.add(url, if "data" of result then result.data.title else url)
+    app.history.add(url, (if "data" of result then result.data.title else url), opened_at)
 
 app.view.open_history = ->
   $container = $("#template > .view_history").clone()

@@ -1,10 +1,10 @@
 `/** @namespace */`
 app.history = {}
 
-app.history.add = (url, title) ->
+app.history.add = (url, title, date) ->
   db = null
 
-  if typeof url isnt "string" or typeof title isnt "string"
+  if typeof url isnt "string" or typeof title isnt "string" or typeof date isnt "number"
     app.log("error", "app.history.add: 引数が不正です", arguments)
     return
   idb_transaction = ->
@@ -18,7 +18,7 @@ app.history.add = (url, title) ->
 
     transaction
       .objectStore("history")
-      .put({url, title, date: Date.now()})
+      .put({url, title, date})
 
   req_open = webkitIndexedDB.open("history")
   req_open.onerror = ->
