@@ -232,16 +232,25 @@ app.view.open_history = ->
 
   app.history.get undefined, 500, (res) ->
     if "data" of res
+      fn = (a) -> (if a < 10 then "0" else "") + a
+
       frag = document.createDocumentFragment()
       for val in res.data
         tr = document.createElement("tr")
         tr.setAttribute("data-href", val.url)
         tr.className = "open_in_rcrx"
+
         td = document.createElement("td")
         td.innerText = val.title
         tr.appendChild(td)
+
         td = document.createElement("td")
-        td.innerText = val.date
+        date = new Date(val.date)
+        td.innerText = date.getFullYear() +
+          "/" + fn(date.getMonth() + 1) +
+          "/" + fn(date.getDate()) +
+          " " + fn(date.getHours()) +
+          ":" + fn(date.getMinutes())
         tr.appendChild(td)
         frag.appendChild(tr)
       $container.find("tbody").append(frag)
