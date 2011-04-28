@@ -5,9 +5,7 @@ app.bookmark = {}
   bookmark_data = []
   bookmark_data_index_url = {}
 
-  bookmark_id = app.config.get("bookmark_id")
-
-  update_all = ->
+  update_all = (bookmark_id) ->
     chrome.bookmarks.getChildren bookmark_id, (array_of_tree) ->
       for tree in array_of_tree
         if "url" of tree
@@ -24,8 +22,11 @@ app.bookmark = {}
               last: null
             bookmark_data_index_url[url] = bookmark_data.length - 1
 
-  if typeof bookmark_id is "string"
-    update_all()
+  tmp = app.config.get("bookmark_id")
+  if typeof tmp is "string"
+    update_all(tmp)
+  else
+    $(-> app.view.open_bookmark_source_selector())
 
   `/**
    * 与えられたURLがブックマークされていた場合はbookmarkオブジェクトを
