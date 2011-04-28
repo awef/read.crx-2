@@ -81,6 +81,15 @@ app.view.open_board = (url) ->
 
   $("#tab_a").tab("add", {element: $container[0], title: url})
 
+  app.board_title_solver.ask app.url.fix(url), (title) ->
+    if title
+      $container
+        .closest(".tab")
+        .tab("update_title",
+          tab_id: $container.attr("data-tab_id")
+          title: title
+        )
+
   app.board.get url, (res) ->
     fn = (a) -> (if a < 10 then "0" else "") + a
     now = Date.now()
