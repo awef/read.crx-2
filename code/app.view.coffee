@@ -208,7 +208,8 @@ app.view.open_thread = (url) ->
 
         $container[0].appendChild(article)
 
-      $("#tab_b")
+      $container
+        .closest(".tab")
         .tab("update_title", {
           tab_id: $container.attr("data-tab_id"),
           title: result.data.title
