@@ -6,6 +6,7 @@ app.bookmark = {}
   bookmark_data = []
   bookmark_data_index_url = {}
   bookmark_data_index_id = {}
+  index_url_id = {}
   watcher_wakeflg = true
 
   hoge_bookmark = (bookmark_node) ->
@@ -22,6 +23,7 @@ app.bookmark = {}
         last: null
       bookmark_data_index_url[url] = bookmark_data.length - 1
       bookmark_data_index_id[bookmark_node.id] = bookmark_data.length - 1
+      index_url_id[url] = bookmark_node.id
 
   update_all = () ->
     try
@@ -29,6 +31,7 @@ app.bookmark = {}
         bookmark_data = []
         bookmark_data_index_url = {}
         bookmark_data_index_id = {}
+        index_url_id = {}
         for tree in array_of_tree
           if "url" of tree
             hoge_bookmark(tree)
@@ -79,7 +82,30 @@ app.bookmark = {}
     app.deep_copy(bookmark_data)
 
   app.bookmark.change_source = (new_source_id) ->
+    if app.assert_arg("app.bookmark.change_source", ["string"], arguments)
+      return
+
     app.config.set("bookmark_id", new_source_id)
     source_id = new_source_id
     update_all()
+
+  app.bookmark.add = (url, title) ->
+    if app.assert_arg("app.bookmark.add", ["string", "string"], arguments)
+      return
+
+    url = app.url.fix(url)
+    unless url of bookmark_data_index_url
+      chrome.bookmarks.create(parentId: source_id, url, title)
+    else
+      app.log("error", "app.bookmark.add: 既にブックマークされいてるURLをブックマークに追加しようとしています", arguments)
+
+  app.bookmark.remove = (url) ->
+    if app.assert_arg("app.bookmark.change_source", ["string"], arguments)
+      return
+
+    id = index_url_id[app.url.fix(url)]
+    if typeof id is "string"
+      chrome.bookmarks.remove(id)
+    else
+      app.log("error", "app.bookmark.remove: ブックマークされていないURLをブックマークから削除しようとしています", arguments)
 )()
