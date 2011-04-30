@@ -149,6 +149,17 @@ $z-index_modal: 5
   label
     :cursor pointer
 
+.nav_bar
+  .button
+    :width 19px
+    :height 19px
+    :border 1px solid #ccc
+    &.button_bookmark
+      :background-image url(/img/star_19x19.png)
+      &.bookmarked
+        :background-image url(/img/star2_19x19.png)
+        :-webkit-box-shadow 0 0 3px yellow inset
+
 html, body, #body
   :position relative
   :width 100%

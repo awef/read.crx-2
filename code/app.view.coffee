@@ -68,6 +68,7 @@ app.view.setup_resizer = ->
 
 app.view.open_board = (url) ->
   url = app.url.fix(url)
+  title = null
   opened_at = Date.now()
   $container = $("#template > .view_board").clone()
   $container
@@ -80,11 +81,22 @@ app.view.open_board = (url) ->
         if e.which is 27 #Esc
           this.value = ""
           $container.find("table").table_search("clear")
+    .end()
+
+    .find(".button_bookmark")
+      .addClass(if app.bookmark.get(url) then "bookmarked")
+      .bind "click", ->
+        if $(this).hasClass("bookmarked")
+          app.bookmark.remove(url)
+        else
+          app.bookmark.add(url, title or url)
+        $(this).toggleClass("bookmarked")
 
   $("#tab_a").tab("add", {element: $container[0], title: url})
 
-  app.board_title_solver.ask url, (title) ->
-    if title
+  app.board_title_solver.ask url, (res) ->
+    if res
+      title = res
       $container
         .closest(".tab")
         .tab("update_title",
