@@ -72,6 +72,13 @@ app.log = (level) ->
 app.deep_copy = (data) ->
   JSON.parse(JSON.stringify(data))
 
+app.assert_arg = (name, rule, arg) ->
+  for val, key in rule
+    unless typeof arg[key] is val
+      app.log("error", "#{name}: 不正な引数", app.deep_copy(arg))
+      return true
+  false
+
 `/** @namespace */`
 app.message = {}
 (->
