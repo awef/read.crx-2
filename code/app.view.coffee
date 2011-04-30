@@ -67,10 +67,11 @@ app.view.setup_resizer = ->
         .appendTo("body")
 
 app.view.open_board = (url) ->
+  url = app.url.fix(url)
   opened_at = Date.now()
   $container = $("#template > .view_board").clone()
   $container
-    .attr("data-url", app.url.fix(url))
+    .attr("data-url", url)
 
     .find(".searchbox_thread_title")
       .bind "input", ->
@@ -82,7 +83,7 @@ app.view.open_board = (url) ->
 
   $("#tab_a").tab("add", {element: $container[0], title: url})
 
-  app.board_title_solver.ask app.url.fix(url), (title) ->
+  app.board_title_solver.ask url, (title) ->
     if title
       $container
         .closest(".tab")
