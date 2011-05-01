@@ -75,29 +75,31 @@ app.view.open_board = (url) ->
 
     .find(".searchbox_thread_title")
       .bind "input", ->
-        $container.find("table").table_search("search", query: this.value, target_col: 1)
+        $container
+          .find("table")
+            .table_search("search", query: this.value, target_col: 1)
       .bind "keyup", (e) ->
         if e.which is 27 #Esc
           this.value = ""
           $container.find("table").table_search("clear")
-    .end()
-
-    .find(".button_bookmark")
-      .addClass(if app.bookmark.get(url) then "bookmarked")
-      .bind "click", ->
-        if $(this).hasClass("bookmarked")
-          app.bookmark.remove(url)
-        else
-          app.bookmark.add(url, title or url)
-        $(this).toggleClass("bookmarked")
 
   if ///^http://\w///.test(url)
+    $container
+      .find(".button_bookmark")
+        .addClass(if app.bookmark.get(url) then "bookmarked")
+        .bind "click", ->
+          if $(this).hasClass("bookmarked")
+            app.bookmark.remove(url)
+          else
+            app.bookmark.add(url, title or url)
+          $(this).toggleClass("bookmarked")
+
     $container
       .find(".button_link")
         .append($("<a>", href: url, target: "_blank"))
   else
     $container
-      .find(".button_link")
+      .find(".button_bookmark, .button_link")
         .remove()
 
   $("#tab_a").tab("add", {element: $container[0], title: url})
@@ -185,22 +187,23 @@ app.view.open_thread = (url) ->
   $container
     .attr("data-url", url)
 
-    .find(".button_bookmark")
-      .addClass(if app.bookmark.get(url) then "bookmarked")
-      .bind "click", ->
-        if $(this).hasClass("bookmarked")
-          app.bookmark.remove(url)
-        else
-          app.bookmark.add(url, title or url)
-        $(this).toggleClass("bookmarked")
-
   if ///^http://\w///.test(url)
+    $container
+      .find(".button_bookmark")
+        .addClass(if app.bookmark.get(url) then "bookmarked")
+        .bind "click", ->
+          if $(this).hasClass("bookmarked")
+            app.bookmark.remove(url)
+          else
+            app.bookmark.add(url, title or url)
+          $(this).toggleClass("bookmarked")
+
     $container
       .find(".button_link")
         .append($("<a>", href: url, target: "_blank"))
   else
     $container
-      .find(".button_link")
+      .find(".button_bookmark, .button_link")
         .remove()
 
   $("#tab_b").tab("add", {element: $container[0], title: url})
