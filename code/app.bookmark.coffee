@@ -73,7 +73,7 @@ app.bookmark = {}
    */`
   app.bookmark.get = (url) ->
     if url of bookmark_data_index_url
-      bookmark_data[bookmark_data_index_url[url]]
+      app.deep_copy(bookmark_data[bookmark_data_index_url[url]])
     else
       null
 
