@@ -118,7 +118,7 @@ app.view.open_board = (url) ->
   app.view.module.bookmark_button($container)
   app.view.module.link_button($container)
 
-  $("#tab_a").tab("add", {element: $container[0], title: url})
+  $("#tab_a").tab("add", element: $container[0], title: url)
 
   app.board_title_solver.ask url, (res) ->
     if res
@@ -206,7 +206,7 @@ app.view.open_thread = (url) ->
   app.view.module.bookmark_button($container)
   app.view.module.link_button($container)
 
-  $("#tab_b").tab("add", {element: $container[0], title: url})
+  $("#tab_b").tab("add", element: $container[0], title: url)
   res_num = 0
 
   app.thread.get url, (result) ->
@@ -286,7 +286,7 @@ app.view.open_thread = (url) ->
 
 app.view.open_history = ->
   $container = $("#template > .view_history").clone()
-  $("#tab_a").tab("add", {element: $container[0], title: "閲覧履歴"})
+  $("#tab_a").tab("add", element: $container[0], title: "閲覧履歴")
 
   app.history.get undefined, 500, (res) ->
     if "data" of res
