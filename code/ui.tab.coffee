@@ -79,6 +79,8 @@
       .find("> .tab_tabbar")
         .find("[data-tab_id=\"#{prop.tab_id}\"] span")
           .text(prop.title)
+            .parent()
+              .attr("title", prop.title)
 
   $.fn.tab = (method, prop) ->
     $(this)
