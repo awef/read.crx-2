@@ -170,9 +170,10 @@ app.view.open_board = (url) ->
           .text("板の読み込みに失敗しました。")
 
 app.view.open_thread = (url) ->
+  url = app.url.fix(url)
   opened_at = Date.now()
   $container = $("#template > .view_thread").clone()
-  $container.attr("data-url", app.url.fix(url))
+  $container.attr("data-url", url)
   $("#tab_b").tab("add", {element: $container[0], title: url})
   res_num = 0
 
