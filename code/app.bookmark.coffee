@@ -25,7 +25,7 @@ app.bookmark = {}
       bookmark_data_index_id[bookmark_node.id] = bookmark_data.length - 1
       index_url_id[url] = bookmark_node.id
 
-  update_all = () ->
+  update_all = ->
     try
       chrome.bookmarks.getChildren source_id, (array_of_tree) ->
         bookmark_data = []
