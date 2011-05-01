@@ -125,10 +125,9 @@ app.view.open_board = (url) ->
       title = res
       $view
         .closest(".tab")
-        .tab("update_title",
+        .tab "update_title",
           tab_id: $view.attr("data-tab_id")
           title: title
-        )
       $view.attr("data-title", title)
     app.history.add(url, title or url, opened_at)
 
