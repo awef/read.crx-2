@@ -150,10 +150,14 @@ $z-index_modal: 5
     :cursor pointer
 
 .nav_bar
+  :overflow hidden
+  *
+    :float left
   .button
     :width 19px
     :height 19px
     :border 1px solid #ccc
+    :cursor pointer
     &.button_bookmark
       :background-image url(/img/star_19x19.png)
       &.bookmarked
