@@ -35,8 +35,12 @@ app.bookmark = {}
         for tree in array_of_tree
           if "url" of tree
             hoge_bookmark(tree)
+        send_update_message()
     catch e
       $(-> app.view.open_bookmark_source_selector())
+
+  send_update_message = ->
+    app.message.send("bookmark_updated", null)
 
   chrome.bookmarks.onImportBegan.addListener ->
     watcher_wakeflg = false
@@ -48,6 +52,7 @@ app.bookmark = {}
   chrome.bookmarks.onCreated.addListener (id, node) ->
     if watcher_wakeflg and node.parentId is source_id and "url" of node
       hoge_bookmark(node)
+      send_update_message()
 
   chrome.bookmarks.onRemoved.addListener (id, e) ->
     if watcher_wakeflg and id of bookmark_data_index_id
