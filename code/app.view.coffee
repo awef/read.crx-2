@@ -39,6 +39,15 @@ app.view.module.bookmark_button = ($view) ->
   else
     $button.remove()
 
+app.view.module.link_button = ($view) ->
+  url = $view.attr("data-url")
+  $button = $view.find(".button_link")
+  if ///^http://\w///.test(url)
+    $("<a>", title: "Chromeで直接開く", href: url, target: "_blank")
+      .appendTo($button)
+  else
+    $button.remove()
+
 app.view.load_sidemenu = (url) ->
   app.bbsmenu.get (res) ->
     if "data" of res
@@ -107,15 +116,7 @@ app.view.open_board = (url) ->
           $container.find("table").table_search("clear")
 
   app.view.module.bookmark_button($container)
-
-  if ///^http://\w///.test(url)
-    $container
-      .find(".button_link")
-        .append($("<a>", href: url, target: "_blank"))
-  else
-    $container
-      .find(".button_link")
-        .remove()
+  app.view.module.link_button($container)
 
   $("#tab_a").tab("add", {element: $container[0], title: url})
 
@@ -203,15 +204,7 @@ app.view.open_thread = (url) ->
     .attr("data-url", url)
 
   app.view.module.bookmark_button($container)
-
-  if ///^http://\w///.test(url)
-    $container
-      .find(".button_link")
-        .append($("<a>", href: url, target: "_blank"))
-  else
-    $container
-      .find(".button_link")
-        .remove()
+  app.view.module.link_button($container)
 
   $("#tab_b").tab("add", {element: $container[0], title: url})
   res_num = 0
