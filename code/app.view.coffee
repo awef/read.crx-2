@@ -21,15 +21,15 @@ app.view.module.bookmark_button = ($view) ->
   $button = $view.find(".button_bookmark")
   if ///^http://\w///.test(url)
     update = ->
-      if document.documentElement.contains($view[0])
-        if app.bookmark.get(url)
-          $button.addClass("bookmarked")
-        else
-          $button.removeClass("bookmarked")
+      if app.bookmark.get(url)
+        $button.addClass("bookmarked")
       else
-        app.message.remove_listener("bookmark_updated", update)
+        $button.removeClass("bookmarked")
 
     app.message.add_listener("bookmark_updated", update)
+
+    $view.bind "tab_removed", ->
+      app.message.remove_listener("bookmark_updated", update)
 
     $button.bind "click", ->
       if app.bookmark.get(url)

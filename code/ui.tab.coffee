@@ -60,6 +60,9 @@
               tab_select.call(that, {tab_id: next.attr("data-tab_id")})
           )
         .end()
+        .filter(".tab_container > *")
+          .trigger("tab_removed")
+        .end()
       .remove()
 
   # prop.tab_id
