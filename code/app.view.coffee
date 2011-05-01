@@ -101,35 +101,35 @@ app.view.open_board = (url) ->
   url = app.url.fix(url)
   opened_at = Date.now()
 
-  $container = $("#template > .view_board").clone()
-  $container
+  $view = $("#template > .view_board").clone()
+  $view
     .attr("data-url", url)
 
     .find(".searchbox_thread_title")
       .bind "input", ->
-        $container
+        $view
           .find("table")
             .table_search("search", query: this.value, target_col: 1)
       .bind "keyup", (e) ->
         if e.which is 27 #Esc
           this.value = ""
-          $container.find("table").table_search("clear")
+          $view.find("table").table_search("clear")
 
-  app.view.module.bookmark_button($container)
-  app.view.module.link_button($container)
+  app.view.module.bookmark_button($view)
+  app.view.module.link_button($view)
 
-  $("#tab_a").tab("add", element: $container[0], title: url)
+  $("#tab_a").tab("add", element: $view[0], title: url)
 
   app.board_title_solver.ask url, (res) ->
     if res
       title = res
-      $container
+      $view
         .closest(".tab")
         .tab("update_title",
-          tab_id: $container.attr("data-tab_id")
+          tab_id: $view.attr("data-tab_id")
           title: title
         )
-      $container.attr("data-title", title)
+      $view.attr("data-title", title)
     app.history.add(url, title or url, opened_at)
 
   app.board.get url, (res) ->
@@ -137,7 +137,7 @@ app.view.open_board = (url) ->
     now = Date.now()
 
     if "data" of res
-      tbody = $container.find("tbody")[0]
+      tbody = $view.find("tbody")[0]
       for thread in res.data
         tr = document.createElement("tr")
         tr.className = "open_in_rcrx"
@@ -175,22 +175,22 @@ app.view.open_board = (url) ->
         tr.appendChild(td)
 
         tbody.appendChild(tr)
-      $container.find("table").table_sort()
+      $view.find("table").table_sort()
 
       if res.status is "error"
-        $container
+        $view
           .find(".message_bar")
             .removeClass("loading")
             .addClass("error")
             .text("板の読み込みに失敗しました。" +
               "キャッシュに残っていたデータを表示します。")
       else
-        $container
+        $view
           .find(".message_bar")
             .removeClass("loading")
             .text("")
     else
-      $container
+      $view
         .find(".message_bar")
           .removeClass("loading")
           .addClass("error")
@@ -199,19 +199,19 @@ app.view.open_board = (url) ->
 app.view.open_thread = (url) ->
   url = app.url.fix(url)
   opened_at = Date.now()
-  $container = $("#template > .view_thread").clone()
-  $container
+  $view = $("#template > .view_thread").clone()
+  $view
     .attr("data-url", url)
 
-  app.view.module.bookmark_button($container)
-  app.view.module.link_button($container)
+  app.view.module.bookmark_button($view)
+  app.view.module.link_button($view)
 
-  $("#tab_b").tab("add", element: $container[0], title: url)
+  $("#tab_b").tab("add", element: $view[0], title: url)
   res_num = 0
 
   app.thread.get url, (result) ->
     if "data" of result
-      $container.attr("data-title", result.data.title)
+      $view.attr("data-title", result.data.title)
       for res in result.data.res
         res_num++
 
@@ -254,29 +254,29 @@ app.view.open_thread = (url) ->
             '<img class="beicon" src="http://$1" /><br />')
         article.appendChild(message)
 
-        $container[0].appendChild(article)
+        $view[0].appendChild(article)
 
-      $container
+      $view
         .closest(".tab")
         .tab("update_title",
-          tab_id: $container.attr("data-tab_id"),
+          tab_id: $view.attr("data-tab_id"),
           title: result.data.title
         )
 
       if result.status is "error"
-        $container
+        $view
           .find(".message_bar")
             .removeClass("loading")
             .addClass("error")
             .text("スレッドの読み込みに失敗しました。" +
               "キャッシュに残っていたデータを表示します。")
       else
-        $container
+        $view
           .find(".message_bar")
             .removeClass("loading")
             .text("")
     else
-      $container
+      $view
         .find(".message_bar")
           .removeClass("loading")
           .addClass("error")
@@ -285,8 +285,8 @@ app.view.open_thread = (url) ->
     app.history.add(url, (if "data" of result then result.data.title else url), opened_at)
 
 app.view.open_history = ->
-  $container = $("#template > .view_history").clone()
-  $("#tab_a").tab("add", element: $container[0], title: "閲覧履歴")
+  $view = $("#template > .view_history").clone()
+  $("#tab_a").tab("add", element: $view[0], title: "閲覧履歴")
 
   app.history.get undefined, 500, (res) ->
     if "data" of res
@@ -311,18 +311,18 @@ app.view.open_history = ->
           ":" + fn(date.getMinutes())
         tr.appendChild(td)
         frag.appendChild(tr)
-      $container.find("tbody").append(frag)
+      $view.find("tbody").append(frag)
 
 app.view.open_config = ->
   container_close = ->
-    $container.fadeOut "fast", -> $container.remove()
+    $view.fadeOut "fast", -> $view.remove()
 
   if $(".view_config:visible").length isnt 0
     app.log("debug", "app.view.open_config: 既に設定パネルが開かれています")
     return
 
-  $container = $("#template > .view_config").clone()
-  $container
+  $view = $("#template > .view_config").clone()
+  $view
     .bind("click", (e) ->
       if e.target.webkitMatchesSelector(".view_config")
         container_close()
@@ -330,7 +330,7 @@ app.view.open_config = ->
     .find("> div > .close_button")
       .bind("click", container_close)
 
-  $container.hide().appendTo(document.body).fadeIn("fast")
+  $view.hide().appendTo(document.body).fadeIn("fast")
 
 app.view.open_bookmark_source_selector = ->
   if $(".view_bookmark_source_selector:visible").length isnt 0
