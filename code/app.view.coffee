@@ -171,14 +171,27 @@ app.view.open_board = (url) ->
 
 app.view.open_thread = (url) ->
   url = app.url.fix(url)
+  title = null
   opened_at = Date.now()
   $container = $("#template > .view_thread").clone()
-  $container.attr("data-url", url)
+  $container
+    .attr("data-url", url)
+
+    .find(".button_bookmark")
+      .addClass(if app.bookmark.get(url) then "bookmarked")
+      .bind "click", ->
+        if $(this).hasClass("bookmarked")
+          app.bookmark.remove(url)
+        else
+          app.bookmark.add(url, title or url)
+        $(this).toggleClass("bookmarked")
+
   $("#tab_b").tab("add", {element: $container[0], title: url})
   res_num = 0
 
   app.thread.get url, (result) ->
     if "data" of result
+      title = result.data.title
       for res in result.data.res
         res_num++
 
