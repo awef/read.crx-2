@@ -20,10 +20,10 @@
       for win in windows
         for tab in win.tabs
           if tab.id isnt current_tab.id and tab.url is app_path
-            chrome.windows.update(win.id, {focused: true})
-            chrome.tabs.update(tab.id, {selected: true})
+            chrome.windows.update(win.id, focused: true)
+            chrome.tabs.update(tab.id, selected: true)
             if query isnt "app"
-              chrome.tabs.sendRequest(tab.id, {type: "open", query})
+              chrome.tabs.sendRequest(tab.id, type: "open", query)
             chrome.tabs.remove(current_tab.id)
             return
       history.pushState(null, null, "/app.html")
@@ -49,7 +49,7 @@ app.main = ->
     if $container.length is 1
       $container
         .closest(".tab")
-          .tab "select", tab_id: $container.attr("data-tab_id")
+          .tab("select", tab_id: $container.attr("data-tab_id"))
     else if message.url is "config"
       app.view.open_config()
     else if message.url is "history"

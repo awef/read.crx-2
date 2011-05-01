@@ -10,12 +10,10 @@ app.view.init = ->
   app.view.setup_resizer()
 
   $(document.documentElement)
-    .delegate(".open_in_rcrx", "click", (e) ->
+    .delegate ".open_in_rcrx", "click", (e) ->
       e.preventDefault()
-      app.message.send("open", {
+      app.message.send "open",
         url: this.href or this.getAttribute("data-href")
-      })
-    )
 
 app.view.load_sidemenu = (url) ->
   app.bbsmenu.get (res) ->
