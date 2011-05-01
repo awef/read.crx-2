@@ -85,13 +85,26 @@ app.message = {}
   listener_store = {}
 
   app.message.send = (type, data) ->
-    if type of listener_store
-      for listener in listener_store[type]
-        listener(app.deep_copy(data))
+    setTimeout (->
+      if type of listener_store
+        for listener in listener_store[type]
+          listener(app.deep_copy(data))
+      ), 0
 
   app.message.add_listener = (type, fn) ->
-    listener_store[type] or= []
-    listener_store[type].push(fn)
+    setTimeout (->
+      listener_store[type] or= []
+      listener_store[type].push(fn)
+      ), 0
+
+  app.message.remove_listener = (type, fn) ->
+    setTimeout (->
+      for val, key in listener_store[type]
+        if val is fn
+          listener_store[type].splice(key, 1)
+          console.log("deleted", listener_store[type].length)
+          return
+      ), 0
 )()
 
 `/** @namespace */`
