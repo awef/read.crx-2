@@ -1,0 +1,78 @@
+!!! 5
+%html{:"data-app-version" => "0.0"}
+  %head
+    %meta{:charset => "utf-8"}
+    %title read.crx 2
+    %link{:rel => "stylesheet", :href => "/app.css?v=0.0"}
+    %script{:src => "/lib/jquery/jquery-1.5.2.min.js?v=0.0"}
+    %script{:src => "/ui.js?v=0.0"}
+    %script{:src => "/app.js?v=0.0"}
+  %body
+    #app_notice_container
+    #body
+      #left_pane
+        %h3 read.crx
+        %ul
+          %li
+            %a{:class=>"open_in_rcrx", :"data-href"=>"bookmark"} ブックマーク
+          %li
+            %a{:class=>"open_in_rcrx", :"data-href"=>"history"} 閲覧履歴
+          %li
+            %a{:class=>"open_in_rcrx", :"data-href"=>"config"} 設定
+      #right_pane
+        #tab_a
+        #tab_resizer
+        #tab_b
+
+    #template{:hidden=>true}
+
+      .view_board
+        .message_bar.loading 読込中
+        %nav.nav_bar
+          %input.searchbox_thread_title{:type=>"search"}
+          .button.button_bookmark
+          .button.button_link
+        %table
+          %thead
+            %tr
+              %th ★
+              %th タイトル
+              %th{:"data-table_sort_type"=>"num"} レス数
+              %th{:"data-table_sort_type"=>"num"} 新着
+              %th{:"data-table_sort_type"=>"num"} 勢い
+              %th 作成日時
+          %tbody
+
+      .view_thread
+        .message_bar.loading 読込中
+        %nav.nav_bar
+          .button.button_bookmark
+          .button.button_link
+
+      .view_history{:"data-url"=>"hisotry"}
+        %table
+          %thead
+            %tr
+              %th タイトル
+              %th 閲覧日時
+          %tbody
+
+      .view_config
+        %div
+          %img.close_button{:src=>"/img/close_16x16.png"}
+          %h2 設定
+          %label
+            %input{:type=>"checkbox"} 対応しているサイトを自動的にread.crxで開く
+
+      .view_bookmark_source_selector
+        %div
+          read.crxのブックマークの保存先として使用するフォルダを指定して下さい
+          .node_list
+            %ul
+          %button.submit{:disabled=>true} 決定
+          %br
+          read.crx内で掲示板をブックマークに登録/削除すると、このフォルダ内にも掲示板のブックマークが追加/削除されます
+          %br
+          ブックマーク同期を利用して既読数を同期出来るようにするために、このフォルダ内の対応掲示板のブックマークは編集される場合が有ります
+          %br
+          このフォルダ内に非対応サイトのブックマークが有っても、それらは完全に無視されます

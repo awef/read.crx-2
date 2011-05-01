@@ -32,8 +32,8 @@ ${DBG_DIR}:
 ${DBG_DIR}/manifest.json: ${SRC_DIR}/manifest.json
 	cp ${SRC_DIR}/manifest.json ${DBG_DIR}/manifest.json
 
-${DBG_DIR}/app.html: ${SRC_DIR}/app.html
-	cp ${SRC_DIR}/app.html ${DBG_DIR}/app.html
+${DBG_DIR}/app.html: ${SRC_DIR}/app.haml
+	haml -q ${SRC_DIR}/app.haml ${DBG_DIR}/app.html
 
 ${DBG_DIR}/app.js: ${SRC_DIR}/app.coffee ${SRC_DIR}/app.*.coffee
 	coffee -b -p -c ${SRC_DIR}/app.coffee ${SRC_DIR}/app.*.coffee | cat > ${DBG_DIR}/app.js
