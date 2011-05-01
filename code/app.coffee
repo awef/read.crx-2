@@ -102,7 +102,6 @@ app.message = {}
       for val, key in listener_store[type]
         if val is fn
           listener_store[type].splice(key, 1)
-          console.log("deleted", listener_store[type].length)
           return
       ), 0
 )()
