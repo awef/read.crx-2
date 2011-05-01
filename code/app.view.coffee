@@ -15,6 +15,30 @@ app.view.init = ->
       app.message.send "open",
         url: this.href or this.getAttribute("data-href")
 
+app.view.module = {}
+app.view.module.bookmark_button = ($view) ->
+  url = $view.attr("data-url")
+  $button = $view.find(".button_bookmark")
+  if ///^http://\w///.test(url)
+    update = ->
+      if document.documentElement.contains($view[0])
+        if app.bookmark.get(url)
+          $button.addClass("bookmarked")
+        else
+          $button.removeClass("bookmarked")
+      else
+        app.message.remove_listener("bookmark_updated", update)
+
+    app.message.add_listener("bookmark_updated", update)
+
+    $button.bind "click", ->
+      if app.bookmark.get(url)
+        app.bookmark.remove(url)
+      else
+        app.bookmark.add(url, $view.attr("data-title") or url)
+  else
+    $button.remove()
+
 app.view.load_sidemenu = (url) ->
   app.bbsmenu.get (res) ->
     if "data" of res
@@ -66,7 +90,6 @@ app.view.setup_resizer = ->
 
 app.view.open_board = (url) ->
   url = app.url.fix(url)
-  title = null
   opened_at = Date.now()
 
   $container = $("#template > .view_board").clone()
@@ -83,23 +106,15 @@ app.view.open_board = (url) ->
           this.value = ""
           $container.find("table").table_search("clear")
 
-  if ///^http://\w///.test(url)
-    $container
-      .find(".button_bookmark")
-        .addClass(if app.bookmark.get(url) then "bookmarked")
-        .bind "click", ->
-          if $(this).hasClass("bookmarked")
-            app.bookmark.remove(url)
-          else
-            app.bookmark.add(url, title or url)
-          $(this).toggleClass("bookmarked")
+  app.view.module.bookmark_button($container)
 
+  if ///^http://\w///.test(url)
     $container
       .find(".button_link")
         .append($("<a>", href: url, target: "_blank"))
   else
     $container
-      .find(".button_bookmark, .button_link")
+      .find(".button_link")
         .remove()
 
   $("#tab_a").tab("add", {element: $container[0], title: url})
@@ -113,6 +128,7 @@ app.view.open_board = (url) ->
           tab_id: $container.attr("data-tab_id")
           title: title
         )
+      $container.attr("data-title", title)
     app.history.add(url, title or url, opened_at)
 
   app.board.get url, (res) ->
@@ -181,29 +197,20 @@ app.view.open_board = (url) ->
 
 app.view.open_thread = (url) ->
   url = app.url.fix(url)
-  title = null
   opened_at = Date.now()
   $container = $("#template > .view_thread").clone()
   $container
     .attr("data-url", url)
 
-  if ///^http://\w///.test(url)
-    $container
-      .find(".button_bookmark")
-        .addClass(if app.bookmark.get(url) then "bookmarked")
-        .bind "click", ->
-          if $(this).hasClass("bookmarked")
-            app.bookmark.remove(url)
-          else
-            app.bookmark.add(url, title or url)
-          $(this).toggleClass("bookmarked")
+  app.view.module.bookmark_button($container)
 
+  if ///^http://\w///.test(url)
     $container
       .find(".button_link")
         .append($("<a>", href: url, target: "_blank"))
   else
     $container
-      .find(".button_bookmark, .button_link")
+      .find(".button_link")
         .remove()
 
   $("#tab_b").tab("add", {element: $container[0], title: url})
@@ -211,7 +218,7 @@ app.view.open_thread = (url) ->
 
   app.thread.get url, (result) ->
     if "data" of result
-      title = result.data.title
+      $container.attr("data-title", result.data.title)
       for res in result.data.res
         res_num++
 
