@@ -59,8 +59,8 @@
             if next.length
               tab_select.call(that, {tab_id: next.attr("data-tab_id")})
           )
-          .end()
-        .remove()
+        .end()
+      .remove()
 
   # prop.tab_id
   tab_select = (prop) ->
