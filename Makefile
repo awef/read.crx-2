@@ -58,6 +58,6 @@ ${DBG_DIR}/test/: ${QUNIT_FILES}
 	
 	cp -r ${SRC_DIR}/test/qunit/ ${DBG_DIR}/test/qunit/
 
-${DBG_DIR}/test/test.js: ${DBG_DIR}/test/
-	coffee -b -p -c ${SRC_DIR}/test/ | cat > ${DBG_DIR}/test/test.js
+${DBG_DIR}/test/test.js: ${DBG_DIR}/test/ ${SRC_DIR}/test/*.coffee
+	coffee -b -p -c ${SRC_DIR}/test/*.coffee | cat > ${DBG_DIR}/test/test.js
 
