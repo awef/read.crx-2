@@ -25,7 +25,7 @@ app.board.get = (url, callback) ->
           title: bookmark.title
           url: bookmark.url
           res_count: bookmark.res_count or 0 #Todo
-          created_at: +/// /(\d+)/$///.exec(bookmark.url)[1]
+          created_at: +/// /(\d+)/$///.exec(bookmark.url)[1] * 1000
     callback(status: "success", data: board)
     return
 
