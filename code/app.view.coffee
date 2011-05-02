@@ -211,6 +211,8 @@ app.view.open_thread = (url) ->
   app.thread.get url, (result) ->
     if "data" of result
       $view.attr("data-title", result.data.title)
+
+      frag = document.createDocumentFragment()
       for res in result.data.res
         res_num++
 
@@ -253,7 +255,9 @@ app.view.open_thread = (url) ->
             '<img class="beicon" src="http://$1" /><br />')
         article.appendChild(message)
 
-        $view[0].appendChild(article)
+        frag.appendChild(article)
+
+      $view.find(".content").append(frag)
 
       $view
         .closest(".tab")

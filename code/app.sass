@@ -28,7 +28,8 @@ $z-index_modal: 5
   :height 100%
   :background-image -webkit-radial-gradient(#666, #333)
 
-@mixin message_bar
+@mixin tabbed_view
+  :overflow-y auto
   .message_bar
     :font-size 13px
     &.loading
@@ -41,6 +42,31 @@ $z-index_modal: 5
       :padding 3px
       :background-color #ecc
       :border 1px solid #ebb
+  .nav_bar
+    :overflow hidden
+    *
+      :float left
+      :margin 3px
+    input
+      :border 1px solid #ccc
+      :height 19px
+      :padding 0
+    .button
+      :width 19px
+      :height 19px
+      :border 1px solid #ccc
+      :cursor pointer
+      &.button_bookmark
+        :background-image url(/img/star_19x19.png)
+        &.bookmarked
+          :background-image url(/img/star2_19x19.png)
+          :-webkit-box-shadow 0 0 3px yellow inset
+      &.button_link
+        :background-image url(/img/link_19x19.png)
+        a
+          :display block
+          :width 100%
+          :height 100%
 
 @mixin content_table
   table
@@ -66,11 +92,10 @@ $z-index_modal: 5
     :white-space nowrap
 
 @mixin view_board
+  @include tabbed_view
   @include ui_table_sort
   @include ui_table_search
-  @include message_bar
   @include content_table
-  :overflow-y auto
   th
     &:nth-child(1)
       :width 1em
@@ -93,9 +118,8 @@ $z-index_modal: 5
   :overflow-y auto
 
 @mixin view_thread
-  @include message_bar
+  @include tabbed_view
   :font-size 14px
-  :overflow-y auto
   article
     :margin 5px
     .num
@@ -148,32 +172,6 @@ $z-index_modal: 5
     :border-bottom 2px solid #eee
   label
     :cursor pointer
-
-.nav_bar
-  :overflow hidden
-  *
-    :float left
-    :margin 3px
-  input
-    :border 1px solid #ccc
-    :height 19px
-    :padding 0
-  .button
-    :width 19px
-    :height 19px
-    :border 1px solid #ccc
-    :cursor pointer
-    &.button_bookmark
-      :background-image url(/img/star_19x19.png)
-      &.bookmarked
-        :background-image url(/img/star2_19x19.png)
-        :-webkit-box-shadow 0 0 3px yellow inset
-    &.button_link
-      :background-image url(/img/link_19x19.png)
-      a
-        :display block
-        :width 100%
-        :height 100%
 
 html, body, #body
   :position relative
