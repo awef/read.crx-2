@@ -38,15 +38,20 @@ module("app.message")
 test "test", 3, ->
   app.message.add_listener "__test1", (message) ->
     strictEqual(message, "test", "基本送信テスト")
+    start()
   app.message.send("__test1", "test")
+  stop()
 
   app.message.add_listener "__test2", (message) ->
     deepEqual(message, {test: 123}, "メッセージの編集テスト")
     message.hoge = 345
+    start()
   app.message.add_listener "__test2", (message) ->
     deepEqual(message, {test: 123}, "メッセージの編集テスト")
     message.hoge = 345
+    start()
   app.message.send("__test2", test: 123)
+  stop()
 
 
 module("app.url")
