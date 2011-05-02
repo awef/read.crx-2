@@ -5,3 +5,4 @@ rsvg -w 16 -h 16 image/svg/close.svg code/img/close_16x16.png
 rsvg -w 19 -h 19 image/svg/star.svg code/img/star_19x19.png
 rsvg -w 19 -h 19 image/svg/star2.svg code/img/star2_19x19.png
 rsvg -w 19 -h 19 image/svg/link.svg code/img/link_19x19.png
+rsvg -w 19 -h 19 image/svg/search2.svg code/img/search2_19x19.png
