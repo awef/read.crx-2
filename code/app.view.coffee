@@ -284,11 +284,9 @@ app.view.open_thread = (url) ->
 
       $view
         .closest(".tab")
-        .tab("update_title",
-          tab_id: $view.attr("data-tab_id"),
-          title: result.data.title
-        )
-
+          .tab "update_title",
+            tab_id: $view.attr("data-tab_id"),
+            title: result.data.title
 
     app.history.add(url, (if "data" of result then result.data.title else url), opened_at)
 
