@@ -132,6 +132,15 @@ app.view.open_board = (url) ->
     app.history.add(url, title or url, opened_at)
 
   app.board.get url, (res) ->
+    $message_bar = $view.find(".message_bar").removeClass("loading")
+    if res.status is "error"
+      text = "板の読み込みに失敗しました。"
+      if "data" of res
+        text += "キャッシュに残っていたデータを表示します。"
+      $message_bar.addClass("error").text(text)
+    else
+      $message_bar.text("")
+
     fn = (a) -> (if a < 10 then "0" else "") + a
     now = Date.now()
 
@@ -176,25 +185,6 @@ app.view.open_board = (url) ->
         tbody.appendChild(tr)
       $view.find("table").table_sort()
 
-      if res.status is "error"
-        $view
-          .find(".message_bar")
-            .removeClass("loading")
-            .addClass("error")
-            .text("板の読み込みに失敗しました。" +
-              "キャッシュに残っていたデータを表示します。")
-      else
-        $view
-          .find(".message_bar")
-            .removeClass("loading")
-            .text("")
-    else
-      $view
-        .find(".message_bar")
-          .removeClass("loading")
-          .addClass("error")
-          .text("板の読み込みに失敗しました。")
-
 app.view.open_thread = (url) ->
   url = app.url.fix(url)
   opened_at = Date.now()
@@ -209,6 +199,15 @@ app.view.open_thread = (url) ->
   res_num = 0
 
   app.thread.get url, (result) ->
+    $message_bar = $view.find(".message_bar").removeClass("loading")
+    if result.status is "error"
+      text = "スレッドの読み込みに失敗しました。"
+      if "data" of result
+        text += "キャッシュに残っていたデータを表示します。"
+      $message_bar.addClass("error").text(text)
+    else
+      $message_bar.text("")
+
     if "data" of result
       $view.attr("data-title", result.data.title)
 
@@ -290,24 +289,6 @@ app.view.open_thread = (url) ->
           title: result.data.title
         )
 
-      if result.status is "error"
-        $view
-          .find(".message_bar")
-            .removeClass("loading")
-            .addClass("error")
-            .text("スレッドの読み込みに失敗しました。" +
-              "キャッシュに残っていたデータを表示します。")
-      else
-        $view
-          .find(".message_bar")
-            .removeClass("loading")
-            .text("")
-    else
-      $view
-        .find(".message_bar")
-          .removeClass("loading")
-          .addClass("error")
-          .text("スレッドの読み込みに失敗しました。")
 
     app.history.add(url, (if "data" of result then result.data.title else url), opened_at)
 
