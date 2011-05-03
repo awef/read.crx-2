@@ -268,6 +268,7 @@ app.view.open_thread = (url) ->
             if res.offsetTop > bottom
               this.last = res_num - 1
               break
+
           if this.read < this.last
             this.read = this.last
           console.log(this.last, this.read, this.received)
