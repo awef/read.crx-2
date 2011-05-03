@@ -189,8 +189,7 @@ app.view.open_thread = (url) ->
   url = app.url.fix(url)
   opened_at = Date.now()
   $view = $("#template > .view_thread").clone()
-  $view
-    .attr("data-url", url)
+  $view.attr("data-url", url)
 
   app.view.module.bookmark_button($view)
   app.view.module.link_button($view)
