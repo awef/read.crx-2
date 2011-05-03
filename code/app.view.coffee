@@ -257,7 +257,31 @@ app.view.open_thread = (url) ->
 
         frag.appendChild(article)
 
-      $view.find(".content").append(frag)
+      read_state =
+        received: result.data.res.length
+        read: 0
+        last: 0
+        update: ->
+          this.last = this.received
+          container = $view[0].querySelector(".content")
+          bottom = container.scrollTop + container.clientHeight
+
+          for res, res_num in container.children
+            if res.offsetTop > bottom
+              this.last = res_num - 1
+              break
+          if this.read < this.last
+            this.read = this.last
+          console.log(this.last, this.read, this.received)
+
+      $view
+        .find(".content")
+          .append(frag)
+          .bind "scroll", ->
+            read_state.update()
+        .end()
+        .bind "tab_removed", ->
+          read_state.update()
 
       $view
         .closest(".tab")
