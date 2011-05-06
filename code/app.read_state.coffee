@@ -2,6 +2,7 @@
 app.read_state = {}
 
 app.read_state.get = (url, callback) ->
+  url = app.url.fix(url)
   req = webkitIndexedDB.open("read_state")
   req.onerror = ->
     callback(status: "error")
@@ -30,10 +31,55 @@ app.read_state.get = (url, callback) ->
         callback(status: "error")
 
 app.read_state.get_by_board = (board_url, callback) ->
-  app.log("warn", "app.read_state.get_by_boardは未実装です")
-  callback(status: "error")
+  $.Deferred (deferred) ->
+      req = webkitIndexedDB.open("read_state")
+      req.onerror = ->
+        app.log("error", "app.read_state.set: データベースへの接続に失敗")
+        deferred.reject()
+      req.onsuccess = ->
+        deferred.resolve(req.result)
+
+    .pipe (db) ->
+      $.Deferred (deferred) ->
+        if db.version is "1"
+          deferred.resolve(db)
+        else
+          deferred.reject(db)
+
+    .pipe (db) ->
+      $.Deferred (deferred) ->
+        data = []
+
+        transaction = db.transaction(["read_state"],
+          webkitIDBTransaction.READ_ONLY)
+        transaction.onerror = ->
+          app.log("error", "app.read_state.get_by_board:
+ トランザクション中断")
+          deferred.reject(db)
+        transaction.oncomplete = ->
+          deferred.resolve(db, data)
+
+        object_store = transaction.objectStore("read_state")
+        req = object_store
+          .index("board_url")
+          .openCursor(webkitIDBKeyRange.only(board_url))
+        req.onsuccess = ->
+          cursor = req.result
+          if cursor
+            data.push(cursor.value)
+            cursor.continue()
+
+    .done (db, data) ->
+      callback(status: "success", data: data)
+
+    .fail (db) ->
+      callback(status: "error")
+
+    .always (db) ->
+      db and db.close()
 
 app.read_state.set = (url, read_state) ->
+  url = app.url.fix(url)
   $.Deferred (deferred) ->
       if (
         typeof url is "string" and
@@ -42,8 +88,7 @@ app.read_state.set = (url, read_state) ->
         typeof read_state.received is "number"
       )
         read_state.url = url
-        #todo
-        read_state.board_url = null
+        read_state.board_url = app.url.thread_to_board(url)
         deferred.resolve()
       else
         app.log("error", "app.read_state.set: 引数が不正です", arguments)
@@ -68,6 +113,7 @@ app.read_state.set = (url, read_state) ->
           deferred.reject(db)
         req.onsuccess = ->
           db.createObjectStore("read_state", keyPath: "url")
+            .createIndex("board_url", "board_url")
           app.log("info", "app.read_state.set: db.setVersion成功(%s -> %s)", db.version, "1")
           deferred.resolve(db)
       else
@@ -82,9 +128,7 @@ app.read_state.set = (url, read_state) ->
         deferred.reject(db)
       transaction.oncomplete = ->
         deferred.resolve(db)
-      transaction
-        .objectStore("read_state")
-          .put(read_state)
+      transaction.objectStore("read_state").put(read_state)
       deferred
 
     .always (db) ->
