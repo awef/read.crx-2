@@ -197,6 +197,45 @@ app.view.open_thread = (url) ->
   $("#tab_b").tab("add", element: $view[0], title: url)
   res_num = 0
 
+  deferred_draw_thread = $.Deferred()
+  deferred_get_read_state = $.Deferred (deferred) ->
+    app.read_state.get url, (res) ->
+      if res.status is "success"
+        deferred.resolve(res.data)
+      else
+        deferred.reject()
+
+  read_state =
+    received: 0
+    read: 0
+    last: 0
+    get: ->
+      received: this.received, read: this.read, last: this.last
+    update: ->
+      this.last = this.received
+      container = $view[0].querySelector(".content")
+      bottom = container.scrollTop + container.clientHeight
+
+      for res, res_num in container.children
+        if res.offsetTop > bottom
+          this.last = res_num - 1
+          break
+
+      if this.read < this.last
+        this.read = this.last
+
+  $.when(deferred_get_read_state, deferred_draw_thread)
+    .done (tmp_read_state, thread) ->
+      console.log "done", arguments
+      read_state.received = thread.res.length
+      read_state.read = tmp_read_state.read
+      read_state.last = tmp_read_state.last
+      content = $view.find(".content")[0]
+      last_res = content.children[read_state.last - 1]
+      if last_res
+        console.log last_res.offsetTop
+        content.scrollTop = last_res.offsetTop
+
   app.thread.get url, (result) ->
     $message_bar = $view.find(".message_bar").removeClass("loading")
     if result.status is "error"
@@ -255,24 +294,6 @@ app.view.open_thread = (url) ->
 
         frag.appendChild(article)
 
-      read_state =
-        received: result.data.res.length
-        read: 0
-        last: 0
-        update: ->
-          this.last = this.received
-          container = $view[0].querySelector(".content")
-          bottom = container.scrollTop + container.clientHeight
-
-          for res, res_num in container.children
-            if res.offsetTop > bottom
-              this.last = res_num - 1
-              break
-
-          if this.read < this.last
-            this.read = this.last
-          console.log(this.last, this.read, this.received)
-
       $view
         .find(".content")
           .append(frag)
@@ -281,6 +302,7 @@ app.view.open_thread = (url) ->
         .end()
         .bind "tab_removed", ->
           read_state.update()
+          app.read_state.set(url, read_state.get())
 
       $view
         .closest(".tab")
@@ -288,6 +310,7 @@ app.view.open_thread = (url) ->
             tab_id: $view.attr("data-tab_id"),
             title: result.data.title
 
+      deferred_draw_thread.resolve(result.data)
     app.history.add(url, (if "data" of result then result.data.title else url), opened_at)
 
 app.view.open_history = ->
