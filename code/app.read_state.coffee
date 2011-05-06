@@ -95,41 +95,38 @@ app.read_state.set = (url, read_state) ->
         deferred.reject()
 
     .pipe ->
-      deferred = $.Deferred()
-      req = webkitIndexedDB.open("read_state")
-      req.onerror = ->
-        app.log("error", "app.read_state.set: データベースへの接続に失敗")
-        deferred.reject()
-      req.onsuccess = ->
-        deferred.resolve(req.result)
-      deferred
-
-    .pipe (db) ->
-      deferred = $.Deferred()
-      if db.version isnt "1"
-        req = db.setVersion("1")
+      $.Deferred (deferred) ->
+        req = webkitIndexedDB.open("read_state")
         req.onerror = ->
-          app.log("error", "app.read_state.set: db.setVersion失敗(%s -> %s)", db.version, "1")
-          deferred.reject(db)
+          app.log("error", "app.read_state.set: データベースへの接続に失敗")
+          deferred.reject()
         req.onsuccess = ->
-          db.createObjectStore("read_state", keyPath: "url")
-            .createIndex("board_url", "board_url")
-          app.log("info", "app.read_state.set: db.setVersion成功(%s -> %s)", db.version, "1")
-          deferred.resolve(db)
-      else
-        deferred.resolve(db)
-      deferred
+          deferred.resolve(req.result)
 
     .pipe (db) ->
-      deferred = $.Deferred()
-      transaction = db.transaction(["read_state"], webkitIDBTransaction.READ_WRITE)
-      transaction.onerror = ->
-        app.log("error", "app.read_state.set: 保存失敗")
-        deferred.reject(db)
-      transaction.oncomplete = ->
-        deferred.resolve(db)
-      transaction.objectStore("read_state").put(read_state)
-      deferred
+      $.Deferred (deferred) ->
+        if db.version is "1"
+          deferred.resolve(db)
+        else
+          req = db.setVersion("1")
+          req.onerror = ->
+            app.log("error", "app.read_state.set: db.setVersion失敗(%s -> %s)", db.version, "1")
+            deferred.reject(db)
+          req.onsuccess = ->
+            db.createObjectStore("read_state", keyPath: "url")
+              .createIndex("board_url", "board_url")
+            app.log("info", "app.read_state.set: db.setVersion成功(%s -> %s)", db.version, "1")
+            deferred.resolve(db)
+
+    .pipe (db) ->
+      $.Deferred (deferred) ->
+        transaction = db.transaction(["read_state"], webkitIDBTransaction.READ_WRITE)
+        transaction.onerror = ->
+          app.log("error", "app.read_state.set: 保存失敗")
+          deferred.reject(db)
+        transaction.oncomplete = ->
+          deferred.resolve(db)
+        transaction.objectStore("read_state").put(read_state)
 
     .always (db) ->
       db and db.close()
