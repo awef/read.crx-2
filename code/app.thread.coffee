@@ -32,10 +32,9 @@ app.thread.get = (url, callback) ->
         Date.now() - cache.data.last_updated < 1000 * 60)
       app.log("debug", "app.thread.get:
  期限内のキャッシュが見つかりました。キャッシュを返します。")
-      callback(
+      callback
         status: "success"
         data: app.thread.parse(url, cache.data.data)
-      )
     else
       app.log("debug", "app.thread.get:
  期限内のキャッシュが見つかりませんでした。datの取得を試みます。")
@@ -52,29 +51,26 @@ app.thread.get = (url, callback) ->
 
             last_modified = new Date(xhr.getResponseHeader("Last-Modified") or "dummy").getTime()
             unless isNaN(last_modified)
-              app.cache.set(
+              app.cache.set
                 url: xhr_path
                 data: xhr.responseText
                 last_updated: Date.now()
                 last_modified: last_modified
-              )
           else if cache.status is "success"
             if xhr.status is 304
               app.log("debug", "app.thread.get:
  datの取得に成功しました（更新無し）")
-              callback(
+              callback
                 status: "success"
                 data: app.thread.parse(url, cache.data.data)
-              )
               cache.data.last_updated = Date.now()
               app.cache.set(cache.data)
             else
               app.log("debug", "app.thread.get:
  datの取得に失敗しました。キャッシュを返します。")
-              callback(
+              callback
                 status: "error"
                 data: app.thread.parse(url, cache.data.data)
-              )
           else
             app.log("debug", "app.thread.get:
  datの取得に失敗しました。")
@@ -109,12 +105,11 @@ app.thread._parse_ch = (text) ->
     if first_flg
       thread.title = reg_res[5]
       first_flg = false
-    thread.res.push(
+    thread.res.push
       name: reg_res[1]
       mail: reg_res[2]
       message: reg_res[4]
       other: reg_res[3]
-    )
   if thread.res.length > 0 then thread else null
 
 app.thread._parse_machi = (text) ->
@@ -125,21 +120,19 @@ app.thread._parse_machi = (text) ->
   res_count = 0
   while (reg_res = reg.exec(text))
     while (++res_count isnt +reg_res[1])
-      thread.res.push(
+      thread.res.push
         name: "あぼーん"
         mail: "あぼーん"
         message: "あぼーん"
         other: "あぼーん"
-      )
 
     if res_count is 1
       thread.title = reg_res[6]
-    thread.res.push(
+    thread.res.push
       name: reg_res[2]
       mail: reg_res[3]
       message: reg_res[5]
       other: reg_res[4]
-    )
 
   if thread.res.length > 0 then thread else null
 
@@ -151,19 +144,17 @@ app.thread._parse_jbbs = (text) ->
   res_count = 0
   while (reg_res = reg.exec(text))
     while (++res_count isnt +reg_res[1])
-      thread.res.push(
+      thread.res.push
         name: "あぼーん"
         mail: "あぼーん"
         message: "あぼーん"
         other: "あぼーん"
-      )
 
     if res_count is 1
       thread.title = reg_res[6]
-    thread.res.push(
+    thread.res.push
       name: reg_res[2]
       mail: reg_res[3]
       message: reg_res[5]
       other: reg_res[4] + " ID:" + reg_res[7]
-    )
   if thread.res.length > 0 then thread else null
