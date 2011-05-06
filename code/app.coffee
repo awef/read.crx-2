@@ -157,6 +157,11 @@ app.url.guess_type = (url) ->
   else
     return {type: "unknown", bbs_type: "unknown"};
 
+app.url.thread_to_board = (thread_url) ->
+  app.url.fix(thread_url)
+    .replace(///^http://([\w\.]+)/(?:test|bbs)/read\.cgi/(\w+)/\d+/$///, "http://$1/$2/")
+    .replace(///^http://jbbs\.livedoor\.jp/bbs/read\.cgi/(\w+)/(\d+)/\d+/$///, "http://jbbs.livedoor.jp/$1/$2/")
+
 `/** @namespace */`
 app.config =
   set: (key, val) ->
