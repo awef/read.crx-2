@@ -89,6 +89,24 @@ test "app.url.fix", ->
   strictEqual(app.url.fix("history"), "history", "history")
   strictEqual(app.url.fix("kakikomi_log"), "kakikomi_log", "kakikomi_log")
 
+test "app.url.thread_to_board", ->
+  fn = (thread_url, board_url, message) ->
+    strictEqual(app.url.thread_to_board(thread_url), board_url, message)
+
+  fn("", "", "空文字列")
+  fn("http://qb5.2ch.net/test/read.cgi/operate/1304609594/",
+    "http://qb5.2ch.net/operate/", "2ch")
+  fn("http://www.machi.to/bbs/read.cgi/tawara/511234524356/",
+    "http://www.machi.to/tawara/", "まちBBS")
+  fn("http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273732874/",
+    "http://jbbs.livedoor.jp/computer/42710/", "したらば")
+  fn("http://pele.bbspink.com/test/read.cgi/erobbs/9241104701/",
+    "http://pele.bbspink.com/erobbs/", "BBSPINK")
+  fn("http://bbs.nicovideo.jp/test/read.cgi/bugreport/1297431393/",
+    "http://bbs.nicovideo.jp/bugreport/", "ニコニコ動画掲示板")
+  fn("http://ex14.vip2ch.com/test/read.cgi/part4vip/1300351822/",
+    "http://ex14.vip2ch.com/part4vip/", "パー速VIP")
+
 test "app.url.guess_type", ->
   hoge = (url, expected) ->
     deepEqual(app.url.guess_type(url), expected, url)
