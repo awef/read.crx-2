@@ -226,14 +226,12 @@ app.view.open_thread = (url) ->
 
   $.when(deferred_get_read_state, deferred_draw_thread)
     .done (tmp_read_state, thread) ->
-      console.log "done", arguments
       read_state.received = thread.res.length
       read_state.read = tmp_read_state.read
       read_state.last = tmp_read_state.last
       content = $view.find(".content")[0]
       last_res = content.children[read_state.last - 1]
       if last_res
-        console.log last_res.offsetTop
         content.scrollTop = last_res.offsetTop
 
   app.thread.get url, (result) ->
