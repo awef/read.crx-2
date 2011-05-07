@@ -224,6 +224,28 @@ app.view.open_thread = (url) ->
       if this.read < this.last
         this.read = this.last
 
+  deferred_get_read_state
+    .done (tmp_read_state) ->
+      read_state.received = tmp_read_state.length
+      read_state.read = tmp_read_state.read
+      read_state.last = tmp_read_state.last
+    .always ->
+      deferred_draw_thread
+        .done (thread) ->
+          read_state.received = thread.res.length
+          content = $view.find(".content")[0]
+          last_res = content.children[read_state.last - 1]
+          if last_res
+            content.scrollTop = last_res.offsetTop
+          $view
+            .find(".content")
+              .bind "scroll", ->
+                read_state.update()
+            .end()
+            .bind "tab_removed", ->
+              read_state.update()
+              app.read_state.set(url, read_state.get())
+
   $.when(deferred_get_read_state, deferred_draw_thread)
     .done (tmp_read_state, thread) ->
       read_state.received = thread.res.length
@@ -295,12 +317,6 @@ app.view.open_thread = (url) ->
       $view
         .find(".content")
           .append(frag)
-          .bind "scroll", ->
-            read_state.update()
-        .end()
-        .bind "tab_removed", ->
-          read_state.update()
-          app.read_state.set(url, read_state.get())
 
       $view
         .closest(".tab")
