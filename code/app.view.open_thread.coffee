@@ -59,16 +59,6 @@ app.view.open_thread = (url) ->
               read_state.update()
               app.read_state.set(url, read_state.get())
 
-  $.when(deferred_get_read_state, deferred_draw_thread)
-    .done (tmp_read_state, thread) ->
-      read_state.received = thread.res.length
-      read_state.read = tmp_read_state.read
-      read_state.last = tmp_read_state.last
-      content = $view.find(".content")[0]
-      last_res = content.children[read_state.last - 1]
-      if last_res
-        content.scrollTop = last_res.offsetTop
-
   app.thread.get url, (result) ->
     $message_bar = $view.find(".message_bar").removeClass("loading")
     if result.status is "error"
