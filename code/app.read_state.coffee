@@ -78,17 +78,16 @@ app.read_state.get_by_board = (board_url, callback) ->
     .always (db) ->
       db and db.close()
 
-app.read_state.set = (url, read_state) ->
-  url = app.url.fix(url)
+app.read_state.set = (read_state) ->
   $.Deferred (deferred) ->
       if (
-        typeof url is "string" and
+        typeof read_state.url is "string" and
         typeof read_state.last is "number" and
         typeof read_state.read is "number" and
         typeof read_state.received is "number"
       )
-        read_state.url = url
-        read_state.board_url = app.url.thread_to_board(url)
+        read_state.url = app.url.fix(read_state.url)
+        read_state.board_url = app.url.thread_to_board(read_state.url)
         deferred.resolve()
       else
         app.log("error", "app.read_state.set: 引数が不正です", arguments)

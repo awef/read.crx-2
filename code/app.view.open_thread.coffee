@@ -23,7 +23,7 @@ app.view.open_thread = (url) ->
     read: 0
     last: 0
     get: ->
-      received: this.received, read: this.read, last: this.last
+      received: this.received, read: this.read, last: this.last, url: url
     update: ->
       this.last = this.received
       container = $view[0].querySelector(".content")
@@ -57,7 +57,7 @@ app.view.open_thread = (url) ->
             .end()
             .bind "tab_removed", ->
               read_state.update()
-              app.read_state.set(url, read_state.get())
+              app.read_state.set(read_state.get())
 
   app.thread.get url, (result) ->
     $message_bar = $view.find(".message_bar").removeClass("loading")
