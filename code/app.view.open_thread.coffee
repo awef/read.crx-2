@@ -111,7 +111,7 @@ app.view.open_thread = (url) ->
           .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
           .replace(/(h)?(ttps?:\/\/[\w\-.!~*'();/?:@&=+$,%#]+)/g,
             '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
-          .replace(/^\s*sssp:\/\/(img\.2ch\.net\/ico\/[\w\-_]+\.gif)\s*<br>/,
+          .replace(///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///,
             '<img class="beicon" src="http://$1" /><br />')
         article.appendChild(message)
 
