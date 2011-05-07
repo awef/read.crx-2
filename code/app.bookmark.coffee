@@ -100,7 +100,7 @@ app.bookmark = {}
 
     url = app.url.fix(url)
     unless url of bookmark_data_index_url
-      chrome.bookmarks.create(parentId: source_id, url, title)
+      chrome.bookmarks.create({parentId: source_id, url, title})
     else
       app.log("error", "app.bookmark.add: 既にブックマークされいてるURLをブックマークに追加しようとしています", arguments)
 
