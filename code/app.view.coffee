@@ -131,25 +131,47 @@ app.view.open_board = (url) ->
       $view.attr("data-title", title)
     app.history.add(url, title or url, opened_at)
 
-  app.board.get url, (res) ->
-    $message_bar = $view.find(".message_bar").removeClass("loading")
-    if res.status is "error"
-      text = "板の読み込みに失敗しました。"
+  deferred_get_read_state = $.Deferred (deferred) ->
+    app.read_state.get_by_board url, (res) ->
+      if res.status is "success"
+        deferred.resolve(res.data)
+      else
+        deferred.reject()
+
+  deferred_board_get = $.Deferred (deferred) ->
+    app.board.get url, (res) ->
+      $message_bar = $view.find(".message_bar").removeClass("loading")
+      if res.status is "error"
+        text = "板の読み込みに失敗しました。"
+        if "data" of res
+          text += "キャッシュに残っていたデータを表示します。"
+        $message_bar.addClass("error").text(text)
+      else
+        $message_bar.text("")
+
       if "data" of res
-        text += "キャッシュに残っていたデータを表示します。"
-      $message_bar.addClass("error").text(text)
-    else
-      $message_bar.text("")
+        deferred.resolve(res.data)
+      else
+        deferred.reject()
 
-    fn = (a) -> (if a < 10 then "0" else "") + a
-    now = Date.now()
+  $.when(deferred_get_read_state, deferred_board_get)
+    .done (array_of_read_state, board) ->
+      read_state_index = {}
+      for read_state, key in array_of_read_state
+        read_state_index[read_state.url] = key
 
-    if "data" of res
+      fn = (a) -> (if a < 10 then "0" else "") + a
+      now = Date.now()
+
       tbody = $view.find("tbody")[0]
-      for thread in res.data
+      for thread in board
         tr = document.createElement("tr")
         tr.className = "open_in_rcrx"
         tr.setAttribute("data-href", thread.url)
+        if thread.url of read_state_index
+          read_state = array_of_read_state[read_state_index[thread.url]]
+        else
+          read_state = null
 
         td = document.createElement("td")
         if app.bookmark.get(thread.url)
@@ -165,6 +187,8 @@ app.view.open_board = (url) ->
         tr.appendChild(td)
 
         td = document.createElement("td")
+        if read_state and thread.res_count > read_state.read
+          td.innerText = thread.res_count - read_state.read
         tr.appendChild(td)
 
         td = document.createElement("td")
