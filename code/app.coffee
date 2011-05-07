@@ -23,7 +23,7 @@
             chrome.windows.update(win.id, focused: true)
             chrome.tabs.update(tab.id, selected: true)
             if query isnt "app"
-              chrome.tabs.sendRequest(tab.id, type: "open", query)
+              chrome.tabs.sendRequest(tab.id, {type: "open", query})
             chrome.tabs.remove(current_tab.id)
             return
       history.pushState(null, null, "/app.html")
