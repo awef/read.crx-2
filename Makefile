@@ -41,7 +41,7 @@ ${DBG_DIR}/app.js: ${SRC_DIR}/app.coffee ${SRC_DIR}/app.*.coffee ${SRC_DIR}/app.
 ${DBG_DIR}/ui.js: ${SRC_DIR}/ui.*.coffee
 	coffee -b -p -c ${SRC_DIR}/ui.*.coffee | cat > ${DBG_DIR}/ui.js
 
-${DBG_DIR}/app.css: ${SRC_DIR}/app.sass
+${DBG_DIR}/app.css: ${SRC_DIR}/app.sass ${SRC_DIR}/sass/*.sass
 	sass --style compressed --no-cache ${SRC_DIR}/app.sass ${DBG_DIR}/app.css
 
 ${DBG_DIR}/lib/: ${LIB_FILES}
