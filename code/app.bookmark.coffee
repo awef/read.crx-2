@@ -13,7 +13,7 @@ app.bookmark = {}
     guess_res = app.url.guess_type(bookmark_node.url)
     if guess_res.type is "board" or guess_res.type is "thread"
       url = app.url.fix(bookmark_node.url)
-      bookmark_data.push
+      tmp_bookmark =
         type: guess_res.type
         bbs_type: guess_res.bbs_type
         url: url
@@ -21,6 +21,13 @@ app.bookmark = {}
         res_count: null
         read: null
         last: null
+      tmp = /#received=(\d+)&read=(\d+)&last=(\d+)$/.exec(bookmark_node.url)
+      if tmp
+        tmp_bookmark.read_state =
+          received: +tmp[1]
+          read: +tmp[2]
+          last: +tmp[3]
+      bookmark_data.push(tmp_bookmark)
       bookmark_data_index_url[url] = bookmark_data.length - 1
       bookmark_data_index_id[bookmark_node.id] = bookmark_data.length - 1
       index_url_id[url] = bookmark_node.id
