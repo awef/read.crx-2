@@ -126,6 +126,9 @@ $z-index_modal: 5
 @mixin view_bookmark
   @include content_table
   :overflow-y auto
+  td
+    &:nth-child(2), &:nth-child(3), &:nth-child(4)
+      :text-align right
 
 @mixin view_thread
   @include tabbed_view
