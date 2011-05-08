@@ -37,6 +37,8 @@ app.view.open_thread = (url) ->
       if this.read < this.last
         this.read = this.last
 
+      app.read_state.set(read_state.get())
+
   deferred_get_read_state
     .done (tmp_read_state) ->
       read_state.received = tmp_read_state.length
@@ -45,6 +47,13 @@ app.view.open_thread = (url) ->
     .always ->
       deferred_draw_thread
         .done (thread) ->
+          scroll_flag = false
+          read_state_watcher = setInterval((->
+            if scroll_flag
+              read_state.update()
+              scroll_flag = false
+          ), 250)
+
           read_state.received = thread.res.length
           content = $view.find(".content")[0]
           last_res = content.children[read_state.last - 1]
@@ -53,11 +62,11 @@ app.view.open_thread = (url) ->
           $view
             .find(".content")
               .bind "scroll", ->
-                read_state.update()
+                scroll_flag = true
             .end()
             .bind "tab_removed", ->
+              clearInterval(read_state_watcher)
               read_state.update()
-              app.read_state.set(read_state.get())
 
   app.thread.get url, (result) ->
     $message_bar = $view.find(".message_bar").removeClass("loading")
