@@ -114,7 +114,6 @@ app.view.open_bookmark = ->
   $view.attr("data-url", "bookmark")
 
   frag = document.createDocumentFragment()
-  fn = (a) -> (if a < 10 then "0" else "") + a
 
   for bookmark in app.bookmark.get_all()
     if bookmark.type is "thread"
@@ -147,11 +146,7 @@ app.view.open_bookmark = ->
 
       td = document.createElement("td")
       date = new Date(+/// /(\d+)/$ ///.exec(bookmark.url)[1] * 1000)
-      td.innerText = date.getFullYear() +
-        "/" + fn(date.getMonth() + 1) +
-        "/" + fn(date.getDate()) +
-        " " + fn(date.getHours()) +
-        ":" + fn(date.getMinutes())
+      td.innerText = app.util.date_to_string(date)
       tr.appendChild(td)
 
       frag.appendChild(tr)
@@ -164,7 +159,6 @@ app.view.open_history = ->
 
   app.history.get undefined, 500, (res) ->
     if "data" of res
-      fn = (a) -> (if a < 10 then "0" else "") + a
 
       frag = document.createDocumentFragment()
       for val in res.data
@@ -177,12 +171,7 @@ app.view.open_history = ->
         tr.appendChild(td)
 
         td = document.createElement("td")
-        date = new Date(val.date)
-        td.innerText = date.getFullYear() +
-          "/" + fn(date.getMonth() + 1) +
-          "/" + fn(date.getDate()) +
-          " " + fn(date.getHours()) +
-          ":" + fn(date.getMinutes())
+        td.innerText = app.util.date_to_string(new Date(val.date))
         tr.appendChild(td)
         frag.appendChild(tr)
       $view.find("tbody").append(frag)

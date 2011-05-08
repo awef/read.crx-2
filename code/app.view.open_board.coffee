@@ -61,7 +61,6 @@ app.view.open_board = (url) ->
       for read_state, key in array_of_read_state
         read_state_index[read_state.url] = key
 
-      fn = (a) -> (if a < 10 then "0" else "") + a
       now = Date.now()
 
       tbody = $view.find("tbody")[0]
@@ -98,12 +97,7 @@ app.view.open_board = (url) ->
         tr.appendChild(td)
 
         td = document.createElement("td")
-        date = new Date(thread.created_at)
-        td.innerText = date.getFullYear() +
-          "/" + fn(date.getMonth() + 1) +
-          "/" + fn(date.getDate()) +
-          " " + fn(date.getHours()) +
-          ":" + fn(date.getMinutes())
+        td.innerText = app.util.date_to_string(new Date(thread.created_at))
         tr.appendChild(td)
 
         tbody.appendChild(tr)
