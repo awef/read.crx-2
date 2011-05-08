@@ -129,3 +129,5 @@ app.read_state.set = (read_state) ->
 
     .always (db) ->
       db and db.close()
+      delete read_state.board_url
+      app.bookmark.update_read_state(read_state)

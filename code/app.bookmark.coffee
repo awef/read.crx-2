@@ -113,4 +113,10 @@ app.bookmark = {}
       chrome.bookmarks.remove(id)
     else
       app.log("error", "app.bookmark.remove: ブックマークされていないURLをブックマークから削除しようとしています", arguments)
+
+  app.bookmark.update_read_state = (read_state) ->
+    if app.bookmark.get(read_state.url)
+      url = read_state.url + "#received=#{read_state.received}"
+      url += "&read=#{read_state.read}&last=#{read_state.last}"
+      chrome.bookmarks.update(index_url_id[read_state.url], {url})
 )()
