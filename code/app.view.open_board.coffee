@@ -105,7 +105,6 @@ app.view.open_board = (url) ->
           " " + fn(date.getHours()) +
           ":" + fn(date.getMinutes())
         tr.appendChild(td)
-        tr.appendChild(td)
 
         tbody.appendChild(tr)
       $view.find("table").table_sort()
