@@ -146,8 +146,7 @@ app.view.open_bookmark = ->
       tr.appendChild(td)
 
       td = document.createElement("td")
-      date = new Date(+/// /(\d+)/$ ///.exec(bookmark.url)[1] * 1000)
-      td.innerText = app.util.date_to_string(date)
+      td.innerText = app.util.date_to_string(new Date(thread_created_at))
       tr.appendChild(td)
 
       frag.appendChild(tr)
