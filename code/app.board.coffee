@@ -17,18 +17,6 @@ app.board._get_xhr_info = (board_url) ->
       charset: "Shift_JIS"
 
 app.board.get = (url, callback) ->
-  if url is "bookmark"
-    board = []
-    for bookmark in app.bookmark.get_all()
-      if bookmark.type is "thread"
-        board.push
-          title: bookmark.title
-          url: bookmark.url
-          res_count: bookmark.res_count or 0 #Todo
-          created_at: +/// /(\d+)/$///.exec(bookmark.url)[1] * 1000
-    callback(status: "success", data: board)
-    return
-
   tmp = app.board._get_xhr_info(url)
   if not tmp
     callback(status: "error")

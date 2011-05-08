@@ -51,6 +51,18 @@
           .button.button_link
         .content
 
+      .view_bookmark
+        .content
+          %table
+            %thead
+              %tr
+                %th タイトル
+                %th{:"data-table_sort_type"=>"num"} レス数
+                %th{:"data-table_sort_type"=>"num"} 未読
+                %th{:"data-table_sort_type"=>"num"} 勢い
+                %th 作成日時
+            %tbody
+
       .view_history{:"data-url"=>"history"}
         %nav.nav_bar
         .content

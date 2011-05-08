@@ -123,6 +123,10 @@ $z-index_modal: 5
   @include content_table
   :overflow-y auto
 
+@mixin view_bookmark
+  @include content_table
+  :overflow-y auto
+
 @mixin view_thread
   @include tabbed_view
   :font-size 14px
@@ -211,6 +215,8 @@ a
       @include view_board
     .view_thread
       @include view_thread
+    .view_bookmark
+      @include view_bookmark
     .view_history
       @include view_history
 

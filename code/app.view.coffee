@@ -108,6 +108,56 @@ app.view.setup_resizer = ->
           app.config.set("tab_a_height", parseInt(tab_a.style["height"], 10))
         .appendTo("body")
 
+app.view.open_bookmark = ->
+  $view = $("#template > .view_bookmark").clone()
+  $("#tab_a").tab("add", element: $view[0], title: "ブックマーク")
+  $view.attr("data-url", "bookmark")
+
+  frag = document.createDocumentFragment()
+  fn = (a) -> (if a < 10 then "0" else "") + a
+
+  for bookmark in app.bookmark.get_all()
+    if bookmark.type is "thread"
+      tr = document.createElement("tr")
+      tr.className = "open_in_rcrx"
+      tr.setAttribute("data-href", bookmark.url)
+
+      thread_created_at = +/// /(\d+)/$ ///.exec(bookmark.url)[1] * 1000
+      td = document.createElement("td")
+      td.innerText = bookmark.title
+      tr.appendChild(td)
+
+      td = document.createElement("td")
+      td.innerText = bookmark.res_count or 0
+      tr.appendChild(td)
+
+      td = document.createElement("td")
+      if (
+          typeof bookmark.res_count is "number" and
+          bookmark.read_state and typeof bookmark.read_state.read is "number"
+      )
+        td.innerText = bookmark.res_count - bookmark.read_state.read
+      tr.appendChild(td)
+
+      td = document.createElement("td")
+      if typeof bookmark.res_count is "number"
+        thread_how_old = (Date.now() - thread.created_at) / (24 * 60 * 60 * 1000)
+        td.innerText = (bookmark.res_count / thread_how_old).toFixed(1)
+      tr.appendChild(td)
+
+      td = document.createElement("td")
+      date = new Date(+/// /(\d+)/$ ///.exec(bookmark.url)[1] * 1000)
+      td.innerText = date.getFullYear() +
+        "/" + fn(date.getMonth() + 1) +
+        "/" + fn(date.getDate()) +
+        " " + fn(date.getHours()) +
+        ":" + fn(date.getMinutes())
+      tr.appendChild(td)
+
+      frag.appendChild(tr)
+
+  $view.find("tbody").append(frag)
+
 app.view.open_history = ->
   $view = $("#template > .view_history").clone()
   $("#tab_a").tab("add", element: $view[0], title: "閲覧履歴")

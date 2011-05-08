@@ -54,7 +54,9 @@ app.main = ->
       app.view.open_config()
     else if message.url is "history"
       app.view.open_history()
-    else if message.url is "bookmark" or guess_result.type is "board"
+    else if message.url is "bookmark"
+      app.view.open_bookmark()
+    else if guess_result.type is "board"
       app.view.open_board(message.url)
     else if guess_result.type is "thread"
       app.view.open_thread(message.url)
