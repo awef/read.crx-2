@@ -113,6 +113,7 @@ app.view.open_bookmark = ->
   $("#tab_a").tab("add", element: $view[0], title: "ブックマーク")
   $view.attr("data-url", "bookmark")
 
+  now = Date.now()
   frag = document.createDocumentFragment()
 
   for bookmark in app.bookmark.get_all()
@@ -122,6 +123,7 @@ app.view.open_bookmark = ->
       tr.setAttribute("data-href", bookmark.url)
 
       thread_created_at = +/// /(\d+)/$ ///.exec(bookmark.url)[1] * 1000
+
       td = document.createElement("td")
       td.innerText = bookmark.title
       tr.appendChild(td)
@@ -140,8 +142,7 @@ app.view.open_bookmark = ->
 
       td = document.createElement("td")
       if typeof bookmark.res_count is "number"
-        thread_how_old = (Date.now() - thread.created_at) / (24 * 60 * 60 * 1000)
-        td.innerText = (bookmark.res_count / thread_how_old).toFixed(1)
+        td.innerText = app.util.calc_heat(now, thread_crated_at, bookmark.res_count)
       tr.appendChild(td)
 
       td = document.createElement("td")

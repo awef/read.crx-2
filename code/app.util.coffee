@@ -9,3 +9,11 @@ app.util.date_to_string = (date) ->
   "/" + fn(date.getDate()) +
   " " + fn(date.getHours()) +
   ":" + fn(date.getMinutes())
+
+`/**
+* @param now {number}
+* @param thread_created {number}
+* @param res_count {number}
+*/`
+app.util.calc_heat = (now, thread_created, res_count) ->
+  (res_count / ((now - thread_created) / (24 * 60 * 60 * 1000))).toFixed(1)

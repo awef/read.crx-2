@@ -92,8 +92,7 @@ app.view.open_board = (url) ->
         tr.appendChild(td)
 
         td = document.createElement("td")
-        thread_how_old = (now - thread.created_at) / (24 * 60 * 60 * 1000)
-        td.innerText = (thread.res_count / thread_how_old).toFixed(1)
+        td.innerText = app.util.calc_heat(now, thread.created_at, thread.res_count)
         tr.appendChild(td)
 
         td = document.createElement("td")
