@@ -19,8 +19,6 @@ app.bookmark = {}
         url: url
         title: bookmark_node.title
         res_count: null
-        read: null
-        last: null
 
       tmp = app.url.parse_hashquery(bookmark_node.url)
       if (
