@@ -164,6 +164,32 @@ app.url.thread_to_board = (thread_url) ->
     .replace(///^http://([\w\.]+)/(?:test|bbs)/read\.cgi/(\w+)/\d+/$///, "http://$1/$2/")
     .replace(///^http://jbbs\.livedoor\.jp/bbs/read\.cgi/(\w+)/(\d+)/\d+/$///, "http://jbbs.livedoor.jp/$1/$2/")
 
+app.url._parse_query = (str) ->
+  data = {}
+  for segment in str.split("&")
+    tmp = segment.split("=")
+    data[decodeURIComponent(tmp[0])] = (
+      if 1 of tmp then decodeURIComponent(tmp[1]) else true
+    )
+  data
+
+app.url.parse_query = (url) ->
+  tmp = /\?([^#]+)(:?\#.*)?$/.exec(url)
+  if tmp then app.url._parse_query(tmp[1]) else {}
+
+app.url.parse_hashquery = (url) ->
+  tmp = /#(.+)$/.exec(url)
+  if tmp then app.url._parse_query(tmp[1]) else {}
+
+app.url.build_param = (data) ->
+  str = ""
+  for key, val of data
+    if val is true
+      str += "&#{encodeURIComponent(key)}"
+    else
+      str += "&#{encodeURIComponent(key)}=#{encodeURIComponent(val)}"
+  str.slice(1)
+
 `/** @namespace */`
 app.config =
   set: (key, val) ->

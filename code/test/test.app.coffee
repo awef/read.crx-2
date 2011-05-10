@@ -127,3 +127,74 @@ test "app.url.guess_type", ->
   hoge("http://ex14.vip2ch.com/test/read.cgi/part4vip/1291628400/", type: "thread", bbs_type: "2ch")
 
   hoge("http://example.com/", type: "unknown", bbs_type: "unknown")
+
+test "app.url.parse_query", ->
+  fn = (url, expected) ->
+    deepEqual(app.url.parse_query(url), expected, url)
+
+  fn "https://encrypted.google.com/webhp?hl=ja"
+    hl: "ja"
+
+  fn "https://encrypted.google.com/search?hl=ja&qscrl=1&q=%E3%83%86%E3%82%B9%E3%83%88"
+    hl: "ja"
+    qscrl: "1"
+    q: "テスト"
+
+  fn "http://b.hatena.ne.jp/search?q=%E3%83%86%E3%82%B9%E3%83%88"
+    q: "テスト"
+
+  fn "http://example.com/?q=%E3%83%86%E3%82%B9%E3%83%88#main"
+    q: "テスト"
+
+  fn "http://example.com/?q=%E3%83%86%E3%82%B9%E3%83%88#q=test&page=10"
+    q: "テスト"
+
+test "app.url.parse_hashquery", ->
+  fn = (url, expected) ->
+    deepEqual(app.url.parse_hashquery(url), expected, url)
+
+  fn "https://encrypted.google.com/webhp#hl=ja"
+    hl: "ja"
+
+  fn "https://encrypted.google.com/search#hl=ja&qscrl=1&q=%E3%83%86%E3%82%B9%E3%83%88"
+    hl: "ja"
+    qscrl: "1"
+    q: "テスト"
+
+  fn "http://b.hatena.ne.jp/search#q=%E3%83%86%E3%82%B9%E3%83%88"
+    q: "テスト"
+
+  fn "http://example.com/?main#q=%E3%83%86%E3%82%B9%E3%83%88"
+    q: "テスト"
+
+  fn "http://example.com/?q=test&page=10#q=%E3%83%86%E3%82%B9%E3%83%88"
+    q: "テスト"
+
+test "app.url.build_param", ->
+  fn = (expected, data) ->
+    deepEqual(app.url.build_param(data), expected, JSON.stringify(data))
+
+  fn "hl=ja"
+   hl: "ja"
+
+  fn "qscrl=1&q=%E3%83%86%E3%82%B9%E3%83%88"
+    qscrl: "1"
+    q: "テスト"
+
+  fn "test"
+    test: true
+
+  fn "qscrl=1&test&q=%E3%83%86%E3%82%B9%E3%83%88"
+    qscrl: "1"
+    test: true
+    q: "テスト"
+
+test "URLパラメータ系関数整合性テスト", ->
+  original_data =
+    test: true
+    q: "テスト"
+    a: "123"
+    hoge: "test"
+
+  url = "http://example.com/?" + app.url.build_param(original_data)
+  deepEqual(app.url.parse_query(url), original_data)
