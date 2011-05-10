@@ -21,6 +21,10 @@ app.bookmark = {}
         res_count: null
 
       tmp = app.url.parse_hashquery(bookmark_node.url)
+
+      if /^\d+$/.test(tmp.res_count)
+        tmp_bookmark.res_count = +tmp.res_count
+
       if (
         /^\d+$/.test(tmp.received) and
         /^\d+$/.test(tmp.read) and
@@ -126,10 +130,29 @@ app.bookmark = {}
       app.log("error", "app.bookmark.remove: ブックマークされていないURLをブックマークから削除しようとしています", arguments)
 
   app.bookmark.update_read_state = (read_state) ->
-    if app.bookmark.get(read_state.url)
-      url = read_state.url + app.url.build_param
+    url = read_state.url
+    if app.bookmark.get(url)
+      data =
         received: read_state.received
         read: read_state.read
         last: read_state.last
-      chrome.bookmarks.update(index_url_id[read_state.url], {url})
+
+      if (res_count = bookmark_data[bookmark_data_index_url[url]].res_count)
+        data.res_count = res_count
+
+      chrome.bookmarks.update(index_url_id[url],
+        url: read_state.url + "#" + app.url.build_param(data))
+
+  app.bookmark.update_res_count = (url, res_count) ->
+    if app.bookmark.get(url, res_count)
+      data = {res_count}
+
+      if (read_state = bookmark_data[bookmark_data_index_url[url]].read_state)
+        data.received = read_state.received
+        data.read = read_state.read
+        data.last = read_state.last
+
+      console.log arguments
+      chrome.bookmarks.update(index_url_id[url],
+        url: url + "#" + app.url.build_param(data))
 )()
