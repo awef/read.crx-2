@@ -127,7 +127,9 @@ app.bookmark = {}
 
   app.bookmark.update_read_state = (read_state) ->
     if app.bookmark.get(read_state.url)
-      url = read_state.url + "#received=#{read_state.received}"
-      url += "&read=#{read_state.read}&last=#{read_state.last}"
+      url = read_state.url + app.url.build_param
+        received: read_state.received
+        read: read_state.read
+        last: read_state.last
       chrome.bookmarks.update(index_url_id[read_state.url], {url})
 )()
