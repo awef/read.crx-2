@@ -21,12 +21,18 @@ app.bookmark = {}
         res_count: null
         read: null
         last: null
-      tmp = /#received=(\d+)&read=(\d+)&last=(\d+)$/.exec(bookmark_node.url)
-      if tmp
+
+      tmp = app.url.parse_hashquery(bookmark_node.url)
+      if (
+        /^\d+$/.test(tmp.received) and
+        /^\d+$/.test(tmp.read) and
+        /^\d+$/.test(tmp.last)
+      )
         tmp_bookmark.read_state =
-          received: +tmp[1]
-          read: +tmp[2]
-          last: +tmp[3]
+          received: +tmp.received
+          read: +tmp.read
+          last: +tmp.last
+
       bookmark_data.push(tmp_bookmark)
       bookmark_data_index_url[url] = bookmark_data.length - 1
       bookmark_data_index_id[bookmark_node.id] = bookmark_data.length - 1
