@@ -152,7 +152,6 @@ app.bookmark = {}
         data.read = read_state.read
         data.last = read_state.last
 
-      console.log arguments
       chrome.bookmarks.update(index_url_id[url],
         url: url + "#" + app.url.build_param(data))
 )()
