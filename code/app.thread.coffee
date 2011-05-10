@@ -56,6 +56,8 @@ app.thread.get = (url, callback) ->
                 data: xhr.responseText
                 last_updated: Date.now()
                 last_modified: last_modified
+
+            app.bookmark.update_res_count(url, thread.res.length)
           else if cache.status is "success"
             if xhr.status is 304
               app.log("debug", "app.thread.get:
