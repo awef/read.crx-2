@@ -142,7 +142,7 @@ app.view.open_bookmark = ->
 
       td = document.createElement("td")
       if typeof bookmark.res_count is "number"
-        td.innerText = app.util.calc_heat(now, thread_crated_at, bookmark.res_count)
+        td.innerText = app.util.calc_heat(now, thread_created_at, bookmark.res_count)
       tr.appendChild(td)
 
       td = document.createElement("td")
