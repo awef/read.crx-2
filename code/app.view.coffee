@@ -134,6 +134,30 @@ app.view.open_bookmark = ->
   $("#tab_a").tab("add", element: $view[0], title: "ブックマーク")
   $view.attr("data-url", "bookmark")
 
+  $view
+    .find(".button_reload")
+      .bind "click", ->
+        board_list = []
+        for bookmark in app.bookmark.get_all()
+          if bookmark.type is "thread"
+            board_url = app.url.thread_to_board(bookmark.url)
+            if board_list.indexOf(board_url) is -1
+              board_list.push(board_url)
+
+        fn = (result) ->
+          if result
+            if result.status is "success"
+              console.log("done")
+            else
+              console.log("fail")
+
+          if board_list.length > 0
+            board_url = board_list[0]
+            board_list.splice(0, 1)
+            console.log("load_start: #{board_url}")
+            app.board.get(board_url, fn)
+        fn()
+
   now = Date.now()
   frag = document.createDocumentFragment()
 
