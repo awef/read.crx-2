@@ -30,7 +30,7 @@
       $ ->
         app.main()
         if query isnt "app"
-          app.message.send("open", {query})
+          app.message.send("open", url: query)
 )()
 
 `/** @namespace */`
