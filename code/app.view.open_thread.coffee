@@ -8,7 +8,6 @@ app.view.open_thread = (url) ->
   app.view.module.link_button($view)
 
   $("#tab_b").tab("add", element: $view[0], title: url)
-  res_num = 0
 
   deferred_draw_thread = $.Deferred()
   deferred_get_read_state = $.Deferred (deferred) ->
@@ -79,62 +78,64 @@ app.view.open_thread = (url) ->
       $message_bar.text("")
 
     if "data" of result
-      $view.attr("data-title", result.data.title)
-
-      frag = document.createDocumentFragment()
-      for res in result.data.res
-        res_num++
-
-        article = document.createElement("article")
-        if /\　\ (?!<br>|$)/i.test(res.message)
-          article.className = "aa"
-
-        header = document.createElement("header")
-        article.appendChild(header)
-
-        num = document.createElement("span")
-        num.className = "num"
-        num.innerText = res_num
-        header.appendChild(num)
-
-        name = document.createElement("span")
-        name.className = "name"
-        name.innerHTML = res.name
-          .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")
-          .replace(/<\/b>(.*?)<b>/g, '<span class="ob">$1</span>')
-        header.appendChild(name)
-
-        mail = document.createElement("span")
-        mail.className = "mail"
-        mail.innerText = res.mail
-        header.appendChild(mail)
-
-        other = document.createElement("span")
-        other.className = "other"
-        other.innerText = res.other
-        header.appendChild(other)
-
-        message = document.createElement("div")
-        message.className = "message"
-        message.innerHTML = res.message
-          .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
-          .replace(/(h)?(ttps?:\/\/[\w\-.!~*'();/?:@&=+$,%#]+)/g,
-            '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
-          .replace(///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///,
-            '<img class="beicon" src="http://$1" /><br />')
-        article.appendChild(message)
-
-        frag.appendChild(article)
+      thread = result.data
+      $view.attr("data-title", thread.title)
 
       $view
         .find(".content")
-          .append(frag)
+          .append(app.view._open_thread_draw_messages(thread))
 
       $view
         .closest(".tab")
           .tab "update_title",
             tab_id: $view.attr("data-tab_id"),
-            title: result.data.title
+            title: thread.title
 
-      deferred_draw_thread.resolve(result.data)
+      deferred_draw_thread.resolve(thread)
     app.history.add(url, (if "data" of result then result.data.title else url), opened_at)
+
+app.view._open_thread_draw_messages = (thread) ->
+  frag = document.createDocumentFragment()
+  for res, res_key in thread.res
+    article = document.createElement("article")
+    if /\　\ (?!<br>|$)/i.test(res.message)
+      article.className = "aa"
+
+    header = document.createElement("header")
+    article.appendChild(header)
+
+    num = document.createElement("span")
+    num.className = "num"
+    num.innerText = res_key + 1
+    header.appendChild(num)
+
+    name = document.createElement("span")
+    name.className = "name"
+    name.innerHTML = res.name
+      .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")
+      .replace(/<\/b>(.*?)<b>/g, '<span class="ob">$1</span>')
+    header.appendChild(name)
+
+    mail = document.createElement("span")
+    mail.className = "mail"
+    mail.innerText = res.mail
+    header.appendChild(mail)
+
+    other = document.createElement("span")
+    other.className = "other"
+    other.innerText = res.other
+    header.appendChild(other)
+
+    message = document.createElement("div")
+    message.className = "message"
+    message.innerHTML = res.message
+      .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
+      .replace(/(h)?(ttps?:\/\/[\w\-.!~*'();/?:@&=+$,%#]+)/g,
+        '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
+      .replace(///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///,
+        '<img class="beicon" src="http://$1" /><br />')
+
+    article.appendChild(message)
+
+    frag.appendChild(article)
+  frag
