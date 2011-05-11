@@ -119,10 +119,12 @@ $z-index_modal: 5
       :text-align right
 
 @mixin view_history
+  @include tabbed_view
   @include content_table
   :overflow-y auto
 
 @mixin view_bookmark
+  @include tabbed_view
   @include content_table
   :overflow-y auto
   td
