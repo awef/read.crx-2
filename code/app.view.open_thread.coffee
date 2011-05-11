@@ -9,63 +9,14 @@ app.view.open_thread = (url) ->
 
   $("#tab_b").tab("add", element: $view[0], title: url)
 
-  deferred_draw_thread = $.Deferred()
-  deferred_get_read_state = $.Deferred (deferred) ->
-    app.read_state.get url, (res) ->
-      if res.status is "success"
-        deferred.resolve(res.data)
-      else
-        deferred.reject()
+  app.view._open_thread_read_state_manager($view)
+  app.view._open_thread_draw($view)
+    .always (thread) ->
+      app.history.add(url, (if thread then thread.title else url), opened_at)
 
-  read_state =
-    received: 0
-    read: 0
-    last: 0
-    get: ->
-      received: this.received, read: this.read, last: this.last, url: url
-    update: ->
-      this.last = this.received
-      container = $view[0].querySelector(".content")
-      bottom = container.scrollTop + container.clientHeight
-
-      for res, res_num in container.children
-        if res.offsetTop > bottom
-          this.last = res_num - 1
-          break
-
-      if this.read < this.last
-        this.read = this.last
-
-      app.read_state.set(read_state.get())
-
-  deferred_get_read_state
-    .done (tmp_read_state) ->
-      read_state.received = tmp_read_state.length
-      read_state.read = tmp_read_state.read
-      read_state.last = tmp_read_state.last
-    .always ->
-      deferred_draw_thread
-        .done (thread) ->
-          scroll_flag = false
-          read_state_watcher = setInterval((->
-            if scroll_flag
-              read_state.update()
-              scroll_flag = false
-          ), 250)
-
-          read_state.received = thread.res.length
-          content = $view.find(".content")[0]
-          last_res = content.children[read_state.last - 1]
-          if last_res
-            content.scrollTop = last_res.offsetTop
-          $view
-            .find(".content")
-              .bind "scroll", ->
-                scroll_flag = true
-            .end()
-            .bind "tab_removed", ->
-              clearInterval(read_state_watcher)
-              read_state.update()
+app.view._open_thread_draw = ($view) ->
+  url = $view.attr("data-url")
+  deferred = $.Deferred()
 
   app.thread.get url, (result) ->
     $message_bar = $view.find(".message_bar")
@@ -82,6 +33,8 @@ app.view.open_thread = (url) ->
       $view
         .find(".content")
           .append(app.view._open_thread_draw_messages(thread))
+        .end()
+        .triggerHandler("draw_content")
 
       $view
         .closest(".tab")
@@ -89,9 +42,12 @@ app.view.open_thread = (url) ->
             tab_id: $view.attr("data-tab_id"),
             title: thread.title
 
-      deferred_draw_thread.resolve(thread)
+      deferred.resolve(thread)
+    else
+      deferred.reject()
+
     $view.find(".loading_overlay").fadeOut(100)
-    app.history.add(url, (if "data" of result then result.data.title else url), opened_at)
+  deferred
 
 app.view._open_thread_draw_messages = (thread) ->
   frag = document.createDocumentFragment()
@@ -157,3 +113,55 @@ app.view._open_thread_draw_messages = (thread) ->
 
     frag.appendChild(article)
   frag
+
+app.view._open_thread_read_state_manager = ($view) ->
+  url = $view.attr("data-url")
+
+  read_state = null
+
+  scan = ->
+    read_state.last = read_state.received
+    content = $view[0].querySelector(".content")
+    bottom = content.scrollTop + content.clientHeight
+
+    for res, res_num in content.children
+      if res.offsetTop > bottom
+        read_state.last = res_num - 1
+        break
+
+    if read_state.read < read_state.last
+      read_state.read = read_state.last
+
+    app.read_state.set(read_state)
+
+  app.read_state.get url, (res) ->
+    if res.status is "success"
+      read_state = res.data
+    else
+      read_state = {received: 0, read: 0, last: 0, url}
+
+    scroll_flag = false
+    scanner = setInterval((->
+      if scroll_flag
+        scan()
+        scroll_flag = false
+    ), 250)
+
+    $view
+      .find(".content")
+        .bind "scroll", ->
+          scroll_flag = true
+      .end()
+
+      .bind "tab_removed", ->
+        clearInterval(scanner)
+        scan()
+
+      .bind "draw_content", ->
+        content = $view.find(".content")[0]
+
+        read_state.received = content.children.length
+
+        last_res = content.children[read_state.last - 1]
+        if last_res
+          content.scrollTop = last_res.offsetTop
