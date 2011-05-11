@@ -53,7 +53,7 @@ app.view.open_bookmark = ->
           typeof bookmark.res_count is "number" and
           bookmark.read_state and typeof bookmark.read_state.read is "number"
       )
-        td.innerText = bookmark.res_count - bookmark.read_state.read
+        td.innerText = bookmark.res_count - bookmark.read_state.read or ""
       tr.appendChild(td)
 
       td = document.createElement("td")
