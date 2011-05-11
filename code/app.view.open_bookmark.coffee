@@ -3,11 +3,15 @@ app.view.open_bookmark = ->
   $("#tab_a").tab("add", element: $view[0], title: "ブックマーク")
   $view.attr("data-url", "bookmark")
 
+  $loading_overlay = $view.find(".loading_overlay").hide()
+
   $view.find("table").table_sort()
 
   $view
     .find(".button_reload")
       .bind "click", ->
+        $loading_overlay.show()
+
         board_list = []
         for bookmark in app.bookmark.get_all()
           if bookmark.type is "thread"
@@ -15,21 +19,24 @@ app.view.open_bookmark = ->
             if board_list.indexOf(board_url) is -1
               board_list.push(board_url)
 
+        $prev = null
         fn = (result) ->
           if result
             if result.status is "success"
-              console.log("done")
+              $prev.toggleClass("loading success")
             else
-              console.log("fail")
+              $prev.toggleClass("loading fail")
 
           if board_list.length > 0
             board_url = board_list[0]
             board_list.splice(0, 1)
-            console.log("load_start: #{board_url}")
+            $prev = $("<div>", text: board_url, class: "loading")
+            $prev.prependTo($loading_overlay)
             app.board.get(board_url, fn)
           else
             $view.find("tbody").empty()
             app.view._open_bookmark_draw($view)
+            $loading_overlay.fadeOut 100, -> $(this).empty()
         fn()
 
   app.view._open_bookmark_draw($view)
