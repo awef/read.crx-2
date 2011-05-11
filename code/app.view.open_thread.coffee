@@ -90,7 +90,7 @@ app.view.open_thread = (url) ->
             title: thread.title
 
       deferred_draw_thread.resolve(thread)
-      $view.find(".loading_overlay").fadeOut(100)
+    $view.find(".loading_overlay").fadeOut(100)
     app.history.add(url, (if "data" of result then result.data.title else url), opened_at)
 
 app.view._open_thread_draw_messages = (thread) ->
