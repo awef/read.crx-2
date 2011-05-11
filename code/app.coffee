@@ -12,7 +12,7 @@
     location.reload(true)
 
   reg_res = /[\?&]q=([^&]+)/.exec(location.search)
-  query = reg_res?[1] or "app"
+  query = reg_res?[1] or "bookmark"
 
   chrome.tabs.getCurrent (current_tab) ->
     chrome.windows.getAll {populate: true}, (windows) ->
