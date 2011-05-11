@@ -3,6 +3,8 @@ app.view.open_bookmark = ->
   $("#tab_a").tab("add", element: $view[0], title: "ブックマーク")
   $view.attr("data-url", "bookmark")
 
+  $view.find("table").table_sort()
+
   $view
     .find(".button_reload")
       .bind "click", ->
