@@ -32,6 +32,11 @@ app.view.open_board = (url) ->
       $view.attr("data-title", title)
     app.history.add(url, title or url, opened_at)
 
+  app.view._open_board_draw($view)
+
+app.view._open_board_draw = ($view) ->
+  url = $view.attr("data-url")
+
   deferred_get_read_state = $.Deferred (deferred) ->
     app.read_state.get_by_board url, (res) ->
       if res.status is "success"
