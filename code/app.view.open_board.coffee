@@ -41,14 +41,12 @@ app.view.open_board = (url) ->
 
   deferred_board_get = $.Deferred (deferred) ->
     app.board.get url, (res) ->
-      $message_bar = $view.find(".message_bar").removeClass("loading")
+      $message_bar = $view.find(".message_bar")
       if res.status is "error"
         text = "板の読み込みに失敗しました。"
         if "data" of res
           text += "キャッシュに残っていたデータを表示します。"
         $message_bar.addClass("error").text(text)
-      else
-        $message_bar.text("")
 
       if "data" of res
         deferred.resolve(res.data)
