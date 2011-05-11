@@ -134,6 +134,25 @@ app.view._open_thread_draw_messages = (thread) ->
         '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
       .replace(///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///,
         '<img class="beicon" src="http://$1" /><br />')
+      .replace(/(?:&gt;|＞){1,2}[\d０-９]+(?:-[\d０-９]+)?(?:\s*,\s*[\d０-９]+(?:-[\d０-９]+)?)*/g, ($0) ->
+          str = $0.replace /[０-９]/g, ($0) ->
+            String.fromCharCode($0.charCodeAt(0) - 65248)
+
+          reg = /(\d+)(?:-(\d+))?/g
+          target_max = 25
+          target_count = 0
+          while ((res = reg.exec(str)) and target_count <= target_max)
+            if res[2]
+              if +res[2] > +res[1]
+                target_count += +res[2] - +res[1]
+            else
+              target_count++
+
+          disabled = target_count >= target_max
+
+          "<a href=\"javascript:undefined;\" class=\"anchor" +
+          "#{if disabled then " disabled" else ""}\">#{$0}</a>"
+      )
 
     article.appendChild(message)
 
