@@ -41,7 +41,7 @@ app.board.get = (url, callback) ->
             xhr.status is 200 and
             (board = app.board.parse(url, xhr.responseText))
           )
-            callback(success: "success", data: board)
+            callback(status: "success", data: board)
 
             last_modified = new Date(xhr.getResponseHeader("Last-Modified") or "dummy").getTime()
             unless isNaN(last_modified)
