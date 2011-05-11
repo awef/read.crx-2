@@ -32,7 +32,16 @@ app.view.open_board = (url) ->
       $view.attr("data-title", title)
     app.history.add(url, title or url, opened_at)
 
+  $view.find(".button_reload").bind "click", ->
+    $loading_overlay = $view.find(".loading_overlay").show()
+    $view.find("tbody").empty()
+    $view
+      .find(".table_sort_desc, .table_sort_asc")
+        .removeClass("table_sort_desc table_sort_asc")
+    app.view._open_board_draw($view)
+
   app.view._open_board_draw($view)
+  $view.find("table").table_sort()
 
 app.view._open_board_draw = ($view) ->
   url = $view.attr("data-url")
@@ -103,6 +112,5 @@ app.view._open_board_draw = ($view) ->
         tr.appendChild(td)
 
         tbody.appendChild(tr)
-      $view.find("table").table_sort()
     .always ->
       $view.find(".loading_overlay").fadeOut(100)
