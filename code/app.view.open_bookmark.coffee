@@ -27,8 +27,14 @@ app.view.open_bookmark = ->
             board_list.splice(0, 1)
             console.log("load_start: #{board_url}")
             app.board.get(board_url, fn)
+          else
+            $view.find("tbody").empty()
+            app.view._open_bookmark_draw($view)
         fn()
 
+  app.view._open_bookmark_draw($view)
+
+app.view._open_bookmark_draw = ($view) ->
   now = Date.now()
   frag = document.createDocumentFragment()
 
