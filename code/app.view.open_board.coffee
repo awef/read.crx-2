@@ -101,3 +101,4 @@ app.view.open_board = (url) ->
 
         tbody.appendChild(tr)
       $view.find("table").table_sort()
+      $view.find(".loading_overlay").fadeOut(100)
