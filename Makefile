@@ -1,6 +1,10 @@
 SRC_DIR = code
 DBG_DIR = debug
 
+APP_COFFEE = ${SRC_DIR}/app.coffee
+APP_COFFEE += ${shell find ${SRC_DIR}/ -type f -regex '${SRC_DIR}/app\.[^.]+\.coffee'}
+APP_COFFEE += ${shell find ${SRC_DIR}/ -type f -regex '${SRC_DIR}/app\.[^.]+\.[^.]+\.coffee'}
+
 LIB_FILES = ${shell find ${SRC_DIR}/lib/ -type f}
 IMG_FILES = ${shell find ${SRC_DIR}/img/ -type f}
 
@@ -35,10 +39,8 @@ ${DBG_DIR}/manifest.json: ${SRC_DIR}/manifest.json
 ${DBG_DIR}/app.html: ${SRC_DIR}/app.haml
 	haml -q ${SRC_DIR}/app.haml ${DBG_DIR}/app.html
 
-${DBG_DIR}/app.js: ${SRC_DIR}/app.coffee ${SRC_DIR}/app.*.coffee
-	coffee -b -p -c ${SRC_DIR}/app.coffee > ${DBG_DIR}/app.js
-	find ${SRC_DIR}/ -type f -regex '${SRC_DIR}/app\.[^.]+\.coffee' -exec coffee -b -p -c {} >> ${DBG_DIR}/app.js \;
-	find ${SRC_DIR}/ -type f -regex '${SRC_DIR}/app\.[^.]+\.[^.]+\.coffee' -exec coffee -b -p -c {} >> ${DBG_DIR}/app.js \;
+${DBG_DIR}/app.js: ${APP_COFFEE}
+	coffee -b -p -c ${APP_COFFEE} > ${DBG_DIR}/app.js
 
 ${DBG_DIR}/ui.js: ${SRC_DIR}/ui.*.coffee
 	coffee -b -p -c ${SRC_DIR}/ui.*.coffee | cat > ${DBG_DIR}/ui.js
