@@ -131,16 +131,22 @@ app.view.thread._read_state_manager = ($view) ->
     read_state.last = read_state.received
     content = $view[0].querySelector(".content")
     bottom = content.scrollTop + content.clientHeight
+    is_updated = false
 
     for res, res_num in content.children
       if res.offsetTop > bottom
-        read_state.last = res_num - 1
+        last = res_num - 1
+        if read_state.last isnt last
+          read_state.last = last
+          is_updated = true
         break
 
     if read_state.read < read_state.last
       read_state.read = read_state.last
+      is_updated = true
 
-    app.read_state.set(read_state)
+    if is_updated
+      app.read_state.set(read_state)
 
   app.read_state.get url, (res) ->
     if res.status is "success"
