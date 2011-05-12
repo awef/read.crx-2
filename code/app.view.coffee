@@ -6,6 +6,7 @@ app.view.init = ->
     .addClass("pane-3")
 
   $("#tab_a, #tab_b").tab()
+  $(".tab .tab_tabbar").sortable()
 
   app.view.setup_resizer()
 
