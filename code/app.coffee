@@ -53,6 +53,9 @@ app.log = (level) ->
 app.deep_copy = (data) ->
   JSON.parse(JSON.stringify(data))
 
+app.defer = (fn) ->
+  setTimeout(fn, 0)
+
 app.assert_arg = (name, rule, arg) ->
   for val, key in rule
     unless typeof arg[key] is val

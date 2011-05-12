@@ -32,6 +32,19 @@ test "test", 7, ->
     "ディープコピーはオリジナルとstrictEqualにならない２")
   deepEqual(copy, original, "ディープコピーはオリジナルと構造は一緒２")
 
+module("app.defer")
+
+asyncTest "test", ->
+  x = 123
+
+  app.defer ->
+    strictEqual(x, 123)
+    x = 321
+    strictEqual(x, 321)
+    start()
+
+  strictEqual(x, 123)
+
 
 module("app.message")
 
