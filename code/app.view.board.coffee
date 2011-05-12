@@ -1,4 +1,8 @@
-app.view.open_board = (url) ->
+`/** @namespace */`
+console.log Date.now()
+app.view.board = {}
+
+app.view.board.open = (url) ->
   url = app.url.fix(url)
   opened_at = Date.now()
 
@@ -38,12 +42,12 @@ app.view.open_board = (url) ->
     $view
       .find(".table_sort_desc, .table_sort_asc")
         .removeClass("table_sort_desc table_sort_asc")
-    app.view._open_board_draw($view)
+    app.view.board._draw($view)
 
-  app.view._open_board_draw($view)
+  app.view.board._draw($view)
   $view.find("table").table_sort()
 
-app.view._open_board_draw = ($view) ->
+app.view.board._draw = ($view) ->
   url = $view.attr("data-url")
 
   deferred_get_read_state = $.Deferred (deferred) ->
