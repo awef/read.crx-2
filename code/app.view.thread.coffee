@@ -1,4 +1,7 @@
-app.view.open_thread = (url) ->
+`/** @namespace */`
+app.view.thread = {}
+
+app.view.thread.open = (url) ->
   url = app.url.fix(url)
   opened_at = Date.now()
   $view = $("#template > .view_thread").clone()
@@ -10,16 +13,16 @@ app.view.open_thread = (url) ->
   $view.find(".button_reload").bind "click", ->
     $view.find(".content").empty()
     $view.find(".loading_overlay").show()
-    app.view._open_thread_draw($view)
+    app.view.thread._draw($view)
 
   $("#tab_b").tab("add", element: $view[0], title: url)
 
-  app.view._open_thread_read_state_manager($view)
-  app.view._open_thread_draw($view)
+  app.view.thread._read_state_manager($view)
+  app.view.thread._draw($view)
     .always (thread) ->
       app.history.add(url, (if thread then thread.title else url), opened_at)
 
-app.view._open_thread_draw = ($view) ->
+app.view.thread._draw = ($view) ->
   url = $view.attr("data-url")
   deferred = $.Deferred()
 
@@ -37,7 +40,7 @@ app.view._open_thread_draw = ($view) ->
 
       $view
         .find(".content")
-          .append(app.view._open_thread_draw_messages(thread))
+          .append(app.view.thread._draw_messages(thread))
         .end()
         .triggerHandler("draw_content")
 
@@ -54,7 +57,7 @@ app.view._open_thread_draw = ($view) ->
     $view.find(".loading_overlay").fadeOut(100)
   deferred
 
-app.view._open_thread_draw_messages = (thread) ->
+app.view.thread._draw_messages = (thread) ->
   frag = document.createDocumentFragment()
   for res, res_key in thread.res
     article = document.createElement("article")
@@ -119,7 +122,7 @@ app.view._open_thread_draw_messages = (thread) ->
     frag.appendChild(article)
   frag
 
-app.view._open_thread_read_state_manager = ($view) ->
+app.view.thread._read_state_manager = ($view) ->
   url = $view.attr("data-url")
 
   read_state = null

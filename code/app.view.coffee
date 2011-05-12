@@ -28,7 +28,7 @@ app.view.init = ->
     else if guess_result.type is "board"
       app.view.open_board(message.url)
     else if guess_result.type is "thread"
-      app.view.open_thread(message.url)
+      app.view.thread.open(message.url)
 
   $(document.documentElement)
     .delegate ".open_in_rcrx", "click", (e) ->
