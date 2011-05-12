@@ -75,16 +75,14 @@ app.message = {}
           listener(app.deep_copy(data))
 
   app.message.add_listener = (type, fn) ->
-    app.defer ->
-      listener_store[type] or= []
-      listener_store[type].push(fn)
+    listener_store[type] or= []
+    listener_store[type].push(fn)
 
   app.message.remove_listener = (type, fn) ->
-    app.defer ->
-      for val, key in listener_store[type]
-        if val is fn
-          listener_store[type].splice(key, 1)
-          return
+    for val, key in listener_store[type]
+      if val is fn
+        listener_store[type].splice(key, 1)
+        return
 )()
 
 `/** @namespace */`
