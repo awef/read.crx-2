@@ -1,5 +1,4 @@
 `/** @namespace */`
-console.log Date.now()
 app.view.board = {}
 
 app.view.board.open = (url) ->
