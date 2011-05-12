@@ -24,7 +24,7 @@ app.view.init = ->
     else if message.url is "history"
       app.view.open_history()
     else if message.url is "bookmark"
-      app.view.open_bookmark()
+      app.view.bookmark.open()
     else if guess_result.type is "board"
       app.view.board.open(message.url)
     else if guess_result.type is "thread"

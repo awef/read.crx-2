@@ -1,4 +1,7 @@
-app.view.open_bookmark = ->
+`/** @namespace */`
+app.view.bookmark = {}
+
+app.view.bookmark.open = ->
   $view = $("#template > .view_bookmark").clone()
   $("#tab_a").tab("add", element: $view[0], title: "ブックマーク")
   $view.attr("data-url", "bookmark")
@@ -35,13 +38,13 @@ app.view.open_bookmark = ->
             app.board.get(board_url, fn)
           else
             $view.find("tbody").empty()
-            app.view._open_bookmark_draw($view)
+            app.view.bookmark._draw($view)
             $loading_overlay.fadeOut 100, -> $(this).empty()
         fn()
 
-  app.view._open_bookmark_draw($view)
+  app.view.bookmark._draw($view)
 
-app.view._open_bookmark_draw = ($view) ->
+app.view.bookmark._draw = ($view) ->
   now = Date.now()
   frag = document.createDocumentFragment()
 
