@@ -38,11 +38,9 @@ app.view.thread._draw = ($view) ->
       thread = result.data
       $view.attr("data-title", thread.title)
 
-      $view
-        .find(".content")
-          .append(app.view.thread._draw_messages(thread))
-        .end()
-        .triggerHandler("draw_content")
+      $view.find(".content").append(app.view.thread._draw_messages(thread))
+      app.defer ->
+        $view.triggerHandler("draw_content")
 
       $view
         .closest(".tab")
