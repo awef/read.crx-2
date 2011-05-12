@@ -7,6 +7,11 @@ app.view.open_thread = (url) ->
   app.view.module.bookmark_button($view)
   app.view.module.link_button($view)
 
+  $view.find(".button_reload").bind "click", ->
+    $view.find(".content").empty()
+    $view.find(".loading_overlay").show()
+    app.view._open_thread_draw($view)
+
   $("#tab_b").tab("add", element: $view[0], title: url)
 
   app.view._open_thread_read_state_manager($view)
