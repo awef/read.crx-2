@@ -52,7 +52,7 @@ app.bookmark = {}
             hoge_bookmark(tree)
         send_update_message()
     catch e
-      $(-> app.view.open_bookmark_source_selector())
+      $(-> app.view.bookmark_source_selector.open())
 
   send_update_message = ->
     app.message.send("bookmark_updated", null)

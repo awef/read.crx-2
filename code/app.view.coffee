@@ -20,9 +20,9 @@ app.view.init = ->
         .closest(".tab")
           .tab("select", tab_id: $container.attr("data-tab_id"))
     else if message.url is "config"
-      app.view.open_config()
+      app.view.config.open()
     else if message.url is "history"
-      app.view.open_history()
+      app.view.history.open()
     else if message.url is "bookmark"
       app.view.bookmark.open()
     else if guess_result.type is "board"
@@ -129,7 +129,10 @@ app.view.setup_resizer = ->
           app.config.set("tab_a_height", parseInt(tab_a.style["height"], 10))
         .appendTo("body")
 
-app.view.open_history = ->
+`/** @namespace */`
+app.view.history = {}
+
+app.view.history.open = ->
   $view = $("#template > .view_history").clone()
   $("#tab_a").tab("add", element: $view[0], title: "閲覧履歴")
 
@@ -152,12 +155,15 @@ app.view.open_history = ->
         frag.appendChild(tr)
       $view.find("tbody").append(frag)
 
-app.view.open_config = ->
+`/** @namespace */`
+app.view.config = {}
+
+app.view.config.open = ->
   container_close = ->
     $view.fadeOut "fast", -> $view.remove()
 
   if $(".view_config:visible").length isnt 0
-    app.log("debug", "app.view.open_config: 既に設定パネルが開かれています")
+    app.log("debug", "app.view.config_open: 既に設定パネルが開かれています")
     return
 
   $view = $("#template > .view_config").clone()
@@ -171,9 +177,12 @@ app.view.open_config = ->
 
   $view.hide().appendTo(document.body).fadeIn("fast")
 
-app.view.open_bookmark_source_selector = ->
+`/** @namespace */`
+app.view.bookmark_source_selector = {}
+
+app.view.bookmark_source_selector.open = ->
   if $(".view_bookmark_source_selector:visible").length isnt 0
-    app.log("debug", "app.view.open_bookmark_source_selector: " +
+    app.log("debug", "app.view.bookmark_source_selector.open: " +
       "既にブックマークフォルダ選択ダイアログが開かれています")
     return
 
