@@ -96,14 +96,17 @@ app.view.load_sidemenu = (url) ->
       .accordion()
 
 app.view.setup_resizer = ->
-  tab_a = document.getElementById("tab_a")
+  $tab_a = $("#tab_a")
+  tab_a = $tab_a[0]
+  offset = $tab_a.outerHeight() - $tab_a.height()
+
   min_height = 50
   max_height = document.body.offsetHeight - 50
 
   tmp = app.config.get("tab_a_height")
   if tmp
     tab_a.style["height"] =
-      Math.max(Math.min(tmp, max_height), min_height) + "px"
+      Math.max(Math.min(tmp - offset, max_height), min_height) + "px"
 
   $("#tab_resizer")
     .bind "mousedown", (e) ->
@@ -123,7 +126,7 @@ app.view.setup_resizer = ->
       }})
         .bind "mousemove", (e) ->
           tab_a.style["height"] =
-            Math.max(Math.min(e.pageY, max_height), min_height) + "px"
+            Math.max(Math.min(e.pageY - offset, max_height), min_height) + "px"
         .bind "mouseup", ->
           $(this).remove()
           app.config.set("tab_a_height", parseInt(tab_a.style["height"], 10))
