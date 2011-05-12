@@ -35,8 +35,10 @@ ${DBG_DIR}/manifest.json: ${SRC_DIR}/manifest.json
 ${DBG_DIR}/app.html: ${SRC_DIR}/app.haml
 	haml -q ${SRC_DIR}/app.haml ${DBG_DIR}/app.html
 
-${DBG_DIR}/app.js: ${SRC_DIR}/app.coffee ${SRC_DIR}/app.*.coffee ${SRC_DIR}/app.*.*.coffee
-	coffee -b -p -c ${SRC_DIR}/app.coffee ${SRC_DIR}/app.*.coffee ${SRC_DIR}/app.*.*.coffee | cat > ${DBG_DIR}/app.js
+${DBG_DIR}/app.js: ${SRC_DIR}/app.coffee ${SRC_DIR}/app.*.coffee
+	coffee -b -p -c ${SRC_DIR}/app.coffee > ${DBG_DIR}/app.js
+	find ${SRC_DIR}/ -type f -regex '${SRC_DIR}/app\.[^.]+\.coffee' -exec coffee -b -p -c {} >> ${DBG_DIR}/app.js \;
+	find ${SRC_DIR}/ -type f -regex '${SRC_DIR}/app\.[^.]+\.[^.]+\.coffee' -exec coffee -b -p -c {} >> ${DBG_DIR}/app.js \;
 
 ${DBG_DIR}/ui.js: ${SRC_DIR}/ui.*.coffee
 	coffee -b -p -c ${SRC_DIR}/ui.*.coffee | cat > ${DBG_DIR}/ui.js
