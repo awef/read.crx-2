@@ -125,32 +125,53 @@ app.view.thread._read_state_manager = ($view) ->
 
   read_state = null
 
-  scan = ->
-    read_state.last = read_state.received
-    content = $view[0].querySelector(".content")
-    bottom = content.scrollTop + content.clientHeight
-    is_updated = false
+  deferred_get_read_state = $.Deferred()
+  deferred_first_draw = $.Deferred (deferred) ->
+    $view.one "draw_content", -> deferred_first_draw.resolve()
 
-    for res, res_num in content.children
-      if res.offsetTop > bottom
-        last = res_num - 1
-        if read_state.last isnt last
-          read_state.last = last
-          is_updated = true
-        break
+  if (bookmark = app.bookmark.get(url)) and "read_state" of bookmark
+    read_state = bookmark.read_state
+    deferred_get_read_state.resolve()
+  else
+    app.read_state.get url, (res) ->
+      if res.status is "success"
+        read_state = res.data
+      else
+        read_state = {received: 0, read: 0, last: 0, url}
+      deferred_get_read_state.resolve()
 
-    if read_state.read < read_state.last
-      read_state.read = read_state.last
-      is_updated = true
+  $.when(deferred_get_read_state, deferred_first_draw).done ->
+    on_updated_draw = ->
+      content = $view.find(".content")[0]
+      read_state.received = content.children.length
+      last_res = content.children[read_state.last - 1]
+      if last_res
+        content.scrollTop = last_res.offsetTop
 
-    if is_updated
-      app.read_state.set(read_state)
+    on_updated_draw()
+    $view.bind("draw_content", on_updated_draw)
 
-  app.read_state.get url, (res) ->
-    if res.status is "success"
-      read_state = res.data
-    else
-      read_state = {received: 0, read: 0, last: 0, url}
+  deferred_get_read_state.done ->
+    scan = ->
+      read_state.last = read_state.received
+      content = $view[0].querySelector(".content")
+      bottom = content.scrollTop + content.clientHeight
+      is_updated = false
+
+      for res, res_num in content.children
+        if res.offsetTop > bottom
+          last = res_num - 1
+          if read_state.last isnt last
+            read_state.last = last
+            is_updated = true
+          break
+
+      if read_state.read < read_state.last
+        read_state.read = read_state.last
+        is_updated = true
+
+      if is_updated
+        app.read_state.set(read_state)
 
     scroll_flag = false
     scanner = setInterval((->
@@ -168,12 +189,3 @@ app.view.thread._read_state_manager = ($view) ->
       .bind "tab_removed", ->
         clearInterval(scanner)
         scan()
-
-      .bind "draw_content", ->
-        content = $view.find(".content")[0]
-
-        read_state.received = content.children.length
-
-        last_res = content.children[read_state.last - 1]
-        if last_res
-          content.scrollTop = last_res.offsetTop
