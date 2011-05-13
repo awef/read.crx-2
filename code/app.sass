@@ -89,6 +89,7 @@ $z-index_modal: 5
 
 @mixin content_table
   table
+    :width 100%
     :font-size 13px
     :border-collapse collapse
   thead
@@ -159,9 +160,12 @@ $z-index_modal: 5
 
 @mixin view_thread
   @include tabbed_view
-  :font-size 14px
+  :font-size 15px
   article
-    :margin 5px
+    :margin 10px 5px
+    header
+      :font-size 14px
+      :color #222
     .num
       &:after
         :content ' '
@@ -172,9 +176,8 @@ $z-index_modal: 5
         :content ' ['
       &:after
         :content '] '
-    .other
-      :color #333
     .message
+      :margin 5px 10px
       .anchor.disabled
         :color #666
     &.aa
@@ -230,7 +233,7 @@ a
 
 #body
   :position relative
-  :color #222
+  :color #111
   #left_pane
     :position absolute
     :width 135px
