@@ -31,6 +31,7 @@ app.bookmark = {}
         /^\d+$/.test(tmp.last)
       )
         tmp_bookmark.read_state =
+          url: url
           received: +tmp.received
           read: +tmp.read
           last: +tmp.last
