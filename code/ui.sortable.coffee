@@ -19,7 +19,7 @@
         e.preventDefault()
 
       .delegate ".sortable > *:not([draggable])", "mousedown", ->
-        $(this).attr("draggable", "true")
+        $(this).attr("draggable", true)
 
     this
 )(jQuery)
