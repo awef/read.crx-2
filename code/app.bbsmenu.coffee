@@ -14,7 +14,7 @@ app.bbsmenu.get = (callback) ->
           deferred.reject(cache)
 
     #通信部
-    .pipe (cache) ->
+    .pipe null, (cache) ->
       $.Deferred (deferred) ->
         xhr = new XMLHttpRequest()
         xhr_timer = setTimeout((-> xhr.abort()), 1000 * 30)
@@ -91,10 +91,9 @@ app.bbsmenu.parse = (html) ->
       board: []
 
     while reg_board_res = reg_board.exec(reg_category_res[0])
-      category.board.push({
-        url: reg_board_res[1],
+      category.board.push
+        url: reg_board_res[1]
         title: reg_board_res[2]
-      })
 
     if category.board.length > 0
       menu.push(category)
