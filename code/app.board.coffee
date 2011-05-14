@@ -24,58 +24,84 @@ app.board.get = (url, callback) ->
   xhr_path = tmp.path
   xhr_charset = tmp.charset
 
-  app.cache.get xhr_path, (cache) ->
-    if cache.status is "success" and Date.now() - cache.data.last_updated < 1000 * 60
-      callback(
-        status: "success"
-        data: app.board.parse(url, cache.data.data)
-      )
-    else
-      xhr = new XMLHttpRequest()
-      xhr_timer = setTimeout((-> xhr.abort()), 1000 * 30)
-      xhr.onreadystatechange = ->
-        if xhr.readyState is 4
-          clearTimeout(xhr_timer)
+  app.cache.get(xhr_path)
+    .pipe (cache) ->
+      $.Deferred (deferred) ->
+        if Date.now() - cache.data.last_updated < 1000 * 60
+          deferred.resolve(cache)
+        else
+          deferred.reject(cache)
 
-          if (
-            xhr.status is 200 and
-            (board = app.board.parse(url, xhr.responseText))
-          )
-            callback(status: "success", data: board)
-
-            last_modified = new Date(xhr.getResponseHeader("Last-Modified") or "dummy").getTime()
-            unless isNaN(last_modified)
-              app.cache.set(
-                url: xhr_path
-                data: xhr.responseText
-                last_updated: Date.now()
-                last_modified: last_modified
-              )
-            for thread in board
-              app.bookmark.update_res_count(thread.url, thread.res_count)
-          else if cache.status is "success"
-            if xhr.status is 304
-              callback(
-                status: "success"
-                data: app.board.parse(url, cache.data.data)
-              )
-              cache.data.last_updated = Date.now()
-              app.cache.set(cache.data)
+    #通信部
+    .pipe null, (cache) ->
+      $.Deferred (deferred) ->
+        xhr = new XMLHttpRequest()
+        xhr_timer = setTimeout((-> xhr.abort()), 1000 * 30)
+        xhr.onreadystatechange = ->
+          if xhr.readyState is 4
+            clearTimeout(xhr_timer)
+            if xhr.status is 200 and
+              deferred.resolve(cache, xhr)
+            else if cache.status is "success" and xhr.status is 304
+              deferred.resolve(cache, xhr)
             else
-              callback(
-                status: "error"
-                data: app.board.parse(url, cache.data.data)
-              )
+              deferred.reject(cache, xhr)
+        xhr.overrideMimeType("text/plain; charset=" + xhr_charset)
+        xhr.open("GET", xhr_path + "?_=" + Date.now().toString(10))
+        if cache.status is "success"
+          xhr.setRequestHeader(
+            "If-Modified-Since"
+            new Date(cache.data.last_modified).toUTCString()
+          )
+        xhr.send(null)
+
+    #パース部
+    .pipe((fn = (cache, xhr) ->
+      $.Deferred (deferred) ->
+        if xhr?.status is 200
+          board = app.board.parse(url, xhr.responseText)
+        else if cache?.status is "success"
+          board = app.board.parse(url, cache.data.data)
+
+        if board
+          if xhr?.status is 200 or xhr?.status is 304 or (not xhr and cache?.status is "success")
+            deferred.resolve(cache, xhr, board)
           else
-            callback(status: "error")
-      xhr.overrideMimeType("text/plain; charset=" + xhr_charset)
-      xhr.open("GET", xhr_path + "?_=" + Date.now().toString(10))
-      if cache.status is "success"
-        xhr.setRequestHeader(
-          "If-Modified-Since"
-          new Date(cache.data.last_modified).toUTCString()
-        )
-      xhr.send(null)
+            deferred.reject(cache, xhr, board)
+        else
+          deferred.reject(cache, xhr)
+    ), fn)
+
+    #コールバック
+    .done (cache, xhr, board) ->
+      callback(status: "success", data: board)
+
+    .fail (cache, xhr, board) ->
+      if thread
+        callback(status: "error", data: board)
+      else
+        callback(status: "error")
+
+    #キャシュ更新部
+    .done (cache, xhr, board) ->
+      if xhr?.status is 200
+        last_modified = new Date(
+          xhr.getResponseHeader("Last-Modified") or "dummy"
+        ).getTime()
+
+        unless isNaN(last_modified)
+          app.cache.set
+            url: xhr_path
+            data: xhr.responseText
+            last_updated: Date.now()
+            last_modified: last_modified
+
+        for thread in board
+          app.bookmark.update_res_count(thread.url, thread.res_count)
+
+      else if cache?.status is "success" and xhr?.status is 304
+        cache.data.last_updated = Date.now()
+        app.cache.set(cache.data)
 
 app.board.parse = (url, text) ->
   tmp = /^http:\/\/(\w+\.(\w+\.\w+))\/(\w+)\/(\w+)?/.exec(url)
