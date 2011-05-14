@@ -27,64 +27,84 @@ app.thread.get = (url, callback) ->
   xhr_path = tmp.path
   xhr_charset = tmp.charset
 
-  app.cache.get xhr_path, (cache) ->
-    if (cache.status is "success" and
-        Date.now() - cache.data.last_updated < 1000 * 60)
-      app.log("debug", "app.thread.get:
- 期限内のキャッシュが見つかりました。キャッシュを返します。")
-      callback
-        status: "success"
-        data: app.thread.parse(url, cache.data.data)
-    else
-      app.log("debug", "app.thread.get:
- 期限内のキャッシュが見つかりませんでした。datの取得を試みます。")
-      xhr = new XMLHttpRequest()
-      xhr_timer = setTimeout((-> xhr.abort()), 1000 * 30)
-      xhr.onreadystatechange = ->
-        if xhr.readyState is 4
-          clearTimeout(xhr_timer)
+  app.cache.get(xhr_path)
+    #キャッシュ取得部
+    .pipe (cache) ->
+      $.Deferred (deferred) ->
+        if Date.now() - cache.data.last_updated < 1000 * 60
+          deferred.resolve(cache)
+        else
+          deferred.reject(cache)
 
-          if xhr.status is 200 and (thread = app.thread.parse(url, xhr.responseText))
-            app.log("debug", "app.thread.get:
- datの取得に成功しました")
-            callback(status: "success", data: thread)
-
-            last_modified = new Date(xhr.getResponseHeader("Last-Modified") or "dummy").getTime()
-            unless isNaN(last_modified)
-              app.cache.set
-                url: xhr_path
-                data: xhr.responseText
-                last_updated: Date.now()
-                last_modified: last_modified
-
-            app.bookmark.update_res_count(url, thread.res.length)
-          else if cache.status is "success"
-            if xhr.status is 304
-              app.log("debug", "app.thread.get:
- datの取得に成功しました（更新無し）")
-              callback
-                status: "success"
-                data: app.thread.parse(url, cache.data.data)
-              cache.data.last_updated = Date.now()
-              app.cache.set(cache.data)
+    #通信部
+    .pipe null, (cache) ->
+      $.Deferred (deferred) ->
+        xhr = new XMLHttpRequest()
+        xhr_timer = setTimeout((-> xhr.abort()), 1000 * 30)
+        xhr.onreadystatechange = ->
+          if xhr.readyState is 4
+            clearTimeout(xhr_timer)
+            if xhr.status is 200
+              deferred.resolve(cache, xhr)
+            else if cache.status is "success" and xhr.status is 304
+              deferred.resolve(cache, xhr)
             else
-              app.log("debug", "app.thread.get:
- datの取得に失敗しました。キャッシュを返します。")
-              callback
-                status: "error"
-                data: app.thread.parse(url, cache.data.data)
+              deferred.reject(cache, xhr)
+        xhr.overrideMimeType("text/plain; charset=" + xhr_charset)
+        xhr.open("GET", xhr_path + "?_=" + Date.now().toString(10))
+        if cache.status is "success"
+          xhr.setRequestHeader(
+            "If-Modified-Since",
+            new Date(cache.data.last_modified).toUTCString()
+          )
+        xhr.send(null)
+
+    #パース部
+    .pipe((fn = (cache, xhr) ->
+      $.Deferred (deferred) ->
+        if xhr?.status is 200
+          thread = app.thread.parse(url, xhr.responseText)
+        else if cache?.status is "success"
+          thread = app.thread.parse(url, cache.data.data)
+
+        if thread
+          if xhr?.status is 200 or xhr?.status is 304 or (not xhr and cacahe?.status is "success")
+            deferred.resolve(cache, xhr, thread)
           else
-            app.log("debug", "app.thread.get:
- datの取得に失敗しました。")
-            callback(status: "error")
-      xhr.overrideMimeType("text/plain; charset=" + xhr_charset)
-      xhr.open("GET", xhr_path + "?_=" + Date.now().toString(10))
-      if cache.status is "success"
-        xhr.setRequestHeader(
-          "If-Modified-Since",
-          new Date(cache.data.last_modified).toUTCString()
-        )
-      xhr.send(null)
+            deferred.reject(cache, xhr, thread)
+        else
+          deferred.reject(cache, xhr)
+    ), fn)
+
+    #コールバック
+    .done (cache, xhr, thread) ->
+      callback(status: "success", data: thread)
+
+    .fail (cache, xhr, thread) ->
+      if thread
+        callback(status: "error", data: thread)
+      else
+        callback(status: "error")
+
+    #キャッシュ更新部
+    .done (cache, xhr, thread) ->
+      if xhr?.status is 200
+        last_modified = new Date(
+          xhr.getResponseHeader("Last-Modified") or "dummy"
+        ).getTime()
+
+        unless isNaN(last_modified)
+          app.cache.set
+            url: xhr_path
+            data: xhr.responseText
+            last_updated: Date.now()
+            last_modified: last_modified
+
+        app.bookmark.update_res_count(url, thread.res.length)
+
+      else if cache?.status is "success" and xhr?.status is 304
+        cache.data.last_updated = Date.now()
+        app.cache.set(cache.data)
 
 app.thread.parse = (url, text) ->
   tmp = /^http:\/\/\w+\.(\w+\.\w+)\//.exec(url)
