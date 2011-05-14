@@ -2,9 +2,15 @@
 app.cache = {}
 
 app.cache.get = (url, callback) ->
+  deferred = $.Deferred()
+
+  deferred.always (res) ->
+    if callback
+      callback(res)
+
   req = webkitIndexedDB.open("cache")
   req.onerror = ->
-    callback(status: "error")
+    deferred.reject(status: "error")
     app.log("error", "app.cache.get: indexedDB.openに失敗")
   req.onsuccess = (e) ->
     db = req.result
@@ -19,15 +25,17 @@ app.cache.get = (url, callback) ->
       req = objectStore.get(url)
       req.onsuccess = (e) ->
         if typeof req.result is "object"
-          callback(status: "success", data: req.result)
+          deferred.resolve(status: "success", data: req.result)
         else
-          callback(status: "not_found")
+          deferred.reject(status: "not_found")
       req.onerror = ->
-        callback(status: "error")
+        app.log("error", "app.cache.get: キャッシュの取得に失敗")
+        deferred.reject(status: "error")
     else
-      callback(status: "error")
+      deferred.reject(status: "error")
       app.log("warn", "app.cache.get: 予期せぬdb.version", db.version)
       db.close()
+  deferred
 
 app.cache.set = (data) ->
   if (
