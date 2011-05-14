@@ -45,7 +45,10 @@ app.bbsmenu.get = (callback) ->
           menu = app.bbsmenu.parse(cache.data.data)
 
         if menu
-          deferred.resolve(cache, xhr, menu)
+          if xhr?.status is 200 or xhr?.status is 304 or (not xhr and cache?.status is "success")
+            deferred.resolve(cache, xhr, menu)
+          else
+            deferred.reject(cache, xhr, menu)
         else
           deferred.reject(cache, xhr)
     ), fn)
