@@ -35,56 +35,74 @@ app.cache.get = (url) ->
   deferred.promise()
 
 app.cache.set = (data) ->
-  if (
-    typeof data.url isnt "string" or
-    typeof data.data isnt "string" or
-    typeof data.last_modified isnt "number" or
-    typeof data.last_updated isnt "number"
-  )
-    app.log("error", "app.cache.set: 引数が不正です", arguments)
-    return
+  arg = arguments
 
-  db = null
-
-  idb_setversion = ->
-    req = db.setVersion("1")
-    req.onerror = ->
-      app.log(
-        "error",
-        "app.cache.set: db.setVersion失敗(%s -> %s)",
-        db.version,
-        "1"
-      )
-      db.close()
-    req.onsuccess = (e) ->
-      db.createObjectStore("cache", {keyPath: "url"})
-      app.log(
-        "info",
-        "app.cache.set: db.setVersion成功(%s -> %s)",
-        db.version,
-        "1"
-      )
-      idb_putdata()
-  idb_putdata = ->
-    tra = db.transaction(["cache"], webkitIDBTransaction.READ_WRITE)
-    tra.oncomplete = ->
-      db.close()
-    tra.onerror = ->
-      db.close()
-
-    objectStore = tra.objectStore("cache")
-    req = objectStore.put(data)
-
-  req = webkitIndexedDB.open("cache")
-  req.onerror = ->
-    app.log("error", "app.cache.set: indexedDB.openに失敗")
-  req.onsuccess = (e) ->
-    db = req.result
-
-    if db.version isnt "1"
-      idb_setversion()
+  $.Deferred (deferred) ->
+    if (
+      typeof data.url isnt "string" or
+      typeof data.data isnt "string" or
+      typeof data.last_modified isnt "number" or
+      typeof data.last_updated isnt "number"
+    )
+      app.log("error", "app.cache.set: 引数が不正です", arg)
+      deferred.reject()
     else
-      idb_putdata()
+      deferred.resolve()
+
+  .pipe ->
+    $.Deferred (deferred) ->
+      req = webkitIndexedDB.open("cache")
+      req.onerror = ->
+        app.log("error", "app.cache.set: indexedDB.openに失敗")
+        deferred.reject()
+      req.onsuccess = (e) ->
+        deferred.resolve(req.result)
+
+  .pipe (db) ->
+    $.Deferred (deferred) ->
+      if db.version is "1"
+        deferred.resolve(db)
+      else
+        deferred.reject(db)
+
+  .pipe null, (db) ->
+    $.Deferred (deferred) ->
+      if db
+        req = db.setVersion("1")
+        req.onerror = ->
+          app.log(
+            "error",
+            "app.cache.set: db.setVersion失敗(%s -> %s)",
+            db.version,
+            "1"
+          )
+          deferred.reject(db)
+        req.onsuccess = (e) ->
+          db.createObjectStore("cache", {keyPath: "url"})
+          app.log(
+            "info",
+            "app.cache.set: db.setVersion成功(%s -> %s)",
+            db.version,
+            "1"
+          )
+          deferred.resolve(db)
+      else
+        deferred.reject()
+
+  .pipe (db) ->
+    $.Deferred (deferred) ->
+      transaction = db.transaction(["cache"], webkitIDBTransaction.READ_WRITE)
+      transaction.oncomplete = ->
+        deferred.resolve(db)
+      transaction.onerror = ->
+        deferred.reject(db)
+
+      transaction.objectStore("cache").put(data)
+
+  .always (db) ->
+    db and db.close()
+
+  .promise()
 
 app.cache.remove = (url) ->
   $.Deferred (deferred) ->
