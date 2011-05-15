@@ -57,9 +57,9 @@ ${DBG_DIR}/img/: ${IMG_FILES}
 	cp -r ${SRC_DIR}/img/ ${DBG_DIR}/img/
 
 ${DBG_DIR}/test/: ${QUNIT_FILES}
-	mkdir -p ${DBG_DIR}/test/
+	rm -rf ${DBG_DIR}/test/
+	mkdir ${DBG_DIR}/test/
 	cp ${SRC_DIR}/test/test.html ${DBG_DIR}/test/test.html
-	
 	cp -r ${SRC_DIR}/test/qunit/ ${DBG_DIR}/test/qunit/
 
 ${DBG_DIR}/test/test.js: ${DBG_DIR}/test/ ${SRC_DIR}/test/*.coffee
