@@ -85,3 +85,28 @@ app.cache.set = (data) ->
       idb_setversion()
     else
       idb_putdata()
+
+app.cache.remove = (url) ->
+  $.Deferred (deferred) ->
+    req = webkitIndexedDB.open("cache")
+    req.onerror = -> deferred.reject()
+    req.onsuccess = ->
+      db = req.result
+      if db.version is "1"
+        deferred.resolve(db)
+      else
+        deferred.reject()
+
+  .pipe (db) ->
+    $.Deferred (deferred) ->
+      transaction = db.transaction(["cache"], webkitIDBTransaction.READ_WRITE)
+      transaction.oncomplete = ->
+        db.close()
+        deferred.resolve()
+      transaction.onerror = ->
+        db.close()
+        deferred.reject()
+
+      transaction.objectStore("cache").delete(url)
+
+  .promise()
