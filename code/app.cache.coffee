@@ -31,7 +31,8 @@ app.cache.get = (url) ->
       deferred.reject(status: "error")
       app.log("warn", "app.cache.get: 予期せぬdb.version", db.version)
       db.close()
-  deferred
+
+  deferred.promise()
 
 app.cache.set = (data) ->
   if (
