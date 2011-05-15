@@ -79,6 +79,7 @@ app.read_state.get_by_board = (board_url, callback) ->
       db and db.close()
 
 app.read_state.set = (read_state) ->
+  arg = arguments
   $.Deferred (deferred) ->
       if (
         typeof read_state.url is "string" and
@@ -90,7 +91,7 @@ app.read_state.set = (read_state) ->
         read_state.board_url = app.url.thread_to_board(read_state.url)
         deferred.resolve()
       else
-        app.log("error", "app.read_state.set: 引数が不正です", arguments)
+        app.log("error", "app.read_state.set: 引数が不正です", arg)
         deferred.reject()
 
     .pipe ->
