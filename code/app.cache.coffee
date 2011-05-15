@@ -1,12 +1,8 @@
 `/** @namespace */`
 app.cache = {}
 
-app.cache.get = (url, callback) ->
+app.cache.get = (url) ->
   deferred = $.Deferred()
-
-  deferred.always (res) ->
-    if callback
-      callback(res)
 
   req = webkitIndexedDB.open("cache")
   req.onerror = ->
