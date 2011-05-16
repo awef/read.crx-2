@@ -1,9 +1,8 @@
 $z-index_tab_content: 0
 $z-index_selected_tab_content: 1
 $z-index_left_pane: 2
-$z-index_view_config: 3
-$z-index_notification: 4
-$z-index_modal: 5
+$z-index_notification: 3
+$z-index_modal: 4
 
 @import sass/ui_accordion.sass
 @import sass/ui_tab.sass
@@ -185,37 +184,28 @@ $z-index_modal: 5
         @include ascii_art
 
 @mixin view_config
-  :position absolute
-  :left 0
-  :top 0
-  :width 100%
-  :height 100%
-  :z-index $z-index_view_config
-  :background-color rgba(#000, 0.3)
-  :color #fff
+  @include modal_overlay
   > div
-    :position relative
-    :margin 10px
-    :background-color rgba(#000, 0.8)
-    :border-radius 4px
     @include drop_shadow
+    :position relative
+    :margin 20px auto
+    :width 500px
+    :border-radius 4px
+    :font-size 14px
+    :background-color #f3f3f3
     .close_button
       :position absolute
       :right 5px
       :top 5px
-      :border 2px solid #fff
-        :radius 3px
-      :opacity 0.8
-      :-webkit-transition opacity 200ms
+      :border-radius 3px
+      :background-color #a55
       :cursor pointer
-      &:hover
-        :opacity 0.9
   h2
     :margin 5px
     :padding 5px
     :font-size 18px
-    :color #eee
-    :border-bottom 2px solid #eee
+    :font-weight normal
+    :border-bottom 2px solid #999
   label
     :cursor pointer
 
