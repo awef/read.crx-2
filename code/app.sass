@@ -160,28 +160,34 @@ $z-index_modal: 4
 .view_thread
   @include tabbed_view
   :font-size 15px
+
   article
     :margin 10px 5px
-    header
-      :font-size 14px
-      :color #222
-    .num
-      &:after
-        :content ' '
-    .name
-      :color #008000
-    .mail
-      &:before
-        :content ' ['
-      &:after
-        :content '] '
-    .message
-      :margin 5px 10px
-      .anchor.disabled
-        :color #666
-    &.aa
-      .message
-        @include ascii_art
+
+  header
+    :font-size 14px
+    :color #222
+
+  .num
+    &:after
+      :content ' '
+
+  .name
+    :color #008000
+
+  .mail
+    &:before
+      :content ' ['
+    &:after
+      :content '] '
+
+  .message
+    :margin 5px 10px
+    .anchor.disabled
+      :color #666
+
+  .aa .message
+    @include ascii_art
 
 .view_config
   @include modal_overlay
