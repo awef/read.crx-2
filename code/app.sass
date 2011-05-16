@@ -226,12 +226,12 @@ a
   :position relative
   :color #111
   #left_pane
+    @include ui_accordion
     :position absolute
     :width 135px
     :height 100%
     :overflow-y auto
     :z-index $z-index_left_pane
-    @include ui_accordion
   #right_pane
     :box-sizing border-box
     :position absolute
