@@ -134,13 +134,11 @@ $z-index_modal: 4
 .view_history
   @include tabbed_view
   @include content_table
-  :overflow-y auto
 
 .view_bookmark
   @include tabbed_view
   @include content_table
   @include ui_table_sort
-  :overflow-y auto
   td
     &:nth-child(2), &:nth-child(3), &:nth-child(4)
       :text-align right
