@@ -109,7 +109,7 @@ $z-index_modal: 4
     :padding 2px
     :white-space nowrap
 
-@mixin view_board
+.view_board
   @include tabbed_view
   @include ui_table_sort
   @include ui_table_search
@@ -131,12 +131,12 @@ $z-index_modal: 4
     &:nth-child(3), &:nth-child(4), &:nth-child(5)
       :text-align right
 
-@mixin view_history
+.view_history
   @include tabbed_view
   @include content_table
   :overflow-y auto
 
-@mixin view_bookmark
+.view_bookmark
   @include tabbed_view
   @include content_table
   @include ui_table_sort
@@ -157,7 +157,7 @@ $z-index_modal: 4
       &:before
         :content "更新失敗 : "
 
-@mixin view_thread
+.view_thread
   @include tabbed_view
   :font-size 15px
   article
@@ -183,7 +183,7 @@ $z-index_modal: 4
       .message
         @include ascii_art
 
-@mixin view_config
+.view_config
   @include modal_overlay
   > div
     @include drop_shadow
@@ -218,9 +218,6 @@ html, body, #body
 a
   :cursor pointer
 
-.view_config
-  @include view_config
-
 #body
   :position relative
   :color #111
@@ -237,14 +234,6 @@ a
     :padding-left 135px
     :width 100%
     :height 100%
-    .view_board
-      @include view_board
-    .view_thread
-      @include view_thread
-    .view_bookmark
-      @include view_bookmark
-    .view_history
-      @include view_history
 
 #body.pane-3
   #right_pane
