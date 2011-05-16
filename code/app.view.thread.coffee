@@ -143,10 +143,21 @@ app.view.thread._read_state_manager = ($view) ->
   $.when(deferred_get_read_state, deferred_first_draw).done ->
     on_updated_draw = ->
       content = $view.find(".content")[0]
+
+      res_last = content.children[read_state.last - 1]
+      if res_last
+        res_last.classList.add("last")
+        content.scrollTop = res_last.offsetTop
+
+      res_read = content.children[read_state.read - 1]
+      if res_read
+        res_read.classList.add("read")
+
+      res_received = content.children[read_state.received - 1]
+      if res_received
+        res_received.classList.add("received")
+
       read_state.received = content.children.length
-      last_res = content.children[read_state.last - 1]
-      if last_res
-        content.scrollTop = last_res.offsetTop
 
     on_updated_draw()
     $view.bind("draw_content", on_updated_draw)
