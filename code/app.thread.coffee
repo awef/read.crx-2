@@ -68,7 +68,7 @@ app.thread.get = (url, callback) ->
           thread = app.thread.parse(url, cache.data.data)
 
         if thread
-          if xhr?.status is 200 or xhr?.status is 304 or (not xhr and cacahe?.status is "success")
+          if xhr?.status is 200 or xhr?.status is 304 or (not xhr and cache?.status is "success")
             deferred.resolve(cache, xhr, thread)
           else
             deferred.reject(cache, xhr, thread)
