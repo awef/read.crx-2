@@ -30,7 +30,7 @@ app.read_state = {}
   .promise()
 )()
 
-app.read_state.get = (url, callback) ->
+app.read_state.get = (url) ->
   url = app.url.fix(url)
 
   app.read_state._db_open
@@ -49,18 +49,9 @@ app.read_state.get = (url, callback) ->
         req.onerror = ->
           deferred.reject()
 
-    .done (read_state) ->
-      if read_state
-        callback(status: "success", data: req.result)
-      else
-        callback(status: "not_found")
-
-    .fail ->
-      callback(status: "error")
-
     .promise()
 
-app.read_state.get_by_board = (board_url, callback) ->
+app.read_state.get_by_board = (board_url) ->
   app.read_state._db_open
 
     .pipe (db) ->
@@ -84,12 +75,6 @@ app.read_state.get_by_board = (board_url, callback) ->
           if cursor
             data.push(cursor.value)
             cursor.continue()
-
-    .done (data) ->
-      callback(status: "success", data: data)
-
-    .fail ->
-      callback(status: "error")
 
     .promise()
 

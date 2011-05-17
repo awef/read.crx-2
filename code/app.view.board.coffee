@@ -49,12 +49,7 @@ app.view.board.open = (url) ->
 app.view.board._draw = ($view) ->
   url = $view.attr("data-url")
 
-  deferred_get_read_state = $.Deferred (deferred) ->
-    app.read_state.get_by_board url, (res) ->
-      if res.status is "success"
-        deferred.resolve(res.data)
-      else
-        deferred.reject()
+  deferred_get_read_state = app.read_state.get_by_board(url)
 
   deferred_board_get = $.Deferred (deferred) ->
     app.board.get url, (res) ->

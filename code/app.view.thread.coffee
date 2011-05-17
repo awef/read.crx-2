@@ -133,12 +133,10 @@ app.view.thread._read_state_manager = ($view) ->
     read_state = bookmark.read_state
     deferred_get_read_state.resolve()
   else
-    app.read_state.get url, (res) ->
-      if res.status is "success"
-        read_state = res.data
-      else
-        read_state = {received: 0, read: 0, last: 0, url}
-      deferred_get_read_state.resolve()
+    app.read_state.get(url)
+      .always (_read_state) ->
+        read_state = _read_state or {received: 0, read: 0, last: 0, url}
+        deferred_get_read_state.resolve()
 
   $.when(deferred_get_read_state, deferred_first_draw).done ->
     on_updated_draw = ->
