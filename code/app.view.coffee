@@ -178,6 +178,8 @@ app.view.config.open = ->
     .find("> div > .close_button")
       .bind("click", container_close)
 
+  $view.find(".version_info").text("UserAgent : #{navigator.userAgent}")
+
   $view.hide().appendTo(document.body).fadeIn("fast")
 
 `/** @namespace */`
