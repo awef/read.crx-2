@@ -54,7 +54,7 @@ app.history.add = (url, title, date) ->
 
     .promise()
 
-app.history.get = (offset, count, callback) ->
+app.history.get = (offset, count) ->
   app.history._open_db
 
     .pipe (db) ->
@@ -79,11 +79,5 @@ app.history.get = (offset, count, callback) ->
           deferred.reject()
         transaction.oncomplete = ->
           deferred.resolve(data)
-
-    .done (data) ->
-      callback({status: "success", data})
-
-    .fail ->
-      callback(status: "error")
 
     .promise()

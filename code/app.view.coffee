@@ -140,11 +140,10 @@ app.view.history.open = ->
   $view = $("#template > .view_history").clone()
   $("#tab_a").tab("add", element: $view[0], title: "閲覧履歴")
 
-  app.history.get undefined, 500, (res) ->
-    if "data" of res
-
+  app.history.get(undefined, 500)
+    .done (data) ->
       frag = document.createDocumentFragment()
-      for val in res.data
+      for val in data
         tr = document.createElement("tr")
         tr.setAttribute("data-href", val.url)
         tr.className = "open_in_rcrx"
