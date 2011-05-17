@@ -1,63 +1,79 @@
 `/** @namespace */`
 app.read_state = {}
 
+(->
+  app.read_state._db_open = $.Deferred (deferred) ->
+    req = webkitIndexedDB.open("read_state")
+    req.onerror = ->
+      deferred.reject()
+      app.log("error", "app.read_state: db.open失敗")
+    req.onsuccess = ->
+      deferred.resolve(req.result)
+
+  .pipe (db) ->
+    $.Deferred (deferred) ->
+      if db.version is "1"
+        deferred.resolve(db)
+      else
+        req = db.setVersion("1")
+        req.onerror = ->
+          app.log("error", "app.read_state: db.setVersion失敗(#{db.version} -> 1)")
+          deferred.reject(db)
+        req.onsuccess = () ->
+          db.createObjectStore("read_state", keyPath: "url")
+            .createIndex("board_url", "board_url")
+          app.log("info", "app.read_state: db.setVersion成功(#{db.version} -> 1)")
+          deferred.resolve(db)
+
+  .fail (db) -> db and db.close()
+
+  .promise()
+)()
+
 app.read_state.get = (url, callback) ->
   url = app.url.fix(url)
-  req = webkitIndexedDB.open("read_state")
-  req.onerror = ->
-    callback(status: "error")
-    app.log("error", "app.read_state.get: データベースへの接続に失敗")
-  req.onsuccess = ->
-    db = req.result
-    if db.version isnt "1"
-      app.log("warn", "app.read_state.get: 予期せぬdb.version", db.version)
-      db.close()
-      callback(status: "error")
-    else
-      tra = db.transaction(["read_state"], webkitIDBTransaction.READ_ONLY)
-      tra.oncomplete = ->
-        db.close()
-      tra.onerror = ->
-        db.close()
 
-      objectStore = tra.objectStore("read_state")
-      req = objectStore.get(url)
-      req.onsuccess = ->
-        if typeof req.result is "object"
-          callback(status: "success", data: req.result)
-        else
-          callback(status: "not_fount")
-      req.onerror = ->
-        callback(status: "error")
-
-app.read_state.get_by_board = (board_url, callback) ->
-  $.Deferred (deferred) ->
-      req = webkitIndexedDB.open("read_state")
-      req.onerror = ->
-        app.log("error", "app.read_state.set: データベースへの接続に失敗")
-        deferred.reject()
-      req.onsuccess = ->
-        deferred.resolve(req.result)
+  app.read_state._db_open
 
     .pipe (db) ->
       $.Deferred (deferred) ->
-        if db.version is "1"
-          deferred.resolve(db)
-        else
-          deferred.reject(db)
+        transaction = db.transaction(["read_state"])
+        objectStore = transaction.objectStore("read_state")
+
+        req = objectStore.get(url)
+        req.onsuccess = ->
+          if typeof req.result is "object"
+            deferred.resolve(req.result)
+          else
+            deferred.resolve()
+        req.onerror = ->
+          deferred.reject()
+
+    .done (read_state) ->
+      if read_state
+        callback(status: "success", data: req.result)
+      else
+        callback(status: "not_found")
+
+    .fail ->
+      callback(status: "error")
+
+    .promise()
+
+app.read_state.get_by_board = (board_url, callback) ->
+  app.read_state._db_open
 
     .pipe (db) ->
       $.Deferred (deferred) ->
         data = []
 
-        transaction = db.transaction(["read_state"],
-          webkitIDBTransaction.READ_ONLY)
+        transaction = db.transaction(["read_state"])
         transaction.onerror = ->
           app.log("error", "app.read_state.get_by_board:
  トランザクション中断")
-          deferred.reject(db)
+          deferred.reject()
         transaction.oncomplete = ->
-          deferred.resolve(db, data)
+          deferred.resolve(data)
 
         object_store = transaction.objectStore("read_state")
         req = object_store
@@ -69,66 +85,41 @@ app.read_state.get_by_board = (board_url, callback) ->
             data.push(cursor.value)
             cursor.continue()
 
-    .done (db, data) ->
+    .done (data) ->
       callback(status: "success", data: data)
 
-    .fail (db) ->
+    .fail ->
       callback(status: "error")
 
-    .always (db) ->
-      db and db.close()
+    .promise()
 
 app.read_state.set = (read_state) ->
-  arg = arguments
-  $.Deferred (deferred) ->
-      if (
-        typeof read_state.url is "string" and
-        typeof read_state.last is "number" and
-        typeof read_state.read is "number" and
-        typeof read_state.received is "number"
-      )
-        read_state.url = app.url.fix(read_state.url)
-        read_state.board_url = app.url.thread_to_board(read_state.url)
-        deferred.resolve()
-      else
-        app.log("error", "app.read_state.set: 引数が不正です", arg)
-        deferred.reject()
+  if (
+    typeof read_state.url isnt "string" or
+    typeof read_state.last isnt "number" or
+    typeof read_state.read isnt "number" or
+    typeof read_state.received isnt "number"
+  )
+    app.log("error", "app.read_state.set: 引数が不正です", arguments)
+    return $.Deferred().reject().promise()
 
-    .pipe ->
-      $.Deferred (deferred) ->
-        req = webkitIndexedDB.open("read_state")
-        req.onerror = ->
-          app.log("error", "app.read_state.set: データベースへの接続に失敗")
-          deferred.reject()
-        req.onsuccess = ->
-          deferred.resolve(req.result)
+  read_state.url = app.url.fix(read_state.url)
+  read_state.board_url = app.url.thread_to_board(read_state.url)
 
-    .pipe (db) ->
-      $.Deferred (deferred) ->
-        if db.version is "1"
-          deferred.resolve(db)
-        else
-          req = db.setVersion("1")
-          req.onerror = ->
-            app.log("error", "app.read_state.set: db.setVersion失敗(%s -> %s)", db.version, "1")
-            deferred.reject(db)
-          req.onsuccess = ->
-            db.createObjectStore("read_state", keyPath: "url")
-              .createIndex("board_url", "board_url")
-            app.log("info", "app.read_state.set: db.setVersion成功(%s -> %s)", db.version, "1")
-            deferred.resolve(db)
+  app.read_state._db_open
 
     .pipe (db) ->
       $.Deferred (deferred) ->
         transaction = db.transaction(["read_state"], webkitIDBTransaction.READ_WRITE)
         transaction.onerror = ->
           app.log("error", "app.read_state.set: 保存失敗")
-          deferred.reject(db)
+          deferred.reject()
         transaction.oncomplete = ->
-          deferred.resolve(db)
+          deferred.resolve()
         transaction.objectStore("read_state").put(read_state)
 
-    .always (db) ->
-      db and db.close()
+    .always ->
       delete read_state.board_url
       app.bookmark.update_read_state(read_state)
+
+    .promise()
