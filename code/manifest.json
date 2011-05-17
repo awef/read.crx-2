@@ -2,7 +2,7 @@
   "name" : "read.crx 2",
   "version" : "0.0",
   "description" : "2chブラウザ",
-  "minimum_chrome_version" : "10",
+  "minimum_chrome_version" : "11",
   "incognito" : "split",
   "options_page" : "app.html?q=config",
   "permissions" : [
