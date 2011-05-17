@@ -172,10 +172,9 @@ app.view.config.open = ->
 
   $view = $("#template > .view_config").clone()
   $view
-    .bind("click", (e) ->
+    .bind "click", (e) ->
       if e.target.webkitMatchesSelector(".view_config")
         container_close()
-    )
     .find("> div > .close_button")
       .bind("click", container_close)
 
