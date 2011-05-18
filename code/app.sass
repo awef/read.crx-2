@@ -185,6 +185,11 @@ $z-index_modal: 4
   .aa .message
     @include ascii_art
 
+  .popup
+    @include drop_shadow
+    :position fixed
+    :background-color #fff
+
 .view_config
   @include modal_overlay
   > div

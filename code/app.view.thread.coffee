@@ -17,6 +17,36 @@ app.view.thread.open = (url) ->
 
   $("#tab_b").tab("add", element: $view[0], title: url)
 
+  $view
+    .delegate ".anchor:not(.disabled)", "mouseenter", (e) ->
+      this.innerText
+        .replace /[\d０-９]+(?:-[\d０-９]+)?(?:\s*,\s*[\d０-９]+(?:-[\d０-９]+)?)*/g, ($0) ->
+          str = $0.replace /[０-９]/g, ($0) ->
+            String.fromCharCode($0.charCodeAt(0) - 65248)
+
+          reg = /(\d+)(?:-(\d+))?/g
+          res_list = $view.find(".content")[0].children
+          res_list_length = res_list.length
+          frag = document.createDocumentFragment()
+          while (res = reg.exec(str))
+            now = +res[1] - 1
+            end = +(res[2] or res[1]) - 1
+            while now <= end and now < res_list_length
+              frag.appendChild(res_list[now].cloneNode(true))
+              now++
+
+          $popup = $view
+            .find(".popup")
+              .append(frag)
+              .css(left: e.pageX + 20, top: e.pageY - 20)
+              .show()
+
+          $popup.css("left", e.pageX + 20 )
+          $popup.css("top", Math.min(e.pageY, document.body.offsetHeight - $popup.outerHeight()) - 20)
+
+    .delegate ".anchor:not(.disabled)", "mouseleave", ->
+      $view.find(".popup").empty().hide()
+
   app.view.thread._read_state_manager($view)
   app.view.thread._draw($view)
     .always (thread) ->
