@@ -43,7 +43,9 @@ app.read_state.get = (url) ->
         req = objectStore.get(url)
         req.onsuccess = ->
           if typeof req.result is "object"
-            deferred.resolve(req.result)
+            read_state = req.result
+            delete read_state.board_url
+            deferred.resolve(read_state)
           else
             deferred.resolve()
         req.onerror = ->
@@ -73,7 +75,9 @@ app.read_state.get_by_board = (board_url) ->
         req.onsuccess = ->
           cursor = req.result
           if cursor
-            data.push(cursor.value)
+            read_state = cursor.value
+            delete read_state.board_url
+            data.push(read_state)
             cursor.continue()
 
     .promise()
