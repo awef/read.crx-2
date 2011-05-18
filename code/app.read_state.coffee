@@ -108,3 +108,19 @@ app.read_state.set = (read_state) ->
       app.bookmark.update_read_state(read_state)
 
     .promise()
+
+app.read_state.remove = (url) ->
+  app.read_state._db_open
+
+    .pipe (db) ->
+      $.Deferred (deferred) ->
+        transaction = db.transaction(["read_state"], webkitIDBTransaction.READ_WRITE)
+        transaction.onerror = ->
+          app.log("error", "app.read_state.remove: 削除失敗")
+          deferred.reject()
+        transaction.oncomplete = ->
+          deferred.resolve()
+        transaction.objectStore("read_state").delete(url)
+
+    .promise()
+
