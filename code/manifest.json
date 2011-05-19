@@ -21,5 +21,15 @@
     "128" : "/img/read.crx_128x128.png",
     "48" : "/img/read.crx_48x48.png",
     "16" : "/img/read.crx_16x16.png"
-  }
+  },
+  "content_scripts" : [
+    {
+      "matches" : [
+        "http://*.2ch.net/*",
+        "http://jbbs.libedoor.jp/*",
+        "http://*.machi.to/*"
+      ],
+      "js" : ["/cs_addlink.js"]
+    }
+  ]
 }

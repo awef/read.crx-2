@@ -21,6 +21,7 @@ all:\
 	${DBG_DIR}/app.js\
 	${DBG_DIR}/ui.js\
 	${DBG_DIR}/app.css\
+	${DBG_DIR}/cs_addlink.js\
 	${DBG_DIR}/lib/\
 	${DBG_DIR}/img/\
 	${DBG_DIR}/test/\
@@ -47,6 +48,9 @@ ${DBG_DIR}/ui.js: ${SRC_DIR}/ui.*.coffee
 
 ${DBG_DIR}/app.css: ${SRC_DIR}/app.sass ${SRC_DIR}/sass/*.sass
 	sass --style compressed --no-cache ${SRC_DIR}/app.sass ${DBG_DIR}/app.css
+
+${DBG_DIR}/cs_addlink.js: ${SRC_DIR}/cs_addlink.coffee
+	coffee -b -p -c ${SRC_DIR}/cs_addlink.coffee | cat > ${DBG_DIR}/cs_addlink.js
 
 ${DBG_DIR}/lib/: ${LIB_FILES}
 	rm -rf ${DBG_DIR}/lib/
