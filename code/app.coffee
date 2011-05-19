@@ -15,7 +15,7 @@ app = {}
     location.reload(true)
 
   reg_res = /[\?&]q=([^&]+)/.exec(location.search)
-  query = reg_res?[1] or "bookmark"
+  query = decodeURIComponent(reg_res?[1] or "bookmark")
 
   chrome.tabs.getCurrent (current_tab) ->
     chrome.windows.getAll {populate: true}, (windows) ->
