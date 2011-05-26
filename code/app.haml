@@ -1,12 +1,15 @@
+:ruby
+  app_version = "0.0"
+
 !!! 5
-%html(data-app-version="0.0")
+%html(data-app-version="#{app_version}")
   %head
     %meta(charset="utf-8")
     %title read.crx 2
-    %link(rel="stylesheet" href="/app.css?v=0.0")
-    %script(src="/lib/jquery/jquery-1.6.1.min.js?v=0.0")
-    %script(src="/ui.js?v=0.0")
-    %script(src="/app.js?v=0.0")
+    %link(rel="stylesheet" href="/app.css?v=#{app_version}")
+    %script(src="/lib/jquery/jquery-1.6.1.min.js?v=#{app_version}")
+    %script(src="/ui.js?v=#{app_version}")
+    %script(src="/app.js?v=#{app_version}")
   %body
     #app_notice_container
     #body
