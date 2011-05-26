@@ -156,8 +156,9 @@ app.view.thread._read_state_manager = ($view) ->
   read_state = null
 
   deferred_get_read_state = $.Deferred()
-  deferred_first_draw = $.Deferred (deferred) ->
-    $view.one "draw_content", -> deferred_first_draw.resolve()
+  promise_first_draw = $.Deferred (deferred) ->
+    $view.one "draw_content", -> deferred.resolve()
+  .promise()
 
   if (bookmark = app.bookmark.get(url)) and "read_state" of bookmark
     read_state = bookmark.read_state
@@ -168,7 +169,7 @@ app.view.thread._read_state_manager = ($view) ->
         read_state = _read_state or {received: 0, read: 0, last: 0, url}
         deferred_get_read_state.resolve()
 
-  $.when(deferred_get_read_state, deferred_first_draw).done ->
+  $.when(deferred_get_read_state, promise_first_draw).done ->
     on_updated_draw = ->
       content = $view.find(".content")[0]
 
