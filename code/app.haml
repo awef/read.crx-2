@@ -1,12 +1,12 @@
 !!! 5
-%html{:"data-app-version" => "0.0"}
+%html(data-app-version="0.0")
   %head
-    %meta{:charset => "utf-8"}
+    %meta(charset="utf-8")
     %title read.crx 2
-    %link{:rel => "stylesheet", :href => "/app.css?v=0.0"}
-    %script{:src => "/lib/jquery/jquery-1.6.1.min.js?v=0.0"}
-    %script{:src => "/ui.js?v=0.0"}
-    %script{:src => "/app.js?v=0.0"}
+    %link(rel="stylesheet" href="/app.css?v=0.0")
+    %script(src="/lib/jquery/jquery-1.6.1.min.js?v=0.0")
+    %script(src="/ui.js?v=0.0")
+    %script(src="/app.js?v=0.0")
   %body
     #app_notice_container
     #body
@@ -14,17 +14,17 @@
         %h3 read.crx
         %ul
           %li
-            %a{:class=>"open_in_rcrx", :"data-href"=>"bookmark"} ブックマーク
+            %a(class="open_in_rcrx" data-href="bookmark") ブックマーク
           %li
-            %a{:class=>"open_in_rcrx", :"data-href"=>"history"} 閲覧履歴
+            %a(class="open_in_rcrx" data-href="history") 閲覧履歴
           %li
-            %a{:class=>"open_in_rcrx", :"data-href"=>"config"} 設定
+            %a(class="open_in_rcrx" data-href="config") 設定
       #right_pane
         #tab_a
         #tab_resizer
         #tab_b
 
-    #template{:hidden=>true}
+    #template(hidden)
 
       .view_board
         .message_bar
@@ -39,9 +39,9 @@
               %tr
                 %th ★
                 %th タイトル
-                %th{:"data-table_sort_type"=>"num"} レス数
-                %th{:"data-table_sort_type"=>"num"} 未読
-                %th{:"data-table_sort_type"=>"num"} 勢い
+                %th(data-table_sort_type="num") レス数
+                %th(data-table_sort_type="num") 未読
+                %th(data-table_sort_type="num") 勢い
                 %th 作成日時
             %tbody
         .loading_overlay Loading...
@@ -64,14 +64,14 @@
             %thead
               %tr
                 %th タイトル
-                %th{:"data-table_sort_type"=>"num"} レス数
-                %th{:"data-table_sort_type"=>"num"} 未読
-                %th{:"data-table_sort_type"=>"num"} 勢い
+                %th(data-table_sort_type="num") レス数
+                %th(data-table_sort_type="num") 未読
+                %th(data-table_sort_type="num") 勢い
                 %th 作成日時
             %tbody
         .loading_overlay
 
-      .view_history{:"data-url"=>"history"}
+      .view_history(data-url="history")
         %nav.nav_bar
         .content
           %table
@@ -83,7 +83,7 @@
 
       .view_config
         %div
-          %img.close_button{:src=>"/img/close_16x16.png"}
+          %img.close_button(src="/img/close_16x16.png")
           %h2 設定
           %h3 バージョン情報
           .version_info
@@ -93,7 +93,7 @@
           read.crxのブックマークの保存先として使用するフォルダを指定して下さい
           .node_list
             %ul
-          %button.submit{:disabled=>true} 決定
+          %button.submit(disabled) 決定
           %br
           read.crx内で掲示板をブックマークに登録/削除すると、このフォルダ内にも掲示板のブックマークが追加/削除されます
           %br
