@@ -25,7 +25,12 @@ all:\
 	${DBG_DIR}/lib/\
 	${DBG_DIR}/img/\
 	${DBG_DIR}/test/\
-	${DBG_DIR}/test/test.js
+	${DBG_DIR}/test/test.js\
+	${DBG_DIR}/write/\
+	${DBG_DIR}/write/write.html\
+	${DBG_DIR}/write/write.css\
+	${DBG_DIR}/write/write.js\
+	${DBG_DIR}/write/cs_write_ch.js
 
 .PHONY: clean
 clean:
@@ -69,3 +74,17 @@ ${DBG_DIR}/test/: ${QUNIT_FILES}
 ${DBG_DIR}/test/test.js: ${DBG_DIR}/test/ ${SRC_DIR}/test/*.coffee
 	coffee -b -p -c ${SRC_DIR}/test/*.coffee | cat > ${DBG_DIR}/test/test.js
 
+${DBG_DIR}/write/:
+	mkdir ${DBG_DIR}/write/
+
+${DBG_DIR}/write/write.html: ${SRC_DIR}/write/write.haml
+	haml -q ${SRC_DIR}/write/write.haml ${DBG_DIR}/write/write.html
+
+${DBG_DIR}/write/write.css: ${SRC_DIR}/write/write.sass
+	sass --style compressed --no-cache ${SRC_DIR}/write/write.sass ${DBG_DIR}/write/write.css
+
+${DBG_DIR}/write/write.js: ${SRC_DIR}/write/write.coffee ${SRC_DIR}/app.url.coffee
+	coffee -b -p -c ${SRC_DIR}/write/write.coffee ${SRC_DIR}/app.url.coffee | cat > ${DBG_DIR}/write/write.js
+
+${DBG_DIR}/write/cs_write_ch.js: ${SRC_DIR}/write/cs_write_ch.coffee ${SRC_DIR}/app.url.coffee
+	coffee -b -p -c ${SRC_DIR}/write/cs_write_ch.coffee ${SRC_DIR}/app.url.coffee | cat > ${DBG_DIR}/write/cs_write_ch.js

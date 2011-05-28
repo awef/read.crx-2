@@ -10,6 +10,19 @@ app.view.thread.open = (url) ->
   app.view.module.bookmark_button($view)
   app.view.module.link_button($view)
 
+  if /// ^http://\w+\.2ch\.net/ ///.test(url)
+    $view.find(".button_write").bind "click", ->
+      param =
+        url: url
+        title: $view.attr("data-title") or url
+      open(
+        "/write/write.html?#{app.url.build_param(param)}"
+        undefined
+        'width=600,height=300'
+      )
+  else
+    $view.find(".button_write").remove()
+
   $view.find(".button_reload").bind "click", ->
     $view.find(".content").empty()
     $view.find(".loading_overlay").show()

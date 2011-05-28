@@ -7,3 +7,4 @@ rsvg -w 19 -h 19 image/svg/star2.svg code/img/star2_19x19.png
 rsvg -w 19 -h 19 image/svg/link.svg code/img/link_19x19.png
 rsvg -w 19 -h 19 image/svg/search2.svg code/img/search2_19x19.png
 rsvg -w 19 -h 19 image/svg/reload.svg code/img/reload_19x19.png
+rsvg -w 19 -h 19 image/svg/pencil.svg code/img/pencil_19x19.png

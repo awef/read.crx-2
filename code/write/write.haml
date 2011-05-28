@@ -1,0 +1,23 @@
+:ruby
+  app_version = "0.0"
+
+!!! 5
+%html(data-app-version="#{app_version}")
+  %head
+    %meta(charset="utf-8")
+    %title
+    %link(rel="stylesheet" href="/write/write.css?v=#{app_version}")
+    %script(src="/lib/jquery/jquery-1.6.1.min.js?v=#{app_version}")
+    %script(src="/write/write.js?v=#{app_version}")
+  %body.view_write
+    %h1
+    %form
+      %div
+        %input(type="submit" value="書きこむ")
+        %button.cancel(type="button" disabld) キャンセル
+        %input.name(size="19")
+        %input.mail(size="19")
+      %textarea.message(wrap="off" autofocus required)
+    .notice
+    .iframe_container
+      .hide_iframe

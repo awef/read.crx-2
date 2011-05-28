@@ -1,0 +1,61 @@
+*
+  :box-sizing border-box
+
+html, body
+  :height 100%
+  :margin 0
+
+html
+  :font-size 14px
+
+body
+  :padding 8px
+
+.view_write
+  h1
+    :font-size 18px
+    :margin 0 0 10px 0
+
+  form
+    :margin 0
+    :height 100%
+    :display -webkit-box
+    :-webkit-box-orient vertical
+
+  textarea
+    :display block
+    :-webkit-box-flex 1
+    :resize none
+    :width 100%
+
+  .iframe_container
+    :display none
+
+    :position fixed
+    :left 0
+    :top 0
+
+    :width 100%
+    :height 100%
+    :padding 5%
+
+    :border 3px solid #ccc
+    :background-color rgba(#000, 0.7)
+    :box-shadow 0 0 20px #000 inset
+
+  .hide_iframe
+    :position absolute
+    :right 4px
+    :top 4px
+
+    :background-color #333
+    :border 2px solid #fff
+    :box-shadow 0 0 20px #000
+
+  iframe
+    :background-color #fff
+    :border none
+    :width 100%
+    :height 100%
+    :box-shadow 0 0 20px #000
+
