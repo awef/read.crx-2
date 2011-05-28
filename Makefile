@@ -61,9 +61,19 @@ ${DBG_DIR}/lib/: ${LIB_FILES}
 	rm -rf ${DBG_DIR}/lib/
 	cp -r ${SRC_DIR}/lib/ ${DBG_DIR}/lib/
 
-${DBG_DIR}/img/: ${IMG_FILES}
+${DBG_DIR}/img/: ${SRC_DIR}/image/svg/*.svg
 	rm -rf ${DBG_DIR}/img/
-	cp -r ${SRC_DIR}/img/ ${DBG_DIR}/img/
+	mkdir ${DBG_DIR}/img/
+	rsvg -w 128 -h 128 ${SRC_DIR}/image/svg/read.crx.svg ${DBG_DIR}/img/read.crx_128x128.png
+	rsvg -w 48 -h 48 ${SRC_DIR}/image/svg/read.crx.svg ${DBG_DIR}/img/read.crx_48x48.png
+	rsvg -w 16 -h 16 ${SRC_DIR}/image/svg/read.crx.svg ${DBG_DIR}/img/read.crx_16x16.png
+	rsvg -w 16 -h 16 ${SRC_DIR}/image/svg/close.svg ${DBG_DIR}/img/close_16x16.png
+	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/star.svg ${DBG_DIR}/img/star_19x19.png
+	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/star2.svg ${DBG_DIR}/img/star2_19x19.png
+	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/link.svg ${DBG_DIR}/img/link_19x19.png
+	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/search2.svg ${DBG_DIR}/img/search2_19x19.png
+	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/reload.svg ${DBG_DIR}/img/reload_19x19.png
+	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/pencil.svg ${DBG_DIR}/img/pencil_19x19.png
 
 ${DBG_DIR}/test/: ${QUNIT_FILES}
 	rm -rf ${DBG_DIR}/test/
