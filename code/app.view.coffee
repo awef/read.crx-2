@@ -92,7 +92,22 @@ app.view.load_sidemenu = (url) ->
           ul.appendChild(li)
         frag.appendChild(ul)
 
+    bookmark_container = document.createElement("div")
+    bookmark_container.className = "bookmark"
+    for bookmark in app.bookmark.get_all()
+      if bookmark.type is "board"
+        li = document.createElement("li")
+        a = document.createElement("a")
+        a.className = "open_in_rcrx"
+        a.href = bookmark.url
+        a.textContent = bookmark.title
+        li.appendChild(a)
+        bookmark_container.appendChild(li)
+
     $("#left_pane")
+      .find("ul")
+        .append(bookmark_container)
+      .end()
       .append(frag)
       .accordion()
 
