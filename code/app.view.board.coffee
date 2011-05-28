@@ -8,6 +8,7 @@ app.view.board.open = (url) ->
   $view = $("#template > .view_board").clone()
   $view
     .attr("data-url", url)
+    .attr("data-title", url)
 
     .find(".searchbox_thread_title")
       .bind "input", ->

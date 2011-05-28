@@ -6,6 +6,7 @@ app.view.thread.open = (url) ->
   opened_at = Date.now()
   $view = $("#template > .view_thread").clone()
   $view.attr("data-url", url)
+  $view.attr("data-title", url)
 
   app.view.module.bookmark_button($view)
   app.view.module.link_button($view)
@@ -14,7 +15,7 @@ app.view.thread.open = (url) ->
     $view.find(".button_write").bind "click", ->
       param =
         url: url
-        title: $view.attr("data-title") or url
+        title: $view.attr("data-title")
       open(
         "/write/write.html?#{app.url.build_param(param)}"
         undefined
@@ -28,7 +29,7 @@ app.view.thread.open = (url) ->
     $view.find(".loading_overlay").show()
     app.view.thread._draw($view)
 
-  $("#tab_b").tab("add", element: $view[0], title: url)
+  $("#tab_b").tab("add", element: $view[0], title: $view.attr("data-title"))
 
   $view
     .delegate ".anchor:not(.disabled)", "mouseenter", (e) ->
@@ -62,8 +63,8 @@ app.view.thread.open = (url) ->
 
   app.view.thread._read_state_manager($view)
   app.view.thread._draw($view)
-    .always (thread) ->
-      app.history.add(url, (if thread then thread.title else url), opened_at)
+    .always ->
+      app.history.add(url, $view.attr("data-title"), opened_at)
 
 app.view.thread._draw = ($view) ->
   url = $view.attr("data-url")
@@ -91,7 +92,7 @@ app.view.thread._draw = ($view) ->
             tab_id: $view.attr("data-tab_id"),
             title: thread.title
 
-      deferred.resolve(thread)
+      deferred.resolve()
     else
       deferred.reject()
 
