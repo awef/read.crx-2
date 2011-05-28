@@ -86,28 +86,28 @@ app.view.board._draw = ($view) ->
 
         td = document.createElement("td")
         if app.bookmark.get(thread.url)
-          td.innerText = "★"
+          td.textContent = "★"
         tr.appendChild(td)
 
         td = document.createElement("td")
-        td.innerText = thread.title
+        td.textContent = thread.title
         tr.appendChild(td)
 
         td = document.createElement("td")
-        td.innerText = thread.res_count
+        td.textContent = thread.res_count
         tr.appendChild(td)
 
         td = document.createElement("td")
         if read_state and thread.res_count > read_state.read
-          td.innerText = thread.res_count - read_state.read
+          td.textContent = thread.res_count - read_state.read
         tr.appendChild(td)
 
         td = document.createElement("td")
-        td.innerText = app.util.calc_heat(now, thread.created_at, thread.res_count)
+        td.textContent = app.util.calc_heat(now, thread.created_at, thread.res_count)
         tr.appendChild(td)
 
         td = document.createElement("td")
-        td.innerText = app.util.date_to_string(new Date(thread.created_at))
+        td.textContent = app.util.date_to_string(new Date(thread.created_at))
         tr.appendChild(td)
 
         tbody.appendChild(tr)

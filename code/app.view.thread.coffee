@@ -33,7 +33,7 @@ app.view.thread.open = (url) ->
 
   $view
     .delegate ".anchor:not(.disabled)", "mouseenter", (e) ->
-      this.innerText
+      this.textContent
         .replace /[\d０-９]+(?:-[\d０-９]+)?(?:\s*,\s*[\d０-９]+(?:-[\d０-９]+)?)*/g, ($0) ->
           str = $0.replace /[０-９]/g, ($0) ->
             String.fromCharCode($0.charCodeAt(0) - 65248)
@@ -111,7 +111,7 @@ app.view.thread._draw_messages = (thread) ->
 
     num = document.createElement("span")
     num.className = "num"
-    num.innerText = res_key + 1
+    num.textContent = res_key + 1
     header.appendChild(num)
 
     name = document.createElement("span")
@@ -123,12 +123,12 @@ app.view.thread._draw_messages = (thread) ->
 
     mail = document.createElement("span")
     mail.className = "mail"
-    mail.innerText = res.mail
+    mail.textContent = res.mail
     header.appendChild(mail)
 
     other = document.createElement("span")
     other.className = "other"
-    other.innerText = res.other
+    other.textContent = res.other
     header.appendChild(other)
 
     message = document.createElement("div")

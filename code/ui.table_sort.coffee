@@ -20,8 +20,8 @@
 
         data = {}
         for td in tbody.querySelectorAll("td:nth-child(#{sort_index + 1})")
-          data[td.innerText] or= []
-          data[td.innerText].push(td.parentNode)
+          data[td.textContent] or= []
+          data[td.textContent].push(td.parentNode)
 
         data_keys = Object.keys(data)
         if sort_type is "num"

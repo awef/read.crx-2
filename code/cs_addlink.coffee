@@ -25,7 +25,7 @@ if (regs.some (a) -> a.test(location.href))
     container.style[key] = val
 
   open_button = document.createElement("span")
-  open_button.innerText = "read.crx 2 で開く"
+  open_button.textContent = "read.crx 2 で開く"
   open_button.style["cursor"] = "pointer"
   open_button.style["text-decoration"] = "underline"
   open_button.addEventListener "click", ->
@@ -35,7 +35,7 @@ if (regs.some (a) -> a.test(location.href))
   container.appendChild(open_button)
 
   close_button = document.createElement("span")
-  close_button.innerText = " x"
+  close_button.textContent = " x"
   close_button.style["cursor"] = "pointer"
   close_button.style["display"] = "inline-block"
   close_button.style["margin-left"] = "5px"

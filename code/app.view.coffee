@@ -78,7 +78,7 @@ app.view.load_sidemenu = (url) ->
       frag = document.createDocumentFragment()
       for category in res.data
         h3 = document.createElement("h3")
-        h3.innerText = category.title
+        h3.textContent = category.title
         frag.appendChild(h3)
 
         ul = document.createElement("ul")
@@ -86,7 +86,7 @@ app.view.load_sidemenu = (url) ->
           li = document.createElement("li")
           a = document.createElement("a")
           a.className = "open_in_rcrx"
-          a.innerText = board.title
+          a.textContent = board.title
           a.href = board.url
           li.appendChild(a)
           ul.appendChild(li)
@@ -164,11 +164,11 @@ app.view.history.open = ->
         tr.className = "open_in_rcrx"
 
         td = document.createElement("td")
-        td.innerText = val.title
+        td.textContent = val.title
         tr.appendChild(td)
 
         td = document.createElement("td")
-        td.innerText = app.util.date_to_string(new Date(val.date))
+        td.textContent = app.util.date_to_string(new Date(val.date))
         tr.appendChild(td)
         frag.appendChild(tr)
       $view.find("tbody").append(frag)
@@ -242,7 +242,7 @@ app.view.bookmark_source_selector.open = ->
         li = document.createElement("li")
         span = document.createElement("span")
         span.className = "node"
-        span.innerText = tree.title
+        span.textContent = tree.title
         span.setAttribute("data-bookmark_id", tree.id)
         li.appendChild(span)
         ul.appendChild(li)

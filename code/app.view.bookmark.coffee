@@ -57,11 +57,11 @@ app.view.bookmark._draw = ($view) ->
       thread_created_at = +/// /(\d+)/$ ///.exec(bookmark.url)[1] * 1000
 
       td = document.createElement("td")
-      td.innerText = bookmark.title
+      td.textContent = bookmark.title
       tr.appendChild(td)
 
       td = document.createElement("td")
-      td.innerText = bookmark.res_count or 0
+      td.textContent = bookmark.res_count or 0
       tr.appendChild(td)
 
       td = document.createElement("td")
@@ -69,16 +69,16 @@ app.view.bookmark._draw = ($view) ->
           typeof bookmark.res_count is "number" and
           bookmark.read_state and typeof bookmark.read_state.read is "number"
       )
-        td.innerText = bookmark.res_count - bookmark.read_state.read or ""
+        td.textContent = bookmark.res_count - bookmark.read_state.read or ""
       tr.appendChild(td)
 
       td = document.createElement("td")
       if typeof bookmark.res_count is "number"
-        td.innerText = app.util.calc_heat(now, thread_created_at, bookmark.res_count)
+        td.textContent = app.util.calc_heat(now, thread_created_at, bookmark.res_count)
       tr.appendChild(td)
 
       td = document.createElement("td")
-      td.innerText = app.util.date_to_string(new Date(thread_created_at))
+      td.textContent = app.util.date_to_string(new Date(thread_created_at))
       tr.appendChild(td)
 
       frag.appendChild(tr)
