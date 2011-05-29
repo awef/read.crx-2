@@ -1,4 +1,4 @@
-SOURCE_DIR="code"
+SOURCE_DIR="src"
 watch () {
   make
   date

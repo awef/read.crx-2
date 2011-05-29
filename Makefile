@@ -1,4 +1,4 @@
-SRC_DIR = code
+SRC_DIR = src
 DBG_DIR = debug
 
 APP_COFFEE = ${SRC_DIR}/app.coffee
