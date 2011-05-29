@@ -20,7 +20,7 @@ $ ->
     console.log e.data
     if message.type is "ping"
       e.source.postMessage("write_iframe_pong", "*")
-    else if "success"
+    else if message.type is "success"
       $view.find(".cancel").attr("disabled", true)
       #TODO 書き込み完了メッセージ送出
       $view.find(".notice").text("書き込み成功")
@@ -28,9 +28,9 @@ $ ->
         chrome.tabs.getCurrent (tab) ->
           chrome.tabs.remove(tab.id)
       , 2000
-    else if "confirm"
+    else if message.type is "confirm"
       $view.find(".iframe_container").fadeIn("fast")
-    else if "error"
+    else if message.type is "error"
       on_error(data.message)
 
   $view.find(".cancel, .hide_iframe").bind "click", ->
