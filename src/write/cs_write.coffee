@@ -38,12 +38,10 @@ app = {}
         exec """
           parent.postMessage(JSON.stringify({type : "success"}), "#{origin}");
         """
-
       else if /確認/.test(document.title)
         exec """
           parent.postMessage(JSON.stringify({type : "confirm"}), "#{origin}");
         """
-
       else if /ＥＲＲＯＲ/.test(document.title)
         exec """
           parent.postMessage(JSON.stringify({type : "error"}), "#{origin}");
