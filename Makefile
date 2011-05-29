@@ -13,6 +13,10 @@ QUNIT_FILES =\
 	${SRC_DIR}/test/qunit/qunit.js\
 	${SRC_DIR}/test/qunit/qunit.css
 
+haml = haml -q $(1) $(2)
+sass = sass --style compressed --no-cache $(1) $(2)
+coffee = coffee -b -p -c $(1) > $(2)
+
 .PHONY: all
 all:\
 	${DBG_DIR}\
@@ -43,19 +47,19 @@ ${DBG_DIR}/manifest.json: ${SRC_DIR}/manifest.json
 	cp ${SRC_DIR}/manifest.json ${DBG_DIR}/manifest.json
 
 ${DBG_DIR}/app.html: ${SRC_DIR}/app.haml
-	haml -q ${SRC_DIR}/app.haml ${DBG_DIR}/app.html
+	$(call haml, ${SRC_DIR}/app.haml, ${DBG_DIR}/app.html)
 
 ${DBG_DIR}/app.js: ${APP_COFFEE}
-	coffee -b -p -c ${APP_COFFEE} > ${DBG_DIR}/app.js
+	$(call coffee, ${APP_COFFEE}, ${DBG_DIR}/app.js)
 
 ${DBG_DIR}/ui.js: ${SRC_DIR}/ui.*.coffee
-	coffee -b -p -c ${SRC_DIR}/ui.*.coffee | cat > ${DBG_DIR}/ui.js
+	$(call coffee, ${SRC_DIR}/ui.*.coffee, ${DBG_DIR}/ui.js)
 
 ${DBG_DIR}/app.css: ${SRC_DIR}/app.sass ${SRC_DIR}/sass/*.sass
-	sass --style compressed --no-cache ${SRC_DIR}/app.sass ${DBG_DIR}/app.css
+	$(call sass, ${SRC_DIR}/app.sass, ${DBG_DIR}/app.css)
 
 ${DBG_DIR}/cs_addlink.js: ${SRC_DIR}/cs_addlink.coffee
-	coffee -b -p -c ${SRC_DIR}/cs_addlink.coffee | cat > ${DBG_DIR}/cs_addlink.js
+	$(call coffee, ${SRC_DIR}/cs_addlink.coffee, ${DBG_DIR}/cs_addlink.js)
 
 ${DBG_DIR}/lib/: ${LIB_FILES}
 	rm -rf ${DBG_DIR}/lib/
@@ -82,19 +86,19 @@ ${DBG_DIR}/test/: ${QUNIT_FILES}
 	cp -r ${SRC_DIR}/test/qunit/ ${DBG_DIR}/test/qunit/
 
 ${DBG_DIR}/test/test.js: ${DBG_DIR}/test/ ${SRC_DIR}/test/*.coffee
-	coffee -b -p -c ${SRC_DIR}/test/*.coffee | cat > ${DBG_DIR}/test/test.js
+	$(call coffee, ${SRC_DIR}/test/*.coffee, ${DBG_DIR}/test/test.js)
 
 ${DBG_DIR}/write/:
 	mkdir ${DBG_DIR}/write/
 
 ${DBG_DIR}/write/write.html: ${SRC_DIR}/write/write.haml
-	haml -q ${SRC_DIR}/write/write.haml ${DBG_DIR}/write/write.html
+	$(call haml, ${SRC_DIR}/write/write.haml, ${DBG_DIR}/write/write.html)
 
 ${DBG_DIR}/write/write.css: ${SRC_DIR}/write/write.sass
-	sass --style compressed --no-cache ${SRC_DIR}/write/write.sass ${DBG_DIR}/write/write.css
+	$(call sass, ${SRC_DIR}/write/write.sass, ${DBG_DIR}/write/write.css)
 
 ${DBG_DIR}/write/write.js: ${SRC_DIR}/write/write.coffee ${SRC_DIR}/app.url.coffee
-	coffee -b -p -c ${SRC_DIR}/write/write.coffee ${SRC_DIR}/app.url.coffee | cat > ${DBG_DIR}/write/write.js
+	$(call coffee, ${SRC_DIR}/write/write.coffee ${SRC_DIR}/app.url.coffee, ${DBG_DIR}/write/write.js)
 
 ${DBG_DIR}/write/cs_write_ch.js: ${SRC_DIR}/write/cs_write_ch.coffee ${SRC_DIR}/app.url.coffee
-	coffee -b -p -c ${SRC_DIR}/write/cs_write_ch.coffee ${SRC_DIR}/app.url.coffee | cat > ${DBG_DIR}/write/cs_write_ch.js
+	$(call coffee, ${SRC_DIR}/write/cs_write_ch.coffee ${SRC_DIR}/app.url.coffee, ${DBG_DIR}/write/cs_write_ch.js)
