@@ -17,7 +17,6 @@ $ ->
 
   window.addEventListener "message", (e) ->
     message = JSON.parse(e.data)
-    console.log e.data
     if message.type is "ping"
       e.source.postMessage("write_iframe_pong", "*")
     else if message.type is "success"

@@ -31,7 +31,6 @@ app = {}
         input.setAttribute("value", val)
         form.appendChild(input)
 
-      console.log(form)
       form.__proto__.submit.call(form)
 
     else if ///^http://\w+\.2ch\.net/test/bbs\.cgi///.test(location.href)
