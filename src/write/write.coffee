@@ -30,7 +30,7 @@ $ ->
     else if message.type is "confirm"
       $view.find(".iframe_container").fadeIn("fast")
     else if message.type is "error"
-      on_error(data.message)
+      on_error(message.message)
 
   $view.find(".cancel, .hide_iframe").bind "click", ->
     $view.find(".iframe_container").find("iframe").remove().end().fadeOut("fast")
