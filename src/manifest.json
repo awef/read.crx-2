@@ -26,7 +26,7 @@
     {
       "matches" : [
         "http://*.2ch.net/*",
-        "http://jbbs.libedoor.jp/*",
+        "http://jbbs.livedoor.jp/*",
         "http://*.machi.to/*"
       ],
       "js" : ["/cs_addlink.js"]
