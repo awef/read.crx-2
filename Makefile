@@ -34,7 +34,7 @@ all:\
 	${DBG_DIR}/write/write.html\
 	${DBG_DIR}/write/write.css\
 	${DBG_DIR}/write/write.js\
-	${DBG_DIR}/write/cs_write_ch.js
+	${DBG_DIR}/write/cs_write.js
 
 .PHONY: clean
 clean:
@@ -100,5 +100,5 @@ ${DBG_DIR}/write/write.css: ${SRC_DIR}/write/write.sass
 ${DBG_DIR}/write/write.js: ${SRC_DIR}/write/write.coffee ${SRC_DIR}/app.url.coffee
 	$(call coffee, ${SRC_DIR}/write/write.coffee ${SRC_DIR}/app.url.coffee, ${DBG_DIR}/write/write.js)
 
-${DBG_DIR}/write/cs_write_ch.js: ${SRC_DIR}/write/cs_write_ch.coffee ${SRC_DIR}/app.url.coffee
-	$(call coffee, ${SRC_DIR}/write/cs_write_ch.coffee ${SRC_DIR}/app.url.coffee, ${DBG_DIR}/write/cs_write_ch.js)
+${DBG_DIR}/write/cs_write.js: ${SRC_DIR}/write/cs_write.coffee ${SRC_DIR}/app.url.coffee
+	$(call coffee, ${SRC_DIR}/write/cs_write.coffee ${SRC_DIR}/app.url.coffee, ${DBG_DIR}/write/cs_write.js)

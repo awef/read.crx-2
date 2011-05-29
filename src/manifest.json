@@ -36,7 +36,7 @@
         "http://*.2ch.net/test/read.cgi/*",
         "http://*.2ch.net/test/bbs.cgi*"
       ],
-      "js" : ["/write/cs_write_ch.js"],
+      "js" : ["/write/cs_write.js"],
       "run_at" : "document_end",
       "all_frames" : true
     }
