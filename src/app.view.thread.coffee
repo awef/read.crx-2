@@ -11,7 +11,7 @@ app.view.thread.open = (url) ->
   app.view.module.bookmark_button($view)
   app.view.module.link_button($view)
 
-  if /// ^http://\w+\.2ch\.net/ ///.test(url)
+  if /// ^http://\w+\.2ch\.net/|^http://jbbs\.livedoor\.jp/ ///.test(url)
     $view.find(".button_write").bind "click", ->
       param =
         url: url

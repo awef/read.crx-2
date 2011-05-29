@@ -49,6 +49,46 @@ app = {}
           parent.postMessage(JSON.stringify({type : "error"}), "#{origin}");
         """
 
+    else if ///^http://jbbs\.livedoor\.jp/bbs/read\.cgi/\w+/\d+/\d+/1\?///.test(location.href)
+      tmp = location.href.split("/")
+
+      form = document.createElement("form")
+      form.action = "/bbs/write.cgi/#{tmp[5]}/#{tmp[6]}/#{tmp[7]}/"
+      form.method = "POST"
+
+      arg = app.url.parse_query(location.href)
+
+      form_data =
+        TIME: Math.floor(Date.now() / 1000) - 60
+        DIR: tmp[5]
+        BBS: tmp[6]
+        KEY: tmp[7]
+        NAME: arg.rcrx_name
+        MAIL: arg.rcrx_mail
+
+      for key, val of form_data
+        input = document.createElement("input")
+        input.name = key
+        input.setAttribute("value", val)
+        form.appendChild(input)
+
+      textarea = document.createElement("textarea")
+      textarea.name = "MESSAGE"
+      textarea.value = arg.rcrx_message
+      form.appendChild(textarea)
+
+      form.submit()
+
+    else if ///^http://jbbs\.livedoor\.jp/bbs/write.cgi/\w+/\d+/\d+/$///.test(location.href)
+      if /書きこみました/.test(document.title)
+        exec """
+          parent.postMessage(JSON.stringify({type : "success"}), "#{origin}");
+        """
+      else if /ERROR/.test(document.title)
+        exec """
+          parent.postMessage(JSON.stringify({type : "error"}), "#{origin}");
+        """
+
   boot = ->
     window.addEventListener "message", (e) ->
       if e.origin is origin and e.data is "write_iframe_pong"

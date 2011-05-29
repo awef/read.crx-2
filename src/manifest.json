@@ -34,7 +34,9 @@
     {
       "matches" : [
         "http://*.2ch.net/test/read.cgi/*",
-        "http://*.2ch.net/test/bbs.cgi*"
+        "http://*.2ch.net/test/bbs.cgi*",
+        "http://jbbs.livedoor.jp/bbs/read.cgi/*",
+        "http://jbbs.livedoor.jp/bbs/write.cgi/*"
       ],
       "js" : ["/write/cs_write.js"],
       "run_at" : "document_end",
