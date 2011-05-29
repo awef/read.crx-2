@@ -14,22 +14,25 @@ app = {}
       form.action = "/test/bbs.cgi"
       form.method = "POST"
 
+      arg = app.url.parse_query(location.href)
       form_data =
         submit: "書きこむ"
         time: Math.floor(Date.now() / 1000) - 60
         bbs: location.href.split("/")[5]
         key: location.href.split("/")[6]
-
-      arg = app.url.parse_query(location.href)
-      form_data.FROM = arg.rcrx_name
-      form_data.mail = arg.rcrx_mail
-      form_data.MESSAGE = arg.rcrx_message
+        FROM: arg.rcrx_name
+        mail: arg.rcrx_mail
 
       for key, val of form_data
         input = document.createElement("input")
         input.name = key
         input.setAttribute("value", val)
         form.appendChild(input)
+
+      textarea = document.createElement("textarea")
+      textarea.name = "MESSAGE"
+      textarea.value = arg.rcrx_message
+      form.appendChild(textarea)
 
       form.__proto__.submit.call(form)
 
