@@ -1,4 +1,3 @@
-`/** @namespace */`
 app.view = {}
 
 app.view.init = ->
@@ -148,7 +147,6 @@ app.view.setup_resizer = ->
           app.config.set("tab_a_height", parseInt(tab_a.style["height"], 10))
         .appendTo("body")
 
-`/** @namespace */`
 app.view.history = {}
 
 app.view.history.open = ->
@@ -173,7 +171,6 @@ app.view.history.open = ->
         frag.appendChild(tr)
       $view.find("tbody").append(frag)
 
-`/** @namespace */`
 app.view.config = {}
 
 app.view.config.open = ->
@@ -198,7 +195,6 @@ app.view.config.open = ->
 
   $view.hide().appendTo(document.body).fadeIn("fast")
 
-`/** @namespace */`
 app.view.bookmark_source_selector = {}
 
 app.view.bookmark_source_selector.open = ->

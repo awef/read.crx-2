@@ -1,4 +1,3 @@
-`/** @namespace */`
 app.util = {}
 
 app.util.date_to_string = (date) ->
@@ -10,10 +9,9 @@ app.util.date_to_string = (date) ->
   " " + fn(date.getHours()) +
   ":" + fn(date.getMinutes())
 
-`/**
-* @param now {number}
-* @param thread_created {number}
-* @param res_count {number}
-*/`
+# #app.util.calc_heat
+# スレの勢いを算出する関数  
+# 引数は現在の時刻、スレが立てられた時刻、スレのレス数  
+# 文字列を返す
 app.util.calc_heat = (now, thread_created, res_count) ->
   (res_count / ((now - thread_created) / (24 * 60 * 60 * 1000))).toFixed(1)

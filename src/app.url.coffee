@@ -1,4 +1,3 @@
-`/** @namespace */`
 app.url = {}
 app.url.fix = (url) ->
   url

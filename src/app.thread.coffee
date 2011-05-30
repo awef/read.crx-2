@@ -1,4 +1,3 @@
-`/** @namespace */`
 app.thread = {}
 
 app.thread._get_xhr_info = (thread_url) ->

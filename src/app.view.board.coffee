@@ -1,4 +1,3 @@
-`/** @namespace */`
 app.view.board = {}
 
 app.view.board.open = (url) ->

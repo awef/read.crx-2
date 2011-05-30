@@ -1,4 +1,3 @@
-`/** @namespace */`
 app.board_title_solver = {}
 
 (->
@@ -14,12 +13,10 @@ app.board_title_solver = {}
 
   $(-> update_dic_bbsmenu())
 
-  `/**
-   * @param url {fixed_url}
-   * @param callback {Function}
-   */`
+  # #app.board\_title\_solver.ask
+  # 板のURLから板のタイトルを取得する  
+  # callbackにはタイトル(string)かnullが渡される
   app.board_title_solver.ask = (url, callback) ->
-    #callback(title) or callback(null)
     if url of dic_bbsmenu
       callback(dic_bbsmenu[url])
     else

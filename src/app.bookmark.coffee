@@ -1,4 +1,3 @@
-`/** @namespace */`
 app.bookmark = {}
 
 (->
@@ -85,20 +84,17 @@ app.bookmark = {}
 
   update_all()
 
-  `/**
-   * 与えられたURLがブックマークされていた場合はbookmarkオブジェクトを
-   * そうでなかった場合はnullを返す
-   * @param {fixed_url}
-   * @returns {bookmark}
-   * @returns {null}
-   */`
+  # ##app.bookmark.get
+  # 与えられたURLがブックマークされていた場合はbookmarkオブジェクトを  
+  # そうでなかった場合はnullを返す
   app.bookmark.get = (url) ->
     if url of bookmark_data_index_url
       app.deep_copy(bookmark_data[bookmark_data_index_url[url]])
     else
       null
 
-  `/** @return {array of bookmark} */`
+  # ##app.bookmark.get
+  # 全てのbookmarkを格納した配列を返す
   app.bookmark.get_all = ->
     app.deep_copy(bookmark_data)
 

@@ -1,4 +1,3 @@
-`/** @namespace */`
 app.view.thread = {}
 
 app.view.thread.open = (url) ->

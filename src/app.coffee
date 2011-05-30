@@ -1,4 +1,3 @@
-`/** @namespace */`
 app = {}
 
 (->
@@ -63,7 +62,6 @@ app.assert_arg = (name, rule, arg) ->
       return true
   false
 
-`/** @namespace */`
 app.message = {}
 (->
   listener_store = {}
@@ -86,7 +84,6 @@ app.message = {}
         return
 )()
 
-`/** @namespace */`
 app.notice = {}
 app.notice.push = (text) ->
   $("<div>")
@@ -105,7 +102,6 @@ app.notice.push = (text) ->
     .appendTo("#app_notice_container")
     .fadeIn()
 
-`/** @namespace */`
 app.config =
   set: (key, val) ->
     localStorage["config_#{key}"] = val

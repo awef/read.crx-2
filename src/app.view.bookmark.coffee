@@ -1,4 +1,3 @@
-`/** @namespace */`
 app.view.bookmark = {}
 
 app.view.bookmark.open = ->
