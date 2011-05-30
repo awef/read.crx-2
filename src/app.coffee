@@ -73,6 +73,7 @@ app.message = {}
       if type of listener_store
         for listener in listener_store[type]
           listener(app.deep_copy(data))
+        null
 
   app.message.add_listener = (type, fn) ->
     listener_store[type] or= []

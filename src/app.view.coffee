@@ -251,6 +251,7 @@ app.view.bookmark_source_selector.open = ->
         li.appendChild(cul)
 
         fn(tree.children, cul)
+    null
 
   chrome.bookmarks.getTree (array_of_tree) ->
     fn(array_of_tree[0].children, $view.find(".node_list > ul")[0])

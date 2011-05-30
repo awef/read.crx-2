@@ -111,5 +111,6 @@ app.view.board._draw = ($view) ->
         tr.appendChild(td)
 
         tbody.appendChild(tr)
+      null
     .always ->
       $view.find(".loading_overlay").fadeOut(100)

@@ -98,6 +98,7 @@ app.board.get = (url, callback) ->
 
         for thread in board
           app.bookmark.update_res_count(thread.url, thread.res_count)
+        null
 
       else if cache?.status is "success" and xhr?.status is 304
         cache.data.last_updated = Date.now()

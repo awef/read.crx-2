@@ -10,6 +10,7 @@ app.board_title_solver = {}
         for category in result.data
           for board in category.board
             dic_bbsmenu[board.url] = board.title
+        null
 
   $(-> update_dic_bbsmenu())
 
