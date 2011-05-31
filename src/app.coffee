@@ -39,6 +39,10 @@ app.main = ->
   app.view.init()
   app.view.load_sidemenu()
 
+  app.view.tab_state.restore()
+  window.addEventListener "unload", ->
+    app.view.tab_state.store()
+
   chrome.extension.onRequest.addListener (request) ->
     if request.type is "open"
       app.message.send("open", url: request.query)
