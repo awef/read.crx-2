@@ -189,26 +189,12 @@ app.view.history.open = ->
 app.view.config = {}
 
 app.view.config.open = ->
-  container_close = ->
-    $view.fadeOut "fast", -> $view.remove()
-
-  if $(".view_config:visible").length isnt 0
-    app.log("debug", "app.view.config_open: 既に設定パネルが開かれています")
-    return
-
   $view = $("#template > .view_config").clone()
-  $view
-    .bind "click", (e) ->
-      if e.target.webkitMatchesSelector(".view_config")
-        container_close()
-    .find("> div > .close_button")
-      .bind("click", container_close)
 
-  $view
-    .find(".version_info")
-      .text("#{app.manifest.name} v#{app.manifest.version} + #{navigator.userAgent}")
+  $view.find(".version_info")
+    .text("#{app.manifest.name} v#{app.manifest.version} + #{navigator.userAgent}")
 
-  $view.hide().appendTo(document.body).fadeIn("fast")
+  $("#tab_a").tab("add", element: $view[0], title: "設定")
 
 app.view.bookmark_source_selector = {}
 

@@ -196,33 +196,15 @@ $z-index_modal: 4
     :background-color #fff
 
 .view_config
-  @include modal_overlay
-  > div
-    @include drop_shadow
-    :position relative
-    :margin 20px auto
-    :width 500px
-    :border-radius 4px
-    :font-size 14px
-    :background-color #f3f3f3
-    .close_button
-      :position absolute
-      :right 5px
-      :top 5px
-      :border-radius 3px
-      :background-color #a55
-      :cursor pointer
-    :padding 5px
+  @include tabbed_view
+  :font-size 14px
+  :padding 5px
   h2
     :margin 0 0 5px 0
     :padding-bottom 5px
-    :font-size 18px
-    :font-weight normal
-    :border-bottom 1px solid #999
-  h3
-    :margin 0 0 5px 0
     :font-size 16px
     :font-weight normal
+    :border-bottom 1px solid #999
   label
     :cursor pointer
   .version_info
