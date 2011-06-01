@@ -24,6 +24,9 @@ app.view.thread.open = (url) ->
     $view.find(".button_write").remove()
 
   $view.find(".button_reload").bind "click", ->
+    $view.trigger("request_reload")
+
+  $view.bind "request_reload", ->
     $view.find(".content").empty()
     $view.find(".loading_overlay").show()
     app.view.thread._draw($view)

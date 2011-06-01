@@ -36,6 +36,9 @@ app.view.board.open = (url) ->
     app.history.add(url, title or url, opened_at)
 
   $view.find(".button_reload").bind "click", ->
+    $view.trigger("request_reload")
+
+  $view.bind "request_reload", ->
     $loading_overlay = $view.find(".loading_overlay").show()
     $view.find("tbody").empty()
     $view

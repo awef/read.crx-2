@@ -36,6 +36,11 @@ app.view.init = ->
       app.message.send "open",
         url: this.href or this.getAttribute("data-href")
 
+  $(window).bind "keydown", (e) ->
+    if e.which is 116 or (e.ctrlKey and e.which is 82) #F5 or Ctrl+R
+      e.preventDefault()
+      $(".tab .tab_container .tab_focused").trigger("request_reload")
+
 app.view.module = {}
 app.view.module.bookmark_button = ($view) ->
   url = $view.attr("data-url")

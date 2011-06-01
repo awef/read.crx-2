@@ -9,37 +9,38 @@ app.view.bookmark.open = ->
 
   $view.find("table").table_sort()
 
-  $view
-    .find(".button_reload")
-      .bind "click", ->
-        $loading_overlay.show()
+  $view.find(".button_reload").bind "click", ->
+    $view.trigger("request_reload")
 
-        board_list = []
-        for bookmark in app.bookmark.get_all()
-          if bookmark.type is "thread"
-            board_url = app.url.thread_to_board(bookmark.url)
-            if board_list.indexOf(board_url) is -1
-              board_list.push(board_url)
+  $view.bind "request_reload", ->
+    $loading_overlay.show()
 
-        $prev = null
-        fn = (result) ->
-          if result
-            if result.status is "success"
-              $prev.toggleClass("loading success")
-            else
-              $prev.toggleClass("loading fail")
+    board_list = []
+    for bookmark in app.bookmark.get_all()
+      if bookmark.type is "thread"
+        board_url = app.url.thread_to_board(bookmark.url)
+        if board_list.indexOf(board_url) is -1
+          board_list.push(board_url)
 
-          if board_list.length > 0
-            board_url = board_list[0]
-            board_list.splice(0, 1)
-            $prev = $("<div>", text: board_url, class: "loading")
-            $prev.prependTo($loading_overlay)
-            app.board.get(board_url, fn)
-          else
-            $view.find("tbody").empty()
-            app.view.bookmark._draw($view)
-            $loading_overlay.fadeOut 100, -> $(this).empty()
-        fn()
+    $prev = null
+    fn = (result) ->
+      if result
+        if result.status is "success"
+          $prev.toggleClass("loading success")
+        else
+          $prev.toggleClass("loading fail")
+
+      if board_list.length > 0
+        board_url = board_list[0]
+        board_list.splice(0, 1)
+        $prev = $("<div>", text: board_url, class: "loading")
+        $prev.prependTo($loading_overlay)
+        app.board.get(board_url, fn)
+      else
+        $view.find("tbody").empty()
+        app.view.bookmark._draw($view)
+        $loading_overlay.fadeOut 100, -> $(this).empty()
+    fn()
 
   app.view.bookmark._draw($view)
 
