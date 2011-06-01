@@ -63,6 +63,11 @@ app.view.thread.open = (url) ->
     .delegate ".anchor:not(.disabled)", "mouseleave", ->
       $view.find(".popup").empty().hide()
 
+    .delegate ".anchor:not(.disabled)", "click", ->
+      tmp = /\d+/.exec(this.textContent)
+      if tmp
+        app.view.thread._jump_to_res($view, tmp[0], true)
+
   app.view.thread._read_state_manager($view)
   app.view.thread._draw($view)
     .always ->
