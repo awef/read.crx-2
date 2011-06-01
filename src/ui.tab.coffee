@@ -30,17 +30,21 @@
 
   # prop.element, prop.title, [prop.background]
   tab_add = (prop) ->
-    $this = $(this)
+    $tab = $(this)
     tab_id = uid()
 
     $("<li>", {"data-tab_id": tab_id, title: prop.title})
       .append($("<span>", {text: prop.title}))
       .append($("<img>", {src: "/img/close_16x16.png", title: "閉じる"}))
-      .appendTo($this.find(".tab_tabbar"))
+      .appendTo($tab.find(".tab_tabbar"))
 
     $(prop.element)
       .attr("data-tab_id", tab_id)
-      .appendTo($this.find(".tab_container"))
+      .appendTo($tab.find(".tab_container"))
+      .bind "click", ->
+        if not this.classList.contains("tab_focused")
+          $(".tab_focused").removeClass("tab_focused")
+          $tab.find("[data-tab_id=\"#{tab_id}\"]").addClass("tab_focused")
 
     unless prop.background and $this.find(".tab_tabbar li").length isnt 1
       tab_select.call(this, {tab_id: tab_id})
