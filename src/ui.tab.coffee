@@ -9,24 +9,20 @@
     $(this)
       .addClass("tab")
       .append('<ul class="tab_tabbar">', '<div class="tab_container">')
-      .delegate(".tab_tabbar", "mousewheel", (e) ->
+      .delegate ".tab_tabbar", "mousewheel", (e) ->
         e.preventDefault()
         way = if e.wheelDelta > 0 then "prev" else "next"
         next = $(that).find(".tab_tabbar li.tab_selected")[way]()
 
         if next.length is 1
           tab_select.call(that, {tab_id: next.attr("data-tab_id")})
-      )
-      .delegate(".tab_tabbar li", "mousedown", (e) ->
+
+      .delegate ".tab_tabbar li", "mousedown", (e) ->
         (if e.which is 2 then tab_remove else tab_select)
           .call(that, {tab_id: $(this).attr("data-tab_id")})
-      )
-      .delegate(".tab_tabbar img", "click", () ->
-        tab_remove.call(
-          that,
-          {tab_id: $(this).parent().attr("data-tab_id")}
-        )
-      )
+
+      .delegate ".tab_tabbar img", "click", ->
+        tab_remove.call(that, tab_id: $(this).parent().attr("data-tab_id"))
 
   # prop.element, prop.title, [prop.background]
   tab_add = (prop) ->
