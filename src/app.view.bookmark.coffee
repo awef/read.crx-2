@@ -9,6 +9,11 @@ app.view.bookmark.open = ->
 
   $view.find("table").table_sort()
 
+  $view.find(".button_link").bind "click", ->
+    path = "chrome-extension://eemcgdkfndhakfknompkggombfjjjeno/"
+    path += "main.html##{app.config.get("bookmark_id")}"
+    open(path)
+
   $view.find(".button_reload").bind "click", ->
     $view.trigger("request_reload")
 
