@@ -1,8 +1,10 @@
 $z-index_tab_content: 0
 $z-index_selected_tab_content: 1
-$z-index_left_pane: 2
-$z-index_notification: 3
-$z-index_modal: 4
+$z-index_tabbed_view_nav_bar: 2
+$z-index_tabbed_view_overlay: 3
+$z-index_left_pane: 4
+$z-index_notification: 5
+$z-index_modal: 6
 
 @import sass/ui_accordion.sass
 @import sass/ui_tab.sass
@@ -45,6 +47,7 @@ $z-index_modal: 4
       :border 1px solid #ebb
   .nav_bar
     @include drop_shadow
+    :z-index $z-index_tabbed_view_nav_bar
     :position relative
     *
       :float left
@@ -79,6 +82,7 @@ $z-index_modal: 4
     :overflow auto
     :position relative
   .loading_overlay
+    :z-index $z-index_tabbed_view_overlay
     :position absolute
     :left 0
     :top 0
