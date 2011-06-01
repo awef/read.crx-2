@@ -68,6 +68,15 @@ app.view.thread.open = (url) ->
     .always ->
       app.history.add(url, $view.attr("data-title"), opened_at)
 
+app.view.thread._jump_to_res = (view, res_num, animate_flg) ->
+  $content = $(view).find(".content")
+  $target = $content.children(":nth-child(#{res_num})")
+  if $target.length > 0
+    if animate_flg
+      $content.animate(scrollTop: $target[0].offsetTop)
+    else
+      $content.scrollTop($target[0].offsetTop)
+
 app.view.thread._draw = ($view) ->
   url = $view.attr("data-url")
   deferred = $.Deferred()
@@ -190,10 +199,7 @@ app.view.thread._read_state_manager = ($view) ->
     on_updated_draw = ->
       content = $view.find(".content")[0]
 
-      res_last = content.children[read_state.last - 1]
-      if res_last
-        res_last.classList.add("last")
-        content.scrollTop = res_last.offsetTop
+      app.view.thread._jump_to_res($view, read_state.last, false)
 
       res_read = content.children[read_state.read - 1]
       if res_read
