@@ -17,6 +17,8 @@ app.view.bookmark.open = ->
   $view.find(".button_reload").bind "click", ->
     $view.trigger("request_reload")
 
+  app.view.module.searchbox_thread_title($view, 0)
+
   $view.bind "request_reload", ->
     $loading_overlay.show()
 

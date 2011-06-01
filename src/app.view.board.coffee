@@ -9,16 +9,7 @@ app.view.board.open = (url) ->
     .attr("data-url", url)
     .attr("data-title", url)
 
-    .find(".searchbox_thread_title")
-      .bind "input", ->
-        $view
-          .find("table")
-            .table_search("search", query: this.value, target_col: 1)
-      .bind "keyup", (e) ->
-        if e.which is 27 #Esc
-          this.value = ""
-          $view.find("table").table_search("clear")
-
+  app.view.module.searchbox_thread_title($view, 1)
   app.view.module.bookmark_button($view)
   app.view.module.link_button($view)
 

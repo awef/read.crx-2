@@ -42,6 +42,16 @@ app.view.init = ->
       $(".tab .tab_container .tab_focused").trigger("request_reload")
 
 app.view.module = {}
+app.view.module.searchbox_thread_title = ($view, target_col) ->
+  $view.find(".searchbox_thread_title")
+    .bind "input", ->
+      $view.find("table")
+        .table_search("search", {query: this.value, target_col})
+    .bind "keyup", (e) ->
+      if e.which is 27 #Esc
+        this.value = ""
+        $view.find("table").table_search("clear")
+
 app.view.module.bookmark_button = ($view) ->
   url = $view.attr("data-url")
   $button = $view.find(".button_bookmark")
