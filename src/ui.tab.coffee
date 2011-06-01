@@ -48,8 +48,9 @@
   # prop.tab_id
   tab_remove = (prop) ->
     that = this
+    $tab = $(this)
 
-    $(this)
+    $tab
       .find("[data-tab_id=\"#{prop.tab_id}\"]")
         .filter(".tab_tabbar li.tab_selected")
           .each(->
@@ -65,14 +66,21 @@
         .end()
       .remove()
 
+    if not $tab.is(":has(.tab_focused)")
+      $(".tab:has(.tab_selected):first")
+        .find(".tab_selected")
+          .addClass("tab_focused")
+
   # prop.tab_id
   tab_select = (prop) ->
+    $(".tab_focused").removeClass("tab_focused")
+
     $(this)
       .find(".tab_selected")
         .removeClass("tab_selected")
       .end()
       .find("[data-tab_id=\"#{prop.tab_id}\"]")
-        .addClass("tab_selected")
+        .addClass("tab_selected tab_focused")
         .filter(".tab_container *")
           .trigger("tab_selected")
 
