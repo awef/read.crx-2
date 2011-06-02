@@ -10,16 +10,19 @@ app.view.thread.open = (url) ->
   app.view.module.bookmark_button($view)
   app.view.module.link_button($view)
 
+  write = (param) ->
+    param or= {}
+    param.url = url
+    param.title = $view.attr("data-title")
+    open(
+      "/write/write.html?#{app.url.build_param(param)}"
+      undefined
+      'width=600,height=300'
+    )
+
   if /// ^http://\w+\.2ch\.net/|^http://jbbs\.livedoor\.jp/ ///.test(url)
     $view.find(".button_write").bind "click", ->
-      param =
-        url: url
-        title: $view.attr("data-title")
-      open(
-        "/write/write.html?#{app.url.build_param(param)}"
-        undefined
-        'width=600,height=300'
-      )
+      write()
   else
     $view.find(".button_write").remove()
 
@@ -30,6 +33,43 @@ app.view.thread.open = (url) ->
     $view.find(".content").empty()
     $view.find(".loading_overlay").show()
     app.view.thread._draw($view)
+
+  $view.find(".num").contextmenu
+    trigger: "click contextmenu"
+    menu: "#template > .view_thread_resmenu"
+
+  $(document.documentElement)
+    .delegate ".view_thread_resmenu", "ui_contextmenu", ->
+      $view.append(this)
+
+  $view
+
+    .delegate ".res_to_this", "click", ->
+      $res = $($(this).parent().data("ui_contextmenu_source"))
+        .closest("article")
+      write(message: ">>#{$res.find(".num").text()}\n")
+      $(this).parent().remove()
+
+    .delegate ".res_to_this2", "click", ->
+      $res = $($(this).parent().data("ui_contextmenu_source"))
+        .closest("article")
+      write(message: """
+      >>#{$res.find(".num").text()}
+      #{$res.find(".message")[0].innerText.replace(/^/gm, '>')}\n
+      """)
+      $(this).parent().remove()
+
+    .delegate ".toggle_aa_mode", "click", ->
+      $res = $($(this).parent().data("ui_contextmenu_source"))
+        .closest("article")
+      $res.toggleClass("aa")
+      $(this).parent().remove()
+
+    .delegate ".res_permalink", "click", ->
+      $res = $($(this).parent().data("ui_contextmenu_source"))
+        .closest("article")
+      open(url + $res.find(".num").text())
+      $(this).parent().remove()
 
   $("#tab_b").tab("add", element: $view[0], title: $view.attr("data-title"))
 
