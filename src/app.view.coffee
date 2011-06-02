@@ -81,7 +81,7 @@ app.view.module.link_button = ($view) ->
   url = $view.attr("data-url")
   $button = $view.find(".button_link")
   if ///^http://\w///.test(url)
-    $("<a>", title: "Chromeで直接開く", href: url, target: "_blank")
+    $("<a>", href: url, target: "_blank")
       .appendTo($button)
   else
     $button.remove()
