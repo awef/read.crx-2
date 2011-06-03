@@ -10,14 +10,14 @@
     %script(src="/lib/jquery/jquery-1.6.1.min.js?v=#{app_version}")
     %script(src="/write/write.js?v=#{app_version}")
   %body.view_write
-    %h1
     %form
+      %h1
       %div
         %input(type="submit" value="書きこむ")
-        %button.cancel(type="button" disabld) キャンセル
+        %button.cancel(type="button" disabled) キャンセル
         %input.name(size="19")
         %input.mail(size="19")
       %textarea.message(wrap="off" autofocus required)
-    .notice
+      .notice
     .iframe_container
       .hide_iframe
