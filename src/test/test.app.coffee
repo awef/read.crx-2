@@ -207,3 +207,14 @@ test "URLパラメータ系関数整合性テスト", ->
 
   url = "http://example.com/?" + app.url.build_param(original_data)
   deepEqual(app.url.parse_query(url), original_data)
+
+
+module "app.config"
+
+test "test", ->
+  strictEqual(app.config.get("_test"), undefined)
+  app.config.set("_test", "12345")
+  strictEqual(app.config.get("_test"), "12345")
+  app.config.del("_test")
+  strictEqual(app.config.get("_test"), undefined)
+
