@@ -30,3 +30,4 @@ app.view.tab_state.restore = ->
   if localStorage["tab_state"]
     for tab in JSON.parse(localStorage["tab_state"])
       app.message.send("open", url: tab.url)
+    null
