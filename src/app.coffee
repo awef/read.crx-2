@@ -111,3 +111,5 @@ app.config =
     localStorage["config_#{key}"] = val
   get: (key) ->
     localStorage["config_#{key}"]
+  del: (key) ->
+    delete localStorage["config_#{key}"]
