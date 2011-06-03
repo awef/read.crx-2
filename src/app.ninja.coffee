@@ -49,7 +49,18 @@ app.ninja.store_cookie = (site_id) ->
   .promise()
 
 app.ninja.restore_cookie = (site_id) ->
-  undefined
+  $.Deferred (deferred) ->
+    tmp = app.config.get("ninja_store_#{site_id}")
+    if tmp
+      backup = JSON.parse(tmp)
+      backup.url = app.ninja._site_info[site_id].cookie_info.url
+      delete backup.hostOnly
+      delete backup.session
+      chrome.cookies.set backup, ->
+        deferred.resolve()
+    else
+      deferred.reject()
+  .promise()
 
 app.ninja.delete_cookie = (site_id) ->
   $.Deferred (deferred) ->
