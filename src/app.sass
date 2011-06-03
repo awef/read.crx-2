@@ -208,19 +208,40 @@ $z-index_modal: 6
   :box-sizing border-box
   :overflow auto
   h2
-    :margin 0 0 5px 0
+    :margin 15px 0 5px 0
     :padding-bottom 5px
     :font-size 16px
     :font-weight normal
     :border-bottom 1px solid #999
+    &:first-of-type
+      :margin-top 5px
+  h3
+    :font-size 14px
+    :margin 10px 0
+  h2 + h3
+    :margin-top 5px
   label
     :cursor pointer
+  .notation
+    :font-size 14px
+    :text-align right
   .version_info
     :font-size 12px
     :margin 5px
     :padding 5px
     :border-radius 3px
     :border 1px solid #aaa
+  .ninja_info_cookie, .ninja_info_stored
+    :list-style-type none
+    :margin 5px
+    :padding 5px
+    :border-radius 3px
+    :border 1px solid #aaa
+    :font-size 12px
+    li
+      :white-space nowrap
+      :text-overflow ellipsis
+      :overflow hidden
 
 html, body, #body
   :position relative
