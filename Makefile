@@ -52,8 +52,8 @@ ${DBG_DIR}/app.html: ${SRC_DIR}/app.haml
 ${DBG_DIR}/app.js: ${APP_COFFEE}
 	$(call coffee, ${APP_COFFEE}, ${DBG_DIR}/app.js)
 
-${DBG_DIR}/ui.js: ${SRC_DIR}/ui.*.coffee
-	$(call coffee, ${SRC_DIR}/ui.*.coffee, ${DBG_DIR}/ui.js)
+${DBG_DIR}/ui.js: ${SRC_DIR}/ui/ui.*.coffee
+	$(call coffee, ${SRC_DIR}/ui/ui.*.coffee, ${DBG_DIR}/ui.js)
 
 ${DBG_DIR}/app.css: ${SRC_DIR}/app.sass ${SRC_DIR}/sass/*.sass
 	$(call sass, ${SRC_DIR}/app.sass, ${DBG_DIR}/app.css)
