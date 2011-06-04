@@ -83,7 +83,7 @@ app.view.thread.open = (url) ->
   $view
     .delegate ".anchor:not(.disabled)", "mouseenter", (e) ->
       this.textContent
-        .replace /[\d０-９]+(?:-[\d０-９]+)?(?:\s*,\s*[\d０-９]+(?:-[\d０-９]+)?)*/g, ($0) ->
+        .replace /[\d０-９]+(?:-[\d０-９]+)?(?:\s*,\s*[\d０-９]+(?:-[\d０-９]+)?)*/g, ($0) =>
           str = $0.replace /[０-９]/g, ($0) ->
             String.fromCharCode($0.charCodeAt(0) - 65248)
 
