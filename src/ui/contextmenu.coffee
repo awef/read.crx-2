@@ -16,32 +16,20 @@
   $(window).bind "blur", ->
     cleanup()
 
-  $.fn.contextmenu = (config) ->
-    config or= {}
-    config.trigger or= "contextmenu"
+  $.contextmenu = (menu, x, y) ->
+    cleanup()
 
-    $(this).live config.trigger, (e) ->
-      if e.type is "contextmenu"
-        e.preventDefault()
+    $(menu)
+      .addClass("ui_contextmenu_menu")
+      .css(position: "fixed", left: x, top: y)
+      .each ->
+        $this = $(this)
+        this_pos = $this.position()
 
-      cleanup()
+        if window.innerWidth < this_pos.left + $this.outerWidth()
+          $this.css(left: "", right: "0")
 
-      $menu = $(config.menu).clone()
-
-      $menu
-        .addClass("ui_contextmenu_menu")
-        .data("ui_contextmenu_source", this)
-        .css(position: "fixed", left: e.clientX, top: e.clientY)
-        .each ->
-          $this = $(this)
-          this_pos = $this.position()
-
-          if window.innerWidth < this_pos.left + $this.outerWidth()
-            $this.css(left: "", right: "0")
-
-          if window.innerHeight < this_pos.top + $this.outerHeight()
-            $this.css("top", "#{this_pos.top - $this.outerHeight()}px")
-
-      $(this).trigger("ui_contextmenu", $menu[0])
+        if window.innerHeight < this_pos.top + $this.outerHeight()
+          $this.css("top", "#{this_pos.top - $this.outerHeight()}px")
 
 )(jQuery)

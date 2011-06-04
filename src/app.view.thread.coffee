@@ -32,13 +32,17 @@ app.view.thread.open = (url) ->
     $view.find(".loading_overlay").show()
     app.view.thread._draw($view)
 
-  $view.find(".num").contextmenu
-    trigger: "click contextmenu"
-    menu: "#template > .view_thread_resmenu"
-
   $view
-    .delegate ".num", "ui_contextmenu", (e, menu) ->
-      $view.append(menu)
+    .delegate ".num", "click contextmenu", (e) ->
+      if e.type is "contextmenu"
+        e.preventDefault()
+
+      app.defer =>
+        $menu = $("#template > .view_thread_resmenu")
+          .clone()
+            .data("ui_contextmenu_source", this)
+            .appendTo($view)
+        $.contextmenu($menu, e.clientX, e.clientY)
 
     .delegate ".res_to_this", "click", ->
       $res = $($(this).parent().data("ui_contextmenu_source"))
