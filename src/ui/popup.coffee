@@ -5,21 +5,26 @@
       .addClass("popup")
       .data("popup_source", source)
 
+    #.popup内にsourceが有った場合はネスト
+    #そうでなければ、指定されたデフォルトの要素に追加
     $parent = $(source).closest(".popup")
     if $parent.length is 1
       $parent.append($popup)
     else
       $(default_parent).append($popup)
 
+    #同一ソースからのポップアップが既に有る場合は、処理を中断
     flg = false
     $popup.siblings(".popup").each ->
       flg or= $($(this).data("popup_source")).is(source)
     if flg
       return
 
+    #画面内に収まるよう、表示位置を修正
     $popup.css("left", "#{x + 20}px")
     $popup.css("top", "#{Math.min(y, document.body.offsetHeight - $popup.outerHeight()) - 20}px")
 
+    #ポップアップ削除関連の処理
     remove = ->
       if $popup.find(".popup.active").length >= 1
         return
