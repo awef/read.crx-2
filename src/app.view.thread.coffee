@@ -44,31 +44,26 @@ app.view.thread.open = (url) ->
             .appendTo($view)
         $.contextmenu($menu, e.clientX, e.clientY)
 
-    .delegate ".res_to_this", "click", ->
-      $res = $($(this).parent().data("ui_contextmenu_source"))
+    .delegate ".view_thread_resmenu > *", "click", ->
+      $this = $(this)
+      $res = $($this.parent().data("ui_contextmenu_source"))
         .closest("article")
-      write(message: ">>#{$res.find(".num").text()}\n")
-      $(this).parent().remove()
 
-    .delegate ".res_to_this2", "click", ->
-      $res = $($(this).parent().data("ui_contextmenu_source"))
-        .closest("article")
-      write(message: """
-      >>#{$res.find(".num").text()}
-      #{$res.find(".message")[0].innerText.replace(/^/gm, '>')}\n
-      """)
-      $(this).parent().remove()
+      if $this.hasClass("res_to_this")
+        write(message: ">>#{$res.find(".num").text()}\n")
 
-    .delegate ".toggle_aa_mode", "click", ->
-      $res = $($(this).parent().data("ui_contextmenu_source"))
-        .closest("article")
-      $res.toggleClass("aa")
-      $(this).parent().remove()
+      else if $this.hasClass("res_to_this2")
+        write(message: """
+        >>#{$res.find(".num").text()}
+        #{$res.find(".message")[0].innerText.replace(/^/gm, '>')}\n
+        """)
 
-    .delegate ".res_permalink", "click", ->
-      $res = $($(this).parent().data("ui_contextmenu_source"))
-        .closest("article")
-      open(url + $res.find(".num").text())
+      else if $this.hasClass("toggle_aa_mode")
+        $res.toggleClass("aa")
+
+      else if $this.hasClass("res_permalink")
+        open(url + $res.find(".num").text())
+
       $(this).parent().remove()
 
   $("#tab_b").tab("add", element: $view[0], title: $view.attr("data-title"))
