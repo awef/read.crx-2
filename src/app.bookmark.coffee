@@ -141,7 +141,7 @@ app.bookmark = {}
         url: read_state.url + "#" + app.url.build_param(data))
 
   app.bookmark.update_res_count = (url, res_count) ->
-    if app.bookmark.get(url, res_count)
+    if app.bookmark.get(url)
       data = {res_count}
 
       if (read_state = bookmark_data[bookmark_data_index_url[url]].read_state)
