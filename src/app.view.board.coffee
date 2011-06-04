@@ -12,6 +12,7 @@ app.view.board.open = (url) ->
   app.view.module.searchbox_thread_title($view, 1)
   app.view.module.bookmark_button($view)
   app.view.module.link_button($view)
+  app.view.module.reload_button($view)
 
   $("#tab_a").tab("add", element: $view[0], title: url)
 
@@ -25,9 +26,6 @@ app.view.board.open = (url) ->
           title: title
       $view.attr("data-title", title)
     app.history.add(url, title or url, opened_at)
-
-  $view.find(".button_reload").bind "click", ->
-    $view.trigger("request_reload")
 
   $view.bind "request_reload", ->
     $loading_overlay = $view.find(".loading_overlay").show()

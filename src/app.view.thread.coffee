@@ -9,6 +9,7 @@ app.view.thread.open = (url) ->
 
   app.view.module.bookmark_button($view)
   app.view.module.link_button($view)
+  app.view.module.reload_button($view)
 
   write = (param) ->
     param or= {}
@@ -25,9 +26,6 @@ app.view.thread.open = (url) ->
       write()
   else
     $view.find(".button_write").remove()
-
-  $view.find(".button_reload").bind "click", ->
-    $view.trigger("request_reload")
 
   $view.bind "request_reload", ->
     $view.find(".content").empty()

@@ -86,6 +86,10 @@ app.view.module.link_button = ($view) ->
   else
     $button.remove()
 
+app.view.module.reload_button = ($view) ->
+  $view.find(".button_reload").bind "click", ->
+    $view.trigger("request_reload")
+
 app.view.load_sidemenu = (url) ->
   app.bbsmenu.get (res) ->
     if "data" of res

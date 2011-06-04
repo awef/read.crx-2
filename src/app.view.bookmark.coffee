@@ -14,9 +14,7 @@ app.view.bookmark.open = ->
     path += "main.html##{app.config.get("bookmark_id")}"
     open(path)
 
-  $view.find(".button_reload").bind "click", ->
-    $view.trigger("request_reload")
-
+  app.view.module.reload_button($view)
   app.view.module.searchbox_thread_title($view, 0)
 
   $view.bind "request_reload", ->
