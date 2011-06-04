@@ -1,1 +1,1 @@
-docco src/*.coffee src/write/*.coffee
+docco src/*.coffee src/ui/*.coffee src/write/*.coffee
