@@ -86,17 +86,9 @@ app.view.thread.open = (url) ->
               frag.appendChild(res_list[now].cloneNode(true))
               now++
 
-          $popup = $view
-            .find(".popup")
-              .append(frag)
-              .css(left: e.pageX + 20, top: e.pageY - 20)
-              .show()
-
-          $popup.css("left", e.pageX + 20 )
-          $popup.css("top", Math.min(e.pageY, document.body.offsetHeight - $popup.outerHeight()) - 20)
-
-    .delegate ".anchor:not(.disabled)", "mouseleave", ->
-      $view.find(".popup").empty().hide()
+          $popup = $("<div>").append(frag)
+          $view.append($popup)
+          $.popup($popup, e.clientX, e.clientY, this)
 
     .delegate ".anchor:not(.disabled)", "click", ->
       tmp = /\d+/.exec(this.textContent)
