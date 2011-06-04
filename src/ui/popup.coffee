@@ -1,13 +1,21 @@
 (($) ->
   $.popup = (default_parent, popup, x, y, source) ->
     $popup = $(popup)
-    $popup.addClass("popup")
+    $popup
+      .addClass("popup")
+      .data("popup_source", source)
 
     $parent = $(source).closest(".popup")
     if $parent.length is 1
       $parent.append($popup)
     else
       $(default_parent).append($popup)
+
+    flg = false
+    $popup.siblings(".popup").each ->
+      flg or= $($(this).data("popup_source")).is(source)
+    if flg
+      return
 
     $popup.css("left", "#{x + 20}px")
     $popup.css("top", "#{Math.min(y, document.body.offsetHeight - $popup.outerHeight()) - 20}px")
