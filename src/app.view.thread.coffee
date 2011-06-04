@@ -33,6 +33,18 @@ app.view.thread.open = (url) ->
     app.view.thread._draw($view)
 
   $view
+    .delegate ".id.link, .id.freq", "mouseenter", (e) ->
+      $container = $("<div>")
+      $container.append(
+        $view
+          .find(".id:contains(\"#{this.textContent}\")")
+            .closest("article")
+              .clone()
+      )
+      $view.append($container)
+      $.popup($container, e.clientX, e.clientY, this)
+
+  $view
     .delegate ".num", "click contextmenu", (e) ->
       if e.type is "contextmenu"
         e.preventDefault()
