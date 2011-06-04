@@ -15,7 +15,7 @@ QUNIT_FILES =\
 
 haml = haml -q $(1) $(2)
 sass = sass --style compressed --no-cache $(1) $(2)
-coffee = coffee -b -p -c $(1) > $(2)
+coffee = cat $(1) | coffee -cbsp > $(2)
 
 .PHONY: all
 all:\
