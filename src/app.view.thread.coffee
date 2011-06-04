@@ -41,8 +41,7 @@ app.view.thread.open = (url) ->
             .closest("article")
               .clone()
       )
-      $view.append($container)
-      $.popup($container, e.clientX, e.clientY, this)
+      $.popup($view, $container, e.clientX, e.clientY, this)
 
   $view
     .delegate ".num", "click contextmenu", (e) ->
@@ -99,8 +98,7 @@ app.view.thread.open = (url) ->
               now++
 
           $popup = $("<div>").append(frag)
-          $view.append($popup)
-          $.popup($popup, e.clientX, e.clientY, this)
+          $.popup($view, $popup, e.clientX, e.clientY, this)
 
     .delegate ".anchor:not(.disabled)", "click", ->
       tmp = /\d+/.exec(this.textContent)
