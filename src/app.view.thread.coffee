@@ -36,11 +36,9 @@ app.view.thread.open = (url) ->
     trigger: "click contextmenu"
     menu: "#template > .view_thread_resmenu"
 
-  $(document.documentElement)
-    .delegate ".view_thread_resmenu", "ui_contextmenu", ->
-      $view.append(this)
-
   $view
+    .delegate ".num", "ui_contextmenu", (e, menu) ->
+      $view.append(menu)
 
     .delegate ".res_to_this", "click", ->
       $res = $($(this).parent().data("ui_contextmenu_source"))

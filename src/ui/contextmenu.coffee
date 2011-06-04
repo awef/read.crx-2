@@ -26,22 +26,22 @@
 
       cleanup()
 
-      $(config.menu)
-        .clone()
-          .addClass("ui_contextmenu_menu")
-          .data("ui_contextmenu_source", this)
-          .css(position: "fixed", left: e.clientX, top: e.clientY)
-          .appendTo(document.body)
-          .each ->
-            $this = $(this)
-            this_pos = $this.position()
+      $menu = $(config.menu).clone()
 
-            if window.innerWidth < this_pos.left + $this.outerWidth()
-              $this.css(left: "", right: "0")
+      $menu
+        .addClass("ui_contextmenu_menu")
+        .data("ui_contextmenu_source", this)
+        .css(position: "fixed", left: e.clientX, top: e.clientY)
+        .each ->
+          $this = $(this)
+          this_pos = $this.position()
 
-            if window.innerHeight < this_pos.top + $this.outerHeight()
-              $this.css("top", "#{this_pos.top - $this.outerHeight()}px")
+          if window.innerWidth < this_pos.left + $this.outerWidth()
+            $this.css(left: "", right: "0")
 
-          .trigger("ui_contextmenu", this)
+          if window.innerHeight < this_pos.top + $this.outerHeight()
+            $this.css("top", "#{this_pos.top - $this.outerHeight()}px")
+
+      $(this).trigger("ui_contextmenu", $menu[0])
 
 )(jQuery)
