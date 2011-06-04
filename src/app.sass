@@ -193,6 +193,15 @@ $z-index_modal: 6
     .anchor.disabled
       :color #666
 
+  .other
+    .id
+      &.link
+        :color #00a
+      &.freq
+        :color #a00
+      &:after
+        :content "("attr(data-id_count)")"
+
   .aa .message
     @include ascii_art
 

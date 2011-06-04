@@ -151,6 +151,13 @@ app.view.thread._draw = ($view) ->
   deferred
 
 app.view.thread._draw_messages = (thread) ->
+  id_index = {}
+  for res, res_key in thread.res
+    tmp = /(?:^| )(ID:(?!\?\?\?)[^ ]+)/.exec(res.other)
+    if tmp
+      id_index[tmp[1]] or= []
+      id_index[tmp[1]].push(res_key)
+
   frag = document.createDocumentFragment()
   for res, res_key in thread.res
     article = document.createElement("article")
@@ -180,6 +187,26 @@ app.view.thread._draw_messages = (thread) ->
     other = document.createElement("span")
     other.className = "other"
     other.textContent = res.other
+
+    tmp = /(^| )(ID:(?!\?\?\?)[^ ]+)/.exec(res.other)
+    if tmp
+      elm_id = document.createElement("span")
+
+      elm_id.className = "id"
+      if id_index[tmp[2]].length >= 5
+        elm_id.className += " freq"
+      else if id_index[tmp[2]].length >= 2
+        elm_id.className += " link"
+
+      elm_id.textContent = tmp[2]
+      elm_id.setAttribute("data-id_count", id_index[tmp[2]].length)
+
+      range = document.createRange()
+      range.setStart(other.firstChild, tmp.index + tmp[1].length)
+      range.setEnd(other.firstChild, tmp.index + tmp[1].length + tmp[2].length)
+      range.deleteContents()
+      range.insertNode(elm_id)
+      range.detach()
     header.appendChild(other)
 
     message = document.createElement("div")
