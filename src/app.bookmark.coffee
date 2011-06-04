@@ -128,26 +128,34 @@ app.bookmark = {}
 
   app.bookmark.update_read_state = (read_state) ->
     url = read_state.url
-    if app.bookmark.get(url)
+    if bookmark = app.bookmark.get(url)
+      if bookmark.read_state.received is read_state.received and
+          bookmark.read_state.read is read_state.read and
+          bookmark.read_state.last is read_state.last
+        return
+
       data =
         received: read_state.received
         read: read_state.read
         last: read_state.last
 
-      if (res_count = bookmark_data[bookmark_data_index_url[url]].res_count)
-        data.res_count = res_count
+      if bookmark.res_count
+        data.res_count = bookmark.res_count
 
       chrome.bookmarks.update(index_url_id[url],
         url: read_state.url + "#" + app.url.build_param(data))
 
   app.bookmark.update_res_count = (url, res_count) ->
-    if app.bookmark.get(url)
+    if bookmark = app.bookmark.get(url)
+      if bookmark.res_count is res_count
+        return
+
       data = {res_count}
 
-      if (read_state = bookmark_data[bookmark_data_index_url[url]].read_state)
-        data.received = read_state.received
-        data.read = read_state.read
-        data.last = read_state.last
+      if bookmark.read_state
+        data.received = bookmark.read_state.received
+        data.read = bookmark.read_state.read
+        data.last = bookmark.read_state.last
 
       chrome.bookmarks.update(index_url_id[url],
         url: url + "#" + app.url.build_param(data))
