@@ -21,6 +21,12 @@
       $popup.remove()
       return
 
+    #同一ソースからのポップアップがネストしないよう処理
+    if tmp = $popup.parent(".popup").data("popup_source")
+      if $(tmp).html() is $(source).html()
+        $popup.remove()
+        return
+
     #画面内に収まるよう、表示位置を修正
     $popup.css("left", "#{x + 20}px")
     $popup.css("top", "#{Math.min(y, document.body.offsetHeight - $popup.outerHeight()) - 20}px")
