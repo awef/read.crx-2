@@ -18,6 +18,7 @@
     $popup.siblings(".popup").each ->
       flg or= $($(this).data("popup_source")).is(source)
     if flg
+      $popup.remove()
       return
 
     #画面内に収まるよう、表示位置を修正
