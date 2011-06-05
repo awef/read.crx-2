@@ -208,16 +208,18 @@ app.view.thread._draw_messages = (thread) ->
 
     tmp = /(^| )(ID:(?!\?\?\?)[^ ]+)/.exec(res.other)
     if tmp
+      id_count = id_index[tmp[2]].length
+
       elm_id = document.createElement("span")
 
       elm_id.className = "id"
-      if id_index[tmp[2]].length >= 5
+      if id_count >= 5
         elm_id.className += " freq"
-      else if id_index[tmp[2]].length >= 2
+      else if id_count >= 2
         elm_id.className += " link"
 
       elm_id.textContent = tmp[2]
-      elm_id.setAttribute("data-id_count", id_index[tmp[2]].length)
+      elm_id.setAttribute("data-id_count", id_count)
 
       range = document.createRange()
       range.setStart(other.firstChild, tmp.index + tmp[1].length)
