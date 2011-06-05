@@ -27,23 +27,16 @@ app.view.thread.open = (url) ->
   else
     $view.find(".button_write").remove()
 
+  #リロード処理
   $view.bind "request_reload", ->
     $view.find(".content").empty()
     $view.find(".loading_overlay").show()
     app.view.thread._draw($view)
 
-  $view
-    .delegate ".id.link, .id.freq", "click", (e) ->
-      $container = $("<div>")
-      $container.append(
-        $view
-          .find(".id:contains(\"#{this.textContent}\")")
-            .closest("article")
-              .clone()
-      )
-      $.popup($view, $container, e.clientX, e.clientY, this)
+  $("#tab_b").tab("add", element: $view[0], title: $view.attr("data-title"))
 
   $view
+    #コンテキストメニュー 表示
     .delegate ".num", "click contextmenu", (e) ->
       if e.type is "contextmenu"
         e.preventDefault()
@@ -55,6 +48,7 @@ app.view.thread.open = (url) ->
             .appendTo($view)
         $.contextmenu($menu, e.clientX, e.clientY)
 
+    #コンテキストメニュー 項目クリック
     .delegate ".view_thread_resmenu > *", "click", ->
       $this = $(this)
       $res = $($this.parent().data("ui_contextmenu_source"))
@@ -77,9 +71,6 @@ app.view.thread.open = (url) ->
 
       $(this).parent().remove()
 
-  $("#tab_b").tab("add", element: $view[0], title: $view.attr("data-title"))
-
-  $view
     #アンカーポップアップ
     .delegate ".anchor:not(.disabled)", "mouseenter", (e) ->
       tmp = $view.find(".content")[0].children
@@ -99,10 +90,22 @@ app.view.thread.open = (url) ->
       $popup = $("<div>").append(frag)
       $.popup($view, $popup, e.clientX, e.clientY, this)
 
+    #アンカーリンク
     .delegate ".anchor:not(.disabled)", "click", ->
       tmp = /\d+/.exec(this.textContent)
       if tmp
         app.view.thread._jump_to_res($view, tmp[0], true)
+
+    #IDポップアップ
+    .delegate ".id.link, .id.freq", "click", (e) ->
+      $container = $("<div>")
+      $container.append(
+        $view
+          .find(".id:contains(\"#{this.textContent}\")")
+            .closest("article")
+              .clone()
+      )
+      $.popup($view, $container, e.clientX, e.clientY, this)
 
   app.view.thread._read_state_manager($view)
   app.view.thread._draw($view)
