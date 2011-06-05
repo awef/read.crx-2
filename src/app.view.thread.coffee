@@ -160,6 +160,18 @@ app.view.thread._draw_messages = (thread) ->
       id_index[tmp[1]] or= []
       id_index[tmp[1]].push(res_key)
 
+  #参照インデックス構築
+  rep_index = {}
+  for res, res_key in thread.res
+    for anchor in app.util.parse_anchor(res.message).data
+      if anchor.target < 25
+        for segment in anchor.segments
+          i = Math.max(1, segment[0])
+          while i <= Math.min(thread.res.length, segment[1])
+            rep_index[i] or= []
+            rep_index[i].push(res_key)
+            i++
+
   #DOM構築
   frag = document.createDocumentFragment()
   for res, res_key in thread.res
@@ -210,6 +222,15 @@ app.view.thread._draw_messages = (thread) ->
       range.deleteContents()
       range.insertNode(elm_id)
       range.detach()
+
+    #リプライ数表示追加
+    if rep_index[res_key + 1]
+      rep = document.createElement("span")
+      rep.className = "rep"
+      rep.textContent = rep_index[res_key + 1].length
+      rep.setAttribute("data-replist", JSON.stringify(rep_index[res_key + 1]))
+      other.appendChild(rep)
+
     header.appendChild(other)
 
     message = document.createElement("div")
