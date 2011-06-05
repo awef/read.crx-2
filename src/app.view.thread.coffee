@@ -107,6 +107,17 @@ app.view.thread.open = (url) ->
       )
       $.popup($view, $container, e.clientX, e.clientY, this)
 
+    #リプライポップアップ
+    .delegate ".rep", "click", (e) ->
+      tmp = $view.find(".content")[0].children
+
+      frag = document.createDocumentFragment()
+      for num in JSON.parse(this.getAttribute("data-replist"))
+        frag.appendChild(tmp[num].cloneNode(true))
+
+      $popup = $("<div>").append(frag)
+      $.popup($view, $popup, e.clientX, e.clientY, this)
+
   app.view.thread._read_state_manager($view)
   app.view.thread._draw($view)
     .always ->
