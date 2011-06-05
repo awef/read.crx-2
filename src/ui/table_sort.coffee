@@ -2,21 +2,33 @@
   $.fn.table_sort = ->
     $(this)
       .find("th")
-      .bind "click", ->
-        $th = $(this)
-        $table = $th.closest("table")
-        $table.hide()
-        tbody = $table.find("tbody")[0]
+        .bind "click", ->
+          $th = $(this)
+
+          sort_order = if $th.hasClass("table_sort_desc") then "asc" else "desc"
+
+          $th
+            .siblings()
+              .andSelf()
+                .removeClass("table_sort_asc table_sort_desc")
+          $th.addClass("table_sort_#{sort_order}")
+
+          $th.closest("table").trigger("table_sort_update")
+
+      .end()
+
+      .bind "table_sort_update", ->
+        $th = $(this).find(".table_sort_asc, .table_sort_desc")
+        if $th.length isnt 1
+          return
+
+        this.style["display"] = "none"
 
         sort_index = $th.index()
         sort_type = $th.data("table_sort_type") or "str"
-        sort_order = if $th.hasClass("table_sort_desc") then "asc" else "desc"
+        sort_order = if $th.hasClass("table_sort_asc") then "asc" else "desc"
 
-        $th
-          .siblings()
-            .andSelf()
-              .removeClass("table_sort_asc table_sort_desc")
-        $th.addClass("table_sort_#{sort_order}")
+        tbody = this.querySelector("tbody")
 
         data = {}
         for td in tbody.querySelectorAll("td:nth-child(#{sort_index + 1})")
@@ -36,7 +48,7 @@
           for tr in data[key]
             tbody.insertBefore(tr)
 
-        $table.show()
+        this.style["display"] = "table"
 
-      this
+    this
 )(jQuery)
