@@ -199,13 +199,14 @@ $z-index_modal: 6
         :color #00a
       &.freq
         :color #a00
-      &:after
-        :content "("attr(data-id_count)")"
+      &.link, &.freq
+        &:after
+          :content " ("attr(data-id_count)")"
     .rep
       &:before
-        :content " 参照:["
+        :content " 参照 ("
       &:after
-        :content "]"
+        :content ")"
 
   .aa .message
     @include ascii_art
