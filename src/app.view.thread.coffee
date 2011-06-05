@@ -241,9 +241,10 @@ app.view.thread._draw_messages = (thread) ->
 
     #リプライ数表示追加
     if rep_index[res_key + 1]
+      rep_count = rep_index[res_key + 1].length
       rep = document.createElement("span")
-      rep.className = "rep"
-      rep.textContent = rep_index[res_key + 1].length
+      rep.className = "rep #{if rep_count >= 5 then " freq" else " link"}"
+      rep.textContent = rep_count
       rep.setAttribute("data-replist", JSON.stringify(rep_index[res_key + 1]))
       other.appendChild(rep)
 
