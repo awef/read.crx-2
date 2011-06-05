@@ -153,6 +153,7 @@ app.view.thread._draw = ($view) ->
   deferred
 
 app.view.thread._draw_messages = (thread) ->
+  #idをキーにレスを取得出来るインデックスを作成
   id_index = {}
   for res, res_key in thread.res
     tmp = /(?:^| )(ID:(?!\?\?\?)[^ ]+)/.exec(res.other)
@@ -160,6 +161,7 @@ app.view.thread._draw_messages = (thread) ->
       id_index[tmp[1]] or= []
       id_index[tmp[1]].push(res_key)
 
+  #DOM構築
   frag = document.createDocumentFragment()
   for res, res_key in thread.res
     article = document.createElement("article")
@@ -214,30 +216,33 @@ app.view.thread._draw_messages = (thread) ->
     message = document.createElement("div")
     message.className = "message"
     message.innerHTML = res.message
+      #タグ除去
       .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
+      #URLリンク
       .replace(/(h)?(ttps?:\/\/[\w\-.!~*'();/?:@&=+$,%#]+)/g,
         '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
+      #Beアイコン埋め込み表示
       .replace(///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///,
         '<img class="beicon" src="http://$1" /><br />')
-      .replace(/(?:&gt;|＞){1,2}[\d０-９]+(?:-[\d０-９]+)?(?:\s*,\s*[\d０-９]+(?:-[\d０-９]+)?)*/g, ($0) ->
-          str = $0.replace /[０-９]/g, ($0) ->
-            String.fromCharCode($0.charCodeAt(0) - 65248)
+      #アンカーリンク
+      .replace /(?:&gt;|＞){1,2}[\d０-９]+(?:-[\d０-９]+)?(?:\s*,\s*[\d０-９]+(?:-[\d０-９]+)?)*/g, ($0) ->
+        str = $0.replace /[０-９]/g, ($0) ->
+          String.fromCharCode($0.charCodeAt(0) - 65248)
 
-          reg = /(\d+)(?:-(\d+))?/g
-          target_max = 25
-          target_count = 0
-          while ((res = reg.exec(str)) and target_count <= target_max)
-            if res[2]
-              if +res[2] > +res[1]
-                target_count += +res[2] - +res[1]
-            else
-              target_count++
+        reg = /(\d+)(?:-(\d+))?/g
+        target_max = 25
+        target_count = 0
+        while ((res = reg.exec(str)) and target_count <= target_max)
+          if res[2]
+            if +res[2] > +res[1]
+              target_count += +res[2] - +res[1]
+          else
+            target_count++
 
-          disabled = target_count >= target_max
+        disabled = target_count >= target_max
 
-          "<a href=\"javascript:undefined;\" class=\"anchor" +
-          "#{if disabled then " disabled" else ""}\">#{$0}</a>"
-      )
+        "<a href=\"javascript:undefined;\" class=\"anchor" +
+        "#{if disabled then " disabled" else ""}\">#{$0}</a>"
 
     article.appendChild(message)
 
