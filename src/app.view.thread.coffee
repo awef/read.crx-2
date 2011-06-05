@@ -80,25 +80,24 @@ app.view.thread.open = (url) ->
   $("#tab_b").tab("add", element: $view[0], title: $view.attr("data-title"))
 
   $view
+    #アンカーポップアップ
     .delegate ".anchor:not(.disabled)", "mouseenter", (e) ->
-      this.textContent
-        .replace /[\d０-９]+(?:-[\d０-９]+)?(?:\s*,\s*[\d０-９]+(?:-[\d０-９]+)?)*/g, ($0) =>
-          str = $0.replace /[０-９]/g, ($0) ->
-            String.fromCharCode($0.charCodeAt(0) - 65248)
+      tmp = $view.find(".content")[0].children
 
-          reg = /(\d+)(?:-(\d+))?/g
-          res_list = $view.find(".content")[0].children
-          res_list_length = res_list.length
-          frag = document.createDocumentFragment()
-          while (res = reg.exec(str))
-            now = +res[1] - 1
-            end = +(res[2] or res[1]) - 1
-            while now <= end and now < res_list_length
-              frag.appendChild(res_list[now].cloneNode(true))
-              now++
+      frag = document.createDocumentFragment()
+      for anchor in app.util.parse_anchor(this.textContent).data
+        for segment in anchor.segments
+          now = segment[0] - 1
+          end = segment[1] - 1
+          while now <= end
+            if tmp[now]
+              frag.appendChild(tmp[now].cloneNode(true))
+            else
+              break
+            now++
 
-          $popup = $("<div>").append(frag)
-          $.popup($view, $popup, e.clientX, e.clientY, this)
+      $popup = $("<div>").append(frag)
+      $.popup($view, $popup, e.clientX, e.clientY, this)
 
     .delegate ".anchor:not(.disabled)", "click", ->
       tmp = /\d+/.exec(this.textContent)
