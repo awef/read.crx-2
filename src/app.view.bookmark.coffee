@@ -89,3 +89,4 @@ app.view.bookmark._draw = ($view) ->
       frag.appendChild(tr)
 
   $view.find("tbody").append(frag)
+  $view.find("table").trigger("table_sort_update")

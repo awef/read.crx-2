@@ -30,9 +30,6 @@ app.view.board.open = (url) ->
   $view.bind "request_reload", ->
     $loading_overlay = $view.find(".loading_overlay").show()
     $view.find("tbody").empty()
-    $view
-      .find(".table_sort_desc, .table_sort_asc")
-        .removeClass("table_sort_desc table_sort_asc")
     app.view.board._draw($view)
 
   app.view.board._draw($view)
@@ -102,6 +99,8 @@ app.view.board._draw = ($view) ->
         tr.appendChild(td)
 
         tbody.appendChild(tr)
-      null
+
+      $view.find("table").trigger("table_sort_update")
+
     .always ->
       $view.find(".loading_overlay").fadeOut(100)
