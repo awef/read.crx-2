@@ -33,7 +33,7 @@ app.view.thread.open = (url) ->
     app.view.thread._draw($view)
 
   $view
-    .delegate ".id.link, .id.freq", "mouseenter", (e) ->
+    .delegate ".id.link, .id.freq", "click", (e) ->
       $container = $("<div>")
       $container.append(
         $view
