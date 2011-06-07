@@ -29,8 +29,18 @@ app.read_state = {}
   .promise()
 )()
 
+app.read_state._url_filter = (original_url) ->
+  original_url = app.url.fix(original_url)
+
+  original: original_url
+  replaced: original_url
+    .replace(/// ^http://\w+\.2ch\.net/ ///, "http://*.2ch.net/")
+  original_origin: original_url
+    .replace(/// ^(http://\w+\.2ch\.net)/.* ///, "$1")
+  replaced_origin: "http://*.2ch.net"
+
 app.read_state.get = (url) ->
-  url = app.url.fix(url)
+  url = app.read_state._url_filter(url)
 
   app.read_state._db_open
 
@@ -39,10 +49,12 @@ app.read_state.get = (url) ->
         transaction = db.transaction(["read_state"])
         objectStore = transaction.objectStore("read_state")
 
-        req = objectStore.get(url)
+        req = objectStore.get(url.replaced)
         req.onsuccess = ->
           if typeof req.result is "object"
             read_state = req.result
+            read_state.url =
+              read_state.url.replace(url.replaced, url.original)
             delete read_state.board_url
             deferred.resolve(read_state)
           else
@@ -53,6 +65,8 @@ app.read_state.get = (url) ->
     .promise()
 
 app.read_state.get_by_board = (board_url) ->
+  board_url = app.read_state._url_filter(board_url)
+
   app.read_state._db_open
 
     .pipe (db) ->
@@ -70,11 +84,13 @@ app.read_state.get_by_board = (board_url) ->
         object_store = transaction.objectStore("read_state")
         req = object_store
           .index("board_url")
-          .openCursor(webkitIDBKeyRange.only(board_url))
+          .openCursor(webkitIDBKeyRange.only(board_url.replaced))
         req.onsuccess = ->
           cursor = req.result
           if cursor
             read_state = cursor.value
+            read_state.url =
+              read_state.url.replace(board_url.replaced_origin, board_url.original_origin)
             delete read_state.board_url
             data.push(read_state)
             cursor.continue()
@@ -91,8 +107,10 @@ app.read_state.set = (read_state) ->
     app.log("error", "app.read_state.set: 引数が不正です", arguments)
     return $.Deferred().reject().promise()
 
-  read_state.url = app.url.fix(read_state.url)
-  read_state.board_url = app.url.thread_to_board(read_state.url)
+  url = app.read_state._url_filter(read_state.url)
+  read_state.url = url.replaced
+  board_url = app.url.thread_to_board(url.original)
+  read_state.board_url = app.read_state._url_filter(board_url).replaced
 
   app.read_state._db_open
 
@@ -108,11 +126,14 @@ app.read_state.set = (read_state) ->
 
     .always ->
       delete read_state.board_url
+      read_state.url = read_state.url.replace(url.replaced, url.original)
       app.bookmark.update_read_state(read_state)
 
     .promise()
 
 app.read_state.remove = (url) ->
+  url = app.read_state._url_filter(url)
+
   app.read_state._db_open
 
     .pipe (db) ->
@@ -123,7 +144,7 @@ app.read_state.remove = (url) ->
           deferred.reject()
         transaction.oncomplete = ->
           deferred.resolve()
-        transaction.objectStore("read_state").delete(url)
+        transaction.objectStore("read_state").delete(url.replaced)
 
     .promise()
 
