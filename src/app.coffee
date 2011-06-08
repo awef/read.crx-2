@@ -47,6 +47,17 @@ app.main = ->
     if request.type is "open"
       app.message.send("open", url: request.query)
 
+app.critical_error = (message) ->
+  alert("""
+  エラーが発生しました。read.crxを終了します。
+
+  詳細情報 :
+  #{message}
+  """)
+
+  chrome.tabs.getCurrent (tab) ->
+    chrome.tabs.remove(tab.id)
+
 app.log = (level) ->
   if ["log", "debug", "info", "warn", "error"].indexOf(level) isnt -1
     console[level].apply(console, Array.prototype.slice.call(arguments, 1))
