@@ -34,7 +34,6 @@
 )()
 
 app.main = ->
-  app.view.init()
   app.view.load_sidemenu()
 
   app.view.tab_state.restore()
@@ -44,3 +43,42 @@ app.main = ->
   chrome.extension.onRequest.addListener (request) ->
     if request.type is "open"
       app.message.send("open", url: request.query)
+
+  $("#body").addClass("pane-3")
+
+  $("#tab_a, #tab_b").tab()
+  $(".tab .tab_tabbar").sortable()
+
+  app.view.setup_resizer()
+
+  app.message.add_listener "open", (message) ->
+    $container = $(".tab_container")
+      .find("> [data-url=\"#{app.url.fix(message.url)}\"]")
+
+    guess_result = app.url.guess_type(message.url)
+
+    if $container.length is 1
+      $container
+        .closest(".tab")
+          .tab("select", tab_id: $container.attr("data-tab_id"))
+    else if message.url is "config"
+      app.view.config.open()
+    else if message.url is "history"
+      app.view.history.open()
+    else if message.url is "bookmark"
+      app.view.bookmark.open()
+    else if guess_result.type is "board"
+      app.view.board.open(message.url)
+    else if guess_result.type is "thread"
+      app.view.thread.open(message.url)
+
+  $(document.documentElement)
+    .delegate ".open_in_rcrx", "click", (e) ->
+      e.preventDefault()
+      app.message.send "open",
+        url: this.href or this.getAttribute("data-href")
+
+  $(window).bind "keydown", (e) ->
+    if e.which is 116 or (e.ctrlKey and e.which is 82) #F5 or Ctrl+R
+      e.preventDefault()
+      $(".tab .tab_container .tab_focused").trigger("request_reload")
