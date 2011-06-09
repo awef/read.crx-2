@@ -139,10 +139,7 @@ app.view.thread._draw = ($view) ->
   app.thread.get url, (result) ->
     $message_bar = $view.find(".message_bar")
     if result.status is "error"
-      text = "スレッドの読み込みに失敗しました。"
-      if "data" of result
-        text += "キャッシュに残っていたデータを表示します。"
-      $message_bar.addClass("error").text(text)
+      $message_bar.addClass("error").text(result.message)
 
     if "data" of result
       thread = result.data

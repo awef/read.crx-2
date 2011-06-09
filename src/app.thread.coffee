@@ -61,8 +61,16 @@ app.thread.get = (url, callback) ->
     #パース部
     .pipe((fn = (cache, xhr) ->
       $.Deferred (deferred) ->
+        guess_res = app.url.guess_type(url)
+
         if xhr?.status is 200
           thread = app.thread.parse(url, xhr.responseText)
+        #2ch系BBSのdat落ち
+        else if guess_res.bbs_type is "2ch" and xhr?.status is 203
+          if cache?.status is "success"
+            thread = app.thread.parse(url, cache.data.data)
+          else
+            thread = app.thread.parse(url, xhr.responseText)
         else if cache?.status is "success"
           thread = app.thread.parse(url, cache.data.data)
 
@@ -75,6 +83,10 @@ app.thread.get = (url, callback) ->
               #キャッシュが期限内だった場合
               (not xhr and cache?.status is "success")
             deferred.resolve(cache, xhr, thread)
+          #2ch系BBSのdat落ち
+          else if guess_res.bbs_type is "2ch" and xhr?.status is 203
+            deferred.reject(cache, xhr, thread)
+            app.message.send("detected_removed_dat", url: url)
           else
             deferred.reject(cache, xhr, thread)
         #パース失敗
@@ -87,10 +99,18 @@ app.thread.get = (url, callback) ->
       callback(status: "success", data: thread)
 
     .fail (cache, xhr, thread) ->
-      if thread
-        callback(status: "error", data: thread)
+      message = ""
+      if xhr?.status is 203
+        message = "dat落ちしたスレッドです。"
       else
-        callback(status: "error")
+        message = "スレッドの読み込みに失敗しました。"
+      if cache?.status is "success" and thread
+        message += "キャッシュに残っていたデータを表示します。"
+
+      if thread
+        callback({status: "error", data: thread, message})
+      else
+        callback({status: "error", message})
 
     #キャッシュ更新部
     .done (cache, xhr, thread) ->
