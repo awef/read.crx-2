@@ -129,7 +129,8 @@ app.bookmark = {}
   app.bookmark.update_read_state = (read_state) ->
     url = read_state.url
     if bookmark = app.bookmark.get(url)
-      if bookmark.read_state.received is read_state.received and
+      if bookmark.read_state and
+          bookmark.read_state.received is read_state.received and
           bookmark.read_state.read is read_state.read and
           bookmark.read_state.last is read_state.last
         return
