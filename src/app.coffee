@@ -100,24 +100,6 @@ app.message = {}
         return
 )()
 
-app.notice = {}
-app.notice.push = (text) ->
-  $("<div>")
-    .append(
-      $("<div>", {text}),
-      $("<button>")
-        .bind("click", ->
-          $(this)
-            .parent()
-            .animate({opacity: 0}, "fast")
-            .delay("fast")
-            .slideUp("fast", -> $(this).remove())
-          )
-      )
-    .hide()
-    .appendTo("#app_notice_container")
-    .fadeIn()
-
 app.config =
   set: (key, val) ->
     localStorage["config_#{key}"] = val

@@ -309,34 +309,6 @@ a
   :height 5px
   :background-color #ddd
 
-#app_notice_container
-  :position fixed
-  :left 5%
-  :top 5px
-  :width 80%
-  :z-index $z-index_notification
-
-  > div
-    :background-color #222
-    :color #eee
-    :margin-bottom 5px
-    :padding 5px 10px
-    :border-radius 5px
-    @include drop_shadow
-
-    :display -webkit-box
-
-    div
-      :-webkit-box-flex 1
-
-    button
-      :cursor pointer
-      :width 16px
-      :height 16px
-      :background-image url(/img/close_16x16.png)
-      :background-color transparent
-      :border none
-
 .view_bookmark_source_selector
   @include modal_overlay
   > div
