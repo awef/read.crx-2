@@ -1,5 +1,3 @@
-app = {}
-
 (->
   origin = chrome.extension.getURL("").slice(0, -1)
 
