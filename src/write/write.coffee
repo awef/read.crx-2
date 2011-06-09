@@ -39,8 +39,8 @@ $ ->
   arg = app.url.parse_query(location.href)
   arg.url = app.url.fix(arg.url)
   arg.title or= arg.url
-  arg.name or= ""
-  arg.mail or= ""
+  arg.name or= app.config.get("default_name") or ""
+  arg.mail or= app.config.get("default_mail") or ""
   arg.message or= ""
 
   $view.find(".cancel, .hide_iframe").bind "click", ->

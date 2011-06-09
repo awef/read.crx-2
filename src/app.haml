@@ -95,6 +95,20 @@
         %h2 バージョン情報
         .version_info
 
+        %h2 書き込み設定
+        %table
+          %tbody
+            %tr
+              %td
+                デフォルトの名前
+              %td
+                %input.direct(type="text" name="default_name")
+            %tr
+              %td
+                デフォルトのメールアドレス
+              %td
+                %input.direct(type="text" name="default_mail")
+
         %h2 忍法帖
         %h3 Cookie
         %ul.ninja_info_cookie

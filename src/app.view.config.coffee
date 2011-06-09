@@ -3,6 +3,13 @@ app.view.config = {}
 app.view.config.open = ->
   $view = $("#template > .view_config").clone()
 
+  $view
+    .find("input.direct[type=\"text\"]")
+      .each ->
+        this.value = app.config.get(this.name) or ""
+      .bind "input", ->
+        app.config.set(this.name, this.value)
+
   $view.find(".version_info")
     .text("#{app.manifest.name} v#{app.manifest.version} + #{navigator.userAgent}")
 
