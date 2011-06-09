@@ -23,7 +23,9 @@ app.cache = {}
           app.log("info", "app.cache: db.setVersion成功(#{db.version} -> 1)")
           deferred.resolve(db)
 
-  .fail (db) -> db and db.close()
+  .fail (db) ->
+    db and db.close()
+    app.critical_error("キャッシュ管理システムの起動に失敗しました")
 
   .promise()
 )()

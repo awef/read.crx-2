@@ -24,7 +24,9 @@ app.read_state = {}
           app.log("info", "app.read_state: db.setVersion成功(#{db.version} -> 1)")
           deferred.resolve(db)
 
-  .fail (db) -> db and db.close()
+  .fail (db) ->
+    db and db.close()
+    app.critical_error("既読情報管理システムの起動に失敗しました")
 
   .promise()
 )()
