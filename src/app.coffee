@@ -48,12 +48,13 @@ app.main = ->
       app.message.send("open", url: request.query)
 
 app.critical_error = (message) ->
-  alert("""
-  エラーが発生しました。read.crxを終了します。
-
-  詳細情報 :
-  #{message}
-  """)
+  webkitNotifications
+    .createNotification(
+      "",
+      "深刻なエラーが発生したのでread.crxを終了します",
+      "詳細 : " + message
+    )
+    .show()
 
   chrome.tabs.getCurrent (tab) ->
     chrome.tabs.remove(tab.id)

@@ -10,6 +10,7 @@
     "cookies",
     "tabs",
     "unlimitedStorage",
+    "notifications",
     "http://*/*"
   ],
   "app" : {
