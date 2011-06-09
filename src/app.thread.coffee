@@ -66,11 +66,18 @@ app.thread.get = (url, callback) ->
         else if cache?.status is "success"
           thread = app.thread.parse(url, cache.data.data)
 
+        #パース成功
         if thread
-          if xhr?.status is 200 or xhr?.status is 304 or (not xhr and cache?.status is "success")
+          #通信成功
+          if xhr?.status is 200 or
+              #通信成功（更新なし）
+              xhr?.status is 304 or
+              #キャッシュが期限内だった場合
+              (not xhr and cache?.status is "success")
             deferred.resolve(cache, xhr, thread)
           else
             deferred.reject(cache, xhr, thread)
+        #パース失敗
         else
           deferred.reject(cache, xhr)
     ), fn)
