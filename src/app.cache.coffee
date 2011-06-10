@@ -53,11 +53,14 @@ app.cache.get = (url) ->
     .promise()
 
 app.cache.set = (data) ->
-  if (
-    typeof data.url isnt "string" or
-    typeof data.data isnt "string" or
-    typeof data.last_modified isnt "number" or
-    typeof data.last_updated isnt "number"
+  unless (
+    typeof data.url is "string" and
+    typeof data.data is "string" and
+    typeof data.last_updated is "number" and
+    (not ("last_modified" of data) or
+      typeof data.last_modified is "number") and
+    (not ("etag" of data) or
+      typeof data.etag is "string")
   )
     app.log("error", "app.cache.set: 引数が不正です", arguments)
     return $.Deferred().reject().promise()

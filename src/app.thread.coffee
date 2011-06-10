@@ -52,10 +52,14 @@ app.thread.get = (url, callback) ->
         xhr.overrideMimeType("text/plain; charset=" + xhr_charset)
         xhr.open("GET", xhr_path + "?_=" + Date.now().toString(10))
         if cache.status is "success"
-          xhr.setRequestHeader(
-            "If-Modified-Since",
-            new Date(cache.data.last_modified).toUTCString()
-          )
+          if "last_modified" of cache.data
+            xhr.setRequestHeader(
+              "If-Modified-Since",
+              new Date(cache.data.last_modified).toUTCString()
+            )
+
+          if "etag" of cache.data
+            xhr.setRequestHeader("If-None-Match", cache.data.etag)
         xhr.send(null)
 
     #パース部
@@ -114,20 +118,29 @@ app.thread.get = (url, callback) ->
 
     #キャッシュ更新部
     .done (cache, xhr, thread) ->
+      #通信に成功した場合
       if xhr?.status is 200
+        cache =
+          url: xhr_path
+          data: xhr.responseText
+          last_updated: Date.now()
+
         last_modified = new Date(
           xhr.getResponseHeader("Last-Modified") or "dummy"
         ).getTime()
 
-        unless isNaN(last_modified)
-          app.cache.set
-            url: xhr_path
-            data: xhr.responseText
-            last_updated: Date.now()
-            last_modified: last_modified
+        if not isNaN(last_modified)
+          cache.last_modified = last_modified
 
+        etag = xhr.getResponseHeader("ETag")
+        if etag
+          cache.etag = etag
+
+        app.cache.set(cache)
         app.bookmark.update_res_count(url, thread.res.length)
 
+      #304だった場合はアップデート時刻のみ更新
+      #TODO 203対策
       else if cache?.status is "success" and xhr?.status is 304
         cache.data.last_updated = Date.now()
         app.cache.set(cache.data)
