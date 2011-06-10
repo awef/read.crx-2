@@ -48,10 +48,14 @@ app.board.get = (url, callback) ->
         xhr.overrideMimeType("text/plain; charset=" + xhr_charset)
         xhr.open("GET", xhr_path + "?_=" + Date.now().toString(10))
         if cache.status is "success"
-          xhr.setRequestHeader(
-            "If-Modified-Since"
-            new Date(cache.data.last_modified).toUTCString()
-          )
+          if "last_modified" of cache.data
+            xhr.setRequestHeader(
+              "If-Modified-Since"
+              new Date(cache.data.last_modified).toUTCString()
+            )
+
+          if "etag" of cache.data
+            xhr.setRequestHeader("If-None-Match", cache.data.etag)
         xhr.send(null)
 
     #パース部
@@ -84,16 +88,22 @@ app.board.get = (url, callback) ->
     #キャシュ更新部
     .done (cache, xhr, board) ->
       if xhr?.status is 200
+        cache =
+          url: xhr_path
+          data: xhr.responseText
+          last_updated: Date.now()
+
         last_modified = new Date(
           xhr.getResponseHeader("Last-Modified") or "dummy"
         ).getTime()
 
-        unless isNaN(last_modified)
-          app.cache.set
-            url: xhr_path
-            data: xhr.responseText
-            last_updated: Date.now()
-            last_modified: last_modified
+        if not isNaN(last_modified)
+          cache.last_modified = last_modified
+
+        if etag = xhr.getResponseHeader("ETag")
+          cache.etag = etag
+
+        app.cache.set(cache)
 
         for thread in board
           app.bookmark.update_res_count(thread.url, thread.res_count)
