@@ -50,15 +50,15 @@ $z-index_modal: 6
     @include drop_shadow
     :z-index $z-index_tabbed_view_nav_bar
     :position relative
-    *
+    > input, > .button
       :float left
       :margin 3px
-    input
+    > input
       :border 1px solid #ccc
       :height 19px
       :padding 0 0 0 19px
       :background url(/img/search2_19x19.png) no-repeat
-    .button
+    > .button
       :width 19px
       :height 19px
       :border 1px solid #ccc
@@ -186,28 +186,28 @@ $z-index_modal: 6
 
   .message
     :margin 5px 10px
-    .anchor.disabled
-      :color #666
 
-  .other
-    .link
-      :color #00a
-    .freq
-      :color #a00
+  .anchor.disabled
+    :color #666
 
-    .id
-      :white-space nowrap
-      &.link, &.freq
-        :cursor pointer
-        &:after
-          :content " ("attr(data-id_count)")"
-    .rep
-      :white-space nowrap
+  .link
+    :color #00a
+  .freq
+    :color #a00
+
+  .id
+    :white-space nowrap
+    &.link, &.freq
       :cursor pointer
-      &:before
-        :content " 返信 ("
       &:after
-        :content ")"
+        :content " ("attr(data-id_count)")"
+  .rep
+    :white-space nowrap
+    :cursor pointer
+    &:before
+      :content " 返信 ("
+    &:after
+      :content ")"
 
   .aa .message
     @include ascii_art
@@ -274,18 +274,20 @@ a
 #body
   :position relative
   :color #111
-  #left_pane
-    :position absolute
-    :width 135px
-    :height 100%
-    :overflow-y auto
-    :z-index $z-index_left_pane
-  #right_pane
-    :box-sizing border-box
-    :position absolute
-    :padding-left 135px
-    :width 100%
-    :height 100%
+
+#left_pane
+  :position absolute
+  :width 135px
+  :height 100%
+  :overflow-y auto
+  :z-index $z-index_left_pane
+
+#right_pane
+  :box-sizing border-box
+  :position absolute
+  :padding-left 135px
+  :width 100%
+  :height 100%
 
 #body.pane-3
   #right_pane
