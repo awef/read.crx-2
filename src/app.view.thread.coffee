@@ -69,7 +69,7 @@ app.view.thread.open = (url) ->
       else if $this.hasClass("res_permalink")
         open(url + $res.find(".num").text())
 
-      $(this).parent().remove()
+      $this.parent().remove()
 
     #アンカーポップアップ
     .delegate ".anchor:not(.disabled)", "mouseenter", (e) ->
