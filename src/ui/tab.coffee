@@ -62,7 +62,7 @@
               tab_select.call(that, {tab_id: next.attr("data-tab_id")})
           )
         .end()
-        .filter(".tab_container > *")
+        .filter(".tab_content")
           .trigger("tab_removed")
         .end()
       .remove()
