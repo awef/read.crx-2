@@ -120,7 +120,6 @@ $z-index_modal: 6
 
 .view_board
   @include tabbed_view
-  @include ui_table_sort
   @include ui_table_search
   @include content_table
   th
@@ -145,7 +144,6 @@ $z-index_modal: 6
 .view_bookmark
   @include tabbed_view
   @include content_table
-  @include ui_table_sort
   @include ui_table_search
   td
     &:nth-child(2), &:nth-child(3), &:nth-child(4)

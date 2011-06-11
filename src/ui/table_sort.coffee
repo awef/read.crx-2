@@ -1,6 +1,8 @@
 (($) ->
   $.fn.table_sort = ->
     $(this)
+      .addClass("table_sort")
+
       .find("th")
         .bind "click", ->
           $th = $(this)
