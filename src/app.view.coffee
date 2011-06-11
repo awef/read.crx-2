@@ -15,18 +15,22 @@ app.view.module.bookmark_button = ($view) ->
   url = $view.attr("data-url")
   $button = $view.find(".button_bookmark")
   if ///^http://\w///.test(url)
-    update = ->
-      if app.bookmark.get(url)
-        $button.addClass("bookmarked")
-      else
-        $button.removeClass("bookmarked")
+    if app.bookmark.get(url)
+      $button.addClass("bookmarked")
+    else
+      $button.removeClass("bookmarked")
 
-    update()
+    on_update = (message) ->
+      if message.url is url
+        if message.type is "added"
+          $button.addClass("bookmarked")
+        else if message.type is "removed"
+          $button.removeClass("bookmarked")
 
-    app.message.add_listener("bookmark_updated", update)
+    app.message.add_listener("bookmark_updated", on_update)
 
     $view.bind "tab_removed", ->
-      app.message.remove_listener("bookmark_updated", update)
+      app.message.remove_listener("bookmark_updated", on_update)
 
     $button.bind "click", ->
       if app.bookmark.get(url)

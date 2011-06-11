@@ -2,60 +2,84 @@ app.bookmark = {}
 
 (->
   source_id = app.config.get("bookmark_id")
-  bookmark_data = []
-  bookmark_data_index_url = {}
-  bookmark_data_index_id = {}
-  index_url_id = {}
-  watcher_wakeflg = true
 
-  hoge_bookmark = (bookmark_node) ->
-    guess_res = app.url.guess_type(bookmark_node.url)
-    if guess_res.type is "board" or guess_res.type is "thread"
-      url = app.url.fix(bookmark_node.url)
-      tmp_bookmark =
-        type: guess_res.type
-        bbs_type: guess_res.bbs_type
-        url: url
-        title: bookmark_node.title
-        res_count: null
+  #ブックマークの状態を管理する処理群
+  empty_awef =
+    data: []
+    index_url: {} #urlからdataのキーを導く
+    index_id: {} #idからdataのキーを導く
+    index_url_id: {} #urlからidを導く
 
-      tmp = app.url.parse_hashquery(bookmark_node.url)
+  scan_awef = ->
+    $.Deferred (deferred) ->
+      tmp_awef = app.deep_copy(empty_awef)
+      try
+        chrome.bookmarks.getChildren source_id, (array_of_tree) ->
+          for tree in array_of_tree
+            if "url" of tree
+              guess_res = app.url.guess_type(tree.url)
+              if guess_res.type is "board" or guess_res.type is "thread"
+                url = app.url.fix(tree.url)
+                tmp_bookmark =
+                  type: guess_res.type
+                  bbs_type: guess_res.bbs_type
+                  url: url
+                  title: tree.title
+                  res_count: null
 
-      if /^\d+$/.test(tmp.res_count)
-        tmp_bookmark.res_count = +tmp.res_count
+                arg = app.url.parse_hashquery(tree.url)
+                if /^\d+$/.test(arg.res_count)
+                  tmp_bookmark.res_count = +arg.res_count
 
-      if (
-        /^\d+$/.test(tmp.received) and
-        /^\d+$/.test(tmp.read) and
-        /^\d+$/.test(tmp.last)
-      )
-        tmp_bookmark.read_state =
-          url: url
-          received: +tmp.received
-          read: +tmp.read
-          last: +tmp.last
+                if (
+                  /^\d+$/.test(arg.received) and
+                  /^\d+$/.test(arg.read) and
+                  /^\d+$/.test(arg.last)
+                )
+                  tmp_bookmark.read_state =
+                    url: url
+                    received: +arg.received
+                    read: +arg.read
+                    last: +arg.last
 
-      bookmark_data.push(tmp_bookmark)
-      bookmark_data_index_url[url] = bookmark_data.length - 1
-      bookmark_data_index_id[bookmark_node.id] = bookmark_data.length - 1
-      index_url_id[url] = bookmark_node.id
+                tmp_awef.data.push(tmp_bookmark)
+                tmp_awef.index_url[url] = tmp_awef.data.length - 1
+                tmp_awef.index_id[tree.id] = tmp_awef.data.length - 1
+                tmp_awef.index_url_id[url] = tree.id
+          deferred.resolve(tmp_awef)
+
+      catch e
+        $(-> app.view.bookmark_source_selector.open())
+        deferred.reject()
+    .promise()
+
+  now_awef = app.deep_copy(empty_awef)
+
+  update_awef = (new_awef) ->
+    old_awef = now_awef or app.deep_copy(empty_awef)
+
+    #追加されたブックマークの検出
+    for new_bookmark in new_awef.data
+      if not (new_bookmark.url of old_awef.index_url)
+        app.message.send("bookmark_updated",
+          {type: "added", url: new_bookmark.url})
+
+    #削除されたブックマークの抽出
+    for old_bookmark in old_awef.data
+      if not (old_bookmark.url of new_awef.index_url)
+        app.message.send("bookmark_updated",
+          {type: "removed", url: old_bookmark.url})
+
+    now_awef = new_awef
 
   update_all = ->
-    try
-      chrome.bookmarks.getChildren source_id, (array_of_tree) ->
-        bookmark_data = []
-        bookmark_data_index_url = {}
-        bookmark_data_index_id = {}
-        index_url_id = {}
-        for tree in array_of_tree
-          if "url" of tree
-            hoge_bookmark(tree)
-        send_update_message()
-    catch e
-      $(-> app.view.bookmark_source_selector.open())
+    scan_awef().done (new_awef) ->
+      update_awef(new_awef)
 
-  send_update_message = ->
-    app.message.send("bookmark_updated", null)
+  update_all()
+
+  #実際のブックマークの変更を検出して更新処理を呼ぶ処理群
+  watcher_wakeflg = true
 
   chrome.bookmarks.onImportBegan.addListener ->
     watcher_wakeflg = false
@@ -66,15 +90,14 @@ app.bookmark = {}
 
   chrome.bookmarks.onCreated.addListener (id, node) ->
     if watcher_wakeflg and node.parentId is source_id and "url" of node
-      hoge_bookmark(node)
-      send_update_message()
+      update_all()
 
   chrome.bookmarks.onRemoved.addListener (id, e) ->
-    if watcher_wakeflg and id of bookmark_data_index_id
+    if watcher_wakeflg and id of now_awef.index_id
       update_all()
 
   chrome.bookmarks.onChanged.addListener (id, e) ->
-    if watcher_wakeflg and id of bookmark_data_index_id
+    if watcher_wakeflg and id of now_awef.index_id
       update_all()
 
   chrome.bookmarks.onMoved.addListener (id, e) ->
@@ -82,21 +105,21 @@ app.bookmark = {}
       if e.parentId is source_id or e.oldParentId is source_id
         update_all()
 
-  update_all()
+  # read.crxが実際にブックマークの取得/操作等を行うための関数群
 
   # ##app.bookmark.get
   # 与えられたURLがブックマークされていた場合はbookmarkオブジェクトを  
   # そうでなかった場合はnullを返す
   app.bookmark.get = (url) ->
-    if url of bookmark_data_index_url
-      app.deep_copy(bookmark_data[bookmark_data_index_url[url]])
+    if url of now_awef.index_url
+      app.deep_copy(now_awef.data[now_awef.index_url[url]])
     else
       null
 
   # ##app.bookmark.get_all
   # 全てのbookmarkを格納した配列を返す
   app.bookmark.get_all = ->
-    app.deep_copy(bookmark_data)
+    app.deep_copy(now_awef.data)
 
   app.bookmark.change_source = (new_source_id) ->
     if app.assert_arg("app.bookmark.change_source", ["string"], arguments)
@@ -111,7 +134,7 @@ app.bookmark = {}
       return
 
     url = app.url.fix(url)
-    unless url of bookmark_data_index_url
+    unless url of now_awef.index_url
       chrome.bookmarks.create({parentId: source_id, url, title})
     else
       app.log("error", "app.bookmark.add: 既にブックマークされいてるURLをブックマークに追加しようとしています", arguments)
@@ -120,7 +143,7 @@ app.bookmark = {}
     if app.assert_arg("app.bookmark.remove", ["string"], arguments)
       return
 
-    id = index_url_id[app.url.fix(url)]
+    id = now_awef.index_url_id[app.url.fix(url)]
     if typeof id is "string"
       chrome.bookmarks.remove(id)
     else
@@ -143,7 +166,7 @@ app.bookmark = {}
       if bookmark.res_count
         data.res_count = bookmark.res_count
 
-      chrome.bookmarks.update(index_url_id[url],
+      chrome.bookmarks.update(now_awef.index_url_id[url],
         url: read_state.url + "#" + app.url.build_param(data))
 
   app.bookmark.update_res_count = (url, res_count) ->
@@ -158,6 +181,6 @@ app.bookmark = {}
         data.read = bookmark.read_state.read
         data.last = bookmark.read_state.last
 
-      chrome.bookmarks.update(index_url_id[url],
+      chrome.bookmarks.update(now_awef.index_url_id[url],
         url: url + "#" + app.url.build_param(data))
 )()
