@@ -93,7 +93,7 @@ app.bookmark = {}
     else
       null
 
-  # ##app.bookmark.get
+  # ##app.bookmark.get_all
   # 全てのbookmarkを格納した配列を返す
   app.bookmark.get_all = ->
     app.deep_copy(bookmark_data)
@@ -117,7 +117,7 @@ app.bookmark = {}
       app.log("error", "app.bookmark.add: 既にブックマークされいてるURLをブックマークに追加しようとしています", arguments)
 
   app.bookmark.remove = (url) ->
-    if app.assert_arg("app.bookmark.change_source", ["string"], arguments)
+    if app.assert_arg("app.bookmark.remove", ["string"], arguments)
       return
 
     id = index_url_id[app.url.fix(url)]
