@@ -1,78 +1,79 @@
-@mixin ui_tab
+.tab
   :display -webkit-box
   :-webkit-box-orient vertical
   :padding 3px
-  .tab_tabbar
+
+.tab_tabbar
+  :position relative
+  :margin 0
+  :padding 3px 3px 0 3px
+  :min-height 26px
+
+  :background-image -webkit-linear-gradient(#e3e3e3, #ccc)
+  :list-style-type none
+
+  :font-size 14px
+  :line-height 1.3
+
+  :border-radius 4px
+  :border 1px solid #aaa
+
+  :-webkit-user-select none
+
+  :color #000
+
+  > li
+    :float left
     :position relative
-    :margin 0
-    :padding 3px 3px 0 3px
-    :min-height 26px
 
-    :background-image -webkit-linear-gradient(#e3e3e3, #ccc)
-    :list-style-type none
-
-    :font-size 14px
-    :line-height 1.3
-
-    :border-radius 4px
-    :border 1px solid #aaa
-
-    :-webkit-user-select none
-
-    :color #000
-
-    li
-      :float left
-      :position relative
-
-      :max-width 13em
-      :overflow hidden
-      :text-overflow ellipsis
-      :white-space nowrap
-
-      :margin-right 3px
-      :padding 3px 7px
-      :border
-        :style solid
-        :width 1px 1px 0 1px
-      :border-top-left-radius 4px
-      :border-top-right-radius 4px
-      :min-width 1em
-      :min-height 1em
-      :top 1px
-      &
-        :background-color rgba(#fff, 0.6)
-        :border
-          :color #ccc
-          :bottom 1px solid #aaa
-      &.tab_selected
-        :background-color #fff
-        :border
-          :color #aaa
-          :bottom none
-        :padding-bottom 4px
-      &.tab_focused
-        :box-shadow 0 0 1px 2px rgba(#05f, 0.4)
-      img
-        :visibility hidden
-        :position absolute
-        :right 0
-        :top 0
-        :cursor pointer
-        :background-color #a55
-        :border-radius 3px
-      &:hover img
-        :visibility visible
-  .tab_container
-    :-webkit-box-flex 1
+    :max-width 13em
     :overflow hidden
-    :position relative
-    > *
-      :position absolute
-      :width 100%
-      :height 100%
-      :z-index $z-index_tab_content
+    :text-overflow ellipsis
+    :white-space nowrap
+
+    :margin-right 3px
+    :padding 3px 7px
+    :border
+      :style solid
+      :width 1px 1px 0 1px
+    :border-top-left-radius 4px
+    :border-top-right-radius 4px
+    :min-width 1em
+    :min-height 1em
+    :top 1px
+    &
+      :background-color rgba(#fff, 0.6)
+      :border
+        :color #ccc
+        :bottom 1px solid #aaa
+    &.tab_selected
+      :background-color #fff
+      :border
+        :color #aaa
+        :bottom none
+      :padding-bottom 4px
+    &.tab_focused
+      :box-shadow 0 0 1px 2px rgba(#05f, 0.4)
+    > img
       :visibility hidden
-      &.tab_selected
-        :z-index $z-index_selected_tab_content
-        :visibility visible
+      :position absolute
+      :right 0
+      :top 0
+      :cursor pointer
+      :background-color #a55
+      :border-radius 3px
+    &:hover > img
+      :visibility visible
+
+.tab_container
+  :-webkit-box-flex 1
+  :overflow hidden
+  :position relative
+
+.tab_content
+  :position absolute
+  :width 100%
+  :height 100%
+  :z-index $z-index_tab_content
+  &.tab_selected
+    :z-index $z-index_selected_tab_content

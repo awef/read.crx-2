@@ -35,6 +35,7 @@
       .appendTo($tab.find(".tab_tabbar"))
 
     $(prop.element)
+      .addClass("tab_content")
       .attr("data-tab_id", tab_id)
       .appendTo($tab.find(".tab_container"))
       .bind "click", ->
