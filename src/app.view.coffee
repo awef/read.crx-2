@@ -49,6 +49,47 @@ app.view.module.reload_button = ($view) ->
   $view.find(".button_reload").bind "click", ->
     $view.trigger("request_reload")
 
+app.view.module.board_contextmenu = ($view) ->
+  $view
+    #コンテキストメニュー 表示
+    .delegate "tbody tr", "click, contextmenu", (e) ->
+      if e.type is "contextmenu"
+        e.preventDefault()
+
+      app.defer =>
+        $menu = $("#template > .view_module_board_contextmenu")
+          .clone()
+            .data("contextmenu_source", this)
+            .appendTo($view)
+
+        url = this.getAttribute("data-href")
+        if app.bookmark.get(url)
+          $menu.find(".add_bookmark").remove()
+        else
+          $menu.find(".del_bookmark").remove()
+
+        $.contextmenu($menu, e.clientX, e.clientY)
+
+    #コンテキストメニュー 項目クリック
+    .delegate ".view_module_board_contextmenu > *", "click", ->
+      $this = $(this)
+      $tr = $($this.parent().data("contextmenu_source"))
+
+      url = $tr.attr("data-href")
+      if $view.is(".view_bookmark")
+        title = $tr.find("td:nth-child(1)").text()
+      else if $view.is(".view_board")
+        title = $tr.find("td:nth-child(2)").text()
+      else
+        app.log("error", "app.view.module.board_contextmenu: 想定外の状況で呼び出されました")
+
+      if $this.hasClass("add_bookmark")
+        app.bookmark.add(url, title)
+      else if $this.hasClass("del_bookmark")
+        app.bookmark.remove(url)
+
+      $this.parent().remove()
+
 app.view.load_sidemenu = (url) ->
   app.bbsmenu.get (res) ->
     if "data" of res

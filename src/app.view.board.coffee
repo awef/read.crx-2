@@ -13,6 +13,7 @@ app.view.board.open = (url) ->
   app.view.module.bookmark_button($view)
   app.view.module.link_button($view)
   app.view.module.reload_button($view)
+  app.view.module.board_contextmenu($view)
 
   $("#tab_a").tab("add", element: $view[0], title: url)
 
