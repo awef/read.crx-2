@@ -44,14 +44,14 @@ app.view.thread.open = (url) ->
       app.defer =>
         $menu = $("#template > .view_thread_resmenu")
           .clone()
-            .data("ui_contextmenu_source", this)
+            .data("contextmenu_source", this)
             .appendTo($view)
         $.contextmenu($menu, e.clientX, e.clientY)
 
     #コンテキストメニュー 項目クリック
     .delegate ".view_thread_resmenu > *", "click", ->
       $this = $(this)
-      $res = $($this.parent().data("ui_contextmenu_source"))
+      $res = $($this.parent().data("contextmenu_source"))
         .closest("article")
 
       if $this.hasClass("res_to_this")

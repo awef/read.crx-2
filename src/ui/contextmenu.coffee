@@ -1,6 +1,6 @@
 (($) ->
   cleanup = ->
-    $(".ui_contextmenu_menu").remove()
+    $(".contextmenu_menu").remove()
 
   $(document.documentElement)
     .bind "mousedown keydown contextmenu", (e) ->
@@ -8,7 +8,7 @@
         return
 
       if (e.type is "mousedown" or e.type is "contextmenu") and
-          $(e.target).is(".ui_contextmenu_menu, .ui_contextmenu_menu *")
+          $(e.target).is(".contextmenu_menu, .contextmenu_menu *")
         return
 
       cleanup()
@@ -20,7 +20,7 @@
     cleanup()
 
     $(menu)
-      .addClass("ui_contextmenu_menu")
+      .addClass("contextmenu_menu")
       .css(position: "fixed", left: x, top: y)
       .each ->
         $this = $(this)
