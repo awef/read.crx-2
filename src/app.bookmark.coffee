@@ -133,9 +133,17 @@ app.bookmark = {}
     if app.assert_arg("app.bookmark.add", ["string", "string"], arguments)
       return
 
-    url = app.url.fix(url)
     unless url of now_awef.index_url
-      chrome.bookmarks.create({parentId: source_id, url, title})
+      url = app.url.fix(url)
+      app.read_state.get(url).done (read_state) ->
+        if read_state
+          data =
+            read: read_state.read
+            last: read_state.last
+            received: read_state.received
+            res_count: read_state.received
+          url += "#" + app.url.build_param(data)
+        chrome.bookmarks.create({parentId: source_id, url, title})
     else
       app.log("error", "app.bookmark.add: 既にブックマークされいてるURLをブックマークに追加しようとしています", arguments)
 
