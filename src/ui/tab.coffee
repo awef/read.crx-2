@@ -82,8 +82,6 @@
       .end()
       .find("[data-tab_id=\"#{prop.tab_id}\"]")
         .addClass("tab_selected tab_focused")
-        .filter(".tab_container *")
-          .trigger("tab_selected")
 
   # prop.tab_id, prop.title
   tab_update_title = (prop) ->
