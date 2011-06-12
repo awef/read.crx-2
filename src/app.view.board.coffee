@@ -33,6 +33,20 @@ app.view.board.open = (url) ->
     $view.find("tbody").empty()
     app.view.board._draw($view)
 
+  #ブックマーク更新処理
+  on_bookmark_updated = (message) ->
+    if app.url.thread_to_board(message.bookmark.url) is url
+      if message.type is "added" or message.type is "removed"
+        $view
+          .find("tr[data-href=\"#{message.bookmark.url}\"]")
+            .find("td:nth-child(1)")
+              .text(if message.type is "added" then "★" else "")
+
+  app.message.add_listener("bookmark_updated", on_bookmark_updated)
+
+  $view.bind "tab_removed", ->
+    app.message.remove_listener("bookmark_updated", on_bookmark_updated)
+
   app.view.board._draw($view)
   $view.find("table").table_sort()
 
