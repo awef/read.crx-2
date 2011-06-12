@@ -19,6 +19,11 @@ app.board_title_solver = {}
   app.board_title_solver.ask = (url, callback) ->
     if url of dic_bbsmenu
       callback(dic_bbsmenu[url])
+    else if bookmark = app.bookmark.get(url)
+      if /// ^http://\w+\.2ch\.net/ ///.test(bookmark.url)
+        callback(bookmark.title.replace("＠2ch掲示板", ""))
+      else
+        callback(bookmark.title)
     else
       callback(null)
 )()
