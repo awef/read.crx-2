@@ -51,43 +51,45 @@ app.view.bookmark.open = ->
   app.view.bookmark._draw($view)
 
 app.view.bookmark._draw = ($view) ->
-  now = Date.now()
   frag = document.createDocumentFragment()
 
   for bookmark in app.bookmark.get_all()
     if bookmark.type is "thread"
-      tr = document.createElement("tr")
-      tr.className = "open_in_rcrx"
-      tr.setAttribute("data-href", bookmark.url)
-
-      thread_created_at = +/// /(\d+)/$ ///.exec(bookmark.url)[1] * 1000
-
-      td = document.createElement("td")
-      td.textContent = bookmark.title
-      tr.appendChild(td)
-
-      td = document.createElement("td")
-      td.textContent = bookmark.res_count or 0
-      tr.appendChild(td)
-
-      td = document.createElement("td")
-      if (
-          typeof bookmark.res_count is "number" and
-          bookmark.read_state and typeof bookmark.read_state.read is "number"
-      )
-        td.textContent = bookmark.res_count - bookmark.read_state.read or ""
-      tr.appendChild(td)
-
-      td = document.createElement("td")
-      if typeof bookmark.res_count is "number"
-        td.textContent = app.util.calc_heat(now, thread_created_at, bookmark.res_count)
-      tr.appendChild(td)
-
-      td = document.createElement("td")
-      td.textContent = app.util.date_to_string(new Date(thread_created_at))
-      tr.appendChild(td)
-
-      frag.appendChild(tr)
+      frag.appendChild(app.view.bookmark._bookmark_to_tr(bookmark))
 
   $view.find("tbody").append(frag)
   $view.find("table").trigger("table_sort_update")
+
+app.view.bookmark._bookmark_to_tr = (bookmark) ->
+  tr = document.createElement("tr")
+  tr.className = "open_in_rcrx"
+  tr.setAttribute("data-href", bookmark.url)
+
+  thread_created_at = +/// /(\d+)/$ ///.exec(bookmark.url)[1] * 1000
+
+  td = document.createElement("td")
+  td.textContent = bookmark.title
+  tr.appendChild(td)
+
+  td = document.createElement("td")
+  td.textContent = bookmark.res_count or 0
+  tr.appendChild(td)
+
+  td = document.createElement("td")
+  if (
+      typeof bookmark.res_count is "number" and
+      bookmark.read_state and typeof bookmark.read_state.read is "number"
+  )
+    td.textContent = bookmark.res_count - bookmark.read_state.read or ""
+  tr.appendChild(td)
+
+  td = document.createElement("td")
+  if typeof bookmark.res_count is "number"
+    td.textContent = app.util.calc_heat(Date.now(), thread_created_at, bookmark.res_count)
+  tr.appendChild(td)
+
+  td = document.createElement("td")
+  td.textContent = app.util.date_to_string(new Date(thread_created_at))
+  tr.appendChild(td)
+
+  tr
