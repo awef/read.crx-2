@@ -21,7 +21,8 @@ app.view.thread.open = (url) ->
       'width=600,height=300'
     )
 
-  if /// ^http://\w+\.2ch\.net/|^http://jbbs\.livedoor\.jp/ ///.test(url)
+  sld = app.url.sld(url)
+  if sld is "2ch" or sld is "livedoor"
     $view.find(".button_write").bind "click", ->
       write()
   else
