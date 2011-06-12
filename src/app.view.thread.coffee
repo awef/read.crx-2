@@ -35,6 +35,11 @@ app.view.thread.open = (url) ->
 
   $("#tab_b").tab("add", element: $view[0], title: $view.attr("data-title"))
 
+  app.view.thread._read_state_manager($view)
+  app.view.thread._draw($view)
+    .always ->
+      app.history.add(url, $view.attr("data-title"), opened_at)
+
   $view
     #コンテキストメニュー 表示
     .delegate ".num", "click contextmenu", (e) ->
@@ -117,11 +122,6 @@ app.view.thread.open = (url) ->
 
       $popup = $("<div>").append(frag)
       $.popup($view, $popup, e.clientX, e.clientY, this)
-
-  app.view.thread._read_state_manager($view)
-  app.view.thread._draw($view)
-    .always ->
-      app.history.add(url, $view.attr("data-title"), opened_at)
 
 app.view.thread._jump_to_res = (view, res_num, animate_flg) ->
   $content = $(view).find(".content")
