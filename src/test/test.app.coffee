@@ -137,6 +137,30 @@ test "app.url.guess_type", ->
 
   hoge("http://example.com/", type: "unknown", bbs_type: "unknown")
 
+test "app.url.sld", ->
+  fn = (url, expected) ->
+    strictEqual(app.url.sld(url), expected, url)
+
+  fn("", "")
+  fn("test", "")
+  fn("http:///", "")
+  fn("/test.test.test/", "")
+
+  fn("http://example.com/", "example")
+  fn("https://example.com/", "example")
+  fn("http://www.example.com/", "example")
+  fn("https://www.example.com/", "example")
+
+  fn("http://qb5.2ch.net/operate/", "2ch")
+  fn("http://qb5.2ch.net/test/read.cgi/operate/1304609594/", "2ch")
+
+  fn("http://www.machi.to/tawara/", "machi")
+  fn("http://www.machi.to/bbs/read.cgi/tawara/511234524356/", "machi")
+
+  fn("http://jbbs.livedoor.jp/computer/42710/", "livedoor")
+  fn("http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273802908/",
+    "livedoor")
+
 test "app.url.parse_query", ->
   fn = (url, expected) ->
     deepEqual(app.url.parse_query(url), expected, url)

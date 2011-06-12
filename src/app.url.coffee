@@ -29,6 +29,9 @@ app.url.guess_type = (url) ->
   else
     return {type: "unknown", bbs_type: "unknown"};
 
+app.url.sld = (url) ->
+  /// ^https?://(?:\w+\.)*(\w+)\.\w+/ ///.exec(url)?[1] or ""
+
 app.url.thread_to_board = (thread_url) ->
   app.url.fix(thread_url)
     .replace(///^http://([\w\.]+)/(?:test|bbs)/read\.cgi/(\w+)/\d+/$///, "http://$1/$2/")
