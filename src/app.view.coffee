@@ -21,7 +21,7 @@ app.view.module.bookmark_button = ($view) ->
       $button.removeClass("bookmarked")
 
     on_update = (message) ->
-      if message.url is url
+      if message.bookmark.url is url
         if message.type is "added"
           $button.addClass("bookmarked")
         else if message.type is "removed"

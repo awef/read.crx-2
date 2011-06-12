@@ -62,13 +62,13 @@ app.bookmark = {}
     for new_bookmark in new_awef.data
       if not (new_bookmark.url of old_awef.index_url)
         app.message.send("bookmark_updated",
-          {type: "added", url: new_bookmark.url})
+          {type: "added", bookmark: new_bookmark})
 
     #削除されたブックマークの抽出
     for old_bookmark in old_awef.data
       if not (old_bookmark.url of new_awef.index_url)
         app.message.send("bookmark_updated",
-          {type: "removed", url: old_bookmark.url})
+          {type: "removed", bookmark: old_bookmark})
 
     now_awef = new_awef
 
