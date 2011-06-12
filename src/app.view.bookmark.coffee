@@ -48,6 +48,24 @@ app.view.bookmark.open = ->
         $loading_overlay.fadeOut 100, -> $(this).empty()
     fn()
 
+  #ブックマーク更新時処理
+  on_updated = (message) ->
+    if message.type is "added"
+      $view
+        .find("tbody")
+          .append(app.view.bookmark._bookmark_to_tr(message.bookmark))
+        .end()
+        .find("table")
+          .trigger("table_sort_update")
+
+    else if message.type is "removed"
+      $view.find("tr[data-href=\"#{message.bookmark.url}\"]").remove()
+
+  app.message.add_listener("bookmark_updated", on_updated)
+
+  $view.bind "tab_removed", ->
+    app.message.remove_listener("bookmark_updated", on_updated)
+
   app.view.bookmark._draw($view)
 
 app.view.bookmark._draw = ($view) ->
