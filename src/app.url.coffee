@@ -24,10 +24,12 @@ app.url.guess_type = (url) ->
     {type: "board", bbs_type: "machi"}
   else if ///^http://[\w\.]+/test/read\.cgi/\w+/\d+/$///.test(url)
     {type: "thread", bbs_type: "2ch"}
+  else if ///^http://(?:find|info|p2|ninja)\.2ch\.net/\w+/$///.test(url)
+    {type: "unknown", bbs_type: "unknown"}
   else if ///^http://[\w\.]+/\w+/$///.test(url)
     {type: "board", bbs_type: "2ch"}
   else
-    return {type: "unknown", bbs_type: "unknown"};
+    {type: "unknown", bbs_type: "unknown"}
 
 app.url.sld = (url) ->
   /// ^https?://(?:\w+\.)*(\w+)\.\w+/ ///.exec(url)?[1] or ""

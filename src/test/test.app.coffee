@@ -137,6 +137,11 @@ test "app.url.guess_type", ->
 
   hoge("http://example.com/", type: "unknown", bbs_type: "unknown")
 
+  hoge("http://info.2ch.net/wiki/", type: "unknown", bbs_type: "unknown")
+  hoge("http://find.2ch.net/test/", type: "unknown", bbs_type: "unknown")
+  hoge("http://p2.2ch.net/test/", type: "unknown", bbs_type: "unknown")
+  hoge("http://ninja.2ch.net/test/", type: "unknown", bbs_type: "unknown")
+
 test "app.url.sld", ->
   fn = (url, expected) ->
     strictEqual(app.url.sld(url), expected, url)
