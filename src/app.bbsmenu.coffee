@@ -27,7 +27,7 @@ app.bbsmenu.get = (callback, force_reload) ->
             else if cache.status is "success" and xhr.status is 304
               deferred.resolve(cache, xhr)
             else
-              deferred.reject(cache)
+              deferred.reject(cache, xhr)
         xhr.overrideMimeType("text/plain; charset=Shift_JIS")
         xhr.open("GET", url + "?_=" + Date.now().toString(10))
         if cache.status is "success"
