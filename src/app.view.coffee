@@ -94,7 +94,7 @@ app.view_module.board_contextmenu = ($view) ->
 
 app.view_sidemenu = {}
 app.view_sidemenu.open = ->
-  $view = $("#template > .view_bbsmenu").clone()
+  $view = $("#template > .view_sidemenu").clone()
 
   app.bbsmenu.get (res) ->
     if "data" of res
