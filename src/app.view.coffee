@@ -96,43 +96,51 @@ app.view_sidemenu = {}
 app.view_sidemenu.open = ->
   $view = $("#template > .view_sidemenu").clone()
 
-  app.bbsmenu.get (res) ->
-    if "data" of res
-      frag = document.createDocumentFragment()
-      for category in res.data
-        h3 = document.createElement("h3")
-        h3.textContent = category.title
-        frag.appendChild(h3)
+  load = ->
+    app.bbsmenu.get (res) ->
+      if "data" of res
+        frag = document.createDocumentFragment()
+        for category in res.data
+          h3 = document.createElement("h3")
+          h3.textContent = category.title
+          frag.appendChild(h3)
 
-        ul = document.createElement("ul")
-        for board in category.board
+          ul = document.createElement("ul")
+          for board in category.board
+            li = document.createElement("li")
+            a = document.createElement("a")
+            a.className = "open_in_rcrx"
+            a.textContent = board.title
+            a.href = board.url
+            li.appendChild(a)
+            ul.appendChild(li)
+          frag.appendChild(ul)
+
+      bookmark_frag = document.createDocumentFragment()
+      for bookmark in app.bookmark.get_all()
+        if bookmark.type is "board"
           li = document.createElement("li")
           a = document.createElement("a")
           a.className = "open_in_rcrx"
-          a.textContent = board.title
-          a.href = board.url
+          a.href = bookmark.url
+          a.textContent = bookmark.title
           li.appendChild(a)
-          ul.appendChild(li)
-        frag.appendChild(ul)
+          bookmark_frag.appendChild(li)
 
-    bookmark_container = document.createElement("div")
-    bookmark_container.className = "bookmark"
-    for bookmark in app.bookmark.get_all()
-      if bookmark.type is "board"
-        li = document.createElement("li")
-        a = document.createElement("a")
-        a.className = "open_in_rcrx"
-        a.href = bookmark.url
-        a.textContent = bookmark.title
-        li.appendChild(a)
-        bookmark_container.appendChild(li)
+      $view
+        .find(".bookmark")
+          .append(bookmark_frag)
+        .end()
+        .append(frag)
+        .accordion()
 
-    $view
-      .find("ul")
-        .append(bookmark_container)
-      .end()
-      .append(frag)
-      .accordion()
+  $view.bind "request_reload", ->
+    undefined
+    $view.find(".bookmark").empty()
+    $view.find("h3:not(:first-of-type), ul:not(:first-of-type)").remove()
+    load()
+
+  load()
 
   $view
 
