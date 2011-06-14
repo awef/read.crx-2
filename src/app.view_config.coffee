@@ -34,4 +34,31 @@ app.view_config.open = ->
   app.ninja.get_info_stored().done (res) ->
     fn(res, $view.find(".ninja_info_stored"))
 
+  #板覧更新ボタン
+  $view.find(".bbsmenu_reload").bind "click", ->
+    $button = $(this)
+    $status = $view.find(".bbsmenu_reload_status")
+
+    $button.attr("disabled", true)
+    $status
+      .removeClass("done fail")
+      .addClass("loading")
+      .text("更新中")
+
+    app.bbsmenu.get (res) ->
+      $button.removeAttr("disabled")
+      $status.removeClass("loading")
+      if res.status is "success"
+        $status
+          .addClass("done")
+          .text("更新完了")
+
+        $(".view_sidemenu").trigger("request_reload")
+        #TODO [board_title_solver]も更新するよう変更
+      else
+        $status
+          .addClass("fail")
+          .text("更新失敗")
+    , true
+
   $("#tab_a").tab("add", element: $view[0], title: "設定")
