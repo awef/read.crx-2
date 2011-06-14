@@ -1,13 +1,15 @@
 app.bbsmenu = {}
 
-app.bbsmenu.get = (callback) ->
+app.bbsmenu.get = (callback, force_reload) ->
   url = "http://menu.2ch.net/bbsmenu.html"
 
   app.cache.get(url)
     #キャッシュ取得部
     .pipe (cache) ->
       $.Deferred (deferred) ->
-        if Date.now() - cache.data.last_updated < 1000 * 60 * 60 * 12
+        if force_reload
+          deferred.reject(cache)
+        else if Date.now() - cache.data.last_updated < 1000 * 60 * 60 * 12
           deferred.resolve(cache)
         else
           deferred.reject(cache)
