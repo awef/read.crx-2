@@ -93,3 +93,18 @@ app.cache.remove = (url) ->
         transaction.objectStore("cache").delete(url)
 
     .promise()
+
+app.cache.clear = ->
+  app.cache._db_open
+
+    .pipe (db) ->
+      $.Deferred (deferred) ->
+        transaction = db.transaction(["cache"], webkitIDBTransaction.READ_WRITE)
+        transaction.objectStore("cache").clear()
+        transaction.oncomplete = ->
+          deferred.resolve()
+        transaction.onerror = ->
+          app.log("error", "app.cache.clear: トランザクション中断")
+          deferred.reject()
+
+    .promise()
