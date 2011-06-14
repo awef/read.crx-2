@@ -187,6 +187,8 @@ app.view_history.open = ->
   $view = $("#template > .view_history").clone()
   $("#tab_a").tab("add", element: $view[0], title: "閲覧履歴")
 
+  app.view_module.reload_button($view)
+
   load = ->
     app.history.get(undefined, 500)
       .done (data) ->
