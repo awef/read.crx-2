@@ -61,4 +61,21 @@ app.view_config.open = ->
           .text("更新失敗")
     , true
 
+  #履歴削除ボタン
+  $view.find(".history_clear").bind "click", ->
+    $button = $(this)
+    $status = $view.find(".history_clear_status")
+
+    $button.attr("disabled", true)
+    $status.text("削除中")
+
+    app.history.clear()
+      .always ->
+        $button.removeAttr("disabled")
+      .done ->
+        $status.text("削除完了")
+        $(".view_history").trigger("request_reload")
+      .fail ->
+        $status.text("削除失敗")
+
   $("#tab_a").tab("add", element: $view[0], title: "設定")
