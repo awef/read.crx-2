@@ -140,7 +140,6 @@ app.thread.get = (url, callback) ->
         app.bookmark.update_res_count(url, thread.res.length)
 
       #304だった場合はアップデート時刻のみ更新
-      #TODO 203対策
       else if cache?.status is "success" and xhr?.status is 304
         cache.data.last_updated = Date.now()
         app.cache.set(cache.data)

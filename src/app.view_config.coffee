@@ -3,6 +3,7 @@ app.view_config = {}
 app.view_config.open = ->
   $view = $("#template > .view_config").clone()
 
+  #汎用設定項目
   $view
     .find("input.direct[type=\"text\"]")
       .each ->
@@ -10,9 +11,11 @@ app.view_config.open = ->
       .bind "input", ->
         app.config.set(this.name, this.value)
 
+  #バージョン情報表示
   $view.find(".version_info")
     .text("#{app.manifest.name} v#{app.manifest.version} + #{navigator.userAgent}")
 
+  #忍法帖関連機能
   fn = (res, $ul) ->
     if res.length is 0
       $ul.remove()
