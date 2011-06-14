@@ -82,3 +82,18 @@ app.history.get = (offset, count) ->
           deferred.resolve(data)
 
     .promise()
+
+app.history.clear = ->
+  app.history._open_db
+
+    .pipe (db) ->
+      $.Deferred (deferred) ->
+        transaction = db.transaction(["history"], webkitIDBTransaction.READ_WRITE)
+        transaction.objectStore("history").clear()
+        transaction.oncomplete = ->
+          deferred.resolve()
+        transaction.onerror = ->
+          app.log("error", "app.history.clear: トランザクション中断")
+          deferred.reject()
+
+    .promise()
