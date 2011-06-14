@@ -13,6 +13,13 @@
   %body
     #body
       #left_pane
+      #right_pane
+        #tab_a
+        #tab_resizer
+        #tab_b
+
+    #template(hidden)
+      .view_bbsmenu
         %h3 read.crx
         %ul
           %li
@@ -21,12 +28,6 @@
             %a(class="open_in_rcrx" data-href="history") 閲覧履歴
           %li
             %a(class="open_in_rcrx" data-href="config") 設定
-      #right_pane
-        #tab_a
-        #tab_resizer
-        #tab_b
-
-    #template(hidden)
 
       .view_board
         .message_bar

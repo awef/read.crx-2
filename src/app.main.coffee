@@ -34,7 +34,7 @@
 )()
 
 app.main = ->
-  app.view.load_sidemenu()
+  $("#left_pane").append(app.view.sidemenu.open())
 
   app.view.tab_state.restore()
   window.addEventListener "unload", ->

@@ -94,7 +94,10 @@ app.view.module.board_contextmenu = ($view) ->
 
       $this.parent().remove()
 
-app.view.load_sidemenu = (url) ->
+app.view.sidemenu = {}
+app.view.sidemenu.open = ->
+  $view = $("#template > .view_bbsmenu").clone()
+
   app.bbsmenu.get (res) ->
     if "data" of res
       frag = document.createDocumentFragment()
@@ -126,12 +129,14 @@ app.view.load_sidemenu = (url) ->
         li.appendChild(a)
         bookmark_container.appendChild(li)
 
-    $("#left_pane")
+    $view
       .find("ul")
         .append(bookmark_container)
       .end()
       .append(frag)
       .accordion()
+
+  $view
 
 app.view.setup_resizer = ->
   $tab_a = $("#tab_a")
