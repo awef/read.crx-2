@@ -187,23 +187,30 @@ app.view_history.open = ->
   $view = $("#template > .view_history").clone()
   $("#tab_a").tab("add", element: $view[0], title: "閲覧履歴")
 
-  app.history.get(undefined, 500)
-    .done (data) ->
-      frag = document.createDocumentFragment()
-      for val in data
-        tr = document.createElement("tr")
-        tr.setAttribute("data-href", val.url)
-        tr.className = "open_in_rcrx"
+  load = ->
+    app.history.get(undefined, 500)
+      .done (data) ->
+        frag = document.createDocumentFragment()
+        for val in data
+          tr = document.createElement("tr")
+          tr.setAttribute("data-href", val.url)
+          tr.className = "open_in_rcrx"
 
-        td = document.createElement("td")
-        td.textContent = val.title
-        tr.appendChild(td)
+          td = document.createElement("td")
+          td.textContent = val.title
+          tr.appendChild(td)
 
-        td = document.createElement("td")
-        td.textContent = app.util.date_to_string(new Date(val.date))
-        tr.appendChild(td)
-        frag.appendChild(tr)
-      $view.find("tbody").append(frag)
+          td = document.createElement("td")
+          td.textContent = app.util.date_to_string(new Date(val.date))
+          tr.appendChild(td)
+          frag.appendChild(tr)
+        $view.find("tbody").append(frag)
+
+  load()
+
+  $view.bind "request_reload", ->
+    $view.find("tbody").empty()
+    load()
 
 app.view_bookmark_source_selector = {}
 
