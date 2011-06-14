@@ -49,7 +49,7 @@ app.bookmark = {}
           deferred.resolve(tmp_awef)
 
       catch e
-        $(-> app.view.bookmark_source_selector.open())
+        $(-> app.view_bookmark_source_selector.open())
         deferred.reject()
     .promise()
 

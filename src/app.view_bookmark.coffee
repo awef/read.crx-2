@@ -1,6 +1,6 @@
-app.view.bookmark = {}
+app.view_bookmark = {}
 
-app.view.bookmark.open = ->
+app.view_bookmark.open = ->
   $view = $("#template > .view_bookmark").clone()
   $("#tab_a").tab("add", element: $view[0], title: "ブックマーク")
   $view.attr("data-url", "bookmark")
@@ -14,9 +14,9 @@ app.view.bookmark.open = ->
     path += "main.html##{app.config.get("bookmark_id")}"
     open(path)
 
-  app.view.module.reload_button($view)
-  app.view.module.searchbox_thread_title($view, 0)
-  app.view.module.board_contextmenu($view)
+  app.view_module.reload_button($view)
+  app.view_module.searchbox_thread_title($view, 0)
+  app.view_module.board_contextmenu($view)
 
   $view.bind "request_reload", ->
     $loading_overlay.show()
@@ -44,7 +44,7 @@ app.view.bookmark.open = ->
         app.board.get(board_url, fn)
       else
         $view.find("tbody").empty()
-        app.view.bookmark._draw($view)
+        app.view_bookmark._draw($view)
         $loading_overlay.fadeOut 100, -> $(this).empty()
     fn()
 
@@ -53,7 +53,7 @@ app.view.bookmark.open = ->
     if message.type is "added"
       $view
         .find("tbody")
-          .append(app.view.bookmark._bookmark_to_tr(message.bookmark))
+          .append(app.view_bookmark._bookmark_to_tr(message.bookmark))
         .end()
         .find("table")
           .trigger("table_sort_update")
@@ -66,19 +66,19 @@ app.view.bookmark.open = ->
   $view.bind "tab_removed", ->
     app.message.remove_listener("bookmark_updated", on_updated)
 
-  app.view.bookmark._draw($view)
+  app.view_bookmark._draw($view)
 
-app.view.bookmark._draw = ($view) ->
+app.view_bookmark._draw = ($view) ->
   frag = document.createDocumentFragment()
 
   for bookmark in app.bookmark.get_all()
     if bookmark.type is "thread"
-      frag.appendChild(app.view.bookmark._bookmark_to_tr(bookmark))
+      frag.appendChild(app.view_bookmark._bookmark_to_tr(bookmark))
 
   $view.find("tbody").append(frag)
   $view.find("table").trigger("table_sort_update")
 
-app.view.bookmark._bookmark_to_tr = (bookmark) ->
+app.view_bookmark._bookmark_to_tr = (bookmark) ->
   tr = document.createElement("tr")
   tr.className = "open_in_rcrx"
   tr.setAttribute("data-href", bookmark.url)

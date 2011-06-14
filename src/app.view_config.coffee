@@ -1,6 +1,6 @@
-app.view.config = {}
+app.view_config = {}
 
-app.view.config.open = ->
+app.view_config.open = ->
   $view = $("#template > .view_config").clone()
 
   $view

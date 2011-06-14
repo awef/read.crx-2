@@ -1,9 +1,7 @@
 SRC_DIR = src
 DBG_DIR = debug
 
-APP_COFFEE = ${SRC_DIR}/app.coffee
-APP_COFFEE += ${shell find ${SRC_DIR}/ -type f -regex '${SRC_DIR}/app\.[^.]+\.coffee'}
-APP_COFFEE += ${shell find ${SRC_DIR}/ -type f -regex '${SRC_DIR}/app\.[^.]+\.[^.]+\.coffee'}
+APP_COFFEE = ${SRC_DIR}/app.coffee ${SRC_DIR}/app.*.coffee
 
 LIB_FILES = ${shell find ${SRC_DIR}/lib/ -type f}
 IMG_FILES = ${shell find ${SRC_DIR}/img/ -type f}

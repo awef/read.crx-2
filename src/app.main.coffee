@@ -34,11 +34,11 @@
 )()
 
 app.main = ->
-  $("#left_pane").append(app.view.sidemenu.open())
+  $("#left_pane").append(app.view_sidemenu.open())
 
-  app.view.tab_state.restore()
+  app.view_tab_state.restore()
   window.addEventListener "unload", ->
-    app.view.tab_state.store()
+    app.view_tab_state.store()
 
   chrome.extension.onRequest.addListener (request) ->
     if request.type is "open"
@@ -49,7 +49,7 @@ app.main = ->
   $("#tab_a, #tab_b").tab()
   $(".tab .tab_tabbar").sortable()
 
-  app.view.setup_resizer()
+  app.view_setup_resizer()
 
   app.message.add_listener "open", (message) ->
     $container = $(".tab_container")
@@ -62,15 +62,15 @@ app.main = ->
         .closest(".tab")
           .tab("select", tab_id: $container.attr("data-tab_id"))
     else if message.url is "config"
-      app.view.config.open()
+      app.view_config.open()
     else if message.url is "history"
-      app.view.history.open()
+      app.view_history.open()
     else if message.url is "bookmark"
-      app.view.bookmark.open()
+      app.view_bookmark.open()
     else if guess_result.type is "board"
-      app.view.board.open(message.url)
+      app.view_board.open(message.url)
     else if guess_result.type is "thread"
-      app.view.thread.open(message.url)
+      app.view_thread.open(message.url)
 
   $(document.documentElement)
     .delegate ".open_in_rcrx", "click", (e) ->

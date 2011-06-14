@@ -1,6 +1,6 @@
-app.view.board = {}
+app.view_board = {}
 
-app.view.board.open = (url) ->
+app.view_board.open = (url) ->
   url = app.url.fix(url)
   opened_at = Date.now()
 
@@ -9,11 +9,11 @@ app.view.board.open = (url) ->
     .attr("data-url", url)
     .attr("data-title", url)
 
-  app.view.module.searchbox_thread_title($view, 1)
-  app.view.module.bookmark_button($view)
-  app.view.module.link_button($view)
-  app.view.module.reload_button($view)
-  app.view.module.board_contextmenu($view)
+  app.view_module.searchbox_thread_title($view, 1)
+  app.view_module.bookmark_button($view)
+  app.view_module.link_button($view)
+  app.view_module.reload_button($view)
+  app.view_module.board_contextmenu($view)
 
   $("#tab_a").tab("add", element: $view[0], title: url)
 
@@ -31,7 +31,7 @@ app.view.board.open = (url) ->
   $view.bind "request_reload", ->
     $loading_overlay = $view.find(".loading_overlay").show()
     $view.find("tbody").empty()
-    app.view.board._draw($view)
+    app.view_board._draw($view)
 
   #ブックマーク更新処理
   on_bookmark_updated = (message) ->
@@ -47,10 +47,10 @@ app.view.board.open = (url) ->
   $view.bind "tab_removed", ->
     app.message.remove_listener("bookmark_updated", on_bookmark_updated)
 
-  app.view.board._draw($view)
+  app.view_board._draw($view)
   $view.find("table").table_sort()
 
-app.view.board._draw = ($view) ->
+app.view_board._draw = ($view) ->
   url = $view.attr("data-url")
 
   deferred_get_read_state = app.read_state.get_by_board(url)

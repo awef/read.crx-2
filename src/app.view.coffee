@@ -1,7 +1,5 @@
-app.view = {}
-
-app.view.module = {}
-app.view.module.searchbox_thread_title = ($view, target_col) ->
+app.view_module = {}
+app.view_module.searchbox_thread_title = ($view, target_col) ->
   $view.find(".searchbox_thread_title")
     .bind "input", ->
       $view.find("table")
@@ -11,7 +9,7 @@ app.view.module.searchbox_thread_title = ($view, target_col) ->
         this.value = ""
         $view.find("table").table_search("clear")
 
-app.view.module.bookmark_button = ($view) ->
+app.view_module.bookmark_button = ($view) ->
   url = $view.attr("data-url")
   $button = $view.find(".button_bookmark")
   if ///^http://\w///.test(url)
@@ -40,7 +38,7 @@ app.view.module.bookmark_button = ($view) ->
   else
     $button.remove()
 
-app.view.module.link_button = ($view) ->
+app.view_module.link_button = ($view) ->
   url = $view.attr("data-url")
   $button = $view.find(".button_link")
   if ///^http://\w///.test(url)
@@ -49,11 +47,11 @@ app.view.module.link_button = ($view) ->
   else
     $button.remove()
 
-app.view.module.reload_button = ($view) ->
+app.view_module.reload_button = ($view) ->
   $view.find(".button_reload").bind "click", ->
     $view.trigger("request_reload")
 
-app.view.module.board_contextmenu = ($view) ->
+app.view_module.board_contextmenu = ($view) ->
   $view
     #コンテキストメニュー 表示
     .delegate "tbody tr", "click, contextmenu", (e) ->
@@ -85,7 +83,7 @@ app.view.module.board_contextmenu = ($view) ->
       else if $view.is(".view_board")
         title = $tr.find("td:nth-child(2)").text()
       else
-        app.log("error", "app.view.module.board_contextmenu: 想定外の状況で呼び出されました")
+        app.log("error", "app.view_module.board_contextmenu: 想定外の状況で呼び出されました")
 
       if $this.hasClass("add_bookmark")
         app.bookmark.add(url, title)
@@ -94,8 +92,8 @@ app.view.module.board_contextmenu = ($view) ->
 
       $this.parent().remove()
 
-app.view.sidemenu = {}
-app.view.sidemenu.open = ->
+app.view_sidemenu = {}
+app.view_sidemenu.open = ->
   $view = $("#template > .view_bbsmenu").clone()
 
   app.bbsmenu.get (res) ->
@@ -138,7 +136,7 @@ app.view.sidemenu.open = ->
 
   $view
 
-app.view.setup_resizer = ->
+app.view_setup_resizer = ->
   $tab_a = $("#tab_a")
   tab_a = $tab_a[0]
   offset = $tab_a.outerHeight() - $tab_a.height()
@@ -175,9 +173,9 @@ app.view.setup_resizer = ->
           app.config.set("tab_a_height", parseInt(tab_a.style["height"], 10))
         .appendTo("body")
 
-app.view.history = {}
+app.view_history = {}
 
-app.view.history.open = ->
+app.view_history.open = ->
   $view = $("#template > .view_history").clone()
   $("#tab_a").tab("add", element: $view[0], title: "閲覧履歴")
 
@@ -199,11 +197,11 @@ app.view.history.open = ->
         frag.appendChild(tr)
       $view.find("tbody").append(frag)
 
-app.view.bookmark_source_selector = {}
+app.view_bookmark_source_selector = {}
 
-app.view.bookmark_source_selector.open = ->
+app.view_bookmark_source_selector.open = ->
   if $(".view_bookmark_source_selector:visible").length isnt 0
-    app.log("debug", "app.view.bookmark_source_selector.open: " +
+    app.log("debug", "app.view_bookmark_source_selector.open: " +
       "既にブックマークフォルダ選択ダイアログが開かれています")
     return
 

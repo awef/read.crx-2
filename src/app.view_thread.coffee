@@ -1,15 +1,15 @@
-app.view.thread = {}
+app.view_thread = {}
 
-app.view.thread.open = (url) ->
+app.view_thread.open = (url) ->
   url = app.url.fix(url)
   opened_at = Date.now()
   $view = $("#template > .view_thread").clone()
   $view.attr("data-url", url)
   $view.attr("data-title", url)
 
-  app.view.module.bookmark_button($view)
-  app.view.module.link_button($view)
-  app.view.module.reload_button($view)
+  app.view_module.bookmark_button($view)
+  app.view_module.link_button($view)
+  app.view_module.reload_button($view)
 
   write = (param) ->
     param or= {}
@@ -32,12 +32,12 @@ app.view.thread.open = (url) ->
   $view.bind "request_reload", ->
     $view.find(".content").empty()
     $view.find(".loading_overlay").show()
-    app.view.thread._draw($view)
+    app.view_thread._draw($view)
 
   $("#tab_b").tab("add", element: $view[0], title: $view.attr("data-title"))
 
-  app.view.thread._read_state_manager($view)
-  app.view.thread._draw($view)
+  app.view_thread._read_state_manager($view)
+  app.view_thread._draw($view)
     .always ->
       app.history.add(url, $view.attr("data-title"), opened_at)
 
@@ -100,7 +100,7 @@ app.view.thread.open = (url) ->
     .delegate ".anchor:not(.disabled)", "click", ->
       tmp = /\d+/.exec(this.textContent)
       if tmp
-        app.view.thread._jump_to_res($view, tmp[0], true)
+        app.view_thread._jump_to_res($view, tmp[0], true)
 
     #通常リンク
     .delegate ".message a:not(.anchor)", "click", (e) ->
@@ -155,7 +155,7 @@ app.view.thread.open = (url) ->
       $popup = $("<div>").append(frag)
       $.popup($view, $popup, e.clientX, e.clientY, this)
 
-app.view.thread._jump_to_res = (view, res_num, animate_flg) ->
+app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
   $content = $(view).find(".content")
   $target = $content.children(":nth-child(#{res_num})")
   if $target.length > 0
@@ -164,7 +164,7 @@ app.view.thread._jump_to_res = (view, res_num, animate_flg) ->
     else
       $content.scrollTop($target[0].offsetTop)
 
-app.view.thread._draw = ($view) ->
+app.view_thread._draw = ($view) ->
   url = $view.attr("data-url")
   deferred = $.Deferred()
 
@@ -177,7 +177,7 @@ app.view.thread._draw = ($view) ->
       thread = result.data
       $view.attr("data-title", thread.title)
 
-      $view.find(".content").append(app.view.thread._draw_messages(thread))
+      $view.find(".content").append(app.view_thread._draw_messages(thread))
       app.defer ->
         $view.triggerHandler("draw_content")
 
@@ -194,7 +194,7 @@ app.view.thread._draw = ($view) ->
     $view.find(".loading_overlay").fadeOut(100)
   deferred
 
-app.view.thread._draw_messages = (thread) ->
+app.view_thread._draw_messages = (thread) ->
   #idをキーにレスを取得出来るインデックスを作成
   id_index = {}
   for res, res_key in thread.res
@@ -315,7 +315,7 @@ app.view.thread._draw_messages = (thread) ->
     frag.appendChild(article)
   frag
 
-app.view.thread._read_state_manager = ($view) ->
+app.view_thread._read_state_manager = ($view) ->
   url = $view.attr("data-url")
 
   read_state = null
@@ -339,7 +339,7 @@ app.view.thread._read_state_manager = ($view) ->
     on_updated_draw = ->
       content = $view.find(".content")[0]
 
-      app.view.thread._jump_to_res($view, read_state.last, false)
+      app.view_thread._jump_to_res($view, read_state.last, false)
 
       res_read = content.children[read_state.read - 1]
       if res_read
