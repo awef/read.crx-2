@@ -78,4 +78,20 @@ app.view_config.open = ->
       .fail ->
         $status.text("削除失敗")
 
+  #キャッシュ削除ボタン
+  $view.find(".cache_clear").bind "click", ->
+    $button = $(this)
+    $status = $view.find(".cache_clear_status")
+
+    $button.attr("disabled", true)
+    $status.text("削除中")
+
+    app.cache.clear()
+      .always ->
+        $button.removeAttr("disabled")
+      .done ->
+        $status.text("削除完了")
+      .fail ->
+        $status.text("削除失敗")
+
   $("#tab_a").tab("add", element: $view[0], title: "設定")
