@@ -80,7 +80,7 @@ app.board.get = (url, callback) ->
       callback(status: "success", data: board)
 
     .fail (cache, xhr, board) ->
-      if thread
+      if board
         callback(status: "error", data: board)
       else
         callback(status: "error")
