@@ -128,7 +128,7 @@ app.view_sidemenu.open = ->
           bookmark_frag.appendChild(li)
 
       $view
-        .find(".bookmark")
+        .find(".view_sidemenu_bookmark")
           .append(bookmark_frag)
         .end()
         .append(frag)
@@ -136,7 +136,7 @@ app.view_sidemenu.open = ->
 
   $view.bind "request_reload", ->
     undefined
-    $view.find(".bookmark").empty()
+    $view.find(".view_sidemenu_bookmark").empty()
     $view.find("h3:not(:first-of-type), ul:not(:first-of-type)").remove()
     load()
 
