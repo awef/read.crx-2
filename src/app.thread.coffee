@@ -25,6 +25,7 @@ app.thread.get = (url, callback) ->
     return
   xhr_path = tmp.path
   xhr_charset = tmp.charset
+  delta_flg = false
 
   app.cache.get(xhr_path)
     #キャッシュ取得部
@@ -38,6 +39,11 @@ app.thread.get = (url, callback) ->
     #通信部
     .pipe null, (cache) ->
       $.Deferred (deferred) ->
+        tmp_xhr_path = xhr_path
+        if app.url.sld(url) is "livedoor" and cache.status is "success"
+          delta_flg = true
+          tmp_xhr_path += (cache.data.received_res_length + 1) + "-"
+
         xhr = new XMLHttpRequest()
         xhr_timer = setTimeout((-> xhr.abort()), 1000 * 30)
         xhr.onreadystatechange = ->
@@ -50,7 +56,7 @@ app.thread.get = (url, callback) ->
             else
               deferred.reject(cache, xhr)
         xhr.overrideMimeType("text/plain; charset=" + xhr_charset)
-        xhr.open("GET", xhr_path + "?_=" + Date.now().toString(10))
+        xhr.open("GET", tmp_xhr_path + "?_=" + Date.now().toString(10))
         if cache.status is "success"
           if "last_modified" of cache.data
             xhr.setRequestHeader(
@@ -67,7 +73,10 @@ app.thread.get = (url, callback) ->
       $.Deferred (deferred) ->
         guess_res = app.url.guess_type(url)
 
-        if xhr?.status is 200
+        #差分取得
+        if delta_flg and xhr?.status is 200
+          thread = app.thread.parse(url, cache.data.data + xhr.responseText)
+        else if xhr?.status is 200
           thread = app.thread.parse(url, xhr.responseText)
         #2ch系BBSのdat落ち
         else if guess_res.bbs_type is "2ch" and xhr?.status is 203
@@ -120,10 +129,16 @@ app.thread.get = (url, callback) ->
     .done (cache, xhr, thread) ->
       #通信に成功した場合
       if xhr?.status is 200
+        old_cache = cache
         cache =
           url: xhr_path
-          data: xhr.responseText
           last_updated: Date.now()
+          received_res_length: thread.res.length.toString(10)
+
+        if delta_flg
+          cache.data = old_cache.data.data + xhr.responseText
+        else
+          cache.data = xhr.responseText
 
         last_modified = new Date(
           xhr.getResponseHeader("Last-Modified") or "dummy"
