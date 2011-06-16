@@ -40,9 +40,10 @@ app.thread.get = (url, callback) ->
     .pipe null, (cache) ->
       $.Deferred (deferred) ->
         tmp_xhr_path = xhr_path
-        if app.url.sld(url) is "livedoor" and cache.status is "success"
-          delta_flg = true
-          tmp_xhr_path += (cache.data.received_res_length + 1) + "-"
+        if app.url.sld(url) is "livedoor" or app.url.sld(url) is "machi"
+          if cache.status is "success"
+            delta_flg = true
+            tmp_xhr_path += (+cache.data.received_res_length + 1) + "-"
 
         xhr = new XMLHttpRequest()
         xhr_timer = setTimeout((-> xhr.abort()), 1000 * 30)
