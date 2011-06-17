@@ -50,7 +50,7 @@ app.view_bookmark.open = ->
 
   #ブックマーク更新時処理
   on_updated = (message) ->
-    if message.type is "added"
+    if message.type is "added" and message.bookmark.type is "thread"
       $view
         .find("tbody")
           .append(app.view_bookmark._bookmark_to_tr(message.bookmark))
