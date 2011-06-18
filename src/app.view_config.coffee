@@ -11,6 +11,13 @@ app.view_config.open = ->
       .bind "input", ->
         app.config.set(this.name, this.value)
 
+  $view
+    .find("input.direct[type=\"checkbox\"]")
+      .each ->
+        this.checked = app.config.get(this.name) is "on"
+      .bind "change", ->
+        app.config.set(this.name, if this.checked then "on" else "off")
+
   #バージョン情報表示
   $view.find(".version_info")
     .text("#{app.manifest.name} v#{app.manifest.version} + #{navigator.userAgent}")
