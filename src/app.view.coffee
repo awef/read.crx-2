@@ -185,7 +185,7 @@ app.view_history = {}
 
 app.view_history.open = ->
   $view = $("#template > .view_history").clone()
-  $("#tab_a").tab("add", element: $view[0], title: "閲覧履歴")
+  $view.attr("data-title", "閲覧履歴")
 
   app.view_module.reload_button($view)
 
@@ -213,6 +213,8 @@ app.view_history.open = ->
   $view.bind "request_reload", ->
     $view.find("tbody").empty()
     load()
+
+  $view
 
 app.view_bookmark_source_selector = {}
 

@@ -34,8 +34,6 @@ app.view_thread.open = (url) ->
     $view.find(".loading_overlay").show()
     app.view_thread._draw($view)
 
-  $("#tab_b").tab("add", element: $view[0], title: $view.attr("data-title"))
-
   app.view_thread._read_state_manager($view)
   app.view_thread._draw($view)
     .always ->
@@ -154,6 +152,8 @@ app.view_thread.open = (url) ->
 
       $popup = $("<div>").append(frag)
       $.popup($view, $popup, e.clientX, e.clientY, this)
+
+  $view
 
 app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
   $content = $(view).find(".content")

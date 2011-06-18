@@ -15,8 +15,6 @@ app.view_board.open = (url) ->
   app.view_module.reload_button($view)
   app.view_module.board_contextmenu($view)
 
-  $("#tab_a").tab("add", element: $view[0], title: url)
-
   app.board_title_solver.ask url, (res) ->
     if res
       title = res
@@ -49,6 +47,8 @@ app.view_board.open = (url) ->
 
   app.view_board._draw($view)
   $view.find("table").table_sort()
+
+  $view
 
 app.view_board._draw = ($view) ->
   url = $view.attr("data-url")

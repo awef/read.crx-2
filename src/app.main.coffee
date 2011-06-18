@@ -62,15 +62,19 @@ app.main = ->
         .closest(".tab")
           .tab("select", tab_id: $container.attr("data-tab_id"))
     else if message.url is "config"
-      app.view_config.open()
+      $view = app.view_config.open()
     else if message.url is "history"
-      app.view_history.open()
+      $view = app.view_history.open()
     else if message.url is "bookmark"
-      app.view_bookmark.open()
+      $view = app.view_bookmark.open()
     else if guess_result.type is "board"
-      app.view_board.open(message.url)
+      $view = app.view_board.open(message.url)
     else if guess_result.type is "thread"
-      app.view_thread.open(message.url)
+      $view = app.view_thread.open(message.url)
+
+    if $view
+      $(if guess_result.type is "thread" then "#tab_b" else "#tab_a")
+        .tab("add", element: $view[0], title: $view.attr("data-title"))
 
   $(document.documentElement)
     .delegate ".open_in_rcrx", "click", (e) ->
