@@ -215,6 +215,33 @@ app.view_thread._draw_messages = (thread) ->
             rep_index[i].push(res_key)
             i++
 
+  #設定値キャッシュ
+  config_thumbnail_supported = app.config.get("thumbnail_supported") is "on"
+
+  #サムネイル追加処理
+  fn_add_thumbnail = (source_a, thumb_path) ->
+    thumb = document.createElement("a")
+    thumb.className = "thumbnail"
+    thumb.href = source_a.href
+    thumb.target = "_blank"
+    thumb.rel = "noreferrer"
+
+    thumb_img = document.createElement("img")
+    thumb_img.src = thumb_path
+    thumb.appendChild(thumb_img)
+
+    sib = source_a
+    while true
+      pre = sib
+      sib = pre.nextSibling
+      if sib is null or sib.nodeName is "BR"
+        if sib?.nextSibling?.classList?.contains("thumbnail")
+          continue
+        if not pre.classList?.contains("thumbnail")
+          source_a.parentNode.insertBefore(document.createElement("br"), sib)
+        source_a.parentNode.insertBefore(thumb, sib)
+        break
+
   #DOM構築
   frag = document.createDocumentFragment()
   for res, res_key in thread.res
@@ -309,6 +336,22 @@ app.view_thread._draw_messages = (thread) ->
 
         "<a href=\"javascript:undefined;\" class=\"anchor" +
         "#{if disabled then " disabled" else ""}\">#{$0}</a>"
+
+    #サムネイル表示(対応サイト)
+    if config_thumbnail_supported
+      for a in Array.prototype.slice.apply(message.getElementsByTagName("a"))
+        #YouTube
+        if res = /// ^http://
+            (?:www\.youtube\.com/watch\?v=|youtu\.be/)
+            ([\w\-]+).*
+          ///.exec(a.href)
+          fn_add_thumbnail(a, "http://img.youtube.com/vi/#{res[1]}/default.jpg")
+        #ニコニコ動画
+        else if res = /// ^http://(?:www\.nicovideo\.jp/watch/|nico\.ms/)
+            (?:sm|nm)(\d+) ///.exec(a.href)
+          tmp = "http://tn-skr#{parseInt(res[1], 10) % 4 + 1}.smilevideo.jp"
+          tmp += "/smile?i=#{res[1]}"
+          fn_add_thumbnail(a, tmp)
 
     article.appendChild(message)
 
