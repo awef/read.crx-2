@@ -52,28 +52,35 @@ app.main = ->
   app.view_setup_resizer()
 
   app.message.add_listener "open", (message) ->
-    $container = $(".tab_container")
+    $view = $(".tab_container")
       .find("> [data-url=\"#{app.url.fix(message.url)}\"]")
 
-    guess_result = app.url.guess_type(message.url)
+    get_view = (url) ->
+      guess_result = app.url.guess_type(url)
 
-    if $container.length is 1
-      $container
+      if url is "config"
+        $view = app.view_config.open()
+      else if url is "history"
+        $view = app.view_history.open()
+      else if url is "bookmark"
+        $view = app.view_bookmark.open()
+      else if guess_result.type is "board"
+        $view = app.view_board.open(message.url)
+      else if guess_result.type is "thread"
+        $view = app.view_thread.open(message.url)
+      else
+        null
+
+    if $view.length is 1
+      $view
         .closest(".tab")
-          .tab("select", tab_id: $container.attr("data-tab_id"))
-    else if message.url is "config"
-      $view = app.view_config.open()
-    else if message.url is "history"
-      $view = app.view_history.open()
-    else if message.url is "bookmark"
-      $view = app.view_bookmark.open()
-    else if guess_result.type is "board"
-      $view = app.view_board.open(message.url)
-    else if guess_result.type is "thread"
-      $view = app.view_thread.open(message.url)
+          .tab("select", tab_id: $view.attr("data-tab_id"))
+      return
+    else
+      $view = get_view(message.url)
 
     if $view
-      $(if guess_result.type is "thread" then "#tab_b" else "#tab_a")
+      $(if $view.hasClass("view_thread") then "#tab_b" else "#tab_a")
         .tab("add", element: $view[0], title: $view.attr("data-title"))
 
   $(document.documentElement)
