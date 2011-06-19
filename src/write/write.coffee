@@ -3,6 +3,13 @@
 $ ->
   $view = $(".view_write")
 
+  arg = app.url.parse_query(location.href)
+  arg.url = app.url.fix(arg.url)
+  arg.title or= arg.url
+  arg.name or= app.config.get("default_name") or ""
+  arg.mail or= app.config.get("default_mail") or ""
+  arg.message or= ""
+
   on_error = (message) ->
     $view.find("form input, form textarea").removeAttr("disabled")
     $view.find(".cancel").attr("disabled", true)
@@ -19,9 +26,9 @@ $ ->
       e.source.postMessage("write_iframe_pong", "*")
     else if message.type is "success"
       $view.find(".cancel").attr("disabled", true)
-      #TODO 書き込み完了メッセージ送出
       $view.find(".notice").text("書き込み成功")
       setTimeout ->
+        chrome.extension.sendRequest(type: "written", url: arg.url)
         chrome.tabs.getCurrent (tab) ->
           chrome.tabs.remove(tab.id)
       , 2000
@@ -35,13 +42,6 @@ $ ->
     $view.find("form input, form textarea").removeAttr("disabled")
     $view.find(".cacnel").attr("disabled", true)
     $view.find(".notice").text("")
-
-  arg = app.url.parse_query(location.href)
-  arg.url = app.url.fix(arg.url)
-  arg.title or= arg.url
-  arg.name or= app.config.get("default_name") or ""
-  arg.mail or= app.config.get("default_mail") or ""
-  arg.message or= ""
 
   $view.find(".cancel, .hide_iframe").bind "click", ->
     $view

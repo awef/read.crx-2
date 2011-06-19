@@ -93,3 +93,10 @@ app.main = ->
     if e.which is 116 or (e.ctrlKey and e.which is 82) #F5 or Ctrl+R
       e.preventDefault()
       $(".tab .tab_container .tab_focused").trigger("request_reload")
+
+  #書き込み完了メッセージの監視
+  chrome.extension.onRequest.addListener (request) ->
+    if request.type is "written"
+      $(".view_thread[data-url=\"#{request.url}\"]")
+        .trigger("request_reload")
+
