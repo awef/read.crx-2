@@ -153,6 +153,40 @@ app.view_thread.open = (url) ->
       $popup = $("<div>").append(frag)
       $.popup($view, $popup, e.clientX, e.clientY, this)
 
+  #クイックジャンプパネル
+  _jump_hoge =
+    jump_one: "article:nth-child(1)"
+    jump_newest: "article:last-child"
+    jump_not_read: "article.read + article"
+    jump_new: "article.received + article"
+    jump_last: "article.last"
+
+  $view.bind "read_state_attached", ->
+    already = {}
+    for key, val of _jump_hoge
+      $tmp = $view.find(val)
+      if $tmp.length is 1 and not ($tmp.index() of already)
+        $view.find(".#{key}").show()
+        already[$tmp.index()] = true
+      else
+        $view.find(".#{key}").hide()
+
+  $view.find(".jump_panel").bind "click", (e) ->
+    $target = $(e.target)
+
+    for key, val of _jump_hoge
+      if $target.hasClass(key)
+        selector = val
+        break
+
+    if selector
+      res_num = $view.find(selector).index() + 1
+
+      if typeof res_num is "number"
+        app.view_thread._jump_to_res($view, res_num, true)
+      else
+        app.log("warn", "[view_thread] .jump_panel: ターゲットが存在しません")
+
   $view
 
 app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
@@ -404,6 +438,7 @@ app.view_thread._read_state_manager = ($view) ->
         res_received.classList.add("received")
 
       read_state.received = content.children.length
+      $view.triggerHandler("read_state_attached")
 
     on_updated_draw()
     $view.bind("draw_content", on_updated_draw)

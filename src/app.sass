@@ -238,6 +238,39 @@ $z-index_modal: 6
     :max-height 300px
     :overflow auto
 
+  .jump_panel
+    @include drop_shadow
+    $radius: 2px
+    :position absolute
+    :right 20px
+    :bottom 20px
+    :margin 0
+    :padding 0
+    :border 1px solid #fff
+    :border-radius $radius
+    :-webkit-user-select none
+    :list-style-type none
+    :font-size 14px
+    :color #fff
+
+    :opacity 0.25
+    :-webkit-transition opacity 200ms
+    &:hover
+      :opacity 1
+    > li
+      :display none
+      :cursor pointer
+      :padding 3px 10px
+      :background-color rgba(#000, 0.8)
+      &:first-child
+        :border-top-left-radius $radius
+        :border-top-right-radius $radius
+      &:last-child
+        :border-bottom-left-radius $radius
+        :border-bottom-right-radius $radius
+      &:hover
+        :text-shadow 0 0 10px #fff
+
 .view_config
   @include tabbed_view
   :font-size 14px
