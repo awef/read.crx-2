@@ -203,6 +203,9 @@ app.view_thread._draw_messages = (thread) ->
     if tmp
       id_index[tmp[1]] or= []
       id_index[tmp[1]].push(res_key)
+      #>>1のIDを保存しておく
+      if res_key is 0
+        one_id = tmp[1]
 
   #参照インデックス構築
   rep_index = {}
@@ -295,6 +298,10 @@ app.view_thread._draw_messages = (thread) ->
       range.deleteContents()
       range.insertNode(elm_id)
       range.detach()
+
+      #>>1と同じIDだった場合、articleにoneクラスを付ける
+      if one_id and one_id is tmp[2]
+        article.classList.add("one")
 
     #リプライ数表示追加
     if rep_index[res_key + 1]
