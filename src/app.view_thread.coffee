@@ -274,6 +274,7 @@ app.view_thread._draw_messages = (thread) ->
     other.className = "other"
     other.textContent = res.other
 
+    #.other内のid表示を.idに分離
     tmp = /(^| )(ID:(?!\?\?\?)[^ ]+)/.exec(res.other)
     if tmp
       id_count = id_index[tmp[2]].length
