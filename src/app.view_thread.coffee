@@ -286,8 +286,7 @@ app.view_thread._draw_messages = (thread) ->
       else if id_count >= 2
         elm_id.className += " link"
 
-      elm_id.textContent = tmp[2]
-      elm_id.setAttribute("data-id_count", id_count)
+      elm_id.textContent = "#{tmp[2]} (#{id_count})"
 
       range = document.createRange()
       range.setStart(other.firstChild, tmp.index + tmp[1].length)
@@ -301,7 +300,7 @@ app.view_thread._draw_messages = (thread) ->
       rep_count = rep_index[res_key + 1].length
       rep = document.createElement("span")
       rep.className = "rep #{if rep_count >= 5 then " freq" else " link"}"
-      rep.textContent = rep_count
+      rep.textContent = "返信 (#{rep_count})"
       rep.setAttribute("data-replist", JSON.stringify(rep_index[res_key + 1]))
       other.appendChild(rep)
 

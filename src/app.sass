@@ -207,15 +207,10 @@ $z-index_modal: 6
     :white-space nowrap
     &.link, &.freq
       :cursor pointer
-      &:after
-        :content " ("attr(data-id_count)")"
   .rep
     :white-space nowrap
     :cursor pointer
-    &:before
-      :content " 返信 ("
-    &:after
-      :content ")"
+    :margin-left 0.5ex
 
   .aa .message
     @include ascii_art
