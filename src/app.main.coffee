@@ -98,5 +98,5 @@ app.main = ->
   chrome.extension.onRequest.addListener (request) ->
     if request.type is "written"
       $(".view_thread[data-url=\"#{request.url}\"]")
-        .trigger("request_reload")
+        .trigger("request_reload", force_update: true)
 

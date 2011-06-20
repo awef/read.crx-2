@@ -18,7 +18,7 @@ app.thread._get_xhr_info = (thread_url) ->
       path: "http://#{tmp[1]}/#{tmp[3]}/dat/#{tmp[4]}.dat",
       charset: "Shift_JIS"
 
-app.thread.get = (url, callback) ->
+app.thread.get = (url, callback, force_update) ->
   tmp = app.thread._get_xhr_info(url)
   if not tmp
     callback(status: "error")
@@ -31,10 +31,10 @@ app.thread.get = (url, callback) ->
     #キャッシュ取得部
     .pipe (cache) ->
       $.Deferred (deferred) ->
-        if Date.now() - cache.data.last_updated < 1000 * 60
-          deferred.resolve(cache)
-        else
+        if force_update or Date.now() - cache.data.last_updated > 1000 * 60
           deferred.reject(cache)
+        else
+          deferred.resolve(cache)
 
     #通信部
     .pipe null, (cache) ->
