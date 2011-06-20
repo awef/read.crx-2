@@ -163,6 +163,14 @@ $z-index_modal: 6
   &:nth-child(2), &:nth-child(3), &:nth-child(4)
     :text-align right
 
+@mixin view_thread_res_info
+  :border-top 1px solid silver
+  :display block
+  :margin-top 1em 0 0 5px
+  :font-size 12px
+  :color #666
+  :text-align center
+
 .view_thread
   @include tabbed_view
   :font-size 15px
@@ -170,6 +178,18 @@ $z-index_modal: 6
 
   article
     :margin 20px 5px
+
+  .last:not(:last-child):after
+    @include view_thread_res_info
+    :content "しおり"
+
+  .read:not(:last-child):after
+    @include view_thread_res_info
+    :content "ここから未読"
+
+  .received:not(:last-child):after
+    @include view_thread_res_info
+    :content "ここから新着"
 
   header
     :font-size 14px
