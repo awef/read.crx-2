@@ -245,6 +245,7 @@ app.view_thread._draw_messages = (thread) ->
           source_a.parentNode.insertBefore(document.createElement("br"), sib)
         source_a.parentNode.insertBefore(thumb, sib)
         break
+    null
 
   #DOM構築
   frag = document.createDocumentFragment()
