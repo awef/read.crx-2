@@ -465,9 +465,10 @@ app.view_thread._read_state_manager = ($view) ->
       if is_updated
         app.read_state.set(read_state)
 
+    scan_suspend = false
     scroll_flag = false
     scanner = setInterval((->
-      if scroll_flag
+      if scroll_flag and not scan_suspend
         scan()
         scroll_flag = false
     ), 250)
@@ -477,6 +478,12 @@ app.view_thread._read_state_manager = ($view) ->
         .bind "scroll", ->
           scroll_flag = true
       .end()
+
+      .bind "request_reload", ->
+        scan_suspend = true
+
+      .bind "draw_content", ->
+        scan_suspend = false
 
       .bind "tab_removed", ->
         clearInterval(scanner)
