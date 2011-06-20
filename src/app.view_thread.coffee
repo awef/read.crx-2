@@ -391,7 +391,9 @@ app.view_thread._read_state_manager = ($view) ->
     on_updated_draw = ->
       content = $view.find(".content")[0]
 
-      app.view_thread._jump_to_res($view, read_state.last, false)
+      if read_state.last
+        content.children[read_state.last - 1]?.classList.add("last")
+        app.view_thread._jump_to_res($view, read_state.last, false)
 
       res_read = content.children[read_state.read - 1]
       if res_read
