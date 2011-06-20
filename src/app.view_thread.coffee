@@ -32,7 +32,7 @@ app.view_thread.open = (url) ->
   $view.bind "request_reload", (e, ex) ->
     $view.find(".content").empty()
     $view.find(".loading_overlay").show()
-    app.view_thread._draw($view, ex.force_update)
+    app.view_thread._draw($view, ex?.force_update)
 
   app.view_thread._read_state_manager($view)
   app.view_thread._draw($view)
