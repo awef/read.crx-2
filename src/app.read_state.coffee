@@ -150,3 +150,17 @@ app.read_state.remove = (url) ->
 
     .promise()
 
+app.read_state.clear = ->
+  app.read_state._db_open
+
+    .pipe (db) ->
+      $.Deferred (deferred) ->
+        transaction = db.transaction(["read_state"], webkitIDBTransaction.READ_WRITE)
+        transaction.objectStore("read_state").clear()
+        transaction.oncomplete = ->
+          deferred.resolve()
+        transaction.onerror = ->
+          app.log("error", "app.read_state.clear: トランザクション中断")
+          deferred.reject()
+
+    .promise()
