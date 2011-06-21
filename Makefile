@@ -76,6 +76,7 @@ ${DBG_DIR}/img/: ${SRC_DIR}/image/svg/*.svg
 	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/search2.svg ${DBG_DIR}/img/search2_19x19.png
 	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/reload.svg ${DBG_DIR}/img/reload_19x19.png
 	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/pencil.svg ${DBG_DIR}/img/pencil_19x19.png
+	rsvg -w 1 -h 1 ${SRC_DIR}/image/svg/dummy.svg ${DBG_DIR}/img/dummy_1x1.png
 
 ${DBG_DIR}/test/: ${QUNIT_FILES}
 	rm -rf ${DBG_DIR}/test/

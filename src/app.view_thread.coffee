@@ -30,16 +30,25 @@ app.view_thread.open = (url) ->
 
   #リロード処理
   $view.bind "request_reload", (e, ex) ->
-    $view.find(".content").empty()
+    $view
+      .find(".content")
+        .empty()
+        .triggerHandler("lazy_img_destroy")
     $view.find(".loading_overlay").show()
     app.view_thread._draw($view, ex?.force_update)
+      .done ->
+        $view.find(".content").lazy_img()
 
   app.view_thread._read_state_manager($view)
   app.view_thread._draw($view)
     .always ->
       app.history.add(url, $view.attr("data-title"), opened_at)
+      $view.find(".content").lazy_img()
 
   $view
+    .bind "tab_removed", ->
+      $view.find(".content").triggerHandler("lazy_img_destroy")
+
     #コンテキストメニュー 表示
     .delegate ".num", "click contextmenu", (e) ->
       if e.type is "contextmenu"
@@ -266,7 +275,8 @@ app.view_thread._draw_messages = (thread) ->
     thumb.rel = "noreferrer"
 
     thumb_img = document.createElement("img")
-    thumb_img.src = thumb_path
+    thumb_img.src = "/img/dummy_1x1.png"
+    thumb_img.setAttribute("data-lazy_img_original_path", thumb_path)
     thumb.appendChild(thumb_img)
 
     sib = source_a
