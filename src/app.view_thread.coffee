@@ -170,6 +170,7 @@ app.view_thread.open = (url) ->
         already[$tmp.index()] = true
       else
         $view.find(".#{key}").hide()
+    null
 
   $view.find(".jump_panel").bind "click", (e) ->
     $target = $(e.target)
