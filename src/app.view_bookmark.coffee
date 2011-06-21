@@ -97,11 +97,8 @@ app.view_bookmark._bookmark_to_tr = (bookmark) ->
   tr.appendChild(td)
 
   td = document.createElement("td")
-  if (
-      typeof bookmark.res_count is "number" and
-      bookmark.read_state and typeof bookmark.read_state.read is "number"
-  )
-    td.textContent = bookmark.res_count - bookmark.read_state.read or ""
+  if typeof bookmark.res_count is "number"
+    td.textContent = bookmark.res_count - (bookmark.read_state?.read or 0) or ""
   tr.appendChild(td)
 
   td = document.createElement("td")

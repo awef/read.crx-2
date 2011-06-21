@@ -80,13 +80,19 @@ app.view_module.board_contextmenu = ($view) ->
       url = $tr.attr("data-href")
       if $view.is(".view_bookmark")
         title = $tr.find("td:nth-child(1)").text()
+        res_count = +$tr.find("td:nth-child(2)").text()
       else if $view.is(".view_board")
         title = $tr.find("td:nth-child(2)").text()
+        res_count = +$tr.find("td:nth-child(3)").text()
       else
         app.log("error", "app.view_module.board_contextmenu: 想定外の状況で呼び出されました")
 
       if $this.hasClass("add_bookmark")
         app.bookmark.add(url, title)
+        #TODO 後でちゃんとする
+        setTimeout ->
+          app.bookmark.update_res_count(url, res_count)
+        , 1000
       else if $this.hasClass("del_bookmark")
         app.bookmark.remove(url)
 
