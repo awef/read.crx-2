@@ -24,6 +24,7 @@ app.view_config.open = ->
     .text("#{app.manifest.name} v#{app.manifest.version} + #{navigator.userAgent}")
 
   #忍法帖関連機能
+  ###
   fn = (res, $ul) ->
     if res.length is 0
       $ul.remove()
@@ -44,6 +45,7 @@ app.view_config.open = ->
 
   app.ninja.get_info_stored().done (res) ->
     fn(res, $view.find(".ninja_info_stored"))
+  ###
 
   #板覧更新ボタン
   $view.find(".bbsmenu_reload").bind "click", ->

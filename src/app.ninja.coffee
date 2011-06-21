@@ -1,3 +1,4 @@
+###
 app.ninja = {}
 
 app.ninja._site_info =
@@ -72,3 +73,4 @@ app.ninja.delete_stored_cookie = (site_id) ->
   app.config.del("ninja_store_#{site_id}")
 
   $.Deferred().resolve().promise()
+###
