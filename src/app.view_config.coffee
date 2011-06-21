@@ -80,7 +80,7 @@ app.view_config.open = ->
     $button.attr("disabled", true)
     $status.text("削除中")
 
-    app.history.clear()
+    $.when(app.history.clear(), app.read_state.clear())
       .always ->
         $button.removeAttr("disabled")
       .done ->
