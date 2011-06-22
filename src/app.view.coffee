@@ -102,6 +102,17 @@ app.view_sidemenu = {}
 app.view_sidemenu.open = ->
   $view = $("#template > .view_sidemenu").clone()
 
+  board_to_li = (board) ->
+    li = document.createElement("li")
+    a = document.createElement("a")
+    a.className = "open_in_rcrx"
+    a.textContent = board.title
+    a.href = board.url
+    li.appendChild(a)
+    li
+
+  bookmark_to_li = board_to_li
+
   load = ->
     app.bbsmenu.get (res) ->
       if "data" of res
@@ -113,25 +124,13 @@ app.view_sidemenu.open = ->
 
           ul = document.createElement("ul")
           for board in category.board
-            li = document.createElement("li")
-            a = document.createElement("a")
-            a.className = "open_in_rcrx"
-            a.textContent = board.title
-            a.href = board.url
-            li.appendChild(a)
-            ul.appendChild(li)
+            ul.appendChild(board_to_li(board))
           frag.appendChild(ul)
 
       bookmark_frag = document.createDocumentFragment()
       for bookmark in app.bookmark.get_all()
         if bookmark.type is "board"
-          li = document.createElement("li")
-          a = document.createElement("a")
-          a.className = "open_in_rcrx"
-          a.href = bookmark.url
-          a.textContent = bookmark.title
-          li.appendChild(a)
-          bookmark_frag.appendChild(li)
+          bookmark_frag.appendChild(bookmark_to_li(bookmark))
 
       $view
         .find(".view_sidemenu_bookmark")
@@ -145,6 +144,20 @@ app.view_sidemenu.open = ->
     $view.find(".view_sidemenu_bookmark").empty()
     $view.find("h3:not(:first-of-type), ul:not(:first-of-type)").remove()
     load()
+
+  #ブックマーク更新時処理
+  #TODO アンロード時にremove_listenerするよう改良
+  app.message.add_listener "bookmark_updated", (message) ->
+    if message.type is "added" and message.bookmark.type is "board"
+      $view
+        .find(".view_sidemenu_bookmark")
+          .append(bookmark_to_li(message.bookmark))
+    else if message.type is "removed"
+      $view
+        .find(".view_sidemenu_bookmark")
+          .find("a[href=\"#{message.bookmark.url}\"]")
+            .parent()
+              .remove()
 
   load()
 
