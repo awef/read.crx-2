@@ -113,6 +113,14 @@ app.view_sidemenu.open = ->
 
   bookmark_to_li = board_to_li
 
+  #ブックマークがない場合はブックマーク表示自体を隠し、有る場合は表示する
+  sh_bookmark = ->
+    $tmp = $view.find(".view_sidemenu_bookmark")
+    if $tmp.children().length is 0
+      $tmp.hide()
+    else
+      $tmp.show()
+
   load = ->
     app.bbsmenu.get (res) ->
       if "data" of res
@@ -138,6 +146,7 @@ app.view_sidemenu.open = ->
         .end()
         .append(frag)
         .accordion()
+      sh_bookmark()
 
   $view.bind "request_reload", ->
     undefined
@@ -152,12 +161,14 @@ app.view_sidemenu.open = ->
       $view
         .find(".view_sidemenu_bookmark")
           .append(bookmark_to_li(message.bookmark))
+      sh_bookmark()
     else if message.type is "removed"
       $view
         .find(".view_sidemenu_bookmark")
           .find("a[href=\"#{message.bookmark.url}\"]")
             .parent()
               .remove()
+      sh_bookmark()
 
   load()
 
