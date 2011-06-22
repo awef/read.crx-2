@@ -45,6 +45,19 @@ app.view_board.open = (url) ->
   $view.bind "tab_removed", ->
     app.message.remove_listener("bookmark_updated", on_bookmark_updated)
 
+  #read_state更新時処理
+  on_read_state_updated = (message) ->
+    if message.board_url is url
+      tr = $view.find("tr[data-href=\"#{message.read_state.url}\"]")[0]
+      if tr
+        text = "" + ((message.read_state.received - message.read_state.read) or "")
+        tr.children[3].textContent = text
+
+  app.message.add_listener("read_state_updated", on_read_state_updated)
+
+  $view.bind "tab_removed", ->
+    app.message.remove_listener("read_state_updated", on_read_state_updated)
+
   app.view_board._draw($view)
   $view.find("table").table_sort()
 
