@@ -67,6 +67,19 @@ app.view_bookmark.open = ->
   $view.bind "tab_removed", ->
     app.message.remove_listener("bookmark_updated", on_updated)
 
+  #read_state更新時処理
+  on_read_state_updated = (message) ->
+    if bookmark = app.bookmark.get(message.read_state.url)
+      $tr = $view.find("tr[data-href=\"#{message.read_state.url}\"]")
+      if $tr.length is 1
+        bookmark.read_state = message.read_state
+        $tr.replaceWith(app.view_bookmark._bookmark_to_tr(bookmark))
+
+  app.message.add_listener("read_state_updated", on_read_state_updated)
+
+  $view.bind "tab_removed", ->
+    app.message.remove_listener("read_state_updated", on_read_state_updated)
+
   app.view_bookmark._draw($view)
 
   $view
