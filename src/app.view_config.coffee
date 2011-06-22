@@ -107,4 +107,8 @@ app.view_config.open = ->
       .fail ->
         $status.text("削除失敗")
 
+  #ブックマークフォルダ変更ボタン
+  $view.find(".bookmark_source_change").bind "click", ->
+    app.view_bookmark_source_selector.open()
+
   $view
