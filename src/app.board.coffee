@@ -26,7 +26,7 @@ app.board.get = (url, callback) ->
   app.cache.get(xhr_path)
     .pipe (cache) ->
       $.Deferred (deferred) ->
-        if Date.now() - cache.data.last_updated < 1000 * 60
+        if Date.now() - cache.data.last_updated < 1000 * 3
           deferred.resolve(cache)
         else
           deferred.reject(cache)

@@ -31,7 +31,7 @@ app.thread.get = (url, callback, force_update) ->
     #キャッシュ取得部
     .pipe (cache) ->
       $.Deferred (deferred) ->
-        if force_update or Date.now() - cache.data.last_updated > 1000 * 60
+        if force_update or Date.now() - cache.data.last_updated > 1000 * 3
           deferred.reject(cache)
         else
           deferred.resolve(cache)
