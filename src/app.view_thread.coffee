@@ -28,6 +28,14 @@ app.view_thread.open = (url) ->
   else
     $view.find(".button_write").remove()
 
+  #リロードボタンを一時的に無効化する
+  suspend_reload_button = ->
+    $button = $view.find(".button_reload")
+    $button.addClass("disabled")
+    setTimeout ->
+      $button.removeClass("disabled")
+    , 1000 * 5
+
   #リロード処理
   $view.bind "request_reload", (e, ex) ->
     $view
@@ -38,12 +46,14 @@ app.view_thread.open = (url) ->
     app.view_thread._draw($view, ex?.force_update)
       .done ->
         $view.find(".content").lazy_img()
+        suspend_reload_button()
 
   app.view_thread._read_state_manager($view)
   app.view_thread._draw($view)
     .always ->
       app.history.add(url, $view.attr("data-title"), opened_at)
       $view.find(".content").lazy_img()
+      suspend_reload_button()
 
   $view
     .bind "tab_removed", ->

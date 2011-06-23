@@ -26,10 +26,20 @@ app.view_board.open = (url) ->
       $view.attr("data-title", title)
     app.history.add(url, title or url, opened_at)
 
+  #リロードボタンを一時的に無効化する
+  suspend_reload_button = ->
+    $button = $view.find(".button_reload")
+    $button.addClass("disabled")
+    setTimeout ->
+      $button.removeClass("disabled")
+    , 1000 * 5
+
   $view.bind "request_reload", ->
     $loading_overlay = $view.find(".loading_overlay").show()
     $view.find("tbody").empty()
     app.view_board._draw($view)
+      .done ->
+        suspend_reload_button()
 
   #ブックマーク更新処理
   on_bookmark_updated = (message) ->
@@ -59,6 +69,9 @@ app.view_board.open = (url) ->
     app.message.remove_listener("read_state_updated", on_read_state_updated)
 
   app.view_board._draw($view)
+    .done ->
+      suspend_reload_button()
+
   $view.find("table").table_sort()
 
   $view

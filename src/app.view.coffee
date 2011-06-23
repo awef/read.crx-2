@@ -49,7 +49,8 @@ app.view_module.link_button = ($view) ->
 
 app.view_module.reload_button = ($view) ->
   $view.find(".button_reload").bind "click", ->
-    $view.trigger("request_reload")
+    if not $(this).hasClass("disabled")
+      $view.trigger("request_reload")
 
 app.view_module.board_contextmenu = ($view) ->
   $view

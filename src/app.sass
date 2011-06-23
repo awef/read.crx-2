@@ -77,6 +77,10 @@ $z-index_modal: 6
           :height 100%
       &.button_reload
         :background-image url(/img/reload_19x19.png)
+        :-webkit-transition background-color 250ms
+        &.disabled
+          :background-color rgba(#000, 0.1)
+          :cursor default
       &.button_write
         :background-image url(/img/pencil_19x19.png)
   .content
