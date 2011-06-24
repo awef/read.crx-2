@@ -9,6 +9,7 @@ app.bookmark = {}
     index_url: {} #urlからdataのキーを導く
     index_id: {} #idからdataのキーを導く
     index_url_id: {} #urlからidを導く
+    index_board_url: {} #板urlからキーの配列を導く
 
   scan_awef = ->
     $.Deferred (deferred) ->
@@ -46,9 +47,13 @@ app.bookmark = {}
                   tmp_bookmark.expired = true
 
                 tmp_awef.data.push(tmp_bookmark)
-                tmp_awef.index_url[url] = tmp_awef.data.length - 1
-                tmp_awef.index_id[tree.id] = tmp_awef.data.length - 1
+                key = tmp_awef.data.length - 1
+                tmp_awef.index_url[url] = key
+                tmp_awef.index_id[tree.id] = key
                 tmp_awef.index_url_id[url] = tree.id
+                board_url = app.url.thread_to_board(url)
+                tmp_awef.index_board_url[board_url] or= []
+                tmp_awef.index_board_url[board_url].push(key)
           deferred.resolve(tmp_awef)
 
       catch e
@@ -123,6 +128,12 @@ app.bookmark = {}
   # 全てのbookmarkを格納した配列を返す
   app.bookmark.get_all = ->
     app.deep_copy(now_awef.data)
+
+  app.bookmark.get_by_board = (board_url) ->
+    data = []
+    for key in now_awef.index_board_url[board_url] or []
+      data.push(now_awef.data[key])
+    app.deep_copy(data)
 
   app.bookmark.change_source = (new_source_id) ->
     if app.assert_arg("app.bookmark.change_source", ["string"], arguments)
