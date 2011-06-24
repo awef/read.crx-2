@@ -159,7 +159,7 @@ app.thread.get = (url, callback, force_update) ->
         cache.data.last_updated = Date.now()
         app.cache.set(cache.data)
 
-    #落ちたスレを検出した場合は対応するメッセージを送出
+    #dat落ち検出
     .fail (cache, xhr, thread) ->
       if xhr?.status is 203
         app.bookmark.update_expired(url, true)
