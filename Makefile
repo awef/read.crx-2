@@ -77,6 +77,7 @@ ${DBG_DIR}/img/: ${SRC_DIR}/image/svg/*.svg
 	$(call svg,search2,19,19)
 	$(call svg,reload,19,19)
 	$(call svg,pencil,19,19)
+	$(call svg,arrow,19,19)
 	$(call svg,dummy,1,1)
 
 ${DBG_DIR}/test/: ${QUNIT_FILES}

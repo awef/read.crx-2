@@ -11,6 +11,11 @@ app.view_thread.open = (url) ->
   app.view_module.link_button($view)
   app.view_module.reload_button($view)
 
+  $("<a>", {
+    href: app.safe_href(app.url.thread_to_board(url))
+    class: "open_in_rcrx"
+  }).appendTo($view.find(".button_board"))
+
   write = (param) ->
     param or= {}
     param.url = url

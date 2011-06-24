@@ -64,6 +64,10 @@ $z-index_modal: 6
       :height 19px
       :border 1px solid #ccc
       :cursor pointer
+      a
+        :display block
+        :width 100%
+        :height 100%
       &.button_bookmark
         :background-image url(/img/star_19x19.png)
         &.bookmarked
@@ -71,10 +75,8 @@ $z-index_modal: 6
           :-webkit-box-shadow 0 0 3px yellow inset
       &.button_link
         :background-image url(/img/link_19x19.png)
-        a
-          :display block
-          :width 100%
-          :height 100%
+      &.button_board
+        :background-image url(/img/arrow_19x19.png)
       &.button_reload
         :background-image url(/img/reload_19x19.png)
         :-webkit-transition background-color 250ms
