@@ -280,6 +280,7 @@ app.view_thread._draw_messages = (thread) ->
 
   #設定値キャッシュ
   config_thumbnail_supported = app.config.get("thumbnail_supported") is "on"
+  config_thumbnail_ext = app.config.get("thumbnail_ext") is "on"
 
   #サムネイル追加処理
   fn_add_thumbnail = (source_a, thumb_path) ->
@@ -421,6 +422,12 @@ app.view_thread._draw_messages = (thread) ->
           tmp = "http://tn-skr#{parseInt(res[1], 10) % 4 + 1}.smilevideo.jp"
           tmp += "/smile?i=#{res[1]}"
           fn_add_thumbnail(a, tmp)
+
+    #サムネイル表示(画像っぽいURL)
+    if config_thumbnail_ext
+      for a in Array.prototype.slice.apply(message.getElementsByTagName("a"))
+        if /\.(?:png|jpg|jpeg|gif|bmp)$/i.test(a.href)
+          fn_add_thumbnail(a, a.href)
 
     article.appendChild(message)
 
