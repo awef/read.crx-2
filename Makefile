@@ -14,6 +14,7 @@ QUNIT_FILES =\
 haml = haml -q $(1) $(2)
 sass = sass --style compressed --no-cache $(1) $(2)
 coffee = cat $(1) | coffee -cbsp > $(2)
+svg = rsvg -w $(2) -h $(3) ${SRC_DIR}/image/svg/$(1).svg ${DBG_DIR}/img/$(1)_$(2)x$(3).png
 
 .PHONY: all
 all:\
@@ -66,17 +67,17 @@ ${DBG_DIR}/lib/: ${LIB_FILES}
 ${DBG_DIR}/img/: ${SRC_DIR}/image/svg/*.svg
 	rm -rf ${DBG_DIR}/img/
 	mkdir ${DBG_DIR}/img/
-	rsvg -w 128 -h 128 ${SRC_DIR}/image/svg/read.crx.svg ${DBG_DIR}/img/read.crx_128x128.png
-	rsvg -w 48 -h 48 ${SRC_DIR}/image/svg/read.crx.svg ${DBG_DIR}/img/read.crx_48x48.png
-	rsvg -w 16 -h 16 ${SRC_DIR}/image/svg/read.crx.svg ${DBG_DIR}/img/read.crx_16x16.png
-	rsvg -w 16 -h 16 ${SRC_DIR}/image/svg/close.svg ${DBG_DIR}/img/close_16x16.png
-	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/star.svg ${DBG_DIR}/img/star_19x19.png
-	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/star2.svg ${DBG_DIR}/img/star2_19x19.png
-	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/link.svg ${DBG_DIR}/img/link_19x19.png
-	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/search2.svg ${DBG_DIR}/img/search2_19x19.png
-	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/reload.svg ${DBG_DIR}/img/reload_19x19.png
-	rsvg -w 19 -h 19 ${SRC_DIR}/image/svg/pencil.svg ${DBG_DIR}/img/pencil_19x19.png
-	rsvg -w 1 -h 1 ${SRC_DIR}/image/svg/dummy.svg ${DBG_DIR}/img/dummy_1x1.png
+	$(call svg,read.crx,128,128)
+	$(call svg,read.crx,48,48)
+	$(call svg,read.crx,16,16)
+	$(call svg,close,16,16)
+	$(call svg,star,19,19)
+	$(call svg,star2,19,19)
+	$(call svg,link,19,19)
+	$(call svg,search2,19,19)
+	$(call svg,reload,19,19)
+	$(call svg,pencil,19,19)
+	$(call svg,dummy,1,1)
 
 ${DBG_DIR}/test/: ${QUNIT_FILES}
 	rm -rf ${DBG_DIR}/test/
