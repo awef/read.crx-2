@@ -60,3 +60,6 @@ app.config =
     localStorage["config_#{key}"]
   del: (key) ->
     delete localStorage["config_#{key}"]
+
+app.safe_href = (url) ->
+  if /// ^https?:// ///.test(url) then url else "http://google.co.jp/"
