@@ -99,6 +99,9 @@ app.view_bookmark._bookmark_to_tr = (bookmark) ->
   tr.className = "open_in_rcrx"
   tr.setAttribute("data-href", bookmark.url)
 
+  if bookmark.expired is true
+    tr.classList.add("expired")
+
   thread_created_at = +/// /(\d+)/$ ///.exec(bookmark.url)[1] * 1000
 
   td = document.createElement("td")

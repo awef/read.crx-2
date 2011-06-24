@@ -151,6 +151,9 @@ $z-index_modal: 6
 .view_bookmark
   @include tabbed_view
   @include content_table
+  tr.expired td:first-child:before
+    :content "[dat落ち] "
+    :color #f00
   .loading_overlay
     .loading
       &:before

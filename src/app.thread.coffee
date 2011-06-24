@@ -100,7 +100,6 @@ app.thread.get = (url, callback, force_update) ->
           #2ch系BBSのdat落ち
           else if guess_res.bbs_type is "2ch" and xhr?.status is 203
             deferred.reject(cache, xhr, thread)
-            app.message.send("detected_removed_dat", url: url)
           else
             deferred.reject(cache, xhr, thread)
         #パース失敗
@@ -159,6 +158,11 @@ app.thread.get = (url, callback, force_update) ->
       else if cache?.status is "success" and xhr?.status is 304
         cache.data.last_updated = Date.now()
         app.cache.set(cache.data)
+
+    #落ちたスレを検出した場合は対応するメッセージを送出
+    .fail (cache, xhr, thread) ->
+      if xhr?.status is 203
+        app.bookmark.update_expired(url, true)
 
 app.thread.parse = (url, text) ->
   tmp = /^http:\/\/\w+\.(\w+\.\w+)\//.exec(url)

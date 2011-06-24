@@ -42,6 +42,9 @@ app.bookmark = {}
                     read: +arg.read
                     last: +arg.last
 
+                if arg.expired is true
+                  tmp_bookmark.expired = true
+
                 tmp_awef.data.push(tmp_bookmark)
                 tmp_awef.index_url[url] = tmp_awef.data.length - 1
                 tmp_awef.index_id[tree.id] = tmp_awef.data.length - 1
@@ -174,6 +177,9 @@ app.bookmark = {}
       if bookmark.res_count
         data.res_count = bookmark.res_count
 
+      if bookmark.expired is true
+        data.expired = true
+
       chrome.bookmarks.update(now_awef.index_url_id[url],
         url: read_state.url + "#" + app.url.build_param(data))
 
@@ -189,6 +195,27 @@ app.bookmark = {}
         data.read = bookmark.read_state.read
         data.last = bookmark.read_state.last
 
+      if bookmark.expired is true
+        data.expired = true
+
       chrome.bookmarks.update(now_awef.index_url_id[url],
         url: url + "#" + app.url.build_param(data))
-)()
+
+  app.bookmark.update_expired = (url, expired) ->
+    if bookmark = app.bookmark.get(url)
+      data = {}
+
+      if expired is true
+        data.expired = true
+
+      if bookmark.read_state
+        data.received = bookmark.read_state.received
+        data.read = bookmark.read_state.read
+        data.last = bookmark.read_state.last
+
+      if bookmark.res_count
+        data.res_count = bookmark.res_count
+
+      chrome.bookmarks.update(now_awef.index_url_id[url],
+        url: url + "#" + app.url.build_param(data))
+ )()
