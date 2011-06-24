@@ -51,9 +51,10 @@ app.bookmark = {}
                 tmp_awef.index_url[url] = key
                 tmp_awef.index_id[tree.id] = key
                 tmp_awef.index_url_id[url] = tree.id
-                board_url = app.url.thread_to_board(url)
-                tmp_awef.index_board_url[board_url] or= []
-                tmp_awef.index_board_url[board_url].push(key)
+                if tmp_bookmark.type is "thread"
+                  board_url = app.url.thread_to_board(url)
+                  tmp_awef.index_board_url[board_url] or= []
+                  tmp_awef.index_board_url[board_url].push(key)
           deferred.resolve(tmp_awef)
 
       catch e
