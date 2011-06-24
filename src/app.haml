@@ -110,18 +110,13 @@
         .version_info
 
         %h2 スレッド表示設定
-        %table
-          %tbody
-            %tr
-              %td
-                対応サイトのサムネイルを表示する
-              %td
-                %input.direct(type="checkbox" name="thumbnail_supported")
-            %tr
-              %td
-                拡張子が画像ファイルなURLのサムネイルを表示する
-              %td
-                %input.direct(type="checkbox" name="thumbnail_ext")
+        %label
+          %input.direct(type="checkbox" name="thumbnail_supported")
+          対応サイトのサムネイルを表示する
+        %br
+        %label
+          %input.direct(type="checkbox" name="thumbnail_ext")
+          拡張子が画像ファイルなURLのサムネイルを表示する
 
         %h2 書き込み設定
         %table
