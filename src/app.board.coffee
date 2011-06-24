@@ -113,6 +113,22 @@ app.board.get = (url, callback) ->
         cache.data.last_updated = Date.now()
         app.cache.set(cache.data)
 
+    #dat落ちスキャン
+    .done (cache, xhr, board) ->
+      if board
+        dict = {}
+        for bookmark in app.bookmark.get_by_board(url)
+          if bookmark.type is "thread"
+            dict[bookmark.url] = true
+
+        for thread in board
+          if thread.url of dict
+            delete dict[thread.url]
+
+        for thread_url of dict
+          app.bookmark.update_expired(thread_url, true)
+        null
+
 app.board.parse = (url, text) ->
   tmp = /^http:\/\/(\w+\.(\w+\.\w+))\/(\w+)\/(\w+)?/.exec(url)
   switch tmp[2]
