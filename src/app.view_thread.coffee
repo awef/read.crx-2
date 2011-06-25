@@ -212,6 +212,43 @@ app.view_thread.open = (url) ->
       else
         app.log("warn", "[view_thread] .jump_panel: ターゲットが存在しません")
 
+  #検索ボックス
+  search_stored_scrollTop = null
+  $view
+    .find(".searchbox")
+      .bind "input", ->
+        if this.value isnt ""
+          if typeof search_stored_scrollTop isnt "number"
+            search_stored_scrollTop = $view.find(".content").scrollTop()
+
+          query = this.value.toLowerCase()
+
+          $view
+            .find(".content")
+              .addClass("searching")
+              .children()
+              .each ->
+                if this.textContent.toLowerCase().indexOf(query) isnt -1
+                  this.classList.add("search_hit")
+                else
+                  this.classList.remove("search_hit")
+        else
+          $view
+            .find(".content")
+              .removeClass("searching")
+              .find(".search_hit")
+                .removeClass("search_hit")
+
+          if typeof search_stored_scrollTop is "number"
+            $view.find(".content").scrollTop(search_stored_scrollTop)
+            search_stored_scrollTop = null
+
+      .bind "keyup", (e) ->
+        if e.which is 27 #Esc
+          if this.value isnt ""
+            this.value = ""
+            $(this).triggerHandler("input")
+
   $view
 
 app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
