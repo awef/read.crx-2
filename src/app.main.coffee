@@ -106,7 +106,7 @@ app.main = ->
     .delegate ".tab_content", "mousedown", ->
       if not this.classList.contains("tab_focused")
         $(".tab_focused")
-          .removeClass(".tab_focused")
+          .removeClass("tab_focused")
 
         $(this)
           .closest(".tab")
