@@ -18,6 +18,7 @@
           tab_select.call(that, {tab_id: next.attr("data-tab_id")})
 
       .delegate ".tab_tabbar li", "mousedown", (e) ->
+        e.preventDefault()
         (if e.which is 2 then tab_remove else tab_select)
           .call(that, {tab_id: $(this).attr("data-tab_id")})
 
@@ -38,10 +39,6 @@
       .addClass("tab_content")
       .attr("data-tab_id", tab_id)
       .appendTo($tab.find(".tab_container"))
-      .bind "click", ->
-        if not this.classList.contains("tab_focused")
-          $(".tab_focused").removeClass("tab_focused")
-          $tab.find("[data-tab_id=\"#{tab_id}\"]").addClass("tab_focused")
 
     unless prop.background and $this.find(".tab_tabbar li").length isnt 1
       tab_select.call(this, {tab_id: tab_id})
@@ -67,21 +64,14 @@
         .end()
       .remove()
 
-    if not $tab.is(":has(.tab_focused)")
-      $(".tab:has(.tab_selected):first")
-        .find(".tab_selected")
-          .addClass("tab_focused")
-
   # prop.tab_id
   tab_select = (prop) ->
-    $(".tab_focused").removeClass("tab_focused")
-
     $(this)
       .find(".tab_selected")
         .removeClass("tab_selected")
       .end()
       .find("[data-tab_id=\"#{prop.tab_id}\"]")
-        .addClass("tab_selected tab_focused")
+        .addClass("tab_selected")
         .filter(".tab_content")
           .trigger("tab_selected")
 

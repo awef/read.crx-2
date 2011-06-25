@@ -37,7 +37,7 @@
           .button.button_bookmark
           .button.button_link(title="Chromeで直接開く")
           .button.button_reload
-        .content
+        .content(tabindex="0")
           %table
             %thead
               %tr
@@ -63,7 +63,7 @@
           .button.button_board(title="板を開く")
           .button.button_reload
           .button.button_write
-        .content
+        .content(tabindex="0")
         %ul.jump_panel
           %li.jump_one >>1
           %li.jump_last しおり
@@ -83,7 +83,7 @@
           %input.searchbox_thread_title
           .button.button_link(title="ブックマークマネージャを開く")
           .button.button_reload
-        .content
+        .content(tabindex="0")
           %table
             %thead
               %tr
@@ -98,7 +98,7 @@
       .view_history(data-url="history")
         %nav.nav_bar
           .button.button_reload
-        .content
+        .content(tabindex="0")
           %table
             %thead
               %tr

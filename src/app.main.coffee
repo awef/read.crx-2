@@ -100,3 +100,37 @@ app.main = ->
       $(".view_thread[data-url=\"#{request.url}\"]")
         .trigger("request_reload", force_update: true)
 
+  #フォーカス管理
+  $(document.documentElement)
+
+    .delegate ".tab_content", "mousedown", ->
+      if not this.classList.contains("tab_focused")
+        $(".tab_focused")
+          .removeClass(".tab_focused")
+
+        $(this)
+          .closest(".tab")
+            .find(".tab_selected")
+              .addClass("tab_focused")
+              .find(".content")
+                .focus()
+
+    .delegate ".tab_content", "tab_selected", ->
+      $(".tab_focused")
+        .removeClass("tab_focused")
+
+      $(this)
+        .closest(".tab")
+          .find(".tab_selected")
+            .addClass("tab_focused")
+            .find(".content")
+              .focus()
+
+    .delegate ".tab_content", "tab_removed", ->
+      $tmp =  $(this).closest(".tab").find(".tab_selected")
+      if $tmp.filter(".tab_content").is(this)
+        $(".tab:has(.tab_selected):first")
+          .find(".tab_selected")
+            .addClass("tab_focused")
+            .find(".content")
+              .focus()
