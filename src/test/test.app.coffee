@@ -78,6 +78,9 @@ test "app.url.fix", ->
     strictEqual(app.url.fix(fixed_url + "50/"), fixed_url, service + " スレッドURL")
     strictEqual(app.url.fix(fixed_url + "50-100"), fixed_url, service + " スレッドURL")
 
+  test_pass_url = (url) ->
+    strictEqual(app.url.fix(url), url, url)
+
   test_board_url("http://qb5.2ch.net/operate/", "2ch")
   test_thread_url("http://pc11.2ch.net/test/read.cgi/hp/1277348045/", "2ch")
 
@@ -93,10 +96,10 @@ test "app.url.fix", ->
   test_board_url("http://ex14.vip2ch.com/part4vip/", "パー速")
   test_thread_url("http://ex14.vip2ch.com/test/read.cgi/part4vip/1291628400/", "パー速")
 
-  strictEqual(app.url.fix("config"), "config", "config")
-  strictEqual(app.url.fix("bookmark"), "bookmark", "bookmark")
-  strictEqual(app.url.fix("history"), "history", "history")
-  strictEqual(app.url.fix("kakikomi_log"), "kakikomi_log", "kakikomi_log")
+  test_pass_url("config")
+  test_pass_url("bookmark")
+  test_pass_url("history")
+  test_pass_url("kakikomi_log")
 
 test "app.url.thread_to_board", ->
   fn = (thread_url, board_url, message) ->
