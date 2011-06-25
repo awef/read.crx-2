@@ -425,8 +425,8 @@ app.view_thread._draw_messages = (thread) ->
       .replace(///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///,
         '<img class="beicon" src="http://$1" /><br />')
       #アンカーリンク
-      .replace /(?:&gt;|＞){1,2}[\d０-９]+(?:-[\d０-９]+)?(?:\s*,\s*[\d０-９]+(?:-[\d０-９]+)?)*/g, ($0) ->
-        str = $0.replace /[０-９]/g, ($0) ->
+      .replace /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?)*/g, ($0) ->
+        str = $0.replace /[\uff10-\uff19]/g, ($0) ->
           String.fromCharCode($0.charCodeAt(0) - 65248)
 
         reg = /(\d+)(?:-(\d+))?/g
