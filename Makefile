@@ -68,6 +68,11 @@ ${DBG_DIR}/img/: ${SRC_DIR}/image/svg/*.svg
 	rm -rf ${DBG_DIR}/img/
 	mkdir ${DBG_DIR}/img/
 	$(call svg,read.crx,128,128)
+	convert\
+  -background transparent\
+  -resize 96x96\
+  -extent 128x128-16-16\
+  ${SRC_DIR}/image/svg/read.crx.svg ${DBG_DIR}/img/read.crx_128x128.png
 	$(call svg,read.crx,48,48)
 	$(call svg,read.crx,16,16)
 	$(call svg,close,16,16)
