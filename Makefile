@@ -14,7 +14,10 @@ QUNIT_FILES =\
 haml = haml -q $(1) $(2)
 sass = sass --style compressed --no-cache $(1) $(2)
 coffee = cat $(1) | coffee -cbsp > $(2)
-svg = rsvg -w $(2) -h $(3) ${SRC_DIR}/image/svg/$(1).svg ${DBG_DIR}/img/$(1)_$(2)x$(3).png
+svg = convert\
+  -background transparent\
+  -resize $(2)x$(3)\
+  ${SRC_DIR}/image/svg/$(1).svg ${DBG_DIR}/img/$(1)_$(2)x$(3).png
 
 .PHONY: all
 all:\
