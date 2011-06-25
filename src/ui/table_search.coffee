@@ -12,6 +12,7 @@
 
     # prop.query, prop.search_col
     if method is "search"
+      prop.query = prop.query.toLowerCase()
       $table.addClass("table_search")
       hit_count = 0
       for tr in $table.find("tbody")[0].children
