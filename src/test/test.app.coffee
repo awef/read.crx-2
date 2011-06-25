@@ -101,6 +101,18 @@ test "app.url.fix", ->
   test_pass_url("history")
   test_pass_url("kakikomi_log")
 
+  test_pass_url("http://yuzuru.2ch.net/campus/subback.html")
+  test_pass_url("http://info.2ch.net/wiki/")
+  test_pass_url("http://info.2ch.net/wiki/index.php?BE%A1%F72ch%B7%C7%BC%A8%C8%C4")
+
+  test_pass_url("http://example.com/")
+  test_pass_url("http://www.example.com/")
+  test_pass_url("http://example.com/index.html")
+  test_pass_url("http://www.example.com/index.html")
+  test_pass_url("http://example.com/test/index.html")
+  test_pass_url("http://www.example.com/test/index.html")
+  test_pass_url("http://example.com/#test")
+
 test "app.url.thread_to_board", ->
   fn = (thread_url, board_url, message) ->
     strictEqual(app.url.thread_to_board(thread_url), board_url, message)

@@ -1,16 +1,13 @@
 app.url = {}
 app.url.fix = (url) ->
   url
-    .replace(///
-      ^(http://
-        (?:
-          [\w\.]+/test/read\.cgi/\w+/\d+
-        | \w+\.machi\.to/bbs/read\.cgi/\w+/\d+
-        | jbbs\.livedoor\.jp/bbs/read\.cgi/\w+/\d+/\d+
-        | [\w\.]+/\w+(?:/\d+)?
-        )
-      ).*?$
-      ///, "$1/")
+    #スレ系 誤爆する事は考えられないので、パラメータ部分をバッサリ切ってしまう
+    .replace(/// ^(http://[\w\.]+/test/read\.cgi/\w+/\d+).*?$ ///, "$1/")
+    .replace(/// ^(http://\w+\.machi\.to/bbs/read\.cgi/\w+/\d+).*?$ ///, "$1/")
+    .replace(/// ^(http://jbbs\.livedoor\.jp/bbs/read\.cgi/\w+/\d+/\d+).*?$ ///, "$1/")
+    #板系 完全に誤爆を少しでも減らすために、パラメータ形式も限定する
+    .replace(/// ^(http://[\w\.]+/\w+/)(?:#.*)?$ ///, "$1")
+    .replace(/// ^(http://jbbs\.livedoor\.jp/\w+/\d+/)(?:#.*)?$ ///, "$1")
 
 app.url.guess_type = (url) ->
   url = app.url.fix(url)
