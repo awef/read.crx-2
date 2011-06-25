@@ -323,7 +323,7 @@ app.view_thread._draw_messages = (thread) ->
   fn_add_thumbnail = (source_a, thumb_path) ->
     thumb = document.createElement("a")
     thumb.className = "thumbnail"
-    thumb.href = source_a.href
+    thumb.href = app.safe_href(source_a.href)
     thumb.target = "_blank"
     thumb.rel = "noreferrer"
 

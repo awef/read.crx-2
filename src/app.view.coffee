@@ -42,7 +42,7 @@ app.view_module.link_button = ($view) ->
   url = $view.attr("data-url")
   $button = $view.find(".button_link")
   if ///^http://\w///.test(url)
-    $("<a>", href: url, target: "_blank")
+    $("<a>", href: app.safe_href(url), target: "_blank")
       .appendTo($button)
   else
     $button.remove()
@@ -108,7 +108,7 @@ app.view_sidemenu.open = ->
     a = document.createElement("a")
     a.className = "open_in_rcrx"
     a.textContent = board.title
-    a.href = board.url
+    a.href = app.safe_href(board.url)
     li.appendChild(a)
     li
 
