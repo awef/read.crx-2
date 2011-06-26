@@ -144,4 +144,4 @@ app.view_board._draw = ($view) ->
       $view.find("table").trigger("table_sort_update")
 
     .always ->
-      $view.find(".loading_overlay").fadeOut(100)
+      $view[0].querySelector(".loading_overlay").style["display"] = "none"

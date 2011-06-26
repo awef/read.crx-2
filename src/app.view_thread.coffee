@@ -287,7 +287,6 @@ app.view_thread._draw = ($view, force_update) ->
     else
       deferred.reject()
 
-    $view.find(".loading_overlay").fadeOut(100)
   , force_update
   deferred
 
@@ -498,6 +497,7 @@ app.view_thread._read_state_manager = ($view) ->
       if read_state.last
         content.children[read_state.last - 1]?.classList.add("last")
         app.view_thread._jump_to_res($view, read_state.last, false)
+      $view[0].querySelector(".loading_overlay").style["display"] = "none"
 
       res_read = content.children[read_state.read - 1]
       if res_read
