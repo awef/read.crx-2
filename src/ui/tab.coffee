@@ -18,7 +18,6 @@
           tab_select.call(that, {tab_id: next.attr("data-tab_id")})
 
       .delegate ".tab_tabbar li", "mousedown", (e) ->
-        e.preventDefault()
         (if e.which is 2 then tab_remove else tab_select)
           .call(that, {tab_id: $(this).attr("data-tab_id")})
 
