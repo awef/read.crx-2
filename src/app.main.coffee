@@ -102,7 +102,7 @@ app.main = ->
 
   #フォーカス管理
   $(document.documentElement)
-
+    #タブの内容がクリックされた時にフォーカスを移動
     .delegate ".tab_content", "mousedown", ->
       if not this.classList.contains("tab_focused")
         $(".tab_focused")
@@ -115,6 +115,7 @@ app.main = ->
               .find(".content")
                 .focus()
 
+    #タブが選択された時にフォーカスを移動
     .delegate ".tab_content", "tab_selected", ->
       $(".tab_focused")
         .removeClass("tab_focused")
@@ -126,6 +127,7 @@ app.main = ->
             .find(".content")
               .focus()
 
+    #フォーカスしているタブが削除された時にフォーカスを移動
     .delegate ".tab_content", "tab_removed", ->
       $tmp =  $(this).closest(".tab").find(".tab_selected")
       if $tmp.filter(".tab_content").is(this)
