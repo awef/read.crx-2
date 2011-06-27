@@ -423,6 +423,10 @@ a
     :color #111
     :padding 5px
     :border-radius 3px
+  p:first-child
+    :margin-top 1ex
+  p:last-child
+    :margin-bottom 1ex
   .node_list
     :overflow auto
     :background-color #f9f9f9
@@ -433,6 +437,8 @@ a
     :padding-left 20px
     :margin 0
     :max-height 300px
+  .node_list > ul
+    :padding-left 0
   .node
     :display block
     :cursor pointer
