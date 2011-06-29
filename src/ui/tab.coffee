@@ -56,6 +56,7 @@
             next = $this.prev("li").add($this.next("li"))
             if next.length
               tab_select.call(that, {tab_id: next.attr("data-tab_id")})
+            null
           )
         .end()
         .filter(".tab_content")
@@ -93,6 +94,7 @@
           select: tab_select
           update_title: tab_update_title
         )[method or "init"].call(val, prop or {})
+        null
       )
     this
 )(jQuery)

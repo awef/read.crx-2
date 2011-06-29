@@ -9,6 +9,7 @@ app.view_config.open = ->
     .find("input.direct[type=\"text\"]")
       .each ->
         this.value = app.config.get(this.name) or ""
+        null
       .bind "input", ->
         app.config.set(this.name, this.value)
 
@@ -16,6 +17,7 @@ app.view_config.open = ->
     .find("input.direct[type=\"checkbox\"]")
       .each ->
         this.checked = app.config.get(this.name) is "on"
+        null
       .bind "change", ->
         app.config.set(this.name, if this.checked then "on" else "off")
 

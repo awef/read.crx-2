@@ -32,4 +32,6 @@
         if window.innerHeight < this_pos.top + $this.outerHeight()
           $this.css("top", "#{this_pos.top - $this.outerHeight()}px")
 
+        null
+
 )(jQuery)

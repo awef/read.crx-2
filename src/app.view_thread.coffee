@@ -232,6 +232,7 @@ app.view_thread.open = (url) ->
                   this.classList.add("search_hit")
                 else
                   this.classList.remove("search_hit")
+                null
         else
           $view
             .find(".content")

@@ -26,6 +26,6 @@
         .one "lazy_img_destroy", ->
           $(this).unbind("scroll", on_scroll)
           clearInterval(interval)
-
+      null
     this
 )(jQuery)

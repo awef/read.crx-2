@@ -17,6 +17,7 @@
     flg = false
     $popup.siblings(".popup").each ->
       flg or= $($(this).data("popup_source")).is(source)
+      null
     if flg
       $popup.remove()
       return

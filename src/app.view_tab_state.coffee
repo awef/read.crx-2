@@ -16,6 +16,7 @@ app.view_tab_state._get = ->
     data.push
       title: val.title
       url: url
+    null
   data
 
 # ##app.view_tab_state.store
