@@ -238,4 +238,32 @@ app.bookmark = {}
   #dat落ち検出時の処理
   app.message.add_listener "detected_removed_dat", (message) ->
     app.bookmark.update_expired(message.url, true)
- )()
+
+  #鯖移転検出時の処理
+  app.message.add_listener "detected_ch_server_move", (message) ->
+    #板ブックマークの更新
+    if bookmark = app.bookmark.get(message.before)
+      app.bookmark.remove(message.before)
+      app.bookmark.add(message.after, bookmark.title)
+
+    #スレブックマークの更新
+    tmp = ///^http://(\w+).2ch.net/ ///.exec(message.after)[1]
+    for bookmark in app.bookmark.get_by_board(message.before)
+      app.bookmark.remove(bookmark.url)
+      bookmark.url = bookmark.url.replace(
+        ///^(http://)\w+(.2ch.net/test/read.cgi/\w+/\d+/)$///,
+        ($0, $1, $2) -> $1 + tmp + $2
+      )
+
+      app.bookmark.add(bookmark.url, bookmark.title)
+
+      if "read_state" of bookmark
+        bookmark.read_state.url = bookmark.url
+        app.bookmark.update_read_state(bookmark.read_state)
+
+      if "res_count" of bookmark
+        app.bookmark.update_res_count(bookmark.url)
+
+      if "expired" of bookmark
+        app.bookmark.update_expired(bookmark.url, bookmark.expired)
+)()
