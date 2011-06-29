@@ -230,4 +230,8 @@ app.bookmark = {}
 
       chrome.bookmarks.update(now_awef.index_url_id[url],
         url: url + "#" + app.url.build_param(data))
+
+  #dat落ち検出時の処理
+  app.message.add_listener "detected_removed_dat", (message) ->
+    app.bookmark.update_expired(message.url, true)
  )()

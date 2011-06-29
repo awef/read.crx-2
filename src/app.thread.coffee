@@ -162,7 +162,7 @@ app.thread.get = (url, callback, force_update) ->
     #dat落ち検出
     .fail (cache, xhr, thread) ->
       if xhr?.status is 203
-        app.bookmark.update_expired(url, true)
+        app.message.send("detected_removed_dat", {url})
 
 app.thread.parse = (url, text) ->
   tmp = /^http:\/\/\w+\.(\w+\.\w+)\//.exec(url)
