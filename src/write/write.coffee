@@ -73,8 +73,26 @@ $ ->
 
     tmp = app.url.guess_type(arg.url)
     if (tmp.bbs_type is "2ch" and ///http://\w+\.2ch\.net/ ///.test(arg.url)) or tmp.bbs_type is "jbbs"
-      iframe_url = app.url.fix(arg.url) + "1?"
-      iframe_url += app.url.build_param(iframe_arg)
+      if app.config.get("p2_write") is "on"
+        if not /^w\d+\.p2\.2ch\.net$/.test(app.config.get("p2_server"))
+          on_error("p2のサーバー設定が誤っています")
+          return
+
+        if res = ///^http://(\w+\.2ch\.net)/test/read\.cgi/(\w+)/(\d+)///.exec(arg.url)
+          iframe_arg.host = res[1]
+          iframe_arg.bbs = res[2]
+          iframe_arg.key = res[3]
+        else if res = ///^http://jbbs\.livedoor\.jp/bbs/read\.cgi/(\w+)/(\d+)/(\d+)///.exec(arg.url)
+          iframe_arg.host = "jbbs.livedoor.jp/#{res[1]}"
+          iframe_arg.bbs = res[2]
+          iframe_arg.key = res[3]
+
+        iframe_url = "http://#{app.config.get("p2_server")}"
+        iframe_url += "/p2/post_form.php?#{app.url.build_param(iframe_arg)}"
+
+      else
+        iframe_url = app.url.fix(arg.url) + "1?"
+        iframe_url += app.url.build_param(iframe_arg)
 
       $("<iframe>")
         .attr("src", iframe_url)

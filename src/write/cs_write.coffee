@@ -88,6 +88,43 @@
           parent.postMessage(JSON.stringify({type : "error"}), "#{origin}");
         """
 
+    #p2
+    else if ///^http://w\d+\.p2\.2ch\.net/p2/post_form\.php///.test(location.href)
+      if form = document.getElementById("resform")
+        console.log form
+
+        arg = app.url.parse_query(location.href)
+        form.FROM.value = arg.rcrx_name
+        form.mail.value = arg.rcrx_mail
+        form.MESSAGE.value = arg.rcrx_message
+        form.__proto__.submit.call(form)
+
+      else
+        exec """
+          parent.postMessage(JSON.stringify({
+            type: "error",
+            message: "p2にログインしていません。ログインしていてもこのメッセージが出る場合、p2サーバーの設定が間違っている可能性が有ります。その場合はオプションページから修正して下さい。"
+          }), "#{origin}");
+        """
+
+    else if ///^http://w\d+\.p2\.2ch\.net/p2/post\.php///.test(location.href)
+      if /書きこみました/.test(document.title)
+        exec """
+          parent.postMessage(JSON.stringify({type : "success"}), "#{origin}");
+        """
+      else if document.querySelector("meta[http-equiv=\"refresh\"]")
+        exec """
+          parent.postMessage(JSON.stringify({
+            type: "error",
+            message: "#{document.body.innerText.replace(/\"/g, "&quot;")}"
+          }), "#{origin}");
+        """
+        location.href = "about:blank"
+      else
+        exec """
+          parent.postMessage(JSON.stringify({type : "error"}), "#{origin}");
+        """
+
   boot = ->
     window.addEventListener "message", (e) ->
       if e.origin is origin and e.data is "write_iframe_pong"
