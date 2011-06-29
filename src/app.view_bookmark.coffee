@@ -62,6 +62,11 @@ app.view_bookmark.open = ->
     else if message.type is "removed"
       $view.find("tr[data-href=\"#{message.bookmark.url}\"]").remove()
 
+    else if message.type is "expired"
+      $tr = $view.find("tr[data-href=\"#{message.bookmark.url}\"]")
+      if $tr.length is 1
+        $tr.replaceWith(app.view_bookmark._bookmark_to_tr(message.bookmark))
+
   app.message.add_listener("bookmark_updated", on_updated)
 
   $view.bind "tab_removed", ->

@@ -73,6 +73,10 @@ app.bookmark = {}
         app.message.send("bookmark_updated",
           {type: "added", bookmark: new_bookmark})
 
+      else if new_bookmark.expired isnt old_awef.data[old_awef.index_url[new_bookmark.url]].expired
+        app.message.send("bookmark_updated",
+          {type: "expired", bookmark: new_bookmark})
+
     #削除されたブックマークの抽出
     for old_bookmark in old_awef.data
       if not (old_bookmark.url of new_awef.index_url)
