@@ -37,3 +37,24 @@ test "test", ->
     {data: [{segments: [[1, 3]], target: 3}], target: 3}
   deepEqual app.util.parse_anchor(">>1ー3, 4ー6"),
     {data: [{segments: [[1, 3], [4, 6]], target: 6}], target: 6}
+
+module "app.util.ch_sever_move_detect"
+
+asyncTest "pc11/linux → hibari/linux", 1, ->
+  app.util.ch_server_move_detect("http://pc11.2ch.net/linux/")
+    .done (new_board_url) ->
+      strictEqual(new_board_url, "http://hibari.2ch.net/linux/")
+      start()
+
+asyncTest "yuzuru/gameswf → hato/gameswf", 1, ->
+  app.util.ch_server_move_detect("http://yuzuru.2ch.net/gameswf/")
+    .done (new_board_url) ->
+      strictEqual(new_board_url, "http://hato.2ch.net/gameswf/")
+      start()
+
+asyncTest "example.com", 1, ->
+  app.util.ch_server_move_detect("http://example.com/")
+    .fail ->
+      ok(true)
+      start()
+

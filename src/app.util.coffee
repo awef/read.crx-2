@@ -49,3 +49,31 @@ app.util.parse_anchor = (str) ->
     total.data.push(anchor)
 
   total
+
+#2chの鯖移転検出関数
+#移転を検出した場合は移転先のURLをresolveに載せる
+#検出出来なかった場合はrejectする
+app.util.ch_server_move_detect = (old_board_url) ->
+  $.Deferred (deferred) ->
+    xhr = new XMLHttpRequest()
+    timer = setTimeout (-> xhr.abort()), 1000 * 30
+    xhr.onreadystatechange = ->
+      if this.readyState is 4
+        clearTimeout(timer)
+
+        res = ///location\.href="(http://\w+\.2ch\.net/\w*/)"///
+          .exec(this.responseText)
+
+        if xhr.status is 200 and res and res[1] isnt old_board_url
+          deferred.resolve(res[1])
+        else
+          deferred.reject()
+    xhr.overrideMimeType("text/html; charset=Shift_JIS")
+    xhr.open("GET", "#{old_board_url}?_#{Date.now()}")
+    xhr.send(null)
+
+  .done (new_board_url) ->
+    app.message.send("detected_ch_server_move",
+      {before: old_board_url, after: new_board_url})
+
+  .promise()
