@@ -266,4 +266,5 @@ app.bookmark = {}
 
       if "expired" of bookmark
         app.bookmark.update_expired(bookmark.url, bookmark.expired)
+    return
 )()
