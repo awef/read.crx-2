@@ -276,6 +276,26 @@ window.addEventListener('load', function() {
       .rotate(-135, 50, 50)
       .translate(0, 5);
   });
+
+  //alpha
+  add(function(paper, container) {
+  	paper
+  		.rect(0, 0, 80, 30)
+  		.attr({
+  			stroke: "#fff",
+  			fill: "270-#ef2929-#cc0000",
+  			r: 5
+  		});
+
+  	paper
+  		.text(40, 15, "alpha")
+  		.attr({
+  			font: "inconsolata",
+  			"font-size": "25",
+  			"font-weight": "bold",
+  			fill: "#fff"
+  		});
+  });
 }, false);
     </script>
   </head>
