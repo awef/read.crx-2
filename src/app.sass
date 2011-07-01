@@ -130,6 +130,8 @@ $z-index_modal: 6
 .view_board
   @include tabbed_view
   @include content_table
+  .content
+    :overflow auto
   th
     &:nth-child(1)
       :width 1em
@@ -149,10 +151,14 @@ $z-index_modal: 6
 .view_history
   @include tabbed_view
   @include content_table
+  .content
+    :overflow auto
 
 .view_bookmark
   @include tabbed_view
   @include content_table
+  .content
+    :overflow auto
   tr.expired td:first-child:before
     :content "[dat落ち] "
     :color #f00
