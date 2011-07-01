@@ -52,9 +52,13 @@ app.view_thread.open = (url) ->
       .done ->
         $view.find(".content").lazy_img()
         suspend_reload_button()
+      .fail ->
+        $view.find(".loading_overlay")[0].style["display"] = "none"
 
   app.view_thread._read_state_manager($view)
   app.view_thread._draw($view)
+    .fail ->
+      $view.find(".loading_overlay")[0].style["display"] = "none"
     .always ->
       app.history.add(url, $view.attr("data-title"), opened_at)
       $view.find(".content").lazy_img()
