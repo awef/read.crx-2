@@ -80,10 +80,13 @@ app.board.get = (url, callback) ->
       callback(status: "success", data: board)
 
     .fail (cache, xhr, board) ->
+      message = "板の読み込みに失敗しました。"
+      if cache?.status is "success" and board
+        message += "キャシュに残っていたデータを表示します。"
       if board
-        callback(status: "error", data: board)
+        callback({status: "error", data: board, message})
       else
-        callback(status: "error")
+        callback({status: "error", message})
 
     #キャシュ更新部
     .done (cache, xhr, board) ->

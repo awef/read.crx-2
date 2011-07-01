@@ -85,10 +85,7 @@ app.view_board._draw = ($view) ->
     app.board.get url, (res) ->
       $message_bar = $view.find(".message_bar")
       if res.status is "error"
-        text = "板の読み込みに失敗しました。"
-        if "data" of res
-          text += "キャッシュに残っていたデータを表示します。"
-        $message_bar.addClass("error").text(text)
+        $message_bar.addClass("error").html(res.message)
 
       if "data" of res
         deferred.resolve(res.data)
