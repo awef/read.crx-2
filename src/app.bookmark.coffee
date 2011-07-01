@@ -247,11 +247,11 @@ app.bookmark = {}
       app.bookmark.add(message.after, bookmark.title)
 
     #スレブックマークの更新
-    tmp = ///^http://(\w+).2ch.net/ ///.exec(message.after)[1]
+    tmp = ///^http://(\w+)\.2ch\.net/ ///.exec(message.after)[1]
     for bookmark in app.bookmark.get_by_board(message.before)
       app.bookmark.remove(bookmark.url)
       bookmark.url = bookmark.url.replace(
-        ///^(http://)\w+(.2ch.net/test/read.cgi/\w+/\d+/)$///,
+        ///^(http://)\w+(\.2ch\.net/test/read\.cgi/\w+/\d+/)$///,
         ($0, $1, $2) -> $1 + tmp + $2
       )
 
