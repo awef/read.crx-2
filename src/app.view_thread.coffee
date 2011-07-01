@@ -272,7 +272,7 @@ app.view_thread._draw = ($view, force_update) ->
   app.thread.get url, (result) ->
     $message_bar = $view.find(".message_bar")
     if result.status is "error"
-      $message_bar.addClass("error").text(result.message)
+      $message_bar.addClass("error").html(result.message)
 
     if "data" of result
       thread = result.data

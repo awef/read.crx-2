@@ -113,17 +113,39 @@ app.thread.get = (url, callback, force_update) ->
 
     .fail (cache, xhr, thread) ->
       message = ""
-      if xhr?.status is 203
-        message = "dat落ちしたスレッドです。"
-      else
-        message = "スレッドの読み込みに失敗しました。"
-      if cache?.status is "success" and thread
-        message += "キャッシュに残っていたデータを表示します。"
 
-      if thread
-        callback({status: "error", data: thread, message})
-      else
-        callback({status: "error", message})
+      #2chでrejectされてる場合は移転を疑う
+      if app.url.sld(url) is "2ch" and xhr
+        app.util.ch_server_move_detect(app.url.thread_to_board(url))
+          #移転検出時
+          .done (new_board_url) ->
+            tmp = ///^http://(\w+)\.2ch\.net/ ///.exec(new_board_url)[1]
+            new_url = url.replace(
+              ///^(http://)\w+(\.2ch\.net/test/read\.cgi/\w+/\d+/)$///,
+              ($0, $1, $2) -> $1 + tmp + $2
+            )
+
+            #TODO エスケープ用関数を用意
+            message += """
+            スレッドの読み込みに失敗しました。
+            サーバーが移転している可能性が有ります
+            (<a href="#{app.safe_href(new_url)}"
+              class="open_in_rcrx">#{new_url.replace(/[<>]/g, "")}</a>)
+            """
+          #移転検出出来なかった場合
+          .fail ->
+            if xhr?.status is 203
+              message += "dat落ちしたスレッドです。"
+            else
+              message += "スレッドの読み込みに失敗しました。"
+          .always ->
+            if cache?.status is "success" and thread
+              message += "キャッシュに残っていたデータを表示します。"
+
+            if thread
+              callback({status: "error", data: thread, message})
+            else
+              callback({status: "error", message})
 
     #キャッシュ更新部
     .done (cache, xhr, thread) ->
