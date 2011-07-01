@@ -40,7 +40,7 @@ app.thread.get = (url, callback, force_update) ->
     .pipe null, (cache) ->
       $.Deferred (deferred) ->
         tmp_xhr_path = xhr_path
-        if app.url.sld(url) is "livedoor" or app.url.sld(url) is "machi"
+        if app.url.tsld(url) is "livedoor.jp" or app.url.tsld(url) is "machi.to"
           if cache.status is "success"
             delta_flg = true
             tmp_xhr_path += (+cache.data.received_res_length + 1) + "-"
@@ -115,7 +115,7 @@ app.thread.get = (url, callback, force_update) ->
       message = ""
 
       #2chでrejectされてる場合は移転を疑う
-      if app.url.sld(url) is "2ch" and xhr
+      if app.url.tsld(url) is "2ch.net" and xhr
         app.util.ch_server_move_detect(app.url.thread_to_board(url))
           #移転検出時
           .done (new_board_url) ->

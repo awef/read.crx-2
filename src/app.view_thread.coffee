@@ -26,8 +26,8 @@ app.view_thread.open = (url) ->
       'width=600,height=300'
     )
 
-  sld = app.url.sld(url)
-  if sld is "2ch" or sld is "livedoor"
+  tsld = app.url.tsld(url)
+  if tsld is "2ch.net" or tsld is "livedoor.jp"
     $view.find(".button_write").bind "click", ->
       write()
   else
@@ -149,7 +149,7 @@ app.view_thread.open = (url) ->
       #2chタイプの板は誤爆率が高いので、もう少し細かく判定する
       else if tmp.type is "board" and tmp.bbs_type is "2ch"
         #2ch自体の場合の判断はguess_typeを信じて板判定
-        if app.url.sld(url) is "2ch"
+        if app.url.tsld(url) is "2ch.net"
           flg = true
         #ブックマークされている場合も板として判定
         else if app.bookmark.get(app.url.fix(url))

@@ -83,7 +83,7 @@ app.board.get = (url, callback) ->
       message = "板の読み込みに失敗しました。"
 
       #2chでrejectされている場合は移転を疑う
-      if app.url.sld(url) is "2ch" and xhr
+      if app.url.tsld(url) is "2ch.net" and xhr
         app.util.ch_server_move_detect(url)
           #移転検出時
           .done (new_board_url) ->

@@ -157,29 +157,29 @@ test "app.url.guess_type", ->
   hoge("http://p2.2ch.net/test/", type: "unknown", bbs_type: "unknown")
   hoge("http://ninja.2ch.net/test/", type: "unknown", bbs_type: "unknown")
 
-test "app.url.sld", ->
+test "app.url.tsld", ->
   fn = (url, expected) ->
-    strictEqual(app.url.sld(url), expected, url)
+    strictEqual(app.url.tsld(url), expected, url)
 
   fn("", "")
   fn("test", "")
   fn("http:///", "")
   fn("/test.test.test/", "")
 
-  fn("http://example.com/", "example")
-  fn("https://example.com/", "example")
-  fn("http://www.example.com/", "example")
-  fn("https://www.example.com/", "example")
+  fn("http://example.com/", "example.com")
+  fn("https://example.com/", "example.com")
+  fn("http://www.example.com/", "example.com")
+  fn("https://www.example.com/", "example.com")
 
-  fn("http://qb5.2ch.net/operate/", "2ch")
-  fn("http://qb5.2ch.net/test/read.cgi/operate/1304609594/", "2ch")
+  fn("http://qb5.2ch.net/operate/", "2ch.net")
+  fn("http://qb5.2ch.net/test/read.cgi/operate/1304609594/", "2ch.net")
 
-  fn("http://www.machi.to/tawara/", "machi")
-  fn("http://www.machi.to/bbs/read.cgi/tawara/511234524356/", "machi")
+  fn("http://www.machi.to/tawara/", "machi.to")
+  fn("http://www.machi.to/bbs/read.cgi/tawara/511234524356/", "machi.to")
 
-  fn("http://jbbs.livedoor.jp/computer/42710/", "livedoor")
+  fn("http://jbbs.livedoor.jp/computer/42710/", "livedoor.jp")
   fn("http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273802908/",
-    "livedoor")
+    "livedoor.jp")
 
 test "app.url.parse_query", ->
   fn = (url, expected) ->
