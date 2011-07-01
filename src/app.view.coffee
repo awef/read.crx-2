@@ -143,6 +143,7 @@ app.view_sidemenu.open = ->
 
       $view
         .find(".view_sidemenu_bookmark")
+          .empty()
           .append(bookmark_frag)
         .end()
         .append(frag)
@@ -158,9 +159,9 @@ app.view_sidemenu.open = ->
   #TODO アンロード時にremove_listenerするよう改良
   app.message.add_listener "bookmark_updated", (message) ->
     if message.type is "added" and message.bookmark.type is "board"
-      $view
-        .find(".view_sidemenu_bookmark")
-          .append(bookmark_to_li(message.bookmark))
+      $tmp =  $view.find(".view_sidemenu_bookmark")
+      if $tmp.find("a[href=\"#{message.bookmark.url}\"]").length is 0
+        $tmp.append(bookmark_to_li(message.bookmark))
       sh_bookmark()
     else if message.type is "removed"
       $view
