@@ -1,6 +1,4 @@
-#TODO バージョン互換性確保処理
-
-$ ->
+app.main = ->
   $view = $(".view_write")
 
   arg = app.url.parse_query(location.href)
@@ -99,3 +97,20 @@ $ ->
         .appendTo($view.find(".iframe_container"))
 
       $view.find(".notice").text("書き込み中")
+
+(->
+  if location.pathname isnt "/write/write.html"
+    return
+
+  xhr = new XMLHttpRequest()
+  xhr.open("GET", "/manifest.json", false)
+  xhr.send(null)
+  app.manifest = JSON.parse(xhr.responseText)
+
+  html_version = document.documentElement.getAttribute("data-app-version")
+  if app.manifest.version isnt html_version
+    location.reload(true)
+  else
+    $(app.main)
+)()
+
