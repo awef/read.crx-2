@@ -34,6 +34,8 @@
 )()
 
 app.main = ->
+  document.title = app.manifest.name
+
   $("#left_pane").append(app.view_sidemenu.open())
 
   app.view_tab_state.restore()
