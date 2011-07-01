@@ -146,6 +146,16 @@ app.thread.get = (url, callback, force_update) ->
               callback({status: "error", data: thread, message})
             else
               callback({status: "error", message})
+      else
+        message += "スレッドの読み込みに失敗しました。"
+
+        if cache?.status is "success" and thread
+          message += "キャッシュに残っていたデータを表示します。"
+
+        if thread
+          callback({status: "error", data: thread, message})
+        else
+          callback({status: "error", message})
 
     #キャッシュ更新部
     .done (cache, xhr, thread) ->
