@@ -150,7 +150,6 @@ app.view_sidemenu.open = ->
       sh_bookmark()
 
   $view.bind "request_reload", ->
-    undefined
     $view.find(".view_sidemenu_bookmark").empty()
     $view.find("h3:not(:first-of-type), ul:not(:first-of-type)").remove()
     load()
