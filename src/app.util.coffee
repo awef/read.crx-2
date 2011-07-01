@@ -53,25 +53,43 @@ app.util.parse_anchor = (str) ->
 #2chの鯖移転検出関数
 #移転を検出した場合は移転先のURLをresolveに載せる
 #検出出来なかった場合はrejectする
-app.util.ch_server_move_detect = (old_board_url) ->
+#htmlを渡す事で通信をスキップする事が出来る
+app.util.ch_server_move_detect = (old_board_url, html) ->
   $.Deferred (deferred) ->
-    xhr = new XMLHttpRequest()
-    timer = setTimeout (-> xhr.abort()), 1000 * 30
-    xhr.onreadystatechange = ->
-      if this.readyState is 4
-        clearTimeout(timer)
+    if typeof html is "string"
+      deferred.resolve(html)
+    else
+      deferred.reject()
 
-        res = ///location\.href="(http://\w+\.2ch\.net/\w*/)"///
-          .exec(this.responseText)
+  #htmlが渡されなかった場合は通信する
+  .pipe null, ->
+    $.Deferred (deferred) ->
+      xhr = new XMLHttpRequest()
+      timer = setTimeout (-> xhr.abort()), 1000 * 30
+      xhr.onreadystatechange = ->
+        if this.readyState is 4
+          clearTimeout(timer)
 
-        if xhr.status is 200 and res and res[1] isnt old_board_url
-          deferred.resolve(res[1])
-        else
-          deferred.reject()
-    xhr.overrideMimeType("text/html; charset=Shift_JIS")
-    xhr.open("GET", "#{old_board_url}?_#{Date.now()}")
-    xhr.send(null)
+          if xhr.status is 200
+            deferred.resolve(xhr.responseText)
+          else
+            deferred.reject()
 
+      xhr.overrideMimeType("text/html; charset=Shift_JIS")
+      xhr.open("GET", "#{old_board_url}?_#{Date.now()}")
+      xhr.send(null)
+
+  #htmlから移転を判定
+  .pipe (html) ->
+    $.Deferred (deferred) ->
+      res = ///location\.href="(http://\w+\.2ch\.net/\w*/)"///.exec(html)
+
+      if res and res[1] isnt old_board_url
+        deferred.resolve(res[1])
+      else
+        deferred.reject()
+
+  #移転を検出した場合は移転検出メッセージを送出
   .done (new_board_url) ->
     app.message.send("detected_ch_server_move",
       {before: old_board_url, after: new_board_url})

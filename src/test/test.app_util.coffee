@@ -40,19 +40,47 @@ test "test", ->
 
 module "app.util.ch_sever_move_detect"
 
-asyncTest "pc11/linux → hibari/linux", 1, ->
+asyncTest "dummy", 1, ->
+  html = "dummy"
+  app.util.ch_server_move_detect("http://pc11.2ch.net/linux/", html)
+    .fail ->
+      ok(true)
+      start()
+
+asyncTest "pc11/linux → hibari/linux (html)", 1, ->
+  html = """
+  <html>
+  <head>
+  <script language="javascript">
+  window.location.href="http://hibari.2ch.net/linux/"</script>
+  <title>2chbbs..</title>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=Shift_JIS">
+  </head>
+  <body bgcolor="#FFFFFF">
+  Change your bookmark ASAP.
+  <a href="http://hibari.2ch.net/linux/">GO !</a>
+  </body>
+  </html>
+  """
+
+  app.util.ch_server_move_detect("http://pc11.2ch.net/linux/", html)
+    .done (new_board_url) ->
+      strictEqual(new_board_url, "http://hibari.2ch.net/linux/")
+      start()
+
+asyncTest "pc11/linux → hibari/linux (xhr)", 1, ->
   app.util.ch_server_move_detect("http://pc11.2ch.net/linux/")
     .done (new_board_url) ->
       strictEqual(new_board_url, "http://hibari.2ch.net/linux/")
       start()
 
-asyncTest "yuzuru/gameswf → hato/gameswf", 1, ->
+asyncTest "yuzuru/gameswf → hato/gameswf (xhr)", 1, ->
   app.util.ch_server_move_detect("http://yuzuru.2ch.net/gameswf/")
     .done (new_board_url) ->
       strictEqual(new_board_url, "http://hato.2ch.net/gameswf/")
       start()
 
-asyncTest "example.com", 1, ->
+asyncTest "example.com (xhr)", 1, ->
   app.util.ch_server_move_detect("http://example.com/")
     .fail ->
       ok(true)
