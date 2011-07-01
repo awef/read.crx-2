@@ -81,12 +81,34 @@ app.board.get = (url, callback) ->
 
     .fail (cache, xhr, board) ->
       message = "板の読み込みに失敗しました。"
-      if cache?.status is "success" and board
-        message += "キャシュに残っていたデータを表示します。"
-      if board
-        callback({status: "error", data: board, message})
+
+      #2chでrejectされている場合は移転を疑う
+      if app.url.sld(url) is "2ch" and xhr
+        app.util.ch_server_move_detect(url)
+          #移転検出時
+          .done (new_board_url) ->
+            message += """
+            サーバーが移転している可能性が有ります
+            (<a href="#{app.safe_href(new_board_url)}"
+            class="open_in_rcrx">#{new_board_url.replace(/[<>]/g, "")}
+            </a>)
+            """
+          .always ->
+            if cache?.status is "success" and board
+              message += "キャシュに残っていたデータを表示します。"
+
+            if board
+              callback({status: "error", data: board, message})
+            else
+              callback({status: "error", message})
       else
-        callback({status: "error", message})
+        if cache?.status is "success" and board
+          message += "キャシュに残っていたデータを表示します。"
+
+        if board
+          callback({status: "error", data: board, message})
+        else
+          callback({status: "error", message})
 
     #キャシュ更新部
     .done (cache, xhr, board) ->
