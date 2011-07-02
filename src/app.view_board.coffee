@@ -15,15 +15,10 @@ app.view_board.open = (url) ->
   app.view_module.reload_button($view)
   app.view_module.board_contextmenu($view)
 
-  app.board_title_solver.ask url, (res) ->
-    if res
-      title = res
-      $view
-        .closest(".tab")
-        .tab "update_title",
-          tab_id: $view.attr("data-tab_id")
-          title: title
+  app.board_title_solver.ask url, (title) ->
+    if title
       $view.attr("data-title", title)
+      $view.trigger("title_updated")
     app.history.add(url, title or url, opened_at)
 
   #リロードボタンを一時的に無効化する

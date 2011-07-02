@@ -109,6 +109,16 @@ app.main = ->
       $(".view_thread[data-url=\"#{request.url}\"]")
         .trigger("request_reload", force_update: true)
 
+  #タブ内コンテンツのタイトルが更新された場合、タブのタイトルを更新する
+  $(document.documentElement).delegate ".tab_content", "title_updated", ->
+    $this = $(this)
+    $this
+      .closest(".tab")
+        .tab("update_title", {
+          tab_id: $this.attr("data-tab_id")
+          title: $this.attr("data-title")
+        })
+
   #フォーカス管理
   $(document.documentElement)
     #タブの内容がクリックされた時にフォーカスを移動

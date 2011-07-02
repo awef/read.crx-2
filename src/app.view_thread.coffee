@@ -289,16 +289,11 @@ app.view_thread._draw = ($view, force_update) ->
     if "data" of result
       thread = result.data
       $view.attr("data-title", thread.title)
+      $view.trigger("title_updated")
 
       $view.find(".content").append(app.view_thread._draw_messages(thread))
       app.defer ->
         $view.triggerHandler("draw_content")
-
-      $view
-        .closest(".tab")
-          .tab "update_title",
-            tab_id: $view.attr("data-tab_id"),
-            title: thread.title
 
       deferred.resolve()
     else
