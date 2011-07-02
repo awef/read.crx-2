@@ -31,6 +31,9 @@ app.view_board.open = (url) ->
     , 1000 * 5
 
   $view.bind "request_reload", ->
+    if $view.hasClass("loading")
+      return
+
     $view.addClass("loading")
     $view.find("tbody").empty()
     app.view_board._draw($view)

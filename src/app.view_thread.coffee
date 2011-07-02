@@ -44,6 +44,9 @@ app.view_thread.open = (url) ->
 
   #リロード処理
   $view.bind "request_reload", (e, ex) ->
+    if $view.hasClass("loading")
+      return
+
     $view
       .addClass("loading")
       .find(".content")

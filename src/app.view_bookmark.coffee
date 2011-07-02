@@ -17,6 +17,9 @@ app.view_bookmark.open = ->
   app.view_module.board_contextmenu($view)
 
   $view.bind "request_reload", ->
+    if $view.hasClass("loading")
+      return
+
     $view.addClass("loading")
 
     board_list = []
