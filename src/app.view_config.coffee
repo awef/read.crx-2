@@ -2,7 +2,6 @@ app.view_config = {}
 
 app.view_config.open = ->
   $view = $("#template > .view_config").clone()
-  $view.attr("data-title", "設定")
 
   #汎用設定項目
   $view

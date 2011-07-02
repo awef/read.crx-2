@@ -236,7 +236,6 @@ app.view_history = {}
 
 app.view_history.open = ->
   $view = $("#template > .view_history").clone()
-  $view.attr("data-title", "閲覧履歴")
 
   app.view_module.reload_button($view)
 

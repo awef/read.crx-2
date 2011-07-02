@@ -2,9 +2,6 @@ app.view_bookmark = {}
 
 app.view_bookmark.open = ->
   $view = $("#template > .view_bookmark").clone()
-  $view
-    .attr("data-url", "bookmark")
-    .attr("data-title", "ブックマーク")
 
   $loading_overlay = $view.find(".loading_overlay").hide()
 

@@ -86,7 +86,7 @@
         %li.toggle_aa_mode AAモード切り替え
         %li.res_permalink このレスを直接開く
 
-      .view_bookmark
+      .view_bookmark(data-url="bookmark" data-title="ブックマーク")
         %nav.nav_bar
           %input.searchbox_thread_title
           .button.button_link(title="ブックマークマネージャを開く")
@@ -103,7 +103,7 @@
             %tbody.view_bookmark_tbody
         .loading_overlay
 
-      .view_history(data-url="history")
+      .view_history(data-url="history" data-title="閲覧履歴")
         %nav.nav_bar
           .button.button_reload
         .content(tabindex="0")
@@ -114,7 +114,7 @@
                 %th 閲覧日時
             %tbody
 
-      .view_config(data-url="config")
+      .view_config(data-url="config" data-title="設定")
         %h2 バージョン情報
         .version_info
 
