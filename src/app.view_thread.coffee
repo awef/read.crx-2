@@ -68,6 +68,18 @@ app.view_thread.open = (url) ->
     .bind "tab_removed", ->
       $view.find(".content").triggerHandler("lazy_img_destroy")
 
+    #名前欄が数字だった場合のポップアップ
+    .delegate ".name", "mouseenter", ->
+      if /^\d+$/.test(this.textContent)
+        if not this.classList.contains("name_num")
+          this.classList.add("name_num")
+
+    .delegate ".name_num", "click", (e) ->
+      res = $view.find(".content")[0].children[+this.textContent - 1]
+      if res
+        $popup = $("<div>").append(res.cloneNode(true))
+        $.popup($view, $popup, e.clientX, e.clientY, this)
+
     #コンテキストメニュー 表示
     .delegate ".num", "click contextmenu", (e) ->
       if e.type is "contextmenu"
