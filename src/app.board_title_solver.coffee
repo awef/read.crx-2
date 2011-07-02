@@ -17,6 +17,12 @@ app.board_title_solver = {}
   # 板のURLから板のタイトルを取得する  
   # callbackにはタイトル(string)かnullが渡される
   app.board_title_solver.ask = (url, callback) ->
+    #場合によって同期か非同期か変わっても困るので、非同期で統一
+    _callback = callback
+    callback = (res) ->
+      app.defer ->
+        _callback(res)
+
     if url of dic_bbsmenu
       callback(dic_bbsmenu[url])
     else if bookmark = app.bookmark.get(url)
