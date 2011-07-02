@@ -18,7 +18,7 @@ app.board._get_xhr_info = (board_url) ->
 app.board.get = (url, callback) ->
   tmp = app.board._get_xhr_info(url)
   if not tmp
-    callback(status: "error")
+    callback(status: "error", message: "未対応のURLです")
     return
   xhr_path = tmp.path
   xhr_charset = tmp.charset
