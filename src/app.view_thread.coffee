@@ -6,6 +6,7 @@ app.view_thread.open = (url) ->
   $view = $("#template > .view_thread").clone()
   $view.attr("data-url", url)
   $view.attr("data-title", url)
+  $view.addClass("loading")
 
   app.view_module.bookmark_button($view)
   app.view_module.link_button($view)
@@ -44,21 +45,21 @@ app.view_thread.open = (url) ->
   #リロード処理
   $view.bind "request_reload", (e, ex) ->
     $view
+      .addClass("loading")
       .find(".content")
         .empty()
         .triggerHandler("lazy_img_destroy")
-    $view.find(".loading_overlay").show()
     app.view_thread._draw($view, ex?.force_update)
       .done ->
         $view.find(".content").lazy_img()
         suspend_reload_button()
       .fail ->
-        $view.find(".loading_overlay")[0].style["display"] = "none"
+        $view.removeClass("loading")
 
   app.view_thread._read_state_manager($view)
   app.view_thread._draw($view)
     .fail ->
-      $view.find(".loading_overlay")[0].style["display"] = "none"
+      $view.removeClass("loading")
     .always ->
       app.history.add(url, $view.attr("data-title"), opened_at)
       $view.find(".content").lazy_img()
@@ -509,7 +510,7 @@ app.view_thread._read_state_manager = ($view) ->
       if read_state.last
         content.children[read_state.last - 1]?.classList.add("last")
         app.view_thread._jump_to_res($view, read_state.last, false)
-      $view[0].querySelector(".loading_overlay").style["display"] = "none"
+      $view.removeClass("loading")
 
       res_read = content.children[read_state.read - 1]
       if res_read

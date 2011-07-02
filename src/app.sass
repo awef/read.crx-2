@@ -102,6 +102,10 @@ $z-index_modal: 6
     :background-color rgba(#000, 0.75)
     :font-size 13px
     :color #eee
+  .loading_overlay
+    :display none
+  &.loading .loading_overlay
+    :display block
 
 @mixin content_table
   table

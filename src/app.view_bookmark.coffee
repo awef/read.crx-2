@@ -3,7 +3,7 @@ app.view_bookmark = {}
 app.view_bookmark.open = ->
   $view = $("#template > .view_bookmark").clone()
 
-  $loading_overlay = $view.find(".loading_overlay").hide()
+  $loading_overlay = $view.find(".loading_overlay")
 
   $view.find("table").table_sort()
 
@@ -17,7 +17,7 @@ app.view_bookmark.open = ->
   app.view_module.board_contextmenu($view)
 
   $view.bind "request_reload", ->
-    $loading_overlay.show()
+    $view.addClass("loading")
 
     board_list = []
     for bookmark in app.bookmark.get_all()
@@ -43,7 +43,8 @@ app.view_bookmark.open = ->
       else
         $view.find("tbody").empty()
         app.view_bookmark._draw($view)
-        $loading_overlay.fadeOut 100, -> $(this).empty()
+        $view.removeClass("loading")
+        $loading_overlay.empty()
     fn()
 
   #ブックマーク更新時処理

@@ -8,6 +8,7 @@ app.view_board.open = (url) ->
   $view
     .attr("data-url", url)
     .attr("data-title", url)
+    .addClass("loading")
 
   app.view_module.searchbox_thread_title($view, 1)
   app.view_module.bookmark_button($view)
@@ -30,7 +31,7 @@ app.view_board.open = (url) ->
     , 1000 * 5
 
   $view.bind "request_reload", ->
-    $loading_overlay = $view.find(".loading_overlay").show()
+    $view.addClass("loading")
     $view.find("tbody").empty()
     app.view_board._draw($view)
       .done ->
@@ -136,4 +137,4 @@ app.view_board._draw = ($view) ->
       $view.find("table").trigger("table_sort_update")
 
     .always ->
-      $view[0].querySelector(".loading_overlay").style["display"] = "none"
+      $view.removeClass("loading")
