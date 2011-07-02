@@ -36,23 +36,21 @@
 app.main = ->
   document.title = app.manifest.name
 
+  #サイドメニューのセットアップ
   $("#left_pane").append(app.view_sidemenu.open())
 
+  #タブの状態の保存/復元関連
   app.view_tab_state.restore()
   window.addEventListener "unload", ->
     app.view_tab_state.store()
 
-  chrome.extension.onRequest.addListener (request) ->
-    if request.type is "open"
-      app.message.send("open", url: request.query)
-
+  #タブ・ペインセットアップ
   $("#body").addClass("pane-3")
-
   $("#tab_a, #tab_b").tab()
   $(".tab .tab_tabbar").sortable()
-
   app.view_setup_resizer()
 
+  #openメッセージ受信部
   app.message.add_listener "open", (message) ->
     $view = $(".tab_container")
       .find("> [data-url=\"#{app.url.fix(message.url)}\"]")
@@ -85,12 +83,19 @@ app.main = ->
       $(if $view.hasClass("view_thread") then "#tab_b" else "#tab_a")
         .tab("add", element: $view[0], title: $view.attr("data-title"))
 
+  #openリクエストの監視
+  chrome.extension.onRequest.addListener (request) ->
+    if request.type is "open"
+      app.message.send("open", url: request.query)
+
+  #a.open_in_rcrxがクリックされた場合にopenメッセージを送出する
   $(document.documentElement)
     .delegate ".open_in_rcrx", "click", (e) ->
       e.preventDefault()
       app.message.send "open",
         url: this.href or this.getAttribute("data-href")
 
+  #更新系のキーが押された時の処理
   $(window).bind "keydown", (e) ->
     if e.which is 116 or (e.ctrlKey and e.which is 82) #F5 or Ctrl+R
       e.preventDefault()
