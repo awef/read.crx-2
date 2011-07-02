@@ -27,8 +27,16 @@
           %li
             %a(class="open_in_rcrx" data-href="history") 閲覧履歴
           %li
+            %a(class="open_in_rcrx" data-href="inputurl") URL指定で開く
+          %li
             %a(class="open_in_rcrx" data-href="config") 設定
           .view_sidemenu_bookmark
+
+      .view_inputurl(data-url="inputurl" data-title="URLを指定して開く")
+        %form(action="javascript:undefined;")
+          %input(name="url" size="50" placeholder="ここにURLを入力して下さい")
+          %input(type="submit" value="開く")
+          .notice
 
       .view_board
         .message_bar

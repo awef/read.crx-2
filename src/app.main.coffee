@@ -64,6 +64,8 @@ app.main = ->
         $view = app.view_history.open()
       else if url is "bookmark"
         $view = app.view_bookmark.open()
+      else if url is "inputurl"
+        $view = app.view_inputurl.open()
       else if guess_result.type is "board"
         $view = app.view_board.open(message.url)
       else if guess_result.type is "thread"

@@ -148,6 +148,18 @@ $z-index_modal: 6
   &:nth-child(3), &:nth-child(4), &:nth-child(5)
     :text-align right
 
+.view_inputurl
+  @include tabbed_view
+  form
+    :display inline-block
+    :border 1px solid #999
+    :margin 5px
+    :padding 5px
+  .notice
+    :display none
+    :margin-top 5px
+    :font-size 14px
+
 .view_history
   @include tabbed_view
   @include content_table

@@ -212,6 +212,26 @@ app.view_setup_resizer = ->
           app.config.set("tab_a_height", parseInt(tab_a.style["height"], 10))
         .appendTo("body")
 
+app.view_inputurl = {}
+
+app.view_inputurl.open = ->
+  $view = $("#template > .view_inputurl").clone()
+
+  $view.find("form").bind "submit", ->
+    url = this.url.value
+    guess_res = app.url.guess_type(url)
+    if guess_res.type is "thread" or guess_res.type is "board"
+      $view.closest(".tab").tab("remove", tab_id: $view.attr("data-tab_id"))
+      app.message.send("open", url: this.url.value)
+    else
+      $view
+        .find(".notice")
+          .hide()
+          .text("未対応形式のURLです")
+          .fadeIn("fast")
+
+  $view
+
 app.view_history = {}
 
 app.view_history.open = ->
