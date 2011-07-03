@@ -1,6 +1,22 @@
 app.bbsmenu = {}
 
+app.bbsmenu._callback = []
+
+app.bbsmenu._respond = (arg) ->
+  for callback in app.bbsmenu._callback
+    #コールバック内でapp.bbsmenu.getされる場合に備えて処理を飛ばす
+    ((callback) ->
+      app.defer ->
+        callback(app.deep_copy(arg))
+    )(callback)
+  app.bbsmenu._callback = []
+
 app.bbsmenu.get = (callback, force_reload) ->
+  app.bbsmenu._callback.push(callback)
+
+  if app.bbsmenu._callback.length isnt 1
+    return
+
   url = "http://menu.2ch.net/bbsmenu.html"
 
   app.cache.get(url)
@@ -56,13 +72,13 @@ app.bbsmenu.get = (callback, force_reload) ->
 
     #コールバック
     .done (cache, xhr, menu) ->
-      callback(status: "success", data: menu)
+      app.bbsmenu._respond(status: "success", data: menu)
 
     .fail (cache, xhr, menu) ->
       if menu
-        callback(status: "error", data: menu)
+        app.bbsmenu._respond(status: "error", data: menu)
       else
-        callback(status: "error")
+        app.bbsmenu._respond(status: "error")
 
     #キャッシュ更新部
     .done (cache, xhr, menu) ->
