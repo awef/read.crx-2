@@ -39,16 +39,16 @@ app.main = ->
   #サイドメニューのセットアップ
   $("#left_pane").append(app.view_sidemenu.open())
 
-  #タブの状態の保存/復元関連
-  app.view_tab_state.restore()
-  window.addEventListener "unload", ->
-    app.view_tab_state.store()
-
   #タブ・ペインセットアップ
   $("#body").addClass("pane-3")
   $("#tab_a, #tab_b").tab()
   $(".tab .tab_tabbar").sortable()
   app.view_setup_resizer()
+
+  #タブの状態の保存/復元関連
+  app.view_tab_state.restore()
+  window.addEventListener "unload", ->
+    app.view_tab_state.store()
 
   #openメッセージ受信部
   app.message.add_listener "open", (message) ->
