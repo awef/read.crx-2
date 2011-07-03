@@ -75,10 +75,12 @@ app.bbsmenu.get = (callback, force_reload) ->
       app.bbsmenu._respond(status: "success", data: menu)
 
     .fail (cache, xhr, menu) ->
+      message = "板一覧の取得に失敗しました。"
       if menu
-        app.bbsmenu._respond(status: "error", data: menu)
+        message += "キャッシュに残っていたデータを表示します。"
+        app.bbsmenu._respond({status: "error", data: menu, message})
       else
-        app.bbsmenu._respond(status: "error")
+        app.bbsmenu._respond({status: "error", message})
 
     #キャッシュ更新部
     .done (cache, xhr, menu) ->

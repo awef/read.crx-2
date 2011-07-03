@@ -124,6 +124,9 @@ app.view_sidemenu.open = ->
 
   load = ->
     app.bbsmenu.get (res) ->
+      if "message" of res
+        app.notice.push(res.message)
+
       if "data" of res
         frag = document.createDocumentFragment()
         for category in res.data
