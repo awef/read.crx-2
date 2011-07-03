@@ -12,7 +12,7 @@
     location.reload(true)
 
   reg_res = /[\?&]q=([^&]+)/.exec(location.search)
-  query = decodeURIComponent(reg_res?[1] or "bookmark")
+  query = decodeURIComponent(reg_res?[1] or "app")
 
   chrome.tabs.getCurrent (current_tab) ->
     chrome.windows.getAll {populate: true}, (windows) ->
@@ -46,9 +46,13 @@ app.main = ->
   app.view_setup_resizer()
 
   #タブの状態の保存/復元関連
-  app.view_tab_state.restore()
+  is_restored = app.view_tab_state.restore()
   window.addEventListener "unload", ->
     app.view_tab_state.store()
+
+  #もし、タブが一つも復元されなかったらブックマークタブを開く
+  unless is_restored
+    app.message.send("open", url: "bookmark")
 
   #openメッセージ受信部
   app.message.add_listener "open", (message) ->

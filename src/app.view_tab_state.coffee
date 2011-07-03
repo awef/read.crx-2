@@ -28,7 +28,11 @@ app.view_tab_state.store = ->
 # ##app.view_tab_state.restore
 # 保存されていたタブを復元
 app.view_tab_state.restore = ->
+  is_restored = false
+
   if localStorage["tab_state"]
     for tab in JSON.parse(localStorage["tab_state"])
+      is_restored = true
       app.message.send("open", url: tab.url)
-    null
+
+  is_restored
