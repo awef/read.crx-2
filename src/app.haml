@@ -33,9 +33,10 @@
           .view_sidemenu_bookmark
 
       .view_inputurl(data-url="inputurl" data-title="URLを指定して開く")
-        %form(action="javascript:undefined;")
-          %input(name="url" size="50" placeholder="ここにURLを入力して下さい" autofocus)
-          %input(type="submit" value="開く")
+        .container
+          %form(action="javascript:undefined;")
+            %input(name="url" placeholder="ここにURLを入力して下さい" autofocus)
+            %input(type="submit" value="開く")
           .notice
 
       .view_board
