@@ -454,23 +454,25 @@ a
 
 #app_notice_container
   :position fixed
-  :left 5%
-  :top 5px
-  :width 80%
+  :left 50px
+  :top 10px
+  :right 50px
   :z-index $z-index_notification
 
   > div
+    @include drop_shadow
     :background-color #222
     :color #eee
+    :border 1px solid #fff
+    :font-size 14px
     :margin-bottom 5px
-    :padding 5px 10px
-    :border-radius 5px
-    @include drop_shadow
+    :padding 10px
 
     :display -webkit-box
 
     div
       :-webkit-box-flex 1
+      :margin-right 5px
 
     button
       :cursor pointer
