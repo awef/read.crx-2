@@ -323,3 +323,21 @@ app.view_bookmark_source_selector.open = ->
   chrome.bookmarks.getTree (array_of_tree) ->
     fn(array_of_tree[0].children, $view.find(".node_list > ul")[0])
 
+app.notice = {}
+app.notice.push = (text) ->
+  $("<div>")
+    .append(
+      $("<div>", {text}),
+      $("<button>")
+        .bind("click", ->
+          $(this)
+            .parent()
+            .animate({opacity: 0}, "fast")
+            .delay("fast")
+            .slideUp("fast", -> $(this).remove())
+          )
+      )
+    .hide()
+    .appendTo("#app_notice_container")
+    .fadeIn()
+
