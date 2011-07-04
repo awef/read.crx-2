@@ -121,7 +121,7 @@ ${DBG_DIR}/write/write.html: ${SRC_DIR}/write/write.haml
 ${DBG_DIR}/write/write.css: ${SRC_DIR}/write/write.sass
 	$(call sass, ${SRC_DIR}/write/write.sass, ${DBG_DIR}/write/write.css)
 
-${DBG_DIR}/write/write.js: ${SRC_DIR}/write/write.coffee ${SRC_DIR}/app.url.coffee
+${DBG_DIR}/write/write.js: ${SRC_DIR}/write/write.coffee ${SRC_DIR}/app.coffee ${SRC_DIR}/app.url.coffee
 	$(call coffee, ${SRC_DIR}/app.coffee ${SRC_DIR}/app.url.coffee ${SRC_DIR}/write/write.coffee, ${DBG_DIR}/write/write.js)
 
 ${DBG_DIR}/write/cs_write.js: ${SRC_DIR}/write/cs_write.coffee ${SRC_DIR}/app.url.coffee
