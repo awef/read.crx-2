@@ -90,10 +90,14 @@ app.view_thread.open = (url) ->
         e.preventDefault()
 
       app.defer =>
-        $menu = $("#template > .view_thread_resmenu")
-          .clone()
-            .data("contextmenu_source", this)
-            .appendTo($view)
+        $menu = $("#template > .view_thread_resmenu").clone()
+        $menu.data("contextmenu_source", this)
+
+        tsld = app.url.tsld(url)
+        unless tsld is "2ch.net" or tsld is "livedoor.jp"
+          $menu.find(".res_to_this, .res_to_this2").remove()
+
+        $menu.appendTo($view)
         $.contextmenu($menu, e.clientX, e.clientY)
 
     #コンテキストメニュー 項目クリック
