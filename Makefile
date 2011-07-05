@@ -1,15 +1,13 @@
 SRC_DIR = src
 DBG_DIR = debug
 
-APP_COFFEE = ${SRC_DIR}/app.coffee ${SRC_DIR}/app.*.coffee
-
 LIB_FILES = ${shell find ${SRC_DIR}/lib/ -type f}
 IMG_FILES = ${shell find ${SRC_DIR}/img/ -type f}
 
 QUNIT_FILES =\
-	${SRC_DIR}/test/test.html\
-	${SRC_DIR}/test/qunit/qunit.js\
-	${SRC_DIR}/test/qunit/qunit.css
+  ${SRC_DIR}/test/test.html\
+  ${SRC_DIR}/test/qunit/qunit.js\
+  ${SRC_DIR}/test/qunit/qunit.css
 
 haml = haml -q $(1) $(2)
 sass = sass --style compressed --no-cache $(1) $(2)
@@ -21,24 +19,24 @@ svg = convert\
 
 .PHONY: all
 all:\
-	${DBG_DIR}\
-	${DBG_DIR}/manifest.json\
-	${DBG_DIR}/app.html\
-	${DBG_DIR}/app.js\
-	${DBG_DIR}/ui.js\
-	${DBG_DIR}/app.css\
-	${DBG_DIR}/cs_addlink.js\
-	${DBG_DIR}/lib/\
-	${DBG_DIR}/img/\
-	${DBG_DIR}/test/\
-	${DBG_DIR}/test/test.js\
-	${DBG_DIR}/write/\
-	${DBG_DIR}/write/write.html\
-	${DBG_DIR}/write/write.css\
-	${DBG_DIR}/write/write.js\
-	${DBG_DIR}/write/cs_write.js\
-	${DBG_DIR}/zombie.html\
-	${DBG_DIR}/zombie.js
+  ${DBG_DIR}\
+  ${DBG_DIR}/manifest.json\
+  ${DBG_DIR}/app.html\
+  ${DBG_DIR}/app.js\
+  ${DBG_DIR}/ui.js\
+  ${DBG_DIR}/app.css\
+  ${DBG_DIR}/cs_addlink.js\
+  ${DBG_DIR}/lib/\
+  ${DBG_DIR}/img/\
+  ${DBG_DIR}/test/\
+  ${DBG_DIR}/test/test.js\
+  ${DBG_DIR}/write/\
+  ${DBG_DIR}/write/write.html\
+  ${DBG_DIR}/write/write.css\
+  ${DBG_DIR}/write/write.js\
+  ${DBG_DIR}/write/cs_write.js\
+  ${DBG_DIR}/zombie.html\
+  ${DBG_DIR}/zombie.js
 
 .PHONY: clean
 clean:
@@ -53,8 +51,13 @@ ${DBG_DIR}/manifest.json: ${SRC_DIR}/manifest.json
 ${DBG_DIR}/app.html: ${SRC_DIR}/app.haml
 	$(call haml, ${SRC_DIR}/app.haml, ${DBG_DIR}/app.html)
 
-${DBG_DIR}/app.js: ${APP_COFFEE}
-	$(call coffee, ${APP_COFFEE}, ${DBG_DIR}/app.js)
+${DBG_DIR}/app.js:\
+  ${SRC_DIR}/app.coffee\
+  ${SRC_DIR}/app.*.coffee
+	$(call coffee,\
+    ${SRC_DIR}/app.coffee\
+    ${SRC_DIR}/app.*.coffee\
+    , ${DBG_DIR}/app.js)
 
 ${DBG_DIR}/ui.js: ${SRC_DIR}/ui/*.coffee
 	$(call coffee, ${SRC_DIR}/ui/*.coffee, ${DBG_DIR}/ui.js)
@@ -74,22 +77,22 @@ ${DBG_DIR}/img/: ${SRC_DIR}/image/svg/*.svg
 	mkdir ${DBG_DIR}/img/
 
 	convert\
-		-background transparent\
-		-resize 96x96\
-		-extent 128x128-16-16\
-		${SRC_DIR}/image/svg/read.crx.svg ${DBG_DIR}/img/read.crx_128x128.png
+    -background transparent\
+    -resize 96x96\
+    -extent 128x128-16-16\
+    ${SRC_DIR}/image/svg/read.crx.svg ${DBG_DIR}/img/read.crx_128x128.png
 
 	convert\
-		-background transparent\
-		-resize 90x90\
-		-extent 128x128-50-92.5\
-		${SRC_DIR}/image/svg/alpha_badge.svg ${DBG_DIR}/img/tmp_alpha_badge.png
+    -background transparent\
+    -resize 90x90\
+    -extent 128x128-50-92.5\
+    ${SRC_DIR}/image/svg/alpha_badge.svg ${DBG_DIR}/img/tmp_alpha_badge.png
 
 	convert\
-		-background transparent\
-		-composite ${DBG_DIR}/img/read.crx_128x128.png\
-		${DBG_DIR}/img/tmp_alpha_badge.png\
-		${DBG_DIR}/img/read.crx_128x128.png
+    -background transparent\
+    -composite ${DBG_DIR}/img/read.crx_128x128.png\
+    ${DBG_DIR}/img/tmp_alpha_badge.png\
+    ${DBG_DIR}/img/read.crx_128x128.png
 
 	rm ${DBG_DIR}/img/tmp_alpha_badge.png
 
@@ -123,11 +126,25 @@ ${DBG_DIR}/write/write.html: ${SRC_DIR}/write/write.haml
 ${DBG_DIR}/write/write.css: ${SRC_DIR}/write/write.sass
 	$(call sass, ${SRC_DIR}/write/write.sass, ${DBG_DIR}/write/write.css)
 
-${DBG_DIR}/write/write.js: ${SRC_DIR}/write/write.coffee ${SRC_DIR}/app.coffee ${SRC_DIR}/app.url.coffee
-	$(call coffee, ${SRC_DIR}/app.coffee ${SRC_DIR}/app.url.coffee ${SRC_DIR}/write/write.coffee, ${DBG_DIR}/write/write.js)
+${DBG_DIR}/write/write.js:\
+  ${SRC_DIR}/app.coffee\
+  ${SRC_DIR}/app.url.coffee\
+  ${SRC_DIR}/write/write.coffee
+	$(call coffee,\
+    ${SRC_DIR}/app.coffee\
+    ${SRC_DIR}/app.url.coffee\
+    ${SRC_DIR}/write/write.coffee\
+    , ${DBG_DIR}/write/write.js)
 
-${DBG_DIR}/write/cs_write.js: ${SRC_DIR}/write/cs_write.coffee ${SRC_DIR}/app.url.coffee
-	$(call coffee, ${SRC_DIR}/app.coffee ${SRC_DIR}/app.url.coffee ${SRC_DIR}/write/cs_write.coffee, ${DBG_DIR}/write/cs_write.js)
+${DBG_DIR}/write/cs_write.js:\
+  ${SRC_DIR}/app.coffee\
+  ${SRC_DIR}/app.url.coffee\
+  ${SRC_DIR}/write/cs_write.coffee
+	$(call coffee,\
+    ${SRC_DIR}/app.coffee\
+    ${SRC_DIR}/app.url.coffee\
+    ${SRC_DIR}/write/cs_write.coffee\
+    , ${DBG_DIR}/write/cs_write.js)
 
 ${DBG_DIR}/zombie.html: ${SRC_DIR}/zombie.haml
 	$(call haml, ${SRC_DIR}/zombie.haml, ${DBG_DIR}/zombie.html)
@@ -143,5 +160,5 @@ ${DBG_DIR}/zombie.js:\
     ${SRC_DIR}/app.url.coffee\
     ${SRC_DIR}/app.read_state.coffee\
     ${SRC_DIR}/app.bookmark.coffee\
-    ${SRC_DIR}/zombie.coffee,\
-    ${DBG_DIR}/zombie.js)
+    ${SRC_DIR}/zombie.coffee\
+    , ${DBG_DIR}/zombie.js)
