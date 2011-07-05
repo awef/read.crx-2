@@ -128,8 +128,12 @@ app.main = ->
     if "zombie_read_state" of localStorage
       open("/zombie.html", undefined, "left=1,top=1,width=250,height=50")
 
-  #フォーカス管理
   $(document.documentElement)
+    #tab_removedイベントをview_unloadに翻訳
+    .delegate ".tab_content", "tab_removed", ->
+      $(this).trigger("view_unload")
+
+    #フォーカス管理
     #タブの内容がクリックされた時にフォーカスを移動
     .delegate ".tab_content", "mousedown", ->
       if not this.classList.contains("tab_focused")

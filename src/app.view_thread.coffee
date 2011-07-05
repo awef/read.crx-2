@@ -71,7 +71,7 @@ app.view_thread.open = (url) ->
       suspend_reload_button()
 
   $view
-    .bind "tab_removed", ->
+    .bind "view_unload", ->
       $view.find(".content").triggerHandler("lazy_img_destroy")
 
     #名前欄が数字だった場合のポップアップ

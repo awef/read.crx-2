@@ -27,7 +27,7 @@ app.view_module.bookmark_button = ($view) ->
 
     app.message.add_listener("bookmark_updated", on_update)
 
-    $view.bind "tab_removed", ->
+    $view.bind "view_unload", ->
       app.message.remove_listener("bookmark_updated", on_update)
 
     $button.bind "click", ->

@@ -70,7 +70,7 @@ app.view_bookmark.open = ->
 
   app.message.add_listener("bookmark_updated", on_updated)
 
-  $view.bind "tab_removed", ->
+  $view.bind "view_unload", ->
     app.message.remove_listener("bookmark_updated", on_updated)
 
   #read_state更新時処理
@@ -83,7 +83,7 @@ app.view_bookmark.open = ->
 
   app.message.add_listener("read_state_updated", on_read_state_updated)
 
-  $view.bind "tab_removed", ->
+  $view.bind "view_unload", ->
     app.message.remove_listener("read_state_updated", on_read_state_updated)
 
   app.view_bookmark._draw($view)
