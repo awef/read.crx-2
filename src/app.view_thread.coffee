@@ -44,20 +44,22 @@ app.view_thread.open = (url) ->
 
   #リロード処理
   $view.bind "request_reload", (e, ex) ->
-    if $view.hasClass("loading")
-      return
+    #read_state保存処理を先に行わせるため、処理を飛ばす
+    app.defer ->
+      if $view.hasClass("loading")
+        return
 
-    $view
-      .addClass("loading")
-      .find(".content")
-        .empty()
-        .triggerHandler("lazy_img_destroy")
-    app.view_thread._draw($view, ex?.force_update)
-      .done ->
-        $view.find(".content").lazy_img()
-        suspend_reload_button()
-      .fail ->
-        $view.removeClass("loading")
+      $view
+        .addClass("loading")
+        .find(".content")
+          .empty()
+          .triggerHandler("lazy_img_destroy")
+      app.view_thread._draw($view, ex?.force_update)
+        .done ->
+          $view.find(".content").lazy_img()
+          suspend_reload_button()
+        .fail ->
+          $view.removeClass("loading")
 
   app.view_thread._read_state_manager($view)
   app.view_thread._draw($view)
@@ -553,29 +555,28 @@ app.view_thread._read_state_manager = ($view) ->
         read_state.read = read_state.last
         is_updated = true
 
-      if is_updated
-        app.read_state.set(read_state)
+      is_updated
 
-    scan_suspend = false
-    scroll_flag = false
-    scanner = setInterval((->
-      if scroll_flag and not scan_suspend
-        scan()
-        scroll_flag = false
-    ), 250)
+    #アンロード時は非同期系の処理をzombie.htmlに渡す
+    #そのためにlocalStorageに更新するread_stateの情報を渡す
+    on_beforeunload = ->
+      if scan()
+        if "zombie_read_state" of localStorage
+          data = JSON.parse(localStorege["zombie_read_state"])
+        else
+          data = []
+        data.push(read_state)
+        localStorage["zombie_read_state"] = JSON.stringify(data)
+      return
+
+    window.addEventListener("beforeunload", on_beforeunload)
 
     $view
-      .find(".content")
-        .bind "scroll", ->
-          scroll_flag = true
-      .end()
-
       .bind "request_reload", ->
-        scan_suspend = true
-
-      .bind "draw_content", ->
-        scan_suspend = false
+        if scan()
+          app.read_state.set(read_state)
 
       .bind "tab_removed", ->
-        clearInterval(scanner)
-        scan()
+        window.removeEventListener("beforeunload", on_beforeunload)
+        if scan()
+          app.read_state.set(read_state)

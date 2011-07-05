@@ -36,7 +36,9 @@ all:\
 	${DBG_DIR}/write/write.html\
 	${DBG_DIR}/write/write.css\
 	${DBG_DIR}/write/write.js\
-	${DBG_DIR}/write/cs_write.js
+	${DBG_DIR}/write/cs_write.js\
+	${DBG_DIR}/zombie.html\
+	${DBG_DIR}/zombie.js
 
 .PHONY: clean
 clean:
@@ -126,3 +128,20 @@ ${DBG_DIR}/write/write.js: ${SRC_DIR}/write/write.coffee ${SRC_DIR}/app.coffee $
 
 ${DBG_DIR}/write/cs_write.js: ${SRC_DIR}/write/cs_write.coffee ${SRC_DIR}/app.url.coffee
 	$(call coffee, ${SRC_DIR}/app.coffee ${SRC_DIR}/app.url.coffee ${SRC_DIR}/write/cs_write.coffee, ${DBG_DIR}/write/cs_write.js)
+
+${DBG_DIR}/zombie.html: ${SRC_DIR}/zombie.haml
+	$(call haml, ${SRC_DIR}/zombie.haml, ${DBG_DIR}/zombie.html)
+
+${DBG_DIR}/zombie.js:\
+  ${SRC_DIR}/app.coffee\
+  ${SRC_DIR}/app.url.coffee\
+  ${SRC_DIR}/app.read_state.coffee\
+  ${SRC_DIR}/app.bookmark.coffee\
+  ${SRC_DIR}/zombie.coffee
+	$(call coffee,\
+    ${SRC_DIR}/app.coffee\
+    ${SRC_DIR}/app.url.coffee\
+    ${SRC_DIR}/app.read_state.coffee\
+    ${SRC_DIR}/app.bookmark.coffee\
+    ${SRC_DIR}/zombie.coffee,\
+    ${DBG_DIR}/zombie.js)

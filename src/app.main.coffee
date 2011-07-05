@@ -123,6 +123,11 @@ app.main = ->
           title: $this.attr("data-title")
         })
 
+  #データ保存等の後片付けを行なってくれるzombie.html起動
+  window.addEventListener "unload", ->
+    if "zombie_read_state" of localStorage
+      open("/zombie.html", undefined, "left=1,top=1,width=250,height=50")
+
   #フォーカス管理
   $(document.documentElement)
     #タブの内容がクリックされた時にフォーカスを移動
