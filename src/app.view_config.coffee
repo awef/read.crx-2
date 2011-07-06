@@ -20,6 +20,16 @@ app.view_config.open = ->
       .bind "change", ->
         app.config.set(this.name, if this.checked then "on" else "off")
 
+  $view
+    .find("input.direct[type=\"radio\"]")
+      .each ->
+        if this.value is app.config.get(this.name)
+          this.checked = true
+        return
+      .bind "change", ->
+        val = $view.find("""input[name="#{this.name}"]:checked""").val()
+        app.config.set(this.name, val)
+
   #バージョン情報表示
   $view.find(".version_info")
     .text("#{app.manifest.name} v#{app.manifest.version} + #{navigator.userAgent}")

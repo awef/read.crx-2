@@ -120,6 +120,16 @@
         %h2 バージョン情報
         .version_info
 
+        %h2 レイアウト設定
+        %label
+          %input.direct(name="layout" type="radio" value="pane-3" checked)
+          3ペイン
+        %label
+          %input.direct(name="layout" type="radio" value="pane-2")
+          2ペイン
+
+        ※変更を反映するにはリロードして下さい
+
         %h2 スレッド表示設定
         %label
           %input.direct(type="checkbox" name="thumbnail_supported")

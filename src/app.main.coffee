@@ -40,10 +40,19 @@ app.main = ->
   $("#left_pane").append(app.view_sidemenu.open())
 
   #タブ・ペインセットアップ
-  $("#body").addClass("pane-3")
-  $("#tab_a, #tab_b").tab()
-  $(".tab .tab_tabbar").sortable()
-  app.view_setup_resizer()
+  layout = app.config.get("layout") or "pane-3"
+
+  if layout is "pane-3"
+    $("#body").addClass("pane-3")
+    $("#tab_a, #tab_b").tab()
+    $(".tab .tab_tabbar").sortable()
+    app.view_setup_resizer()
+
+  else if layout is "pane-2"
+    $("#body").addClass("pane-2")
+    $("#tab_a").tab()
+    $("#tab_b, #tab_resizer").remove()
+    $(".tab .tab_tabbar").sortable()
 
   #タブの状態の保存/復元関連
   is_restored = app.view_tab_state.restore()
@@ -86,7 +95,11 @@ app.main = ->
       $view = get_view(message.url)
 
     if $view
-      $(if $view.hasClass("view_thread") then "#tab_b" else "#tab_a")
+      target = "#tab_a"
+      if $view.hasClass("view_thread")
+        target = document.getElementById("tab_b") or target
+
+      $(target)
         .tab("add", element: $view[0], title: $view.attr("data-title"))
 
   #openリクエストの監視
