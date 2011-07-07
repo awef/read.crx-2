@@ -276,6 +276,53 @@ app.view_thread.open = (url) ->
             this.value = ""
             $(this).triggerHandler("input")
 
+  #フッター表示処理
+  (->
+    is_visible = false
+    $view.find(".content")
+      .bind "scroll", ->
+        scroll_left = this.scrollHeight -
+            (this.offsetHeight + this.scrollTop)
+
+        if not is_visible and scroll_left is 0
+          #表示するべき未読ブックマークが有るかをスキャン
+          next = null
+          for bookmark in app.bookmark.get_all()
+            if bookmark.url is url
+              continue
+            else if bookmark.read_state? and bookmark.res_count?
+              if bookmark.res_count - bookmark.read_state.read > 0
+                #TODO もっと綺麗に
+                if document.querySelector("[data-url=\"#{bookmark.url}\"]")
+                  continue
+                else
+                  next = bookmark
+                  break
+
+          if next
+            $view
+              .find(".next_unread")
+                .show()
+                .find("a")
+                  .attr("href", app.safe_href(next.url))
+                  .text(next.title + " (未読#{next.res_count - next.read_state.read}件)")
+          else
+            $view.find(".next_unread").hide()
+
+          is_visible = true
+          $view.find("footer").show()
+
+        else if is_visible and scroll_left isnt 0
+          is_visible = false
+          $view.find("footer").hide()
+  )()
+
+  $view.find(".next_unread").bind "click", ->
+    #TODO view_request_killmeに変更
+    $view
+      .closest(".tab")
+        .tab("remove", tab_id: $view.attr("data-tab_id"))
+
   $view
 
 app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
