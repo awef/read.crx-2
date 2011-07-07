@@ -1,7 +1,7 @@
 (($)->
   $.fn.lazy_img = ->
     $(this).each ->
-      img_list = Array.prototype.slice.apply(
+      img_list = Array::slice.apply(
         this.querySelectorAll("[data-lazy_img_original_path]")
       )
 

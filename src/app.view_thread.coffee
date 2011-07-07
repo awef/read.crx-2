@@ -511,7 +511,7 @@ app.view_thread._draw_messages = (thread) ->
 
     #サムネイル表示(対応サイト)
     if config_thumbnail_supported
-      for a in Array.prototype.slice.apply(message.getElementsByTagName("a"))
+      for a in Array::slice.apply(message.getElementsByTagName("a"))
         #YouTube
         if res = /// ^http://
             (?:www\.youtube\.com/watch\?v=|youtu\.be/)
@@ -527,7 +527,7 @@ app.view_thread._draw_messages = (thread) ->
 
     #サムネイル表示(画像っぽいURL)
     if config_thumbnail_ext
-      for a in Array.prototype.slice.apply(message.getElementsByTagName("a"))
+      for a in Array::slice.apply(message.getElementsByTagName("a"))
         if /\.(?:png|jpg|jpeg|gif|bmp)$/i.test(a.href)
           fn_add_thumbnail(a, a.href)
 
