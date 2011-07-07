@@ -20,7 +20,7 @@
         #tab_b
 
     #template(hidden)
-      .view_sidemenu
+      .view.view_sidemenu(data-url="sidemenu" data-title="サイドメニュー")
         %h3 read.crx
         %ul
           %li
@@ -33,14 +33,14 @@
             %a(class="open_in_rcrx" data-href="config") 設定
           .view_sidemenu_bookmark
 
-      .view_inputurl(data-url="inputurl" data-title="URLを指定して開く")
+      .view.view_inputurl(data-url="inputurl" data-title="URLを指定して開く")
         .container
           %form(action="javascript:undefined;")
             %input(name="url" placeholder="ここにURLを入力して下さい" autofocus)
             %input(type="submit" value="開く")
           .notice
 
-      .view_board
+      .view.view_board
         .message_bar
         %nav.nav_bar
           %input.searchbox_thread_title
@@ -64,7 +64,7 @@
         %li.add_bookmark ブックマークに追加
         %li.del_bookmark ブックマークを解除
 
-      .view_thread
+      .view.view_thread
         .message_bar
         %nav.nav_bar
           %input.searchbox
@@ -92,7 +92,7 @@
         %li.toggle_aa_mode AAモード切り替え
         %li.res_permalink このレスを直接開く
 
-      .view_bookmark(data-url="bookmark" data-title="ブックマーク")
+      .view.view_bookmark(data-url="bookmark" data-title="ブックマーク")
         %nav.nav_bar
           %input.searchbox_thread_title
           .button.button_link(title="ブックマークマネージャを開く")
@@ -109,7 +109,7 @@
             %tbody.view_bookmark_tbody
         .loading_overlay
 
-      .view_history(data-url="history" data-title="閲覧履歴")
+      .view.view_history(data-url="history" data-title="閲覧履歴")
         %nav.nav_bar
           .button.button_reload
         .content(tabindex="0")
@@ -120,7 +120,7 @@
                 %th 閲覧日時
             %tbody
 
-      .view_config(data-url="config" data-title="設定")
+      .view.view_config(data-url="config" data-title="設定")
         %h2 バージョン情報
         .version_info
 
@@ -201,7 +201,7 @@
         %button.cache_clear(type="button") キャッシュの削除
         %span.cache_clear_status
 
-      .view_bookmark_source_selector
+      .view.view_bookmark_source_selector
         %div
           %p read.crxのブックマークの保存先として使用するフォルダを指定して下さい
           .node_list
