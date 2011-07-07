@@ -318,10 +318,7 @@ app.view_thread.open = (url) ->
   )()
 
   $view.find(".next_unread").bind "click", ->
-    #TODO view_request_killmeに変更
-    $view
-      .closest(".tab")
-        .tab("remove", tab_id: $view.attr("data-tab_id"))
+    $view.trigger("view_request_killme")
 
   $view
 

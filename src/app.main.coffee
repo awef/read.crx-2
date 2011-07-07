@@ -142,6 +142,11 @@ app.main = ->
       open("/zombie.html", undefined, "left=1,top=1,width=250,height=50")
 
   $(document.documentElement)
+    #タブ内コンテンツがview_request_killmeを送って来た場合、タブを閉じる。
+    .delegate ".tab_content", "view_request_killme", ->
+      $this = $(this)
+      $this.closest(".tab").tab("remove", tab_id: $this.attr("data-tab_id"))
+
     #tab_removedイベントをview_unloadに翻訳
     .delegate ".tab_content", "tab_removed", ->
       $(this).trigger("view_unload")
