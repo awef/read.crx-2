@@ -17,7 +17,7 @@ app.bookmark = {}
       try
         chrome.bookmarks.getChildren source_id, (array_of_tree) ->
           for tree in array_of_tree
-            if "url" of tree
+            if tree.url?
               guess_res = app.url.guess_type(tree.url)
               if guess_res.type is "board" or guess_res.type is "thread"
                 url = app.url.fix(tree.url)
@@ -69,7 +69,7 @@ app.bookmark = {}
 
     #追加されたブックマークの検出
     for new_bookmark in new_awef.data
-      if not (new_bookmark.url of old_awef.index_url)
+      if not old_awef.index_url[new_bookmark.url]?
         app.message.send("bookmark_updated",
           {type: "added", bookmark: new_bookmark})
 
@@ -79,7 +79,7 @@ app.bookmark = {}
 
     #削除されたブックマークの抽出
     for old_bookmark in old_awef.data
-      if not (old_bookmark.url of new_awef.index_url)
+      if not new_awef.index_url[old_bookmark.url]?
         app.message.send("bookmark_updated",
           {type: "removed", bookmark: old_bookmark})
 
@@ -102,15 +102,15 @@ app.bookmark = {}
     update_all()
 
   chrome.bookmarks.onCreated.addListener (id, node) ->
-    if watcher_wakeflg and node.parentId is source_id and "url" of node
+    if watcher_wakeflg and node.parentId is source_id and node.url?
       update_all()
 
   chrome.bookmarks.onRemoved.addListener (id, e) ->
-    if watcher_wakeflg and id of now_awef.index_id
+    if watcher_wakeflg and now_awef.index_id[id]?
       update_all()
 
   chrome.bookmarks.onChanged.addListener (id, e) ->
-    if watcher_wakeflg and id of now_awef.index_id
+    if watcher_wakeflg and now_awef.index_id[id]?
       update_all()
 
   chrome.bookmarks.onMoved.addListener (id, e) ->
@@ -124,7 +124,7 @@ app.bookmark = {}
   # 与えられたURLがブックマークされていた場合はbookmarkオブジェクトを  
   # そうでなかった場合はnullを返す
   app.bookmark.get = (url) ->
-    if url of now_awef.index_url
+    if now_awef.index_url[url]?
       app.deep_copy(now_awef.data[now_awef.index_url[url]])
     else
       null
@@ -152,7 +152,7 @@ app.bookmark = {}
     if app.assert_arg("app.bookmark.add", ["string", "string"], arguments)
       return
 
-    unless url of now_awef.index_url
+    unless now_awef.index_url[url]?
       url = app.url.fix(url)
       app.read_state.get(url).done (read_state) ->
         if read_state
@@ -257,14 +257,14 @@ app.bookmark = {}
 
       app.bookmark.add(bookmark.url, bookmark.title)
 
-      if "read_state" of bookmark
+      if bookmark.read_state?
         bookmark.read_state.url = bookmark.url
         app.bookmark.update_read_state(bookmark.read_state)
 
-      if "res_count" of bookmark
+      if bookmark.res_count?
         app.bookmark.update_res_count(bookmark.url)
 
-      if "expired" of bookmark
+      if bookmark.expired?
         app.bookmark.update_expired(bookmark.url, bookmark.expired)
     return
 )()

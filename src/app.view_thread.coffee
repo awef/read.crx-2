@@ -215,7 +215,7 @@ app.view_thread.open = (url) ->
     already = {}
     for key, val of _jump_hoge
       $tmp = $view.find(val)
-      if $tmp.length is 1 and not ($tmp.index() of already)
+      if $tmp.length is 1 and not already[$tmp.index()]?
         $view.find(".#{key}").show()
         already[$tmp.index()] = true
       else
@@ -340,7 +340,7 @@ app.view_thread._draw = ($view, force_update) ->
     if result.status is "error"
       $message_bar.addClass("error").html(result.message)
 
-    if "data" of result
+    if result.data?
       thread = result.data
       $view.attr("data-title", thread.title)
       $view.trigger("title_updated")
@@ -542,7 +542,7 @@ app.view_thread._read_state_manager = ($view) ->
   read_state = null
 
   promise_get_read_state = $.Deferred (deferred) ->
-    if (bookmark = app.bookmark.get(url)) and "read_state" of bookmark
+    if (bookmark = app.bookmark.get(url)) and bookmark.read_state?
       read_state = bookmark.read_state
       deferred.resolve()
     else
@@ -605,7 +605,7 @@ app.view_thread._read_state_manager = ($view) ->
     #そのためにlocalStorageに更新するread_stateの情報を渡す
     on_beforeunload = ->
       if scan()
-        if "zombie_read_state" of localStorage
+        if localStorage.zombie_read_state?
           data = JSON.parse(localStorege["zombie_read_state"])
         else
           data = []

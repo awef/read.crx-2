@@ -5,7 +5,7 @@ app.board_title_solver = {}
 
   update_dic_bbsmenu = ->
     app.bbsmenu.get (result) ->
-      if "data" of result
+      if result.data?
         for category in result.data
           for board in category.board
             dic_bbsmenu[board.url] = board.title
@@ -23,7 +23,7 @@ app.board_title_solver = {}
       app.defer ->
         _callback(res)
 
-    if url of dic_bbsmenu
+    if dic_bbsmenu[url]?
       callback(dic_bbsmenu[url])
     else if bookmark = app.bookmark.get(url)
       if /// ^http://\w+\.2ch\.net/ ///.test(bookmark.url)

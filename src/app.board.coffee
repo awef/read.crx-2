@@ -48,13 +48,13 @@ app.board.get = (url, callback) ->
         xhr.overrideMimeType("text/plain; charset=" + xhr_charset)
         xhr.open("GET", xhr_path + "?_=" + Date.now().toString(10))
         if cache.status is "success"
-          if "last_modified" of cache.data
+          if cache.data.last_modified?
             xhr.setRequestHeader(
               "If-Modified-Since"
               new Date(cache.data.last_modified).toUTCString()
             )
 
-          if "etag" of cache.data
+          if cache.data.etag?
             xhr.setRequestHeader("If-None-Match", cache.data.etag)
         xhr.send(null)
 
@@ -147,7 +147,7 @@ app.board.get = (url, callback) ->
             dict[bookmark.url] = true
 
         for thread in board
-          if thread.url of dict
+          if dict[thread.url]?
             delete dict[thread.url]
 
         for thread_url of dict

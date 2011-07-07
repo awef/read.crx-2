@@ -57,9 +57,9 @@ app.cache.set = (data) ->
     typeof data.url is "string" and
     typeof data.data is "string" and
     typeof data.last_updated is "number" and
-    (not ("last_modified" of data) or
+    (not data.last_modified? or
       typeof data.last_modified is "number") and
-    (not ("etag" of data) or
+    (not data.etag? or
       typeof data.etag is "string")
   )
     app.log("error", "app.cache.set: 引数が不正です", arguments)

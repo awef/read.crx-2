@@ -124,10 +124,10 @@ app.view_sidemenu.open = ->
 
   load = ->
     app.bbsmenu.get (res) ->
-      if "message" of res
+      if res.message?
         app.notice.push(res.message)
 
-      if "data" of res
+      if res.data?
         frag = document.createDocumentFragment()
         for category in res.data
           h3 = document.createElement("h3")
@@ -308,7 +308,7 @@ app.view_bookmark_source_selector.open = ->
 
   fn = (array_of_tree, ul) ->
     for tree in array_of_tree
-      if "children" of tree
+      if tree.children?
         li = document.createElement("li")
         span = document.createElement("span")
         span.className = "node"

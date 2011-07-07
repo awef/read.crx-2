@@ -59,13 +59,13 @@ app.thread.get = (url, callback, force_update) ->
         xhr.overrideMimeType("text/plain; charset=" + xhr_charset)
         xhr.open("GET", tmp_xhr_path + "?_=" + Date.now().toString(10))
         if cache.status is "success"
-          if "last_modified" of cache.data
+          if cache.data.last_modified?
             xhr.setRequestHeader(
               "If-Modified-Since",
               new Date(cache.data.last_modified).toUTCString()
             )
 
-          if "etag" of cache.data
+          if cache.data.etag?
             xhr.setRequestHeader("If-None-Match", cache.data.etag)
         xhr.send(null)
 

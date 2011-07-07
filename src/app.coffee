@@ -37,7 +37,7 @@ app.message = {}
 
   app.message.send = (type, data) ->
     app.defer ->
-      if type of listener_store
+      if listener_store[type]?
         for listener in listener_store[type]
           listener(app.deep_copy(data))
         null

@@ -41,7 +41,7 @@ app.url._parse_query = (str) ->
   for segment in str.split("&")
     tmp = segment.split("=")
     data[decodeURIComponent(tmp[0])] = (
-      if 1 of tmp then decodeURIComponent(tmp[1]) else true
+      if tmp[1]? then decodeURIComponent(tmp[1]) else true
     )
   data
 

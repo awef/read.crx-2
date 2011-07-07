@@ -1,4 +1,4 @@
-if "zombie_read_state" of localStorage
+if localStorage.zombie_read_state?
   array_of_read_state = JSON.parse(localStorage["zombie_read_state"])
   for read_state in array_of_read_state
     url_list = []

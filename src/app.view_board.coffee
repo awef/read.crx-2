@@ -86,7 +86,7 @@ app.view_board._draw = ($view) ->
       if res.status is "error"
         $message_bar.addClass("error").html(res.message)
 
-      if "data" of res
+      if res.data?
         deferred.resolve(res.data)
       else
         deferred.reject()
@@ -104,7 +104,7 @@ app.view_board._draw = ($view) ->
         tr = document.createElement("tr")
         tr.className = "open_in_rcrx"
         tr.setAttribute("data-href", thread.url)
-        if thread.url of read_state_index
+        if read_state_index[thread.url]?
           read_state = array_of_read_state[read_state_index[thread.url]]
         else
           read_state = null

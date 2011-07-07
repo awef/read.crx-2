@@ -122,7 +122,7 @@ app.main = ->
 
     #データ保存等の後片付けを行なってくれるzombie.html起動
     .bind "unload", ->
-      if "zombie_read_state" of localStorage
+      if localStorage.zombie_read_state?
         open("/zombie.html", undefined, "left=1,top=1,width=250,height=50")
 
   $(document.documentElement)
