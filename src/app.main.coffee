@@ -107,41 +107,41 @@ app.main = ->
     if request.type is "open"
       app.message.send("open", url: request.query)
 
-  #a.open_in_rcrxがクリックされた場合にopenメッセージを送出する
-  $(document.documentElement)
-    .delegate ".open_in_rcrx", "click", (e) ->
-      e.preventDefault()
-      app.message.send "open",
-        url: this.href or this.getAttribute("data-href")
-
-  #更新系のキーが押された時の処理
-  $(window).bind "keydown", (e) ->
-    if e.which is 116 or (e.ctrlKey and e.which is 82) #F5 or Ctrl+R
-      e.preventDefault()
-      $(".tab .tab_container .tab_focused").trigger("request_reload")
-
   #書き込み完了メッセージの監視
   chrome.extension.onRequest.addListener (request) ->
     if request.type is "written"
       $(".view_thread[data-url=\"#{request.url}\"]")
         .trigger("request_reload", force_update: true)
 
-  #タブ内コンテンツのタイトルが更新された場合、タブのタイトルを更新する
-  $(document.documentElement).delegate ".tab_content", "title_updated", ->
-    $this = $(this)
-    $this
-      .closest(".tab")
-        .tab("update_title", {
-          tab_id: $this.attr("data-tab_id")
-          title: $this.attr("data-title")
-        })
+  $(window)
+    #更新系のキーが押された時の処理
+    .bind "keydown", (e) ->
+      if e.which is 116 or (e.ctrlKey and e.which is 82) #F5 or Ctrl+R
+        e.preventDefault()
+        $(".tab .tab_container .tab_focused").trigger("request_reload")
 
-  #データ保存等の後片付けを行なってくれるzombie.html起動
-  window.addEventListener "unload", ->
-    if "zombie_read_state" of localStorage
-      open("/zombie.html", undefined, "left=1,top=1,width=250,height=50")
+    #データ保存等の後片付けを行なってくれるzombie.html起動
+    .bind "unload", ->
+      if "zombie_read_state" of localStorage
+        open("/zombie.html", undefined, "left=1,top=1,width=250,height=50")
 
   $(document.documentElement)
+    #a.open_in_rcrxがクリックされた場合にopenメッセージを送出する
+    .delegate ".open_in_rcrx", "click", (e) ->
+      e.preventDefault()
+      app.message.send "open",
+        url: this.href or this.getAttribute("data-href")
+
+    #タブ内コンテンツがtitle_updatedを送出した場合、タブのタイトルを更新する
+    .delegate ".tab_content", "title_updated", ->
+      $this = $(this)
+      $this
+        .closest(".tab")
+          .tab("update_title", {
+            tab_id: $this.attr("data-tab_id")
+            title: $this.attr("data-title")
+          })
+
     #タブ内コンテンツがview_request_killmeを送って来た場合、タブを閉じる。
     .delegate ".tab_content", "view_request_killme", ->
       $this = $(this)
