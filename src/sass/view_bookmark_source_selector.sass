@@ -1,0 +1,42 @@
+.view_bookmark_source_selector
+  @include modal_overlay
+  > div
+    @include drop_shadow
+    :font-size 14px
+    :width 500px
+    :margin 20px auto
+    :background-color #f3f3f3
+    :color #111
+    :padding 5px
+    :border-radius 3px
+  p:first-child
+    :margin-top 1ex
+  p:last-child
+    :margin-bottom 1ex
+  .node_list
+    :overflow auto
+    :background-color #f9f9f9
+    :border 1px solid #bbb
+    :border-radius 3px
+  ul
+    :list-style-type none
+    :padding-left 20px
+    :margin 0
+    :max-height 300px
+  .node_list > ul
+    :padding-left 0
+  .node
+    :display block
+    :cursor pointer
+    :font-size 13px
+    :margin 1px
+    :padding 1px
+    :border-radius 3px
+    :border 1px solid transparent
+    &:hover
+      :background-color #eef
+      :border-color #69c
+    &.selected
+      :background-color #dde
+      :border-color #58b
+

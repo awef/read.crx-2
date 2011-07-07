@@ -1,0 +1,20 @@
+.view_board
+  @include tabbed_view
+  @include content_table
+  .content
+    :overflow auto
+  th
+    &:nth-child(1)
+      :width 1em
+    &:nth-child(3)
+      :width 4em
+    &:nth-child(4)
+      :width 3em
+    &:nth-child(5)
+      :width 4em
+    &:nth-child(6)
+      :width 16em
+
+.view_board_tbody > tr > td
+  &:nth-child(3), &:nth-child(4), &:nth-child(5)
+    :text-align right

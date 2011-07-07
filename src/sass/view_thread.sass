@@ -1,0 +1,155 @@
+@mixin view_thread_res_info
+  :border-top 1px solid silver
+  :display block
+  :margin-top 1em 0 0 5px
+  :font-size 12px
+  :color #666
+  :text-align center
+
+.view_thread
+  @include tabbed_view
+  :font-size 15px
+  :background-color #fafafa
+
+  .content
+    :padding-bottom 20px
+
+  article
+    :margin 20px 5px
+
+  .last:not(:last-child):after
+    @include view_thread_res_info
+    :content "しおり"
+
+  .read:not(:last-child):after
+    @include view_thread_res_info
+    :content "ここから未読"
+
+  .received:not(:last-child):after
+    @include view_thread_res_info
+    :content "ここから新着"
+
+  header
+    :font-size 14px
+    :color #222
+
+  .num
+    :cursor pointer
+    &:after
+      :content ' '
+
+  .name
+    :color #008000
+
+  .name_num
+    :cursor pointer
+
+  .one:not(:first-child) .name:before
+    :content "[>>1]"
+    :color #d22
+    :font-size 12px
+    :font-weight bold
+    :margin-right 0.5ex
+
+  .ob
+    :color #036
+
+  .mail
+    &:before
+      :content ' ['
+    &:after
+      :content '] '
+
+  .message
+    :margin 5px 10px
+
+  .anchor.disabled
+    :color #666
+
+  .link
+    :color #00a
+  .freq
+    :color #a00
+
+  .id
+    :white-space nowrap
+    &.link, &.freq
+      :cursor pointer
+  .rep
+    :white-space nowrap
+    :cursor pointer
+    :margin-left 0.5ex
+
+  .aa .message
+    @include ascii_art
+
+  .thumbnail
+    :display inline-block
+    :margin 5px
+    :background-color #fff
+    :padding 3px
+    :box-shadow 0 1px 3px 0px rgba(0, 0, 0, 0.4)
+    :border 1px solid #aaa
+    img
+      :max-width 150px
+      :max-height 100px
+
+  .popup
+    @include drop_shadow
+    :z-index $z-index_popup
+    :position fixed
+    :background-color #fff
+    :max-width 500px
+    :max-height 300px
+    :overflow auto
+
+  .jump_panel
+    @include drop_shadow
+    $radius: 2px
+    :position absolute
+    :right 20px
+    :bottom 20px
+    :margin 0
+    :padding 0
+    :border 1px solid #fff
+    :border-radius $radius
+    :-webkit-user-select none
+    :list-style-type none
+    :font-size 14px
+    :color #fff
+
+    :opacity 0.25
+    :-webkit-transition opacity 200ms
+    &:hover
+      :opacity 1
+    > li
+      :display none
+      :cursor pointer
+      :padding 3px 10px
+      :background-color rgba(#000, 0.8)
+      &:first-child
+        :border-top-left-radius $radius
+        :border-top-right-radius $radius
+      &:last-child
+        :border-bottom-left-radius $radius
+        :border-bottom-right-radius $radius
+      &:hover
+        :text-shadow 0 0 10px #fff
+
+  .searching > :not(.search_hit)
+    :display none
+
+  footer
+    :position absolute
+    :bottom 0
+    :right 20px
+    :display none
+
+    :color #333
+    :font-size 12px
+    :padding 5px
+
+  .next_unread a
+    :text-decoration none
+    :color #36f
+

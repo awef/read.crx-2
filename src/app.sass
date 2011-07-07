@@ -8,10 +8,10 @@ $z-index_notification: 6
 $z-index_modal: 7
 
 @import sass/ui_accordion.sass
+@import sass/ui_contextmenu.sass
 @import sass/ui_tab.sass
 @import sass/ui_table_search.sass
 @import sass/ui_table_sort.sass
-@import sass/ui_contextmenu.sass
 
 @mixin ascii_art
   :font
@@ -132,26 +132,10 @@ $z-index_modal: 7
     :padding 3px
     :white-space nowrap
 
-.view_board
-  @include tabbed_view
-  @include content_table
-  .content
-    :overflow auto
-  th
-    &:nth-child(1)
-      :width 1em
-    &:nth-child(3)
-      :width 4em
-    &:nth-child(4)
-      :width 3em
-    &:nth-child(5)
-      :width 4em
-    &:nth-child(6)
-      :width 16em
-
-.view_board_tbody > tr > td
-  &:nth-child(3), &:nth-child(4), &:nth-child(5)
-    :text-align right
+@import sass/view_board.sass
+@import sass/view_bookmark_source_selector.sass
+@import sass/view_config.sass
+@import sass/view_thread.sass
 
 .view_inputurl
   @include tabbed_view
@@ -207,210 +191,6 @@ $z-index_modal: 7
 .view_bookmark_tbody > tr > td
   &:nth-child(2), &:nth-child(3), &:nth-child(4)
     :text-align right
-
-@mixin view_thread_res_info
-  :border-top 1px solid silver
-  :display block
-  :margin-top 1em 0 0 5px
-  :font-size 12px
-  :color #666
-  :text-align center
-
-.view_thread
-  @include tabbed_view
-  :font-size 15px
-  :background-color #fafafa
-
-  .content
-    :padding-bottom 20px
-
-  article
-    :margin 20px 5px
-
-  .last:not(:last-child):after
-    @include view_thread_res_info
-    :content "しおり"
-
-  .read:not(:last-child):after
-    @include view_thread_res_info
-    :content "ここから未読"
-
-  .received:not(:last-child):after
-    @include view_thread_res_info
-    :content "ここから新着"
-
-  header
-    :font-size 14px
-    :color #222
-
-  .num
-    :cursor pointer
-    &:after
-      :content ' '
-
-  .name
-    :color #008000
-
-  .name_num
-    :cursor pointer
-
-  .one:not(:first-child) .name:before
-    :content "[>>1]"
-    :color #d22
-    :font-size 12px
-    :font-weight bold
-    :margin-right 0.5ex
-
-  .ob
-    :color #036
-
-  .mail
-    &:before
-      :content ' ['
-    &:after
-      :content '] '
-
-  .message
-    :margin 5px 10px
-
-  .anchor.disabled
-    :color #666
-
-  .link
-    :color #00a
-  .freq
-    :color #a00
-
-  .id
-    :white-space nowrap
-    &.link, &.freq
-      :cursor pointer
-  .rep
-    :white-space nowrap
-    :cursor pointer
-    :margin-left 0.5ex
-
-  .aa .message
-    @include ascii_art
-
-  .thumbnail
-    :display inline-block
-    :margin 5px
-    :background-color #fff
-    :padding 3px
-    :box-shadow 0 1px 3px 0px rgba(0, 0, 0, 0.4)
-    :border 1px solid #aaa
-    img
-      :max-width 150px
-      :max-height 100px
-
-  .popup
-    @include drop_shadow
-    :z-index $z-index_popup
-    :position fixed
-    :background-color #fff
-    :max-width 500px
-    :max-height 300px
-    :overflow auto
-
-  .jump_panel
-    @include drop_shadow
-    $radius: 2px
-    :position absolute
-    :right 20px
-    :bottom 20px
-    :margin 0
-    :padding 0
-    :border 1px solid #fff
-    :border-radius $radius
-    :-webkit-user-select none
-    :list-style-type none
-    :font-size 14px
-    :color #fff
-
-    :opacity 0.25
-    :-webkit-transition opacity 200ms
-    &:hover
-      :opacity 1
-    > li
-      :display none
-      :cursor pointer
-      :padding 3px 10px
-      :background-color rgba(#000, 0.8)
-      &:first-child
-        :border-top-left-radius $radius
-        :border-top-right-radius $radius
-      &:last-child
-        :border-bottom-left-radius $radius
-        :border-bottom-right-radius $radius
-      &:hover
-        :text-shadow 0 0 10px #fff
-
-  .searching > :not(.search_hit)
-    :display none
-
-  footer
-    :position absolute
-    :bottom 0
-    :right 20px
-    :display none
-
-    :color #333
-    :font-size 12px
-    :padding 5px
-
-  .next_unread a
-    :text-decoration none
-    :color #36f
-
-.view_config
-  @include tabbed_view
-  :font-size 14px
-  :padding 5px
-  :box-sizing border-box
-  :overflow auto
-  h2
-    :margin 15px 0 5px 0
-    :padding-bottom 5px
-    :font-size 16px
-    :font-weight normal
-    :border-bottom 1px solid #999
-    &:first-of-type
-      :margin-top 5px
-  h3
-    :font-size 14px
-    :margin 10px 0
-  h2 + h3
-    :margin-top 5px
-  label
-    :cursor pointer
-  .notation
-    :font-size 14px
-    :text-align right
-  .version_info
-    :font-size 12px
-    :margin 5px
-    :padding 5px
-    :border-radius 3px
-    :border 1px solid #aaa
-  //.ninja_info_cookie, .ninja_info_stored
-    :list-style-type none
-    :margin 5px
-    :padding 5px
-    :border-radius 3px
-    :border 1px solid #aaa
-    :font-size 12px
-    li
-      :white-space nowrap
-      :text-overflow ellipsis
-      :overflow hidden
-  .bbsmenu_reload_status
-    &.done
-      :color green
-    &.fail
-      :color red
-  input[type="text"]:invalid
-    :background-color #fcc
 
 html, body, #body
   :position relative
@@ -505,46 +285,4 @@ a
       :background-image url(/img/close_16x16.png)
       :background-color transparent
       :border none
-
-.view_bookmark_source_selector
-  @include modal_overlay
-  > div
-    @include drop_shadow
-    :font-size 14px
-    :width 500px
-    :margin 20px auto
-    :background-color #f3f3f3
-    :color #111
-    :padding 5px
-    :border-radius 3px
-  p:first-child
-    :margin-top 1ex
-  p:last-child
-    :margin-bottom 1ex
-  .node_list
-    :overflow auto
-    :background-color #f9f9f9
-    :border 1px solid #bbb
-    :border-radius 3px
-  ul
-    :list-style-type none
-    :padding-left 20px
-    :margin 0
-    :max-height 300px
-  .node_list > ul
-    :padding-left 0
-  .node
-    :display block
-    :cursor pointer
-    :font-size 13px
-    :margin 1px
-    :padding 1px
-    :border-radius 3px
-    :border 1px solid transparent
-    &:hover
-      :background-color #eef
-      :border-color #69c
-    &.selected
-      :background-color #dde
-      :border-color #58b
 
