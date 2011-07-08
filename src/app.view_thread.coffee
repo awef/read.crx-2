@@ -559,17 +559,17 @@ app.view_thread._read_state_manager = ($view) ->
     promise_get_read_state.done ->
       content = $view.find(".content")[0]
 
-      content.children[read_state.last - 1]?.classList.add("last")
-      app.view_thread._jump_to_res($view, read_state.last, false)
-      $view.removeClass("loading")
-
-      content.children[read_state.read - 1]?.classList.add("read")
-
-      content.children[read_state.received - 1]?.classList.add("received")
-
       read_state.received = content.children.length
       read_state_updated = true
+
+      content.children[read_state.last - 1]?.classList.add("last")
+      content.children[read_state.read - 1]?.classList.add("read")
+      content.children[read_state.received - 1]?.classList.add("received")
+
       $view.triggerHandler("read_state_attached")
+
+      app.view_thread._jump_to_res($view, read_state.last, false)
+      $view.removeClass("loading")
 
   promise_get_read_state.done ->
     scan = ->
