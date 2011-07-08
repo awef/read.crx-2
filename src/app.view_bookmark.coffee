@@ -26,7 +26,7 @@ app.view_bookmark.open = ->
     for bookmark in app.bookmark.get_all()
       if bookmark.type is "thread"
         board_url = app.url.thread_to_board(bookmark.url)
-        if board_list.indexOf(board_url) is -1
+        unless board_url in board_list
           board_list.push(board_url)
 
     $prev = null

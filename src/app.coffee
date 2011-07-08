@@ -13,7 +13,7 @@ app.critical_error = (message) ->
     chrome.tabs.remove(tab.id)
 
 app.log = (level) ->
-  if ["log", "debug", "info", "warn", "error"].indexOf(level) isnt -1
+  if level in ["log", "debug", "info", "warn", "error"]
     console[level].apply(console, Array::slice.call(arguments, 1))
   else
     app.log("error", "app.log: 引数levelが不正な値です", arguments)
