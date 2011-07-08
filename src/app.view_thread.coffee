@@ -541,6 +541,7 @@ app.view_thread._read_state_manager = ($view) ->
 
   read_state = null
 
+  #read_stateの取得
   promise_get_read_state = $.Deferred (deferred) ->
     if (bookmark = app.bookmark.get(url)) and bookmark.read_state?
       read_state = bookmark.read_state
@@ -552,12 +553,9 @@ app.view_thread._read_state_manager = ($view) ->
           deferred.resolve()
   .promise()
 
-  promise_first_draw = $.Deferred (deferred) ->
-    $view.one "draw_content", -> deferred.resolve()
-  .promise()
-
-  $.when(promise_get_read_state, promise_first_draw).done ->
-    on_updated_draw = ->
+  #スレが描画される度に、read_state関連のクラスを付与する
+  $view.bind "draw_content", ->
+    promise_get_read_state.done ->
       content = $view.find(".content")[0]
 
       if read_state.last
@@ -575,9 +573,6 @@ app.view_thread._read_state_manager = ($view) ->
 
       read_state.received = content.children.length
       $view.triggerHandler("read_state_attached")
-
-    on_updated_draw()
-    $view.bind("draw_content", on_updated_draw)
 
   promise_get_read_state.done ->
     scan = ->
