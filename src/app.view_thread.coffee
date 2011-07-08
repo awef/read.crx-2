@@ -324,7 +324,7 @@ app.view_thread.open = (url) ->
 
 app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
   $content = $(view).find(".content")
-  $target = $content.children(":nth-child(#{res_num})")
+  $target = $content.children(":nth-child(#{res_num}):visible")
   if $target.length > 0
     if animate_flg
       $content.animate(scrollTop: $target[0].offsetTop)
