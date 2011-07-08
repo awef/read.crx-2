@@ -540,6 +540,7 @@ app.view_thread._read_state_manager = ($view) ->
   url = $view.attr("data-url")
 
   read_state = null
+  read_state_updated = false
 
   #read_stateの取得
   promise_get_read_state = $.Deferred (deferred) ->
@@ -558,20 +559,16 @@ app.view_thread._read_state_manager = ($view) ->
     promise_get_read_state.done ->
       content = $view.find(".content")[0]
 
-      if read_state.last
-        content.children[read_state.last - 1]?.classList.add("last")
-        app.view_thread._jump_to_res($view, read_state.last, false)
+      content.children[read_state.last - 1]?.classList.add("last")
+      app.view_thread._jump_to_res($view, read_state.last, false)
       $view.removeClass("loading")
 
-      res_read = content.children[read_state.read - 1]
-      if res_read
-        res_read.classList.add("read")
+      content.children[read_state.read - 1]?.classList.add("read")
 
-      res_received = content.children[read_state.received - 1]
-      if res_received
-        res_received.classList.add("received")
+      content.children[read_state.received - 1]?.classList.add("received")
 
       read_state.received = content.children.length
+      read_state_updated = true
       $view.triggerHandler("read_state_attached")
 
   promise_get_read_state.done ->
@@ -579,7 +576,6 @@ app.view_thread._read_state_manager = ($view) ->
       last = read_state.received
       content = $view[0].querySelector(".content")
       bottom = content.scrollTop + content.clientHeight
-      is_updated = false
 
       for res, res_num in content.children
         if res.offsetTop > bottom
@@ -588,13 +584,11 @@ app.view_thread._read_state_manager = ($view) ->
 
       if read_state.last isnt last
         read_state.last = last
-        is_updated = true
+        read_state_updated = true
 
       if read_state.read < read_state.last
         read_state.read = read_state.last
-        is_updated = true
-
-      is_updated
+        read_state_updated = true
 
     #アンロード時は非同期系の処理をzombie.htmlに渡す
     #そのためにlocalStorageに更新するread_stateの情報を渡す
@@ -610,12 +604,34 @@ app.view_thread._read_state_manager = ($view) ->
 
     window.addEventListener("beforeunload", on_beforeunload)
 
+    #read_state.readの値を更新するため、スクロールされたら定期的にスキャンを実行する
+    scroll_watcher_suspend = false
+    scroll_flg = false
+    scroll_watcher = setInterval ->
+      if scroll_flg and not scroll_watcher_suspend
+        scroll_flg = false
+        scan()
+    , 250
+
     $view
+      .find(".content")
+        .bind "scroll", ->
+          scroll_flg = true
+      .end()
+
       .bind "request_reload", ->
-        if scan()
+        scan()
+        if read_state_updated
           app.read_state.set(read_state)
+          read_state_updated = false
+        scan_watcher_suspend = true
+
+      .bind "draw_content", ->
+        scan_watcher_suspend = false
 
       .bind "view_unload", ->
         window.removeEventListener("beforeunload", on_beforeunload)
-        if scan()
+        scan()
+        if read_state_updated
           app.read_state.set(read_state)
+          read_state_updated = false
