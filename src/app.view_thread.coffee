@@ -615,7 +615,7 @@ app.view_thread._read_state_manager = ($view) ->
         if scan()
           app.read_state.set(read_state)
 
-      .bind "tab_removed", ->
+      .bind "view_unload", ->
         window.removeEventListener("beforeunload", on_beforeunload)
         if scan()
           app.read_state.set(read_state)
