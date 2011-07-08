@@ -567,8 +567,8 @@ app.view_thread._read_state_manager = ($view) ->
 
       $view.triggerHandler("read_state_attached")
 
-      app.view_thread._jump_to_res($view, read_state.last, false)
       $view.removeClass("loading")
+      app.view_thread._jump_to_res($view, read_state.last, false)
 
   promise_get_read_state.done ->
     scan = ->
