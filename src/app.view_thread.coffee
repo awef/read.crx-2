@@ -346,8 +346,7 @@ app.view_thread._draw = ($view, force_update) ->
       $view.trigger("title_updated")
 
       $view.find(".content").append(app.view_thread._draw_messages(thread))
-      app.defer ->
-        $view.triggerHandler("draw_content")
+      $view.triggerHandler("draw_content")
 
       deferred.resolve()
     else
