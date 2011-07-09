@@ -174,7 +174,7 @@ app.board.parse = (url, text) ->
   while (reg_res = reg.exec(text))
     board.push(
       url: base_url + reg_res[1] + "/"
-      title: reg_res[2]
+      title: app.util.decode_char_reference(reg_res[2])
       res_count: +reg_res[3]
       created_at: +reg_res[1] * 1000
     )

@@ -215,7 +215,7 @@ app.thread._parse_ch = (text) ->
   first_flg = true
   while (reg_res = reg.exec(text))
     if first_flg
-      thread.title = reg_res[5]
+      thread.title = app.util.decode_char_reference(reg_res[5])
       first_flg = false
     thread.res.push
       name: reg_res[1]
@@ -239,7 +239,7 @@ app.thread._parse_machi = (text) ->
         other: "あぼーん"
 
     if res_count is 1
-      thread.title = reg_res[6]
+      thread.title = app.util.decode_char_reference(reg_res[6])
     thread.res.push
       name: reg_res[2]
       mail: reg_res[3]
@@ -263,7 +263,7 @@ app.thread._parse_jbbs = (text) ->
         other: "あぼーん"
 
     if res_count is 1
-      thread.title = reg_res[6]
+      thread.title = app.util.decode_char_reference(reg_res[6])
     thread.res.push
       name: reg_res[2]
       mail: reg_res[3]
