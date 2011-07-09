@@ -95,3 +95,23 @@ app.util.ch_server_move_detect = (old_board_url, html) ->
       {before: old_board_url, after: new_board_url})
 
   .promise()
+
+#文字参照をデコード
+(->
+  span = document.createElement("span")
+
+  app.util.decode_char_reference = (str) ->
+    str.replace /\&(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));/g, ($0, $1, $2, $3) ->
+      #数値文字参照 - 10進数
+      if $1?
+        String.fromCharCode($1)
+      #数値文字参照 - 16進数
+      else if $2?
+        String.fromCharCode(parseInt($2, 16))
+      #文字実体参照
+      else if $3?
+        span.innerHTML = $0
+        span.textContent
+      else
+        $0
+)()

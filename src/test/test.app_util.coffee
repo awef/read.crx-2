@@ -86,3 +86,52 @@ asyncTest "example.com (xhr)", 1, ->
       ok(true)
       start()
 
+module "app.util.decode_char_reference"
+
+test "test", ->
+  fn = (a, b) ->
+    strictEqual(app.util.decode_char_reference(a), b)
+
+    x = app.util.decode_char_reference(a)
+    if x isnt b
+      console.log x.length, b.length
+      console.log x.charCodeAt(0), b.charCodeAt(0)
+
+  #数値文字参照テスト(10進数)
+  fn("&#0161;", "¡")
+  fn("&#0165;", "¥")
+  fn("&#0169;", "©")
+  fn("&#0181;", "µ")
+  fn("&#0255;", "ÿ")
+
+  #数値文字参照テスト(16進数)
+  fn("&#x00A1;", "¡")
+  fn("&#x00A5;", "¥")
+  fn("&#x00A9;", "©")
+  fn("&#x00B5;", "µ")
+  fn("&#x00FF;", "ÿ")
+
+  #数値文字参照テスト(16進数 小文字)
+  fn("&#x00a1;", "¡")
+  fn("&#x00a5;", "¥")
+  fn("&#x00a9;", "©")
+  fn("&#x00b5;", "µ")
+  fn("&#x00ff;", "ÿ")
+
+  #XML実体参照テスト
+  fn("&amp;", "&")
+  fn("&lt;", "<")
+  fn("&gt;", ">")
+  fn("&quot;", "\"")
+  fn("&apos;", "'")
+
+  #実例テスト
+  fn("★☆★【雲雀|朱鷺】VIP&amp;VIP+運用情報387★☆★",
+    "★☆★【雲雀|朱鷺】VIP&VIP+運用情報387★☆★")
+
+  fn("お、おい！&gt;&gt;5が息してねえぞ！",
+    "お、おい！>>5が息してねえぞ！")
+
+  fn("【ブログ貼付】 &lt;iframe&gt;タグの不具合 ",
+    "【ブログ貼付】 <iframe>タグの不具合 ")
+
