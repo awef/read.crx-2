@@ -4,19 +4,19 @@ app.view_tab_state = {}
 
 app.view_tab_state._get = ->
   data = []
-  $(".tab .tab_tabbar li").each (key, val) ->
-    tab_id = val.getAttribute("data-tab_id")
-    url = (
-      val
-        .parentNode
-          .parentNode
-            .querySelector(".tab_container [data-tab_id=\"#{tab_id}\"]")
-              .getAttribute("data-url")
-    )
+
+  tmp = Array::slice.apply(document.getElementsByClassName("tab_content"))
+
+  for tab_content in tmp
+    tab_url = tab_content.getAttribute("data-url")
+    tab_title = tab_content.getAttribute("data-title")
+
     data.push
-      title: val.title
-      url: url
+      url: tab_url
+      title: tab_title
+
     null
+
   data
 
 # ##app.view_tab_state.store
