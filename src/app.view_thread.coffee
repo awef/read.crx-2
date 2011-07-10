@@ -146,9 +146,10 @@ app.view_thread.open = (url) ->
 
     #アンカーリンク
     .delegate ".anchor:not(.disabled)", "click", ->
-      tmp = /\d+/.exec(this.textContent)
-      if tmp
-        app.view_thread._jump_to_res($view, tmp[0], true)
+      tmp = app.util.parse_anchor(this.textContent)
+      target_res_num = tmp.data[0]?.segments[0]?[0]
+      if target_res_num?
+        app.view_thread._jump_to_res($view, target_res_num, true)
 
     #通常リンク
     .delegate ".message a:not(.anchor)", "click", (e) ->
