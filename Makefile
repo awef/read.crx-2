@@ -2,7 +2,6 @@ SRC_DIR = src
 DBG_DIR = debug
 
 LIB_FILES = ${shell find ${SRC_DIR}/lib/ -type f}
-IMG_FILES = ${shell find ${SRC_DIR}/img/ -type f}
 
 QUNIT_FILES =\
   ${SRC_DIR}/test/test.html\
