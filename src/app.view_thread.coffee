@@ -591,7 +591,8 @@ app.view_thread._read_state_manager = ($view) ->
     #アンロード時は非同期系の処理をzombie.htmlに渡す
     #そのためにlocalStorageに更新するread_stateの情報を渡す
     on_beforeunload = ->
-      if scan()
+      scan()
+      if read_state_updated
         if localStorage.zombie_read_state?
           data = JSON.parse(localStorege["zombie_read_state"])
         else
