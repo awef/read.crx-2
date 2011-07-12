@@ -557,8 +557,9 @@ app.view_thread._read_state_manager = ($view) ->
     promise_get_read_state.done ->
       content = $view.find(".content")[0]
 
-      read_state.received = content.children.length
-      read_state_updated = true
+      if read_state.received isnt content.children.length
+        read_state.received = content.children.length
+        read_state_updated = true
 
       content.children[read_state.last - 1]?.classList.add("last")
       content.children[read_state.read - 1]?.classList.add("read")
