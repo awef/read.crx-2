@@ -179,24 +179,39 @@ app.view_sidemenu.open = ->
   $view
 
 app.view_setup_resizer = ->
+  $body = $("#body")
+
+  if $body.hasClass("pane-3")
+    val = "height"
+    val_c = "Height"
+    val_axis = "Y"
+  else if $body.hasClass("pane-3h")
+    val = "width"
+    val_c = "Width"
+    val_axis = "X"
+  else
+    app.log("warn", "呼ばれるべきでない状況でapp.view_setup_resizerが呼ばれました")
+    return
+
   $tab_a = $("#tab_a")
   tab_a = $tab_a[0]
-  offset = $tab_a.outerHeight() - $tab_a.height()
+  offset = $tab_a["outer#{val_c}"]() - $tab_a[val]()
 
-  min_height = 50
-  max_height = document.body.offsetHeight - 50
+  min = 50
+  max = document.body["offset#{val_c}"] - 50
 
-  tmp = app.config.get("tab_a_height")
+  tmp = app.config.get("tab_a_#{val}")
   if tmp
-    tab_a.style["height"] =
-      Math.max(Math.min(tmp - offset, max_height), min_height) + "px"
+    tab_a.style[val] =
+      Math.max(Math.min(tmp - offset, max), min) + "px"
 
   $("#tab_resizer")
     .bind "mousedown", (e) ->
+      that = this
       e.preventDefault()
 
-      min_height = 50
-      max_height = document.body.offsetHeight - 50
+      min = 50
+      max = document.body["offset#{val_c}"] - 50
 
       $("<div>", {css: {
         position: "absolute"
@@ -205,14 +220,17 @@ app.view_setup_resizer = ->
         width: "100%"
         height: "100%"
         "z-index": 999
-        cursor: "row-resize"
+        cursor: if val_axis is "X" then "col-resize" else "row-resize"
       }})
         .bind "mousemove", (e) ->
-          tab_a.style["height"] =
-            Math.max(Math.min(e.pageY - offset, max_height), min_height) + "px"
+          offset = that.parentNode[if val_axis is "Y" then "offsetTop" else "offsetLeft"]
+          tab_a.style[val] =
+            Math.max(Math.min(e["page#{val_axis}"] - offset, max), min) + "px"
+
         .bind "mouseup", ->
           $(this).remove()
-          app.config.set("tab_a_height", parseInt(tab_a.style["height"], 10))
+          app.config.set("tab_a_#{val}", parseInt(tab_a.style[val], 10))
+
         .appendTo("body")
 
 app.view_inputurl = {}

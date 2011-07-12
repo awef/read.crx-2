@@ -48,6 +48,12 @@ app.main = ->
     $(".tab .tab_tabbar").sortable()
     app.view_setup_resizer()
 
+  else if layout is "pane-3h"
+    $("#body").addClass("pane-3h")
+    $("#tab_a, #tab_b").tab()
+    $(".tab .tab_tabbar").sortable()
+    app.view_setup_resizer()
+
   else if layout is "pane-2"
     $("#body").addClass("pane-2")
     $("#tab_a").tab()

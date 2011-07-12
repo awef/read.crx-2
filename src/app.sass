@@ -241,11 +241,26 @@ a
   :bottom 0
 
 #body.pane-3
+  #tab_resizer
+    :cursor row-resize
+    :height 5px
   #right_pane
     :display -webkit-box
     :-webkit-box-orient vertical
     #tab_a
       :height 50%
+    #tab_b
+      :-webkit-box-flex 1
+
+#body.pane-3h
+  #tab_resizer
+    :cursor col-resize
+    :width 5px
+  #right_pane
+    :display -webkit-box
+    :-webkit-box-orient horizontal
+    #tab_a
+      :width 50%
     #tab_b
       :-webkit-box-flex 1
 
@@ -257,8 +272,6 @@ a
       :-webkit-box-flex 1
 
 #tab_resizer
-  :cursor row-resize
-  :height 5px
   :background-color #ddd
 
 #app_notice_container
