@@ -106,12 +106,13 @@ $z-index_modal: 7
     :-webkit-user-select none
   .loading_overlay
     :display none
-  &.loading .loading_overlay
-    :display block
   .content
     :display block
-  &.loading .content
-    :display none
+  &.loading
+    .loading_overlay
+      :display block
+    .content
+      :display none
 
 @mixin content_table
   table
