@@ -630,6 +630,7 @@ app.view_thread._read_state_manager = ($view) ->
         scan_watcher_suspend = false
 
       .bind "view_unload", ->
+        clearInterval(scroll_watcher)
         window.removeEventListener("beforeunload", on_beforeunload)
         scan()
         if read_state_updated
