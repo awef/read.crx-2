@@ -111,24 +111,29 @@ app.view_bookmark._bookmark_to_tr = (bookmark) ->
 
   thread_created_at = +/// /(\d+)/$ ///.exec(bookmark.url)[1] * 1000
 
+  #タイトル
   td = document.createElement("td")
   td.textContent = bookmark.title
   tr.appendChild(td)
 
+  #レス数
   td = document.createElement("td")
   td.textContent = bookmark.res_count or 0
   tr.appendChild(td)
 
+  #未読レス数
   td = document.createElement("td")
   if typeof bookmark.res_count is "number"
     td.textContent = bookmark.res_count - (bookmark.read_state?.read or 0) or ""
   tr.appendChild(td)
 
+  #勢い
   td = document.createElement("td")
   if typeof bookmark.res_count is "number"
     td.textContent = app.util.calc_heat(Date.now(), thread_created_at, bookmark.res_count)
   tr.appendChild(td)
 
+  #作成日時
   td = document.createElement("td")
   td.textContent = app.util.date_to_string(new Date(thread_created_at))
   tr.appendChild(td)

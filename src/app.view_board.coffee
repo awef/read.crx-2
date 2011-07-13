@@ -109,28 +109,34 @@ app.view_board._draw = ($view) ->
         else
           read_state = null
 
+        #マーク
         td = document.createElement("td")
         if app.bookmark.get(thread.url)
           td.textContent = "★"
         tr.appendChild(td)
 
+        #タイトル
         td = document.createElement("td")
         td.textContent = thread.title
         tr.appendChild(td)
 
+        #レス数
         td = document.createElement("td")
         td.textContent = thread.res_count
         tr.appendChild(td)
 
+        #未読数
         td = document.createElement("td")
         if read_state and thread.res_count > read_state.read
           td.textContent = thread.res_count - read_state.read
         tr.appendChild(td)
 
+        #勢い
         td = document.createElement("td")
         td.textContent = app.util.calc_heat(now, thread.created_at, thread.res_count)
         tr.appendChild(td)
 
+        #作成日時
         td = document.createElement("td")
         td.textContent = app.util.date_to_string(new Date(thread.created_at))
         tr.appendChild(td)
