@@ -73,6 +73,7 @@ app.cache.set = (data) ->
         transaction.oncomplete = ->
           deferred.resolve(db)
         transaction.onerror = ->
+          app.log("error", "app.cache.set: トランザクション中断")
           deferred.reject()
 
         transaction.objectStore("cache").put(data)
@@ -88,6 +89,7 @@ app.cache.remove = (url) ->
         transaction.oncomplete = ->
           deferred.resolve()
         transaction.onerror = ->
+          app.log("error", "app.cache.remove: トランザクション中断")
           deferred.reject()
 
         transaction.objectStore("cache").delete(url)
