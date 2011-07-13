@@ -346,7 +346,7 @@ app.view_thread._draw = ($view, force_update) ->
       $view.trigger("title_updated")
 
       $view.find(".content").append(app.view_thread._draw_messages(thread))
-      $view.triggerHandler("draw_content")
+      $view.trigger("view_loaded")
 
       deferred.resolve()
     else
@@ -554,7 +554,7 @@ app.view_thread._read_state_manager = ($view) ->
   .promise()
 
   #スレが描画される度に、read_state関連のクラスを付与する
-  $view.bind "draw_content", ->
+  $view.bind "view_loaded", ->
     promise_get_read_state.done ->
       content = $view.find(".content")[0]
 
@@ -627,8 +627,9 @@ app.view_thread._read_state_manager = ($view) ->
           read_state_updated = false
         scan_watcher_suspend = true
 
-      .bind "draw_content", ->
+      .bind "view_loaded", ->
         scan_watcher_suspend = false
+        return
 
       .bind "view_unload", ->
         clearInterval(scroll_watcher)

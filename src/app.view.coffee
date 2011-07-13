@@ -278,6 +278,7 @@ app.view_history.open = ->
           tr.appendChild(td)
           frag.appendChild(tr)
         $view.find("tbody").append(frag)
+        $view.trigger("view_loaded")
 
   load()
 

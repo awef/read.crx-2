@@ -189,3 +189,8 @@ app.main = ->
               .addClass("tab_focused")
               .find(".content")
                 .focus()
+
+    #フォーカスしているタブ内のコンテンツが再描画された場合、フォーカスを合わせ直す
+    .delegate ".tab_content", "view_loaded", ->
+      if this.classList.contains("tab_focused")
+        this.getElementsByClassName("content")[0]?.focus()

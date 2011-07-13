@@ -141,3 +141,4 @@ app.view_board._draw = ($view) ->
 
     .always ->
       $view.removeClass("loading")
+      $view.trigger("view_loaded")

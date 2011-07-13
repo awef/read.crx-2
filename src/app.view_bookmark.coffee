@@ -46,7 +46,6 @@ app.view_bookmark.open = ->
       else
         $view.find("tbody").empty()
         app.view_bookmark._draw($view)
-        $view.removeClass("loading")
         $loading_overlay.empty()
     fn()
 
@@ -99,6 +98,8 @@ app.view_bookmark._draw = ($view) ->
 
   $view.find("tbody").append(frag)
   $view.find("table").trigger("table_sort_update")
+  $view.removeClass("loading")
+  $view.trigger("view_loaded")
 
 app.view_bookmark._bookmark_to_tr = (bookmark) ->
   tr = document.createElement("tr")
