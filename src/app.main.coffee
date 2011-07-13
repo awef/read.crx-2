@@ -173,16 +173,11 @@ app.main = ->
 
     #タブが選択された時にフォーカスを移動
     .delegate ".tab_content", "tab_selected", ->
-      $(".tab_focused")
-        .removeClass("tab_focused")
-
-      app.defer =>
-        $(this)
-          .closest(".tab")
-            .find(".tab_selected")
-              .addClass("tab_focused")
-              .find(".content")
-                .focus()
+      $(".tab_focused").removeClass("tab_focused")
+      $(this).closest(".tab").find(".tab_selected").addClass("tab_focused")
+      #クリックでタブを選択した時にフォーカスが移らなくなるため、deferで飛ばす
+      app.defer ->
+        $(".tab_focused .content").focus()
 
     #フォーカスしているタブが削除された時にフォーカスを移動
     .delegate ".tab_content", "tab_removed", ->
