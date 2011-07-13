@@ -11,11 +11,11 @@
       .append('<ul class="tab_tabbar">', '<div class="tab_container">')
       .delegate ".tab_tabbar", "mousewheel", (e) ->
         e.preventDefault()
-        way = if e.wheelDelta > 0 then "prev" else "next"
-        next = $(that).find(".tab_tabbar li.tab_selected")[way]()
+        tmp = if e.wheelDelta > 0 then "previousSibling" else "nextSibling"
+        next = that.querySelector(".tab_tabbar li.tab_selected")?[tmp]
 
-        if next.length is 1
-          tab_select.call(that, {tab_id: next.attr("data-tab_id")})
+        if next
+          tab_select.call(that, {tab_id: next.getAttribute("data-tab_id")})
 
       .delegate ".tab_tabbar li", "mousedown", (e) ->
         (if e.which is 2 then tab_remove else tab_select)
@@ -66,14 +66,13 @@
 
   # prop.tab_id
   tab_select = (prop) ->
-    $(this)
-      .find(".tab_selected")
-        .removeClass("tab_selected")
-      .end()
-      .find("[data-tab_id=\"#{prop.tab_id}\"]")
-        .addClass("tab_selected")
-        .filter(".tab_content")
-          .trigger("tab_selected")
+    for tmp in Array::slice.apply(this.getElementsByClassName("tab_selected"))
+      tmp.classList.remove("tab_selected")
+
+    for tmp in this.querySelectorAll("[data-tab_id=\"#{prop.tab_id}\"]")
+      tmp.classList.add("tab_selected")
+      if tmp.classList.contains("tab_content")
+        $(tmp).trigger("tab_selected")
 
   # prop.tab_id, prop.title
   tab_update_title = (prop) ->
