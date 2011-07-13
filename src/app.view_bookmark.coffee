@@ -124,7 +124,9 @@ app.view_bookmark._bookmark_to_tr = (bookmark) ->
   #未読レス数
   td = document.createElement("td")
   if typeof bookmark.res_count is "number"
-    td.textContent = bookmark.res_count - (bookmark.read_state?.read or 0) or ""
+    unread = bookmark.res_count - (bookmark.read_state?.read or 0)
+    unread = Math.max(unread, 0)
+    td.textContent = unread or ""
   tr.appendChild(td)
 
   #勢い
