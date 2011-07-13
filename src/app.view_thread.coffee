@@ -305,6 +305,7 @@ app.view_thread.open = (url) ->
               .find(".next_unread")
                 .attr("href", app.safe_href(next.url))
                 .text("未読ブックマーク: #{next.title} (未読#{next.res_count - next.read_state.read}件)")
+                .show()
           else
             $view.find(".next_unread").hide()
 
