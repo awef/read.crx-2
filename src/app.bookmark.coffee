@@ -177,6 +177,7 @@ app.bookmark = {}
       app.log("error", "app.bookmark.remove: ブックマークされていないURLをブックマークから削除しようとしています", arguments)
 
   app.bookmark.update_read_state = (read_state) ->
+    read_state = app.deep_copy(read_state)
     url = read_state.url
     if bookmark = app.bookmark.get(url)
       if bookmark.read_state and

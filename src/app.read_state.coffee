@@ -100,6 +100,8 @@ app.read_state.get_by_board = (board_url) ->
     .promise()
 
 app.read_state.set = (read_state) ->
+  read_state = app.deep_copy(read_state)
+
   if (
     typeof read_state.url isnt "string" or
     typeof read_state.last isnt "number" or
