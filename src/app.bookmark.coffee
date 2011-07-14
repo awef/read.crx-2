@@ -152,20 +152,26 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
     source_id = new_source_id
     update_all()
 
-  app.bookmark.add = (url, title) ->
+  #res_countはオプショナル
+  app.bookmark.add = (url, title, res_count) ->
     if app.assert_arg("app.bookmark.add", ["string", "string"], arguments)
       return
 
     unless now_awef.index_url[url]?
       url = app.url.fix(url)
       app.read_state.get(url).done (read_state) ->
+        data = {}
+
         if read_state
-          data =
-            read: read_state.read
-            last: read_state.last
-            received: read_state.received
-            res_count: read_state.received
-          url += "#" + app.url.build_param(data)
+          data.read = read_state.read
+          data.last = read_state.last
+          data.received =  read_state.received
+          data.res_count = read_state.received
+
+        if res_count?
+          data.res_count = res_count
+
+        url += "#" + app.url.build_param(data)
         chrome.bookmarks.create({parentId: source_id, url, title})
     else
       app.log("error", "app.bookmark.add: 既にブックマークされいてるURLをブックマークに追加しようとしています", arguments)
