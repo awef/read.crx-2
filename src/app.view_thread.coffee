@@ -296,45 +296,54 @@ app.view_thread.open = (url) ->
         return
 
   #フッター表示処理
-  (->
-    is_visible = false
-    $view.find(".content")
-      .bind "scroll", ->
-        scroll_left = this.scrollHeight -
-            (this.offsetHeight + this.scrollTop)
+  update_footer = ->
+    console.log "update_footer"
+    content = $view[0].querySelector(".content")
+    scroll_left = content.scrollHeight -
+        (content.offsetHeight + content.scrollTop)
 
-        if not is_visible and scroll_left is 0
-          #表示するべき未読ブックマークが有るかをスキャン
-          next = null
-          for bookmark in app.bookmark.get_all()
-            if bookmark.url is url
+    #未読ブックマーク表示更新
+    if scroll_left is 0
+      #表示するべき未読ブックマークが有るかをスキャン
+      next = null
+      for bookmark in app.bookmark.get_all()
+        if bookmark.url is url
+          continue
+        else if bookmark.read_state? and bookmark.res_count?
+          if bookmark.res_count - bookmark.read_state.read > 0
+            #TODO もっと綺麗に
+            if document.querySelector("[data-url=\"#{bookmark.url}\"]")
               continue
-            else if bookmark.read_state? and bookmark.res_count?
-              if bookmark.res_count - bookmark.read_state.read > 0
-                #TODO もっと綺麗に
-                if document.querySelector("[data-url=\"#{bookmark.url}\"]")
-                  continue
-                else
-                  next = bookmark
-                  break
+            else
+              next = bookmark
+              break
 
-          if next
-            $view
-              .find(".next_unread")
-                .attr("href", app.safe_href(next.url))
-                .text("未読ブックマーク: #{next.title} (未読#{next.res_count - next.read_state.read}件)")
-                .show()
-          else
-            $view.find(".next_unread").hide()
+      if next
+        $view
+          .find(".next_unread")
+            .attr("href", app.safe_href(next.url))
+            .text("未読ブックマーク: #{next.title} (未読#{next.res_count - next.read_state.read}件)")
+            .show()
+      else
+        $view.find(".next_unread").hide()
 
-          is_visible = true
-          $view.find("footer").show()
+    #フッター自体の表示/非表示を更新
+    if scroll_left is 0
+      $view.find("footer").show()
+    else
+      $view.find("footer").hide()
 
-        else if is_visible and scroll_left isnt 0
-          is_visible = false
-          $view.find("footer").hide()
+  $view
+    #TODO tab系からの分離
+    .bind "tab_selected", ->
+      console.log "tab_selected"
+      update_footer()
+      return
+
+    .find(".content")
+      .bind "scroll", ->
+        update_footer()
         return
-  )()
 
   $view.find(".next_unread").bind "click", ->
     $view.trigger("view_request_killme")
