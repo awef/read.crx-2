@@ -59,8 +59,8 @@ app.view_board.open = (url) ->
     if message.board_url is url
       tr = $view.find("tr[data-href=\"#{message.read_state.url}\"]")[0]
       if tr
-        text = "" + ((message.read_state.received - message.read_state.read) or "")
-        tr.children[3].textContent = text
+        unread = message.read_state.received - message.read_state.read
+        tr.children[3].textContent = Math.max(unread, 0) or ""
 
   app.message.add_listener("read_state_updated", on_read_state_updated)
 
