@@ -1,28 +1,18 @@
 if localStorage.zombie_read_state?
   array_of_read_state = JSON.parse(localStorage["zombie_read_state"])
-  for read_state in array_of_read_state
-    url_list = []
-    url_list.push(read_state.url)
-
-  #TODO ちゃんとした名前を付ける
-  hoge = (url) ->
-    index = url_list.indexOf(url)
-    if index isnt -1
-      url_list.splice(index, 1)
-      if url_list.length is 0
-        close()
-
-  app.message.add_listener "read_state_updated", (message) ->
-    if not app.bookmark.get(message.read_state.url)
-      hoge(message.read_state.url)
-
-  chrome.bookmarks.onChanged.addListener (id, prop) ->
-    hoge(app.url.fix(prop.url))
 
   app.bookmark.promise_first_scan.done ->
+    count = 0
+    countdown = ->
+      if --count is 0
+        close()
+
     for read_state in array_of_read_state
-      app.read_state.set(read_state)
-      app.bookmark.update_read_state(read_state)
+      count += 2
+      app.read_state.set(read_state).always(countdown)
+      app.bookmark.update_read_state(read_state).always(countdown)
+
+    return
 
   delete localStorage["zombie_read_state"]
 else
