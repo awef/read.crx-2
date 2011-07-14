@@ -187,28 +187,37 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
       app.log("error", "app.bookmark.remove: ブックマークされていないURLをブックマークから削除しようとしています", arguments)
 
   app.bookmark.update_read_state = (read_state) ->
-    read_state = app.deep_copy(read_state)
-    url = read_state.url
-    if bookmark = app.bookmark.get(url)
-      if bookmark.read_state and
-          bookmark.read_state.received is read_state.received and
-          bookmark.read_state.read is read_state.read and
-          bookmark.read_state.last is read_state.last
-        return
+    $.Deferred (deferred) ->
+      read_state = app.deep_copy(read_state)
+      url = read_state.url
+      if bookmark = app.bookmark.get(url)
+        if bookmark.read_state and
+            bookmark.read_state.received is read_state.received and
+            bookmark.read_state.read is read_state.read and
+            bookmark.read_state.last is read_state.last
+          deferred.resolve()
+          return
 
-      data =
-        received: read_state.received
-        read: read_state.read
-        last: read_state.last
+        data =
+          received: read_state.received
+          read: read_state.read
+          last: read_state.last
 
-      if bookmark.res_count
-        data.res_count = bookmark.res_count
+        if bookmark.res_count
+          data.res_count = bookmark.res_count
 
-      if bookmark.expired is true
-        data.expired = true
+        if bookmark.expired is true
+          data.expired = true
 
-      chrome.bookmarks.update(now_awef.index_url_id[url],
-        url: read_state.url + "#" + app.url.build_param(data))
+        chrome.bookmarks.update(
+          now_awef.index_url_id[url],
+          url: read_state.url + "#" + app.url.build_param(data),
+          ->
+            deferred.resolve()
+        )
+      else
+        deferred.reject()
+    .promise()
 
   app.bookmark.update_res_count = (url, res_count) ->
     if bookmark = app.bookmark.get(url)
