@@ -19,9 +19,10 @@ if localStorage.zombie_read_state?
   chrome.bookmarks.onChanged.addListener (id, prop) ->
     hoge(app.url.fix(prop.url))
 
-  for read_state in array_of_read_state
-    app.read_state.set(read_state)
-    app.bookmark.update_read_state(read_state)
+  app.bookmark.promise_first_scan.done ->
+    for read_state in array_of_read_state
+      app.read_state.set(read_state)
+      app.bookmark.update_read_state(read_state)
 
   delete localStorage["zombie_read_state"]
 else

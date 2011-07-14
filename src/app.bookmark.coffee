@@ -1,5 +1,7 @@
 app.bookmark = {}
 
+app.bookmark._deferred_first_scan = $.Deferred()
+app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
 (->
   source_id = app.config.get("bookmark_id")
 
@@ -88,6 +90,8 @@ app.bookmark = {}
   update_all = ->
     scan_awef().done (new_awef) ->
       update_awef(new_awef)
+      unless app.bookmark._deferred_first_scan.isResolved()
+        app.bookmark._deferred_first_scan.resolve()
 
   update_all()
 
