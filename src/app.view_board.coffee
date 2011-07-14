@@ -39,6 +39,7 @@ app.view_board.open = (url) ->
     app.view_board._draw($view)
       .done ->
         suspend_reload_button()
+    return
 
   #ブックマーク更新処理
   on_bookmark_updated = (message) ->
@@ -53,6 +54,7 @@ app.view_board.open = (url) ->
 
   $view.bind "view_unload", ->
     app.message.remove_listener("bookmark_updated", on_bookmark_updated)
+    return
 
   #read_state更新時処理
   on_read_state_updated = (message) ->
@@ -66,6 +68,7 @@ app.view_board.open = (url) ->
 
   $view.bind "view_unload", ->
     app.message.remove_listener("read_state_updated", on_read_state_updated)
+    return
 
   app.view_board._draw($view)
     .done ->

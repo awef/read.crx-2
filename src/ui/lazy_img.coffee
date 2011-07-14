@@ -20,12 +20,14 @@
 
       on_scroll = ->
         scroll_flg = true
+        return
 
       $(this)
         .bind("scroll", on_scroll)
         .one "lazy_img_destroy", ->
           $(this).unbind("scroll", on_scroll)
           clearInterval(interval)
+          return
       null
     this
 )(jQuery)

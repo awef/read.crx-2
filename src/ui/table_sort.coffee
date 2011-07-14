@@ -16,6 +16,7 @@
           $th.addClass("table_sort_#{sort_order}")
 
           $th.closest("table").trigger("table_sort_update")
+          return
 
       .end()
 
@@ -51,6 +52,7 @@
             tbody.insertBefore(tr)
 
         this.style["display"] = "table"
+        return
 
     this
 )(jQuery)

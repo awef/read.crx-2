@@ -28,5 +28,6 @@
               .removeClass("accordion_open")
               .next()
                 .slideUp(250)
+          return
     this
 )(jQuery)

@@ -64,6 +64,7 @@ app.main = ->
   is_restored = app.view_tab_state.restore()
   window.addEventListener "unload", ->
     app.view_tab_state.store()
+    return
 
   #もし、タブが一つも復元されなかったらブックマークタブを開く
   unless is_restored
@@ -125,11 +126,13 @@ app.main = ->
       if e.which is 116 or (e.ctrlKey and e.which is 82) #F5 or Ctrl+R
         e.preventDefault()
         $(".tab .tab_container .tab_focused").trigger("request_reload")
+      return
 
     #データ保存等の後片付けを行なってくれるzombie.html起動
     .bind "unload", ->
       if localStorage.zombie_read_state?
         open("/zombie.html", undefined, "left=1,top=1,width=250,height=50")
+      return
 
   $(document.documentElement)
     #a.open_in_rcrxがクリックされた場合にopenメッセージを送出する
@@ -137,6 +140,7 @@ app.main = ->
       e.preventDefault()
       app.message.send "open",
         url: this.href or this.getAttribute("data-href")
+      return
 
     #タブ内コンテンツがtitle_updatedを送出した場合、タブのタイトルを更新する
     .delegate ".tab_content", "title_updated", ->
@@ -147,15 +151,18 @@ app.main = ->
             tab_id: $this.attr("data-tab_id")
             title: $this.attr("data-title")
           })
+      return
 
     #タブ内コンテンツがview_request_killmeを送って来た場合、タブを閉じる。
     .delegate ".tab_content", "view_request_killme", ->
       $this = $(this)
       $this.closest(".tab").tab("remove", tab_id: $this.attr("data-tab_id"))
+      return
 
     #tab_removedイベントをview_unloadに翻訳
     .delegate ".tab_content", "tab_removed", ->
       $(this).trigger("view_unload")
+      return
 
     #フォーカス管理
     #タブの内容がクリックされた時にフォーカスを移動
@@ -170,6 +177,7 @@ app.main = ->
               .addClass("tab_focused")
               .find(".content")
                 .focus()
+      return
 
     #タブが選択された時にフォーカスを移動
     .delegate ".tab_content", "tab_selected", ->
@@ -178,6 +186,7 @@ app.main = ->
       #クリックでタブを選択した時にフォーカスが移らなくなるため、deferで飛ばす
       app.defer ->
         $(".tab_focused .content").focus()
+      return
 
     #フォーカスしているタブが削除された時にフォーカスを移動
     .delegate ".tab_content", "tab_removed", ->
@@ -189,8 +198,10 @@ app.main = ->
               .addClass("tab_focused")
               .find(".content")
                 .focus()
+      return
 
     #フォーカスしているタブ内のコンテンツが再描画された場合、フォーカスを合わせ直す
     .delegate ".tab_content", "view_loaded", ->
       if this.classList.contains("tab_focused")
         this.getElementsByClassName("content")[0]?.focus()
+      return

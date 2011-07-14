@@ -31,6 +31,7 @@ app.view_thread.open = (url) ->
   if tsld is "2ch.net" or tsld is "livedoor.jp"
     $view.find(".button_write").bind "click", ->
       write()
+      return
   else
     $view.find(".button_write").remove()
 
@@ -60,6 +61,7 @@ app.view_thread.open = (url) ->
           suspend_reload_button()
         .fail ->
           $view.removeClass("loading")
+    return
 
   app.view_thread._read_state_manager($view)
   app.view_thread._draw($view)
@@ -73,18 +75,21 @@ app.view_thread.open = (url) ->
   $view
     .bind "view_unload", ->
       $view.find(".content").triggerHandler("lazy_img_destroy")
+      return
 
     #名前欄が数字だった場合のポップアップ
     .delegate ".name", "mouseenter", ->
       if /^\d+$/.test(this.textContent)
         if not this.classList.contains("name_num")
           this.classList.add("name_num")
+      return
 
     .delegate ".name_num", "click", (e) ->
       res = $view.find(".content")[0].children[+this.textContent - 1]
       if res
         $popup = $("<div>").append(res.cloneNode(true))
         $.popup($view, $popup, e.clientX, e.clientY, this)
+      return
 
     #コンテキストメニュー 表示
     .delegate ".num", "click contextmenu", (e) ->
@@ -101,6 +106,8 @@ app.view_thread.open = (url) ->
 
         $menu.appendTo($view)
         $.contextmenu($menu, e.clientX, e.clientY)
+
+      return
 
     #コンテキストメニュー 項目クリック
     .delegate ".view_thread_resmenu > *", "click", ->
@@ -125,6 +132,8 @@ app.view_thread.open = (url) ->
 
       $this.parent().remove()
 
+      return
+
     #アンカーポップアップ
     .delegate ".anchor:not(.disabled)", "mouseenter", (e) ->
       tmp = $view.find(".content")[0].children
@@ -144,12 +153,15 @@ app.view_thread.open = (url) ->
       $popup = $("<div>").append(frag)
       $.popup($view, $popup, e.clientX, e.clientY, this)
 
+      return
+
     #アンカーリンク
     .delegate ".anchor:not(.disabled)", "click", ->
       tmp = app.util.parse_anchor(this.textContent)
       target_res_num = tmp.data[0]?.segments[0]?[0]
       if target_res_num?
         app.view_thread._jump_to_res($view, target_res_num, true)
+      return
 
     #通常リンク
     .delegate ".message a:not(.anchor)", "click", (e) ->
@@ -181,6 +193,7 @@ app.view_thread.open = (url) ->
       if flg
         e.preventDefault()
         app.message.send("open", {url})
+      return
 
     #IDポップアップ
     .delegate ".id.link, .id.freq", "click", (e) ->
@@ -192,6 +205,7 @@ app.view_thread.open = (url) ->
               .clone()
       )
       $.popup($view, $container, e.clientX, e.clientY, this)
+      return
 
     #リプライポップアップ
     .delegate ".rep", "click", (e) ->
@@ -203,6 +217,7 @@ app.view_thread.open = (url) ->
 
       $popup = $("<div>").append(frag)
       $.popup($view, $popup, e.clientX, e.clientY, this)
+      return
 
   #クイックジャンプパネル
   _jump_hoge =
@@ -221,7 +236,7 @@ app.view_thread.open = (url) ->
         already[$tmp.index()] = true
       else
         $view.find(".#{key}").hide()
-    null
+    return
 
   $view.find(".jump_panel").bind "click", (e) ->
     $target = $(e.target)
@@ -238,6 +253,7 @@ app.view_thread.open = (url) ->
         app.view_thread._jump_to_res($view, res_num, true)
       else
         app.log("warn", "[view_thread] .jump_panel: ターゲットが存在しません")
+    return
 
   #検索ボックス
   search_stored_scrollTop = null
@@ -270,12 +286,14 @@ app.view_thread.open = (url) ->
           if typeof search_stored_scrollTop is "number"
             $view.find(".content").scrollTop(search_stored_scrollTop)
             search_stored_scrollTop = null
+        return
 
       .bind "keyup", (e) ->
         if e.which is 27 #Esc
           if this.value isnt ""
             this.value = ""
             $(this).triggerHandler("input")
+        return
 
   #フッター表示処理
   (->
@@ -315,10 +333,12 @@ app.view_thread.open = (url) ->
         else if is_visible and scroll_left isnt 0
           is_visible = false
           $view.find("footer").hide()
+        return
   )()
 
   $view.find(".next_unread").bind "click", ->
     $view.trigger("view_request_killme")
+    return
 
   $view
 
@@ -570,6 +590,7 @@ app.view_thread._read_state_manager = ($view) ->
 
       $view.removeClass("loading")
       app.view_thread._jump_to_res($view, read_state.last, false)
+    return
 
   promise_get_read_state.done ->
     scan = ->
@@ -618,6 +639,7 @@ app.view_thread._read_state_manager = ($view) ->
       .find(".content")
         .bind "scroll", ->
           scroll_flg = true
+          return
       .end()
 
       .bind "request_reload", ->
@@ -626,6 +648,7 @@ app.view_thread._read_state_manager = ($view) ->
           app.read_state.set(read_state)
           read_state_updated = false
         scan_watcher_suspend = true
+        return
 
       .bind "view_loaded", ->
         scan_watcher_suspend = false
@@ -638,3 +661,4 @@ app.view_thread._read_state_manager = ($view) ->
         if read_state_updated
           app.read_state.set(read_state)
           read_state_updated = false
+        return

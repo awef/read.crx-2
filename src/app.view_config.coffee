@@ -11,6 +11,7 @@ app.view_config.open = ->
         null
       .bind "input", ->
         app.config.set(this.name, this.value)
+        return
 
   $view
     .find("input.direct[type=\"checkbox\"]")
@@ -19,6 +20,7 @@ app.view_config.open = ->
         null
       .bind "change", ->
         app.config.set(this.name, if this.checked then "on" else "off")
+        return
 
   $view
     .find("input.direct[type=\"radio\"]")
@@ -29,6 +31,7 @@ app.view_config.open = ->
       .bind "change", ->
         val = $view.find("""input[name="#{this.name}"]:checked""").val()
         app.config.set(this.name, val)
+        return
 
   #バージョン情報表示
   $view.find(".version_info")
@@ -85,6 +88,8 @@ app.view_config.open = ->
           .text("更新失敗")
     , true
 
+    return
+
   #履歴削除ボタン
   $view.find(".history_clear").bind "click", ->
     $button = $(this)
@@ -101,6 +106,7 @@ app.view_config.open = ->
         $(".view_history").trigger("request_reload")
       .fail ->
         $status.text("削除失敗")
+    return
 
   #キャッシュ削除ボタン
   $view.find(".cache_clear").bind "click", ->
@@ -117,9 +123,11 @@ app.view_config.open = ->
         $status.text("削除完了")
       .fail ->
         $status.text("削除失敗")
+    return
 
   #ブックマークフォルダ変更ボタン
   $view.find(".bookmark_source_change").bind "click", ->
     app.view_bookmark_source_selector.open()
+    return
 
   $view

@@ -133,6 +133,7 @@
     window.addEventListener "message", (e) ->
       if e.origin is origin and e.data is "write_iframe_pong"
         main()
+      return
 
     send_message_ping()
 

@@ -16,13 +16,16 @@
 
         if next
           tab_select.call(that, {tab_id: next.getAttribute("data-tab_id")})
+        return
 
       .delegate ".tab_tabbar li", "mousedown", (e) ->
         (if e.which is 2 then tab_remove else tab_select)
           .call(that, {tab_id: $(this).attr("data-tab_id")})
+        return
 
       .delegate ".tab_tabbar img", "click", ->
         tab_remove.call(that, tab_id: $(this).parent().attr("data-tab_id"))
+        return
 
   # prop.element, prop.title, [prop.background]
   tab_add = (prop) ->

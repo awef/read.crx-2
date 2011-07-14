@@ -50,11 +50,13 @@
     start_rmtimer = ->
       $popup.addClass("active")
       rmtimer = setTimeout(remove, 300)
+      return
 
     stop_rmtimer = ->
       $popup.removeClass("active")
       clearTimeout(rmtimer)
       rmtimer = null
+      return
 
     $popup
       .bind("mouseleave", start_rmtimer)

@@ -11,6 +11,7 @@ app.view_bookmark.open = ->
     path = "chrome-extension://eemcgdkfndhakfknompkggombfjjjeno/"
     path += "main.html##{app.config.get("bookmark_id")}"
     open(path)
+    return
 
   app.view_module.reload_button($view)
   app.view_module.searchbox_thread_title($view, 0)
@@ -48,6 +49,7 @@ app.view_bookmark.open = ->
         app.view_bookmark._draw($view)
         $loading_overlay.empty()
     fn()
+    return
 
   #ブックマーク更新時処理
   on_updated = (message) ->
@@ -71,6 +73,7 @@ app.view_bookmark.open = ->
 
   $view.bind "view_unload", ->
     app.message.remove_listener("bookmark_updated", on_updated)
+    return
 
   #read_state更新時処理
   on_read_state_updated = (message) ->
@@ -84,6 +87,7 @@ app.view_bookmark.open = ->
 
   $view.bind "view_unload", ->
     app.message.remove_listener("read_state_updated", on_read_state_updated)
+    return
 
   app.view_bookmark._draw($view)
 

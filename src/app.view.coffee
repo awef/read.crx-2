@@ -4,10 +4,12 @@ app.view_module.searchbox_thread_title = ($view, target_col) ->
     .bind "input", ->
       $view.find("table")
         .table_search("search", {query: this.value, target_col})
+      return
     .bind "keyup", (e) ->
       if e.which is 27 #Esc
         this.value = ""
         $view.find("table").table_search("clear")
+      return
 
 app.view_module.bookmark_button = ($view) ->
   url = $view.attr("data-url")
@@ -29,12 +31,14 @@ app.view_module.bookmark_button = ($view) ->
 
     $view.bind "view_unload", ->
       app.message.remove_listener("bookmark_updated", on_update)
+      return
 
     $button.bind "click", ->
       if app.bookmark.get(url)
         app.bookmark.remove(url)
       else
         app.bookmark.add(url, $view.attr("data-title") or url)
+      return
   else
     $button.remove()
 
@@ -51,6 +55,7 @@ app.view_module.reload_button = ($view) ->
   $view.find(".button_reload").bind "click", ->
     if not $(this).hasClass("disabled")
       $view.trigger("request_reload")
+    return
 
 app.view_module.board_contextmenu = ($view) ->
   $view
@@ -72,6 +77,8 @@ app.view_module.board_contextmenu = ($view) ->
           $menu.find(".del_bookmark").remove()
 
         $.contextmenu($menu, e.clientX, e.clientY)
+
+      return
 
     #コンテキストメニュー 項目クリック
     .delegate ".view_module_board_contextmenu > *", "click", ->
@@ -98,6 +105,7 @@ app.view_module.board_contextmenu = ($view) ->
         app.bookmark.remove(url)
 
       $this.parent().remove()
+      return
 
 app.view_sidemenu = {}
 app.view_sidemenu.open = ->
@@ -157,6 +165,7 @@ app.view_sidemenu.open = ->
     $view.find(".view_sidemenu_bookmark").empty()
     $view.find("h3:not(:first-of-type), ul:not(:first-of-type)").remove()
     load()
+    return
 
   #ブックマーク更新時処理
   #TODO アンロード時にremove_listenerするよう改良
@@ -226,12 +235,15 @@ app.view_setup_resizer = ->
           offset = that.parentNode[if val_axis is "Y" then "offsetTop" else "offsetLeft"]
           tab_a.style[val] =
             Math.max(Math.min(e["page#{val_axis}"] - offset, max), min) + "px"
+          return
 
         .bind "mouseup", ->
           $(this).remove()
           app.config.set("tab_a_#{val}", parseInt(tab_a.style[val], 10))
+          return
 
         .appendTo("body")
+      return
 
 app.view_inputurl = {}
 
@@ -250,6 +262,7 @@ app.view_inputurl.open = ->
           .hide()
           .text("未対応形式のURLです")
           .fadeIn("fast")
+    return
 
   $view
 
@@ -285,6 +298,7 @@ app.view_history.open = ->
   $view.bind "request_reload", ->
     $view.find("tbody").empty()
     load()
+    return
 
   $view
 
@@ -309,6 +323,8 @@ app.view_bookmark_source_selector.open = ->
             .end()
           .end()
           .addClass("selected")
+        return
+
       .find(".submit")
         .bind "click", ->
           bookmark_id = (
@@ -322,6 +338,7 @@ app.view_bookmark_source_selector.open = ->
             .closest(".view_bookmark_source_selector")
               .fadeOut "fast", ->
                 $(this).remove()
+          return
       .end()
       .appendTo(document.body)
 
@@ -351,13 +368,13 @@ app.notice.push = (text) ->
     .append(
       $("<div>", {text}),
       $("<button>")
-        .bind("click", ->
+        .bind "click", ->
           $(this)
             .parent()
             .animate({opacity: 0}, "fast")
             .delay("fast")
             .slideUp("fast", -> $(this).remove())
-          )
+          return
       )
     .hide()
     .appendTo("#app_notice_container")

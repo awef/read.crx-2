@@ -12,9 +12,11 @@
         return
 
       cleanup()
+      return
 
   $(window).bind "blur", ->
     cleanup()
+    return
 
   $.contextmenu = (menu, x, y) ->
     cleanup()

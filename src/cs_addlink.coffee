@@ -32,6 +32,7 @@ if (regs.some (a) -> a.test(location.href))
     url = chrome.extension.getURL("app.html")
     url += "?q=#{encodeURIComponent(location.href)}"
     open(url)
+    return
   container.appendChild(open_button)
 
   close_button = document.createElement("span")
@@ -41,6 +42,7 @@ if (regs.some (a) -> a.test(location.href))
   close_button.style["margin-left"] = "5px"
   close_button.addEventListener "click", ->
     this.parentNode.parentNode.removeChild(this.parentNode)
+    return
   container.appendChild(close_button)
 
   document.body.appendChild(container)

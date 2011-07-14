@@ -34,12 +34,14 @@ app.main = ->
       $view.find(".iframe_container").fadeIn("fast")
     else if message.type is "error"
       on_error(message.message)
+    return
 
   $view.find(".cancel, .hide_iframe").bind "click", ->
     $view.find(".iframe_container").find("iframe").remove().end().fadeOut("fast")
     $view.find("form input, form textarea").removeAttr("disabled")
     $view.find(".cacnel").attr("disabled", true)
     $view.find(".notice").text("")
+    return
 
   $view.find(".cancel, .hide_iframe").bind "click", ->
     $view
@@ -51,6 +53,7 @@ app.main = ->
     $view.find("input, textarea").removeAttr("disabled")
     $view.find(".cancel").attr("disabled", true)
     $view.find(".notice").text("")
+    return
 
   document.title = arg.title
   $view.find("h1").text(arg.title)
@@ -97,6 +100,7 @@ app.main = ->
         .appendTo($view.find(".iframe_container"))
 
       $view.find(".notice").text("書き込み中")
+    return
 
 (->
   if location.pathname isnt "/write/write.html"
