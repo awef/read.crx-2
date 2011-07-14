@@ -633,6 +633,8 @@ app.view_thread._read_state_manager = ($view) ->
       if scroll_flg and not scroll_watcher_suspend
         scroll_flg = false
         scan()
+        if read_state_updated
+          app.read_state.set(read_state)
     , 250
 
     $view
@@ -646,6 +648,7 @@ app.view_thread._read_state_manager = ($view) ->
         scan()
         if read_state_updated
           app.read_state.set(read_state)
+          app.bookmark.update_read_state(read_state)
           read_state_updated = false
         scan_watcher_suspend = true
         return
@@ -660,5 +663,6 @@ app.view_thread._read_state_manager = ($view) ->
         scan()
         if read_state_updated
           app.read_state.set(read_state)
+          app.bookmark.update_read_state(read_state)
           read_state_updated = false
         return

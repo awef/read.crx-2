@@ -131,7 +131,6 @@ app.read_state.set = (read_state) ->
     .always ->
       delete read_state.board_url
       read_state.url = read_state.url.replace(url.replaced, url.original)
-      app.bookmark.update_read_state(read_state)
       app.message.send("read_state_updated", {board_url, read_state})
 
     .promise()

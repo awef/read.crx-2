@@ -21,6 +21,7 @@ if localStorage.zombie_read_state?
 
   for read_state in array_of_read_state
     app.read_state.set(read_state)
+    app.bookmark.update_read_state(read_state)
 
   delete localStorage["zombie_read_state"]
 else
