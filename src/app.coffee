@@ -18,8 +18,19 @@ app.log = (level) ->
   else
     app.log("error", "app.log: 引数levelが不正な値です", arguments)
 
-app.deep_copy = (data) ->
-  JSON.parse(JSON.stringify(data))
+(->
+  fn = (data) ->
+    if typeof data isnt "object"
+      data
+    else if Array.isArray(data)
+      (fn(val) for val in data)
+    else
+      res = {}
+      (res[key] = fn(val) for key,val of data)
+      res
+
+  app.deep_copy = fn
+)()
 
 app.defer = (fn) ->
   setTimeout(fn, 0)
