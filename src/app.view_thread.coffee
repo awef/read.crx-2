@@ -297,7 +297,6 @@ app.view_thread.open = (url) ->
 
   #フッター表示処理
   update_footer = ->
-    console.log "update_footer"
     content = $view[0].querySelector(".content")
     scroll_left = content.scrollHeight -
         (content.offsetHeight + content.scrollTop)
@@ -336,7 +335,6 @@ app.view_thread.open = (url) ->
   $view
     #TODO tab系からの分離
     .bind "tab_selected", ->
-      console.log "tab_selected"
       update_footer()
       return
 
