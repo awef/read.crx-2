@@ -306,22 +306,28 @@ app.view_thread.open = (url) ->
       #表示するべき未読ブックマークが有るかをスキャン
       next = null
       for bookmark in app.bookmark.get_all()
-        if bookmark.url is url
+        if bookmark.type isnt "thread" or bookmark.url is url
           continue
-        else if bookmark.read_state? and bookmark.res_count?
-          if bookmark.res_count - bookmark.read_state.read > 0
-            #TODO もっと綺麗に
-            if document.querySelector("[data-url=\"#{bookmark.url}\"]")
-              continue
-            else
-              next = bookmark
-              break
+
+        if bookmark.res_count?
+          if bookmark.res_count - (bookmark.read_state?.read or 0) is 0
+            continue
+
+        #TODO もっと綺麗に
+        if document.querySelector("[data-url=\"#{bookmark.url}\"]")
+          continue
+        else
+          next = bookmark
+          break
 
       if next
+        text = "未読ブックマーク: #{next.title}"
+        if next.res_count?
+          text += " (未読#{next.res_count - (next.read_state?.read or 0)}件)"
         $view
           .find(".next_unread")
             .attr("href", app.safe_href(next.url))
-            .text("未読ブックマーク: #{next.title} (未読#{next.res_count - next.read_state.read}件)")
+            .text(text)
             .show()
       else
         $view.find(".next_unread").hide()
