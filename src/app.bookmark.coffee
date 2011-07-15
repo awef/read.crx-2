@@ -282,7 +282,7 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
         app.bookmark.update_read_state(bookmark.read_state)
 
       if bookmark.res_count?
-        app.bookmark.update_res_count(bookmark.url)
+        app.bookmark.update_res_count(bookmark.url, bookmark.res_count)
 
       if bookmark.expired?
         app.bookmark.update_expired(bookmark.url, bookmark.expired)
