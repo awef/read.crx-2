@@ -1,6 +1,6 @@
 {
   "name" : "read.crx 2 (alpha version)",
-  "version" : "0.9",
+  "version" : "0.10",
   "description" : "2chブラウザ",
   "minimum_chrome_version" : "12",
   "incognito" : "split",
