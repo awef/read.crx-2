@@ -54,7 +54,12 @@ app.view_thread.open = (url) ->
         .addClass("loading")
         .find(".content")
           .empty()
-          .triggerHandler("lazy_img_destroy")
+          .removeClass("searching")
+          .trigger("lazy_img_destroy")
+        .end()
+        .find(".searchbox")
+          .val("")
+
       app.view_thread._draw($view, ex?.force_update)
         .done ->
           $view.find(".content").lazy_img()

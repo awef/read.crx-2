@@ -34,8 +34,14 @@ app.view_board.open = (url) ->
     if $view.hasClass("loading")
       return
 
-    $view.addClass("loading")
-    $view.find("tbody").empty()
+    $view
+      .addClass("loading")
+      .find("tbody")
+        .empty()
+      .end()
+      .find(".searchbox_thread_title")
+        .val("")
+
     app.view_board._draw($view)
       .done ->
         suspend_reload_button()

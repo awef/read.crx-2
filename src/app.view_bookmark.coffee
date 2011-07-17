@@ -21,7 +21,10 @@ app.view_bookmark.open = ->
     if $view.hasClass("loading")
       return
 
-    $view.addClass("loading")
+    $view
+      .addClass("loading")
+      .find(".searchbox_thread_title")
+        .val("")
 
     board_list = []
     for bookmark in app.bookmark.get_all()
