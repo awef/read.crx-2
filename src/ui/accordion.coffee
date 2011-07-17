@@ -7,14 +7,13 @@
       .find(".accordion_open")
         .removeClass("accordion_open")
       .end()
-      .find("> :header:first")
+      .find(":header + :not(:header)")
+        .hide()
+      .end()
+      .find("> :header:eq(0)")
         .addClass("accordion_open")
           .next()
             .show()
-          .end()
-      .end()
-      .find("> :not(:header):not(:first)")
-        .hide()
 
     if not refresh
       $this
