@@ -107,6 +107,14 @@ app.view_sidemenu = {}
 app.view_sidemenu.open = ->
   $view = $("#template > .view_sidemenu").clone()
 
+  #スレタイ検索ボックス
+  $view
+    .find(".search")
+      .bind "submit", ->
+        app.defer =>
+          this.STR.value = ""
+        return
+
   board_to_li = (board) ->
     li = document.createElement("li")
     a = document.createElement("a")

@@ -21,6 +21,9 @@
 
     #template(hidden)
       .view.view_sidemenu(data-url="sidemenu" data-title="サイドメニュー")
+        %form.search(action="http://find.2ch.net/#rcrx" accept-charset="euc-jp" target="_blank")
+          %input(name="STR" placeholder="スレッド検索")
+          %input(type="submit" value="")
         %h3 read.crx
         %ul
           %li
