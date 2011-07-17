@@ -25,6 +25,7 @@ all:\
   ${DBG_DIR}/ui.js\
   ${DBG_DIR}/app.css\
   ${DBG_DIR}/cs_addlink.js\
+  ${DBG_DIR}/cs_search.js\
   ${DBG_DIR}/lib/\
   ${DBG_DIR}/img/\
   ${DBG_DIR}/test/\
@@ -66,6 +67,16 @@ ${DBG_DIR}/app.css: ${SRC_DIR}/app.sass ${SRC_DIR}/sass/*.sass
 
 ${DBG_DIR}/cs_addlink.js: ${SRC_DIR}/cs_addlink.coffee
 	$(call coffee, ${SRC_DIR}/cs_addlink.coffee, ${DBG_DIR}/cs_addlink.js)
+
+${DBG_DIR}/cs_search.js:\
+    ${SRC_DIR}/app.coffee\
+    ${SRC_DIR}/app.url.coffee\
+    ${SRC_DIR}/cs_search.coffee
+	$(call coffee,\
+  ${SRC_DIR}/app.coffee\
+  ${SRC_DIR}/app.url.coffee\
+  ${SRC_DIR}/cs_search.coffee\
+  , ${DBG_DIR}/cs_search.js)
 
 ${DBG_DIR}/lib/: ${LIB_FILES}
 	rm -rf ${DBG_DIR}/lib/
