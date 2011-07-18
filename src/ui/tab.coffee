@@ -77,6 +77,8 @@
       if tmp.classList.contains("tab_content")
         $(tmp).trigger("tab_selected")
 
+    return
+
   # prop.tab_id, prop.title
   tab_update_title = (prop) ->
     $(this)
