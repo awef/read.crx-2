@@ -54,9 +54,11 @@ ${DBG_DIR}/app.html: ${SRC_DIR}/app.haml
 
 ${DBG_DIR}/app.js:\
   ${SRC_DIR}/app.coffee\
+  ${SRC_DIR}/core/*.coffee\
   ${SRC_DIR}/app.*.coffee
 	$(call coffee,\
     ${SRC_DIR}/app.coffee\
+    ${SRC_DIR}/core/*.coffee\
     ${SRC_DIR}/app.*.coffee\
     , ${DBG_DIR}/app.js)
 
@@ -79,11 +81,11 @@ ${DBG_DIR}/cs_addlink.js: ${SRC_DIR}/cs_addlink.coffee
 
 ${DBG_DIR}/cs_search.js:\
     ${SRC_DIR}/app.coffee\
-    ${SRC_DIR}/app.url.coffee\
+    ${SRC_DIR}/core/url.coffee\
     ${SRC_DIR}/cs_search.coffee
 	$(call coffee,\
   ${SRC_DIR}/app.coffee\
-  ${SRC_DIR}/app.url.coffee\
+  ${SRC_DIR}/core/url.coffee\
   ${SRC_DIR}/cs_search.coffee\
   , ${DBG_DIR}/cs_search.js)
 
@@ -147,21 +149,21 @@ ${DBG_DIR}/write/write.css: ${SRC_DIR}/write/write.sass
 
 ${DBG_DIR}/write/write.js:\
   ${SRC_DIR}/app.coffee\
-  ${SRC_DIR}/app.url.coffee\
+  ${SRC_DIR}/core/url.coffee\
   ${SRC_DIR}/write/write.coffee
 	$(call coffee,\
     ${SRC_DIR}/app.coffee\
-    ${SRC_DIR}/app.url.coffee\
+    ${SRC_DIR}/core/url.coffee\
     ${SRC_DIR}/write/write.coffee\
     , ${DBG_DIR}/write/write.js)
 
 ${DBG_DIR}/write/cs_write.js:\
   ${SRC_DIR}/app.coffee\
-  ${SRC_DIR}/app.url.coffee\
+  ${SRC_DIR}/core/url.coffee\
   ${SRC_DIR}/write/cs_write.coffee
 	$(call coffee,\
     ${SRC_DIR}/app.coffee\
-    ${SRC_DIR}/app.url.coffee\
+    ${SRC_DIR}/core/url.coffee\
     ${SRC_DIR}/write/cs_write.coffee\
     , ${DBG_DIR}/write/cs_write.js)
 
@@ -170,14 +172,14 @@ ${DBG_DIR}/zombie.html: ${SRC_DIR}/zombie.haml
 
 ${DBG_DIR}/zombie.js:\
   ${SRC_DIR}/app.coffee\
-  ${SRC_DIR}/app.url.coffee\
-  ${SRC_DIR}/app.read_state.coffee\
-  ${SRC_DIR}/app.bookmark.coffee\
+  ${SRC_DIR}/core/url.coffee\
+  ${SRC_DIR}/core/read_state.coffee\
+  ${SRC_DIR}/core/bookmark.coffee\
   ${SRC_DIR}/zombie.coffee
 	$(call coffee,\
     ${SRC_DIR}/app.coffee\
-    ${SRC_DIR}/app.url.coffee\
-    ${SRC_DIR}/app.read_state.coffee\
-    ${SRC_DIR}/app.bookmark.coffee\
+    ${SRC_DIR}/core/url.coffee\
+    ${SRC_DIR}/core/read_state.coffee\
+    ${SRC_DIR}/core/bookmark.coffee\
     ${SRC_DIR}/zombie.coffee\
     , ${DBG_DIR}/zombie.js)
