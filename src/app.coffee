@@ -63,3 +63,20 @@ app.config =
 
 app.safe_href = (url) ->
   if /// ^https?:// ///.test(url) then url else "http://google.co.jp/"
+
+# app.manifest
+(->
+  xhr = new XMLHttpRequest()
+  xhr.open("GET", "/manifest.json", false)
+  xhr.send(null)
+  app.manifest = JSON.parse(xhr.responseText)
+)()
+
+app.boot = (path, fn) ->
+  if location.pathname is path
+    html_version = document.documentElement.getAttribute("data-app-version")
+    if app.manifest.version isnt html_version
+      location.reload(true)
+    else
+      fn()
+

@@ -1,16 +1,4 @@
-(->
-  if location.pathname isnt "/app.html"
-    return
-
-  xhr = new XMLHttpRequest()
-  xhr.open("GET", "/manifest.json", false)
-  xhr.send(null)
-  app.manifest = JSON.parse(xhr.responseText)
-
-  html_version = document.documentElement.getAttribute("data-app-version")
-  if app.manifest.version isnt html_version
-    location.reload(true)
-
+app.boot "/app.html", ->
   reg_res = /[\?&]q=([^&]+)/.exec(location.search)
   query = decodeURIComponent(reg_res?[1] or "app")
 
@@ -31,7 +19,6 @@
         app.main()
         if query isnt "app"
           app.message.send("open", url: query)
-)()
 
 app.main = ->
   document.title = app.manifest.name

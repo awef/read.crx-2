@@ -102,19 +102,6 @@ app.main = ->
       $view.find(".notice").text("書き込み中")
     return
 
-(->
-  if location.pathname isnt "/write/write.html"
-    return
-
-  xhr = new XMLHttpRequest()
-  xhr.open("GET", "/manifest.json", false)
-  xhr.send(null)
-  app.manifest = JSON.parse(xhr.responseText)
-
-  html_version = document.documentElement.getAttribute("data-app-version")
-  if app.manifest.version isnt html_version
-    location.reload(true)
-  else
-    $(app.main)
-)()
+app.boot "/write/write.html", ->
+  $(app.main)
 
