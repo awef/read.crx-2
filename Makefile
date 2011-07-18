@@ -23,6 +23,7 @@ all:\
   ${DBG_DIR}/app.html\
   ${DBG_DIR}/app.js\
   ${DBG_DIR}/ui.js\
+  ${DBG_DIR}/ui.css\
   ${DBG_DIR}/app.css\
   ${DBG_DIR}/cs_addlink.js\
   ${DBG_DIR}/cs_search.js\
@@ -62,7 +63,15 @@ ${DBG_DIR}/app.js:\
 ${DBG_DIR}/ui.js: ${SRC_DIR}/ui/*.coffee
 	$(call coffee, ${SRC_DIR}/ui/*.coffee, ${DBG_DIR}/ui.js)
 
-${DBG_DIR}/app.css: ${SRC_DIR}/app.sass ${SRC_DIR}/sass/*.sass
+${DBG_DIR}/ui.css:\
+  ${SRC_DIR}/common.sass\
+  ${SRC_DIR}/ui/*.sass
+	$(call sass, ${SRC_DIR}/ui/ui.sass, ${DBG_DIR}/ui.css)
+
+${DBG_DIR}/app.css:\
+  ${SRC_DIR}/common.sass\
+  ${SRC_DIR}/app.sass\
+  ${SRC_DIR}/sass/*.sass
 	$(call sass, ${SRC_DIR}/app.sass, ${DBG_DIR}/app.css)
 
 ${DBG_DIR}/cs_addlink.js: ${SRC_DIR}/cs_addlink.coffee
