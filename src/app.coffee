@@ -66,10 +66,11 @@ app.safe_href = (url) ->
 
 # app.manifest
 (->
-  xhr = new XMLHttpRequest()
-  xhr.open("GET", "/manifest.json", false)
-  xhr.send(null)
-  app.manifest = JSON.parse(xhr.responseText)
+  if location.origin is chrome.extension.getURL("").slice(0, -1)
+    xhr = new XMLHttpRequest()
+    xhr.open("GET", "/manifest.json", false)
+    xhr.send(null)
+    app.manifest = JSON.parse(xhr.responseText)
 )()
 
 app.boot = (path, fn) ->
