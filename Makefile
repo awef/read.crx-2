@@ -22,6 +22,18 @@ all:\
   ${DBG_DIR}/manifest.json\
   ${DBG_DIR}/app.js\
   ${DBG_DIR}/app_core.js\
+  ${DBG_DIR}/view/\
+\
+  ${DBG_DIR}/view/module.js\
+\
+  ${DBG_DIR}/view/index.html\
+  ${DBG_DIR}/view/index.css\
+  ${DBG_DIR}/view/index.js\
+\
+  ${DBG_DIR}/view/bookmark.html\
+  ${DBG_DIR}/view/bookmark.css\
+  ${DBG_DIR}/view/bookmark.js\
+\
   ${DBG_DIR}/app.html\
   ${DBG_DIR}/app_html.js\
   ${DBG_DIR}/ui.js\
@@ -56,6 +68,30 @@ ${DBG_DIR}/app.js: ${SRC_DIR}/app.coffee
 
 ${DBG_DIR}/app_core.js: ${SRC_DIR}/core/*.coffee
 	$(call coffee, ${SRC_DIR}/core/*.coffee, ${DBG_DIR}/app_core.js)
+
+${DBG_DIR}/view/:
+	mkdir ${DBG_DIR}/view/
+
+${DBG_DIR}/view/module.js: ${SRC_DIR}/view/module.coffee
+	$(call coffee, ${SRC_DIR}/view/module.coffee, ${DBG_DIR}/view/module.js)
+
+${DBG_DIR}/view/index.html: ${SRC_DIR}/view/index.haml
+	$(call haml, ${SRC_DIR}/view/index.haml, ${DBG_DIR}/view/index.html)
+${DBG_DIR}/view/index.css:\
+  ${SRC_DIR}/view/common.sass\
+  ${SRC_DIR}/view/index.sass
+	$(call sass, ${SRC_DIR}/view/index.sass, ${DBG_DIR}/view/index.css)
+${DBG_DIR}/view/index.js: ${SRC_DIR}/view/index.coffee
+	$(call coffee, ${SRC_DIR}/view/index.coffee, ${DBG_DIR}/view/index.js)
+
+${DBG_DIR}/view/bookmark.html: ${SRC_DIR}/view/bookmark.haml
+	$(call haml, ${SRC_DIR}/view/bookmark.haml, ${DBG_DIR}/view/bookmark.html)
+${DBG_DIR}/view/bookmark.css:\
+  ${SRC_DIR}/view/common.sass\
+  ${SRC_DIR}/view/bookmark.sass
+	$(call sass, ${SRC_DIR}/view/bookmark.sass, ${DBG_DIR}/view/bookmark.css)
+${DBG_DIR}/view/bookmark.js: ${SRC_DIR}/view/bookmark.coffee
+	$(call coffee, ${SRC_DIR}/view/bookmark.coffee, ${DBG_DIR}/view/bookmark.js)
 
 ${DBG_DIR}/app.html: ${SRC_DIR}/app.haml
 	$(call haml, ${SRC_DIR}/app.haml, ${DBG_DIR}/app.html)

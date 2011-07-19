@@ -1,0 +1,135 @@
+$z-index_tab_content: 0
+$z-index_selected_tab_content: 1
+$z-index_tabbed_view_nav_bar: 2
+$z-index_popup: 3
+$z-index_tabbed_view_overlay: 4
+$z-index_contextmenu: 5
+$z-index_notification: 6
+$z-index_modal: 7
+
+@mixin ascii_art
+  :font
+    :size 16px
+    :family "ＭＳ Ｐゴシック","Konatu","IPAMonaPGothic"
+  :line-height 18px
+
+@mixin drop_shadow
+  :box-shadow 0 1px 4px rgba(#000, 0.6)
+
+@mixin modal_overlay
+  :z-index $z-index_modal
+  :position absolute
+  :left 0
+  :top 0
+  :width 100%
+  :height 100%
+  :background-image -webkit-radial-gradient(#666, #333)
+
+@mixin common_view_style_1
+  :background-color #fff
+  body
+    :margin 0
+    :display -webkit-box
+    :-webkit-box-orient vertical
+  .message_bar
+    :font-size 13px
+    &.loading
+      :padding 3px
+    &.info
+      :padding 3px
+      :background-color #eef
+      :border 1px solid #ccd
+    &.error
+      :padding 3px
+      :background-color #ecc
+      :border 1px solid #ebb
+  .nav_bar
+    @include drop_shadow
+    :z-index $z-index_tabbed_view_nav_bar
+    :position relative
+    :background-color #fff
+    > input, > .button
+      :float left
+      :margin 3px
+    > input
+      :border 1px solid #ccc
+      :height 19px
+      :padding 0 0 0 19px
+      :background url(/img/search2_19x19.png) no-repeat
+    > .button
+      :width 19px
+      :height 19px
+      :border 1px solid #ccc
+      :cursor pointer
+      a
+        :display block
+        :width 100%
+        :height 100%
+      &.button_bookmark
+        :background-image url(/img/star_19x19.png)
+        &.bookmarked
+          :background-image url(/img/star2_19x19.png)
+          :-webkit-box-shadow 0 0 3px yellow inset
+      &.button_link
+        :background-image url(/img/link_19x19.png)
+      &.button_board
+        :background-image url(/img/arrow_19x19.png)
+      &.button_reload
+        :background-image url(/img/reload_19x19.png)
+        :-webkit-transition background-color 250ms
+        &.disabled
+          :background-color rgba(#000, 0.1)
+          :cursor default
+      &.button_write
+        :background-image url(/img/pencil_19x19.png)
+  .content
+    :-webkit-box-flex 1
+    :overflow-x hidden
+    :overflow-y auto
+    :position relative
+  .loading_overlay
+    :z-index $z-index_tabbed_view_overlay
+    :position absolute
+    :left 0
+    :top 0
+    :width 100%
+    :height 100%
+    :padding 5px
+    :box-sizing border-box
+    :background-color rgba(#000, 0.75)
+    :font-size 13px
+    :color #eee
+    :-webkit-user-select none
+  .loading_overlay
+    :display none
+  .content
+    :display block
+  &.loading
+    .loading_overlay
+      :display block
+    .content
+      :display none
+
+@mixin content_table
+  table
+    :width 100%
+    :font-size 13px
+    :border-collapse collapse
+    :background-color #fafafa
+  tr
+    :border-bottom 1px solid #ddd
+  th
+    :padding 3px
+    :font-size 12px
+    :font-weight normal
+    :border-right 1px solid #ddd
+    :white-space nowrap
+  th:hover
+    :background-color #e8e8e8
+  tbody > tr
+    :cursor pointer
+    &:hover
+      :background-color #e8e8e8
+  td
+    :padding 3px
+    :white-space nowrap

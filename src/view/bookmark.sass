@@ -1,0 +1,28 @@
+@import common.sass
+
+html
+  @include common_view_style_1
+  @include content_table
+
+.content
+  :overflow auto
+
+tr.expired td:first-child:before
+  :content "[dat落ち] "
+  :color #f00
+.loading_overlay
+  .loading
+    &:before
+      :content "更新中 : "
+  .success
+    :color lightgreen
+    &:before
+      :content "更新成功 : "
+  .fail
+    :color red
+    &:before
+      :content "更新失敗 : "
+
+tr > td
+  &:nth-child(2), &:nth-child(3), &:nth-child(4)
+    :text-align right
