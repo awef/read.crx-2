@@ -20,6 +20,7 @@ svg = convert\
 all:\
   ${DBG_DIR}\
   ${DBG_DIR}/manifest.json\
+  ${DBG_DIR}/app_core.js\
   ${DBG_DIR}/app.html\
   ${DBG_DIR}/app.js\
   ${DBG_DIR}/ui.js\
@@ -49,16 +50,17 @@ ${DBG_DIR}:
 ${DBG_DIR}/manifest.json: ${SRC_DIR}/manifest.json
 	cp ${SRC_DIR}/manifest.json ${DBG_DIR}/manifest.json
 
+${DBG_DIR}/app_core.js: ${SRC_DIR}/core/*.coffee
+	$(call coffee, ${SRC_DIR}/core/*.coffee, ${DBG_DIR}/app_core.js)
+
 ${DBG_DIR}/app.html: ${SRC_DIR}/app.haml
 	$(call haml, ${SRC_DIR}/app.haml, ${DBG_DIR}/app.html)
 
 ${DBG_DIR}/app.js:\
   ${SRC_DIR}/app.coffee\
-  ${SRC_DIR}/core/*.coffee\
   ${SRC_DIR}/app.*.coffee
 	$(call coffee,\
     ${SRC_DIR}/app.coffee\
-    ${SRC_DIR}/core/*.coffee\
     ${SRC_DIR}/app.*.coffee\
     , ${DBG_DIR}/app.js)
 
