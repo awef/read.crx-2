@@ -15,10 +15,9 @@ app.boot "/app.html", ->
             chrome.tabs.remove(current_tab.id)
             return
       history.pushState(null, null, "/app.html")
-      $ ->
-        app.main()
-        if query isnt "app"
-          app.message.send("open", url: query)
+      app.main()
+      if query isnt "app"
+        app.message.send("open", url: query)
 
 app.main = ->
   document.title = app.manifest.name

@@ -103,5 +103,5 @@ app.main = ->
     return
 
 app.boot "/write/write.html", ->
-  $(app.main)
+  app.main()
 

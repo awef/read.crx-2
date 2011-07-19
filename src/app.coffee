@@ -79,5 +79,5 @@ app.boot = (path, fn) ->
     if app.manifest.version isnt html_version
       location.reload(true)
     else
-      fn()
+      $(fn)
 
