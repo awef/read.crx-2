@@ -20,9 +20,10 @@ svg = convert\
 all:\
   ${DBG_DIR}\
   ${DBG_DIR}/manifest.json\
+  ${DBG_DIR}/app.js\
   ${DBG_DIR}/app_core.js\
   ${DBG_DIR}/app.html\
-  ${DBG_DIR}/app.js\
+  ${DBG_DIR}/app_html.js\
   ${DBG_DIR}/ui.js\
   ${DBG_DIR}/ui.css\
   ${DBG_DIR}/app.css\
@@ -50,19 +51,17 @@ ${DBG_DIR}:
 ${DBG_DIR}/manifest.json: ${SRC_DIR}/manifest.json
 	cp ${SRC_DIR}/manifest.json ${DBG_DIR}/manifest.json
 
+${DBG_DIR}/app.js: ${SRC_DIR}/app.coffee
+	$(call coffee, ${SRC_DIR}/app.coffee, ${DBG_DIR}/app.js)
+
 ${DBG_DIR}/app_core.js: ${SRC_DIR}/core/*.coffee
 	$(call coffee, ${SRC_DIR}/core/*.coffee, ${DBG_DIR}/app_core.js)
 
 ${DBG_DIR}/app.html: ${SRC_DIR}/app.haml
 	$(call haml, ${SRC_DIR}/app.haml, ${DBG_DIR}/app.html)
 
-${DBG_DIR}/app.js:\
-  ${SRC_DIR}/app.coffee\
-  ${SRC_DIR}/app.*.coffee
-	$(call coffee,\
-    ${SRC_DIR}/app.coffee\
-    ${SRC_DIR}/app.*.coffee\
-    , ${DBG_DIR}/app.js)
+${DBG_DIR}/app_html.js: ${SRC_DIR}/app.*.coffee
+	$(call coffee, ${SRC_DIR}/app.*.coffee, ${DBG_DIR}/app_html.js)
 
 ${DBG_DIR}/ui.js: ${SRC_DIR}/ui/*.coffee
 	$(call coffee, ${SRC_DIR}/ui/*.coffee, ${DBG_DIR}/ui.js)
@@ -150,11 +149,9 @@ ${DBG_DIR}/write/write.css: ${SRC_DIR}/write/write.sass
 	$(call sass, ${SRC_DIR}/write/write.sass, ${DBG_DIR}/write/write.css)
 
 ${DBG_DIR}/write/write.js:\
-  ${SRC_DIR}/app.coffee\
   ${SRC_DIR}/core/url.coffee\
   ${SRC_DIR}/write/write.coffee
 	$(call coffee,\
-    ${SRC_DIR}/app.coffee\
     ${SRC_DIR}/core/url.coffee\
     ${SRC_DIR}/write/write.coffee\
     , ${DBG_DIR}/write/write.js)
@@ -173,13 +170,11 @@ ${DBG_DIR}/zombie.html: ${SRC_DIR}/zombie.haml
 	$(call haml, ${SRC_DIR}/zombie.haml, ${DBG_DIR}/zombie.html)
 
 ${DBG_DIR}/zombie.js:\
-  ${SRC_DIR}/app.coffee\
   ${SRC_DIR}/core/url.coffee\
   ${SRC_DIR}/core/read_state.coffee\
   ${SRC_DIR}/core/bookmark.coffee\
   ${SRC_DIR}/zombie.coffee
 	$(call coffee,\
-    ${SRC_DIR}/app.coffee\
     ${SRC_DIR}/core/url.coffee\
     ${SRC_DIR}/core/read_state.coffee\
     ${SRC_DIR}/core/bookmark.coffee\
