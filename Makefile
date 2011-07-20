@@ -31,6 +31,10 @@ all:\
   ${DBG_DIR}/view/index.css\
   ${DBG_DIR}/view/index.js\
 \
+  ${DBG_DIR}/view/sidemenu.html\
+  ${DBG_DIR}/view/sidemenu.css\
+  ${DBG_DIR}/view/sidemenu.js\
+\
   ${DBG_DIR}/view/inputurl.html\
   ${DBG_DIR}/view/inputurl.css\
   ${DBG_DIR}/view/inputurl.js\
@@ -96,6 +100,14 @@ ${DBG_DIR}/view/index.css:\
 ${DBG_DIR}/view/index.js: ${SRC_DIR}/view/index.coffee
 	$(call coffee, ${SRC_DIR}/view/index.coffee, ${DBG_DIR}/view/index.js)
 
+${DBG_DIR}/view/sidemenu.html: ${SRC_DIR}/view/sidemenu.haml
+	$(call haml, ${SRC_DIR}/view/sidemenu.haml, ${DBG_DIR}/view/sidemenu.html)
+${DBG_DIR}/view/sidemenu.css:\
+  ${SRC_DIR}/view/sidemenu.sass\
+  ${SRC_DIR}/view/sidemenu.sass
+	$(call sass, ${SRC_DIR}/view/sidemenu.sass, ${DBG_DIR}/view/sidemenu.css)
+${DBG_DIR}/view/sidemenu.js: ${SRC_DIR}/view/sidemenu.coffee
+	$(call coffee, ${SRC_DIR}/view/sidemenu.coffee, ${DBG_DIR}/view/sidemenu.js)
 
 ${DBG_DIR}/view/inputurl.html: ${SRC_DIR}/view/inputurl.haml
 	$(call haml, ${SRC_DIR}/view/inputurl.haml, ${DBG_DIR}/view/inputurl.html)

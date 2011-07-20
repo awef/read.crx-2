@@ -1,0 +1,31 @@
+:ruby
+  app_version = "0.12"
+
+!!! 5
+%html.view.view_sidemenu(data-app-version="#{app_version}")
+  %head
+    %meta(charset="utf-8")
+    %title sidemenu
+    %link(rel="stylesheet" href="/ui.css?v=#{app_version}")
+    %link(rel="stylesheet" href="sidemenu.css?v=#{app_version}")
+    %script(src="/lib/jquery/jquery-1.6.2.min.js?v=#{app_version}")
+    %script(src="/ui.js?v=#{app_version}")
+    %script(src="/app.js?v=#{app_version}")
+    %script(src="app_core_proxy.js?v=#{app_version}")
+    %script(src="module.js?v=#{app_version}")
+    %script(src="sidemenu.js?v=#{app_version}")
+  %body
+    %form.search(action="http://find.2ch.net/#rcrx" accept-charset="euc-jp" target="_blank")
+      %input(name="STR" placeholder="スレッド検索")
+      %input(type="submit" value="")
+    %h3 read.crx
+    %ul
+      %li
+        %a(class="open_in_rcrx" data-href="bookmark") ブックマーク
+      %li
+        %a(class="open_in_rcrx" data-href="history") 閲覧履歴
+      %li
+        %a(class="open_in_rcrx" data-href="inputurl") URL指定で開く
+      %li
+        %a(class="open_in_rcrx" data-href="config") 設定
+      .view_sidemenu_bookmark
