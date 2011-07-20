@@ -1,0 +1,41 @@
+:ruby
+  app_version = "0.12"
+
+!!! 5
+%html.view.view_board(data-app-version="#{app_version}")
+  %head
+    %meta(charset="utf-8")
+    %title board
+    %link(rel="stylesheet" href="/ui.css?v=#{app_version}")
+    %link(rel="stylesheet" href="board.css?v=#{app_version}")
+    %script(src="/lib/jquery/jquery-1.6.2.min.js?v=#{app_version}")
+    %script(src="/ui.js?v=#{app_version}")
+    %script(src="/app.js?v=#{app_version}")
+    %script(src="app_core_proxy.js?v=#{app_version}")
+    %script(src="module.js?v=#{app_version}")
+    %script(src="board.js?v=#{app_version}")
+  %body
+    .message_bar
+    %nav.nav_bar
+      %input.searchbox_thread_title
+      .button.button_bookmark
+      .button.button_link(title="Chromeで直接開く")
+      .button.button_reload
+    .content(tabindex="0")
+      %table
+        %thead
+          %tr
+            %th ★
+            %th タイトル
+            %th(data-table_sort_type="num") レス数
+            %th(data-table_sort_type="num") 未読
+            %th(data-table_sort_type="num") 勢い
+            %th 作成日時
+        %tbody.view_board_tbody
+    .loading_overlay Loading...
+
+  #template(hidden)
+    %ul.view_module_board_contextmenu
+      %li.add_bookmark ブックマークに追加
+      %li.del_bookmark ブックマークを解除
+

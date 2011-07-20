@@ -43,6 +43,10 @@ all:\
   ${DBG_DIR}/view/bookmark.css\
   ${DBG_DIR}/view/bookmark.js\
 \
+  ${DBG_DIR}/view/board.html\
+  ${DBG_DIR}/view/board.css\
+  ${DBG_DIR}/view/board.js\
+\
   ${DBG_DIR}/view/thread.html\
   ${DBG_DIR}/view/thread.css\
   ${DBG_DIR}/view/thread.js\
@@ -118,7 +122,6 @@ ${DBG_DIR}/view/inputurl.css:\
 ${DBG_DIR}/view/inputurl.js: ${SRC_DIR}/view/inputurl.coffee
 	$(call coffee, ${SRC_DIR}/view/inputurl.coffee, ${DBG_DIR}/view/inputurl.js)
 
-
 ${DBG_DIR}/view/bookmark.html: ${SRC_DIR}/view/bookmark.haml
 	$(call haml, ${SRC_DIR}/view/bookmark.haml, ${DBG_DIR}/view/bookmark.html)
 ${DBG_DIR}/view/bookmark.css:\
@@ -127,6 +130,15 @@ ${DBG_DIR}/view/bookmark.css:\
 	$(call sass, ${SRC_DIR}/view/bookmark.sass, ${DBG_DIR}/view/bookmark.css)
 ${DBG_DIR}/view/bookmark.js: ${SRC_DIR}/view/bookmark.coffee
 	$(call coffee, ${SRC_DIR}/view/bookmark.coffee, ${DBG_DIR}/view/bookmark.js)
+
+${DBG_DIR}/view/board.html: ${SRC_DIR}/view/board.haml
+	$(call haml, ${SRC_DIR}/view/board.haml, ${DBG_DIR}/view/board.html)
+${DBG_DIR}/view/board.css:\
+  ${SRC_DIR}/view/common.sass\
+  ${SRC_DIR}/view/board.sass
+	$(call sass, ${SRC_DIR}/view/board.sass, ${DBG_DIR}/view/board.css)
+${DBG_DIR}/view/board.js: ${SRC_DIR}/view/board.coffee
+	$(call coffee, ${SRC_DIR}/view/board.coffee, ${DBG_DIR}/view/board.js)
 
 ${DBG_DIR}/view/thread.html: ${SRC_DIR}/view/thread.haml
 	$(call haml, ${SRC_DIR}/view/thread.haml, ${DBG_DIR}/view/thread.html)
