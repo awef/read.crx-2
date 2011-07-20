@@ -155,44 +155,48 @@ app.main = ->
 
   #openメッセージ受信部
   app.message.add_listener "open", (message) ->
-    $view = $(".tab_container")
+    $iframe = $(".tab_container")
       .find("> [data-url=\"#{app.url.fix(message.url)}\"]")
 
-    get_view = (url) ->
+    get_iframe_info = (url) ->
       guess_result = app.url.guess_type(url)
-      #TODO
       if url is "config"
-        #$view = app.view_config.open()
+        src: "/view/config.html"
+        url: "config"
       else if url is "history"
-        #$view = app.view_history.open()
+        src: "/view/history.html"
+        url: "history"
       else if url is "bookmark"
-        #$view = app.view_bookmark.open()
-        iframe = document.createElement("iframe")
-        iframe.src = "/view/bookmark.html"
-        iframe.setAttribute("data-url", "bookmark")
-        $(iframe)
+        src: "/view/bookmark.html"
+        url: "bookmark"
       else if url is "inputurl"
-        #$view = app.view_inputurl.open()
+        src: "/view/inputurl.html"
+        url: "inputurl"
       else if guess_result.type is "board"
-        #$view = app.view_board.open(message.url)
+        src: "/view/board.html?#{app.url.build_param(q: message.url)}"
+        url: app.url.fix(message.url)
       else if guess_result.type is "thread"
-        #$view = app.view_thread.open(message.url)
+        src: "/view/thread.html?#{app.url.build_param(q: message.url)}"
+        url: app.url.fix(message.url)
       else
         null
 
-    if $view.length is 1
-      $view.closest(".tab").tab("select", tab_id: $view.attr("data-tab_id"))
-      return
-    else
-      $view = get_view(message.url)
+    if $iframe.length is 1
+      $iframe
+        .closest(".tab")
+          .tab("select", tab_id: $iframe.attr("data-tab_id"))
+    else if iframe_info = get_iframe_info(message.url)
+      $iframe = $("<iframe>")
+        .attr("src", iframe_info.src)
+        .attr("data-url", iframe_info.url)
+        .attr("data-title", iframe_info.url)
 
-    if $view
       target = "#tab_a"
-      if $view.hasClass("view_thread")
+      if iframe_info.src[0..16] is "/view/thread.html"
         target = document.getElementById("tab_b") or target
 
       $(target)
-        .tab("add", element: $view[0], title: $view.attr("data-title"))
+        .tab("add", element: $iframe[0], title: $iframe.attr("data-title"))
 
   #openリクエストの監視
   chrome.extension.onRequest.addListener (request) ->
