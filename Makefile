@@ -47,6 +47,10 @@ all:\
   ${DBG_DIR}/view/board.css\
   ${DBG_DIR}/view/board.js\
 \
+  ${DBG_DIR}/view/history.html\
+  ${DBG_DIR}/view/history.css\
+  ${DBG_DIR}/view/history.js\
+\
   ${DBG_DIR}/view/thread.html\
   ${DBG_DIR}/view/thread.css\
   ${DBG_DIR}/view/thread.js\
@@ -139,6 +143,15 @@ ${DBG_DIR}/view/board.css:\
 	$(call sass, ${SRC_DIR}/view/board.sass, ${DBG_DIR}/view/board.css)
 ${DBG_DIR}/view/board.js: ${SRC_DIR}/view/board.coffee
 	$(call coffee, ${SRC_DIR}/view/board.coffee, ${DBG_DIR}/view/board.js)
+
+${DBG_DIR}/view/history.html: ${SRC_DIR}/view/history.haml
+	$(call haml, ${SRC_DIR}/view/history.haml, ${DBG_DIR}/view/history.html)
+${DBG_DIR}/view/history.css:\
+  ${SRC_DIR}/view/common.sass\
+  ${SRC_DIR}/view/history.sass
+	$(call sass, ${SRC_DIR}/view/history.sass, ${DBG_DIR}/view/history.css)
+${DBG_DIR}/view/history.js: ${SRC_DIR}/view/history.coffee
+	$(call coffee, ${SRC_DIR}/view/history.coffee, ${DBG_DIR}/view/history.js)
 
 ${DBG_DIR}/view/thread.html: ${SRC_DIR}/view/thread.haml
 	$(call haml, ${SRC_DIR}/view/thread.haml, ${DBG_DIR}/view/thread.html)
