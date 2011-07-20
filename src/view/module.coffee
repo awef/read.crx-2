@@ -50,7 +50,7 @@ app.view_module.bookmark_button = ($view) ->
       if app.bookmark.get(url)
         app.bookmark.remove(url)
       else
-        app.bookmark.add(url, $view.attr("data-title") or url)
+        app.bookmark.add(url, $view.find("title").text() or url)
       return
   else
     $button.remove()
