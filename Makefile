@@ -24,6 +24,7 @@ all:\
   ${DBG_DIR}/app_core.js\
   ${DBG_DIR}/view/\
 \
+  ${DBG_DIR}/view/app_core_proxy.js\
   ${DBG_DIR}/view/module.js\
 \
   ${DBG_DIR}/view/index.html\
@@ -71,6 +72,9 @@ ${DBG_DIR}/app_core.js: ${SRC_DIR}/core/*.coffee
 
 ${DBG_DIR}/view/:
 	mkdir ${DBG_DIR}/view/
+
+${DBG_DIR}/view/app_core_proxy.js: ${SRC_DIR}/view/app_core_proxy.coffee
+	$(call coffee, ${SRC_DIR}/view/app_core_proxy.coffee, ${DBG_DIR}/view/app_core_proxy.js)
 
 ${DBG_DIR}/view/module.js: ${SRC_DIR}/view/module.coffee
 	$(call coffee, ${SRC_DIR}/view/module.coffee, ${DBG_DIR}/view/module.js)
