@@ -1,0 +1,20 @@
+:ruby
+  app_version = "0.12"
+
+!!! 5
+%html.view.view_inputurl(data-app-version="#{app_version}")
+  %head
+    %meta(charset="utf-8")
+    %title URLを指定して開く
+    %link(rel="stylesheet" href="/ui.css?v=#{app_version}")
+    %link(rel="stylesheet" href="inputurl.css?v=#{app_version}")
+    %script(src="/lib/jquery/jquery-1.6.2.min.js?v=#{app_version}")
+    %script(src="/app.js?v=#{app_version}")
+    %script(src="app_core_proxy.js?v=#{app_version}")
+    %script(src="inputurl.js?v=#{app_version}")
+  %body
+    .container
+      %form(action="javascript:undefined;")
+        %input(name="url" placeholder="ここにURLを入力して下さい" autofocus)
+        %input(type="submit" value="開く")
+      .notice
