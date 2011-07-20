@@ -1,0 +1,43 @@
+:ruby
+  app_version = "0.12"
+
+!!! 5
+%html.view.view_thread(data-app-version="#{app_version}")
+  %head
+    %meta(charset="utf-8")
+    %title
+    %link(rel="stylesheet" href="/ui.css?v=#{app_version}")
+    %link(rel="stylesheet" href="thread.css?v=#{app_version}")
+    %script(src="/lib/jquery/jquery-1.6.2.min.js?v=#{app_version}")
+    %script(src="/ui.js?v=#{app_version}")
+    %script(src="/app.js?v=#{app_version}")
+    %script(src="app_core_proxy.js?v=#{app_version}")
+    %script(src="module.js?v=#{app_version}")
+    %script(src="thread.js?v=#{app_version}")
+  %body
+    .message_bar
+    %nav.nav_bar
+      %input.searchbox
+      .button.button_bookmark
+      .button.button_link(title="Chromeで直接開く")
+      .button.button_board(title="板を開く")
+      .button.button_reload
+      .button.button_write
+    .content(tabindex="0")
+    %footer
+      %a.next_unread.open_in_rcrx(href="javascript:undefined;")
+    %ul.jump_panel
+      %li.jump_one >>1
+      %li.jump_last しおり
+      %li.jump_not_read 未読
+      %li.jump_new 新着
+      %li.jump_newest 最後
+    .loading_overlay Loading...
+
+    #template(hidden)
+      %ul.view_thread_resmenu
+        %li.res_to_this このレスにレス
+        %li.res_to_this2 引用してレス
+        %li.toggle_aa_mode AAモード切り替え
+        %li.res_permalink このレスを直接開く
+

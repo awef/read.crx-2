@@ -35,6 +35,10 @@ all:\
   ${DBG_DIR}/view/bookmark.css\
   ${DBG_DIR}/view/bookmark.js\
 \
+  ${DBG_DIR}/view/thread.html\
+  ${DBG_DIR}/view/thread.css\
+  ${DBG_DIR}/view/thread.js\
+\
   ${DBG_DIR}/app.html\
   ${DBG_DIR}/app_html.js\
   ${DBG_DIR}/ui.js\
