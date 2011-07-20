@@ -229,6 +229,15 @@ app.main = ->
               title: message.title
             })
           break
+    #タブ内コンテンツがrequest_killmeを送って来た場合、タブを閉じる。
+    else if message.type is "request_killme"
+      for iframe in document.querySelectorAll("iframe.tab_content")
+        if iframe.contentWindow is e.source
+          $iframe = $(iframe)
+          $iframe
+            .closest(".tab")
+              .tab("remove", tab_id: $iframe.attr("data-tab_id"))
+
     return
 
   $(window)
@@ -247,12 +256,6 @@ app.main = ->
       return
 
   $(document.documentElement)
-    #タブ内コンテンツがview_request_killmeを送って来た場合、タブを閉じる。
-    .delegate ".tab_content", "view_request_killme", ->
-      $this = $(this)
-      $this.closest(".tab").tab("remove", tab_id: $this.attr("data-tab_id"))
-      return
-
     #tab_removedイベントをview_unloadに翻訳
     .delegate ".tab_content", "tab_removed", ->
       $(this).trigger("view_unload")

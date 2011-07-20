@@ -360,7 +360,9 @@ app.boot "/view/thread.html", ->
         return
 
   $view.find(".next_unread").bind "click", ->
-    $view.trigger("view_request_killme")
+    if frameElement
+      tmp = {type: "request_killme"}
+      parent.postMessage(JSON.stringify(tmp), location.origin)
     return
 
 app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
