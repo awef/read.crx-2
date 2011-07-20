@@ -5,9 +5,7 @@ app.view_module.open_in_rcrx = ($view) ->
     e.preventDefault()
     url = this.href or this.getAttribute("data-href")
     if frameElement
-      message =
-        type: "open"
-        href: url
+      message = {type: "open", url}
       parent.postMessage(JSON.stringify(message), location.origin)
     else
       tmp = chrome.extension.getURL("/app.html?")

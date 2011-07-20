@@ -205,13 +205,17 @@ app.main = ->
       $(".view_thread[data-url=\"#{request.url}\"]")
         .trigger("request_reload", force_update: true)
 
+  #viewからのメッセージを監視
   window.addEventListener "message", (e) ->
     if e.origin isnt location.origin
       return
 
     message = JSON.parse(e.data)
+    #タブ内コンテンツがopenを送出した場合、対応するviewを開く
+    if message.type is "open"
+      app.message.send("open", url: message.url)
     #タブ内コンテンツがtitle_updatedを送出した場合、タブのタイトルを更新する
-    if message.type is "title_updated"
+    else if message.type is "title_updated"
       for iframe in document.querySelectorAll("iframe.tab_content")
         if iframe.contentWindow is e.source
           $iframe = $(iframe)
