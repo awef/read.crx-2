@@ -64,11 +64,28 @@ app.view_module.link_button = ($view) ->
   else
     $button.remove()
 
-app.view_module.reload_button = ($view) ->
-  $view.find(".button_reload").bind "click", ->
-    if not $(this).hasClass("disabled")
-      $view.trigger("request_reload")
-    return
+app.view_module.reload = ($view) ->
+  #request_reload(postMessage) -> request_reload(event) 翻訳処理
+  window.addEventListener "message", (e) ->
+    if e.origin is location.origin
+      message = JSON.parse(e.data)
+      if message.type is "request_reload"
+        $view.trigger("request_reload")
+
+  #更新系のキーが押された場合の処理
+  $(window)
+    .bind "keydown", (e)->
+      if e.which is 116 or (e.ctrlKey and e.which is 82) #F5 or Ctrl+R
+        e.preventDefault()
+        $view.trigger("request_reload")
+
+  #view内リロードボタンの処理
+  $view
+    .find(".button_reload")
+      .bind "click", ->
+        if not $(this).hasClass("disabled")
+          $view.trigger("request_reload")
+        return
 
 app.view_module.board_contextmenu = ($view) ->
   $view

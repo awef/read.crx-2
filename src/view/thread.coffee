@@ -15,7 +15,7 @@ app.boot "/view/thread.html", ->
   app.view_module.open_in_rcrx($view)
   app.view_module.bookmark_button($view)
   app.view_module.link_button($view)
-  app.view_module.reload_button($view)
+  app.view_module.reload($view)
 
   $("<a>", {
     href: app.safe_href(app.url.thread_to_board(url))

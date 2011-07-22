@@ -1,6 +1,8 @@
 app.boot "/view/config.html", ->
   $view = $(document.documentElement)
 
+  app.view_module.reload($view)
+
   #汎用設定項目
   $view
     .find("input.direct[type=\"text\"]")

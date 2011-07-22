@@ -1,6 +1,7 @@
 app.boot "/view/sidemenu.html", ->
   $view = $(document.documentElement)
 
+  app.view_module.reload($view)
   app.view_module.open_in_rcrx($view)
 
   #スレタイ検索ボックス

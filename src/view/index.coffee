@@ -242,8 +242,11 @@ app.main = ->
     .bind "keydown", (e) ->
       if e.which is 116 or (e.ctrlKey and e.which is 82) #F5 or Ctrl+R
         e.preventDefault()
-        #TODO
-        #$(".tab .tab_container .tab_focused").trigger("request_reload")
+        iframe = document.querySelector("iframe.tab_focused")
+        if iframe
+          iframe.contentWindow.postMessage(
+            JSON.stringify(type: "request_reload"), location.origin
+          )
       return
 
     #データ保存等の後片付けを行なってくれるzombie.html起動
