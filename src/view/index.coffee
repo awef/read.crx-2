@@ -119,9 +119,6 @@ app.view_setup_resizer = ->
 app.main = ->
   document.title = app.manifest.name
 
-  #TODO サイドメニューのセットアップ
-  #$("#left_pane").append(app.view_sidemenu.open())
-
   #タブ・ペインセットアップ
   layout = app.config.get("layout") or "pane-3"
 
