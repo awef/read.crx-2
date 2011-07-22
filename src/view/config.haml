@@ -1,0 +1,98 @@
+:ruby
+  app_version = "0.12"
+
+!!! 5
+%html.view.view_config(data-app-version="#{app_version}")
+  %head
+    %meta(charset="utf-8")
+    %title 設定
+    %link(rel="stylesheet" href="config.css?v=#{app_version}")
+    %script(src="/lib/jquery/jquery-1.6.2.min.js?v=#{app_version}")
+    %script(src="/app.js?v=#{app_version}")
+    %script(src="app_core_proxy.js?v=#{app_version}")
+    %script(src="config.js?v=#{app_version}")
+  %body
+    %h2 バージョン情報
+    .version_info
+
+    %h2 レイアウト設定
+    %label
+      /TODO cloneするのでこのcheckedは機能しない
+      %input.direct(name="layout" type="radio" value="pane-3" checked)
+      3ペイン
+    %label
+      %input.direct(name="layout" type="radio" value="pane-3h")
+      3ペイン（横一列）
+    %label
+      %input.direct(name="layout" type="radio" value="pane-2")
+      2ペイン
+
+    ※変更を反映するにはリロードして下さい
+
+    %h2 スレッド表示設定
+    %label
+      %input.direct(type="checkbox" name="thumbnail_supported")
+      対応サイトのサムネイルを表示する
+    %br
+    %label
+      %input.direct(type="checkbox" name="thumbnail_ext")
+      拡張子が画像ファイルなURLのサムネイルを表示する
+
+    %h2 書き込み設定
+    %table
+      %tbody
+        %tr
+          %td
+            デフォルトの名前
+          %td
+            %input.direct(type="text" name="default_name")
+        %tr
+          %td
+            デフォルトのメールアドレス
+          %td
+            %input.direct(type="text" name="default_mail")
+    %h2 p2連携
+    %label
+      %input.direct(type="checkbox" name="p2_write")
+      公式p2経由で書き込む
+    %table
+      %tbody
+        %tr
+          %td
+            p2のサーバー
+          %td
+            %input.direct(type="text" name="p2_server" placeholder="w1.p2.2ch.net" pattern="w\\d\\.p2\\.2ch\\.net")
+    %br
+    ※現時点では公式p2のみに対応しています
+
+    %h2 プライバシー
+    %button.history_clear(type="button") 閲覧履歴を削除する
+    %span.history_clear_status
+
+    -#
+      %h2 忍法帖
+      %h3 Cookie
+      %ul.ninja_info_cookie
+      %div 忍法帖のCookieが有りません
+      %h3 バックアップ
+      %ul.ninja_info_stored
+      %div 忍法帖のバックアップは有りません
+      .notation
+        %span 忍法帖については
+        %a(href="http://ninja.2ch.net/" target="_blank") http://ninja.2ch.net/
+        %span をご覧下さい
+
+    %h2 その他
+    %button.bookmark_source_change ブックマークのフォルダを変更する
+
+    %br
+
+    %button.bbsmenu_reload(type="button") 板一覧の更新
+    %span.bbsmenu_reload_status
+    %span ※このボタンを押さなくても、read.crxは定期的に板一覧の更新を行います
+
+    %br
+
+    %button.cache_clear(type="button") キャッシュの削除
+    %span.cache_clear_status
+

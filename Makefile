@@ -55,6 +55,10 @@ all:\
   ${DBG_DIR}/view/thread.css\
   ${DBG_DIR}/view/thread.js\
 \
+  ${DBG_DIR}/view/config.html\
+  ${DBG_DIR}/view/config.css\
+  ${DBG_DIR}/view/config.js\
+\
   ${DBG_DIR}/app.html\
   ${DBG_DIR}/app_html.js\
   ${DBG_DIR}/ui.js\
@@ -161,6 +165,15 @@ ${DBG_DIR}/view/thread.css:\
 	$(call sass, ${SRC_DIR}/view/thread.sass, ${DBG_DIR}/view/thread.css)
 ${DBG_DIR}/view/thread.js: ${SRC_DIR}/view/thread.coffee
 	$(call coffee, ${SRC_DIR}/view/thread.coffee, ${DBG_DIR}/view/thread.js)
+
+${DBG_DIR}/view/config.html: ${SRC_DIR}/view/config.haml
+	$(call haml, ${SRC_DIR}/view/config.haml, ${DBG_DIR}/view/config.html)
+${DBG_DIR}/view/config.css:\
+  ${SRC_DIR}/view/common.sass\
+  ${SRC_DIR}/view/config.sass
+	$(call sass, ${SRC_DIR}/view/config.sass, ${DBG_DIR}/view/config.css)
+${DBG_DIR}/view/config.js: ${SRC_DIR}/view/config.coffee
+	$(call coffee, ${SRC_DIR}/view/config.coffee, ${DBG_DIR}/view/config.js)
 
 ${DBG_DIR}/app.html: ${SRC_DIR}/app.haml
 	$(call haml, ${SRC_DIR}/app.haml, ${DBG_DIR}/app.html)
