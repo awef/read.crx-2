@@ -1,5 +1,6 @@
 (->
   modules = [
+    "message"
     "bbsmenu"
     "board"
     "board_title_solver"
