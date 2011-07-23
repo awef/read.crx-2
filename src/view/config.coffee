@@ -1,12 +1,8 @@
 app.boot "/view/config.html", ->
   $view = $(document.documentElement)
 
+  app.view_module.view($view)
   app.view_module.reload($view)
-
-  tmp =
-    type: "title_updated"
-    title: document.title
-  parent.postMessage(JSON.stringify(tmp), location.origin)
 
   #汎用設定項目
   $view

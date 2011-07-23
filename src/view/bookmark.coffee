@@ -56,10 +56,6 @@ app.view_bookmark._bookmark_to_tr = (bookmark) ->
 app.boot "/view/bookmark.html", ->
   $view = $(document.documentElement)
 
-  if frameElement
-    tmp = {type: "title_updated", title: document.title}
-    parent.postMessage(JSON.stringify(tmp), location.origin)
-
   $loading_overlay = $view.find(".loading_overlay")
 
   $view.find("table").table_sort()
@@ -70,7 +66,7 @@ app.boot "/view/bookmark.html", ->
     open(path)
     return
 
-  app.view_module.open_in_rcrx($view)
+  app.view_module.view($view)
   app.view_module.reload($view)
   app.view_module.searchbox_thread_title($view, 0)
   app.view_module.board_contextmenu($view)

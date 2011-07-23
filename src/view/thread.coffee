@@ -12,7 +12,7 @@ app.boot "/view/thread.html", ->
   document.title = url
   $view.addClass("loading")
 
-  app.view_module.open_in_rcrx($view)
+  app.view_module.view($view)
   app.view_module.bookmark_button($view)
   app.view_module.link_button($view)
   app.view_module.reload($view)
@@ -386,9 +386,6 @@ app.view_thread._draw = ($view, force_update) ->
     if result.data?
       thread = result.data
       document.title = thread.title
-      if frameElement
-        tmp = {type: "title_updated", title: document.title}
-        parent.postMessage(JSON.stringify(tmp), location.origin)
 
       $view.find(".content").append(app.view_thread._draw_messages(thread))
       $view.trigger("view_loaded")

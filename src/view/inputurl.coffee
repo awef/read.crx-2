@@ -1,12 +1,8 @@
 app.boot "/view/inputurl.html", ->
   $view = $(document.documentElement)
 
+  app.view_module.view($view)
   app.view_module.reload($view)
-
-  tmp =
-    type: "title_updated"
-    title: document.title
-  parent.postMessage(JSON.stringify(tmp), location.origin)
 
   $view.find("form").bind "submit", ->
     url = this.url.value

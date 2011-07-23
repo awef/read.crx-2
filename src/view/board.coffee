@@ -11,7 +11,7 @@ app.boot "/view/board.html", ->
     .attr("data-url", url)
     .addClass("loading")
 
-  app.view_module.open_in_rcrx($view)
+  app.view_module.view($view)
   app.view_module.searchbox_thread_title($view, 1)
   app.view_module.bookmark_button($view)
   app.view_module.link_button($view)
@@ -21,10 +21,6 @@ app.boot "/view/board.html", ->
   app.board_title_solver.ask url, (title) ->
     if title
       document.title = title
-      if frameElement
-        tmp = {type: "title_updated", title: title}
-        parent.postMessage(JSON.stringify(tmp), location.origin)
-      $view.trigger("title_updated")
     app.history.add(url, title or url, opened_at)
 
   #リロードボタンを一時的に無効化する

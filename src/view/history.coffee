@@ -1,13 +1,8 @@
 app.boot "/view/history.html", ->
   $view = $(document.documentElement)
 
-  app.view_module.open_in_rcrx($view)
+  app.view_module.view($view)
   app.view_module.reload($view)
-
-  tmp =
-    type: "title_updated"
-    title: document.title
-  parent.postMessage(JSON.stringify(tmp), location.origin)
 
   load = ->
     app.history.get(undefined, 500)

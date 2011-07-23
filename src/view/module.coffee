@@ -1,6 +1,19 @@
 app.view_module = {}
 
-app.view_module.open_in_rcrx = ($view) ->
+app.view_module.view = ($view) ->
+  #title_updatedメッセージ送出処理
+  send_title_updated = ->
+    tmp =
+      type: "title_updated"
+      title: document.title
+    parent.postMessage(JSON.stringify(tmp), location.origin)
+
+  send_title_updated()
+  $view
+    .find("title")
+      .bind("DOMSubtreeModified", send_title_updated)
+
+  #.open_in_rcrx
   $view.delegate ".open_in_rcrx", "click", (e) ->
     e.preventDefault()
     url = this.href or this.getAttribute("data-href")
@@ -11,6 +24,10 @@ app.view_module.open_in_rcrx = ($view) ->
       tmp = chrome.extension.getURL("/app.html?")
       tmp += app.url.build_param(q: url)
       open(tmp)
+
+  #unloadイベント → view_unloadイベント
+  window.addEventListener "unload", ->
+    $view.trigger("view_unload")
 
 app.view_module.searchbox_thread_title = ($view, target_col) ->
   $view.find(".searchbox_thread_title")
