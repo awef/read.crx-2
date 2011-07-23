@@ -3,6 +3,11 @@ app.boot "/view/inputurl.html", ->
 
   app.view_module.reload($view)
 
+  tmp =
+    type: "title_updated"
+    title: document.title
+  parent.postMessage(JSON.stringify(tmp), location.origin)
+
   $view.find("form").bind "submit", ->
     url = this.url.value
     guess_res = app.url.guess_type(url)

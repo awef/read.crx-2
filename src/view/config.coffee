@@ -3,6 +3,11 @@ app.boot "/view/config.html", ->
 
   app.view_module.reload($view)
 
+  tmp =
+    type: "title_updated"
+    title: document.title
+  parent.postMessage(JSON.stringify(tmp), location.origin)
+
   #汎用設定項目
   $view
     .find("input.direct[type=\"text\"]")
