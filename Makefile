@@ -107,7 +107,7 @@ ${DBG_DIR}/view/module.js: ${SRC_DIR}/view/module.coffee
 ${DBG_DIR}/view/index.html: ${SRC_DIR}/view/index.haml
 	$(call haml, ${SRC_DIR}/view/index.haml, ${DBG_DIR}/view/index.html)
 ${DBG_DIR}/view/index.css:\
-  ${SRC_DIR}/view/common.sass\
+  ${SRC_DIR}/common.sass\
   ${SRC_DIR}/view/index.sass
 	$(call sass, ${SRC_DIR}/view/index.sass, ${DBG_DIR}/view/index.css)
 ${DBG_DIR}/view/index.js: ${SRC_DIR}/view/index.coffee
@@ -125,7 +125,7 @@ ${DBG_DIR}/view/sidemenu.js: ${SRC_DIR}/view/sidemenu.coffee
 ${DBG_DIR}/view/inputurl.html: ${SRC_DIR}/view/inputurl.haml
 	$(call haml, ${SRC_DIR}/view/inputurl.haml, ${DBG_DIR}/view/inputurl.html)
 ${DBG_DIR}/view/inputurl.css:\
-  ${SRC_DIR}/view/common.sass\
+  ${SRC_DIR}/common.sass\
   ${SRC_DIR}/view/inputurl.sass
 	$(call sass, ${SRC_DIR}/view/inputurl.sass, ${DBG_DIR}/view/inputurl.css)
 ${DBG_DIR}/view/inputurl.js: ${SRC_DIR}/view/inputurl.coffee
@@ -134,7 +134,7 @@ ${DBG_DIR}/view/inputurl.js: ${SRC_DIR}/view/inputurl.coffee
 ${DBG_DIR}/view/bookmark.html: ${SRC_DIR}/view/bookmark.haml
 	$(call haml, ${SRC_DIR}/view/bookmark.haml, ${DBG_DIR}/view/bookmark.html)
 ${DBG_DIR}/view/bookmark.css:\
-  ${SRC_DIR}/view/common.sass\
+  ${SRC_DIR}/common.sass\
   ${SRC_DIR}/view/bookmark.sass
 	$(call sass, ${SRC_DIR}/view/bookmark.sass, ${DBG_DIR}/view/bookmark.css)
 ${DBG_DIR}/view/bookmark.js: ${SRC_DIR}/view/bookmark.coffee
@@ -143,7 +143,7 @@ ${DBG_DIR}/view/bookmark.js: ${SRC_DIR}/view/bookmark.coffee
 ${DBG_DIR}/view/board.html: ${SRC_DIR}/view/board.haml
 	$(call haml, ${SRC_DIR}/view/board.haml, ${DBG_DIR}/view/board.html)
 ${DBG_DIR}/view/board.css:\
-  ${SRC_DIR}/view/common.sass\
+  ${SRC_DIR}/common.sass\
   ${SRC_DIR}/view/board.sass
 	$(call sass, ${SRC_DIR}/view/board.sass, ${DBG_DIR}/view/board.css)
 ${DBG_DIR}/view/board.js: ${SRC_DIR}/view/board.coffee
@@ -152,7 +152,7 @@ ${DBG_DIR}/view/board.js: ${SRC_DIR}/view/board.coffee
 ${DBG_DIR}/view/history.html: ${SRC_DIR}/view/history.haml
 	$(call haml, ${SRC_DIR}/view/history.haml, ${DBG_DIR}/view/history.html)
 ${DBG_DIR}/view/history.css:\
-  ${SRC_DIR}/view/common.sass\
+  ${SRC_DIR}/common.sass\
   ${SRC_DIR}/view/history.sass
 	$(call sass, ${SRC_DIR}/view/history.sass, ${DBG_DIR}/view/history.css)
 ${DBG_DIR}/view/history.js: ${SRC_DIR}/view/history.coffee
@@ -161,7 +161,7 @@ ${DBG_DIR}/view/history.js: ${SRC_DIR}/view/history.coffee
 ${DBG_DIR}/view/thread.html: ${SRC_DIR}/view/thread.haml
 	$(call haml, ${SRC_DIR}/view/thread.haml, ${DBG_DIR}/view/thread.html)
 ${DBG_DIR}/view/thread.css:\
-  ${SRC_DIR}/view/common.sass\
+  ${SRC_DIR}/common.sass\
   ${SRC_DIR}/view/thread.sass
 	$(call sass, ${SRC_DIR}/view/thread.sass, ${DBG_DIR}/view/thread.css)
 ${DBG_DIR}/view/thread.js: ${SRC_DIR}/view/thread.coffee
@@ -170,7 +170,7 @@ ${DBG_DIR}/view/thread.js: ${SRC_DIR}/view/thread.coffee
 ${DBG_DIR}/view/config.html: ${SRC_DIR}/view/config.haml
 	$(call haml, ${SRC_DIR}/view/config.haml, ${DBG_DIR}/view/config.html)
 ${DBG_DIR}/view/config.css:\
-  ${SRC_DIR}/view/common.sass\
+  ${SRC_DIR}/common.sass\
   ${SRC_DIR}/view/config.sass
 	$(call sass, ${SRC_DIR}/view/config.sass, ${DBG_DIR}/view/config.css)
 ${DBG_DIR}/view/config.js: ${SRC_DIR}/view/config.coffee

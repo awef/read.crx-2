@@ -16,19 +16,15 @@ $z-index_modal: 7
 @mixin drop_shadow
   :box-shadow 0 1px 4px rgba(#000, 0.6)
 
-@mixin modal_overlay
-  :z-index $z-index_modal
-  :position absolute
-  :left 0
-  :top 0
-  :width 100%
-  :height 100%
-  :background-image -webkit-radial-gradient(#666, #333)
-
-@mixin tabbed_view
-  :display -webkit-box
-  :-webkit-box-orient vertical
+@mixin common_view_style_1
   :background-color #fff
+  &, body
+    :width 100%
+    :height 100%
+  body
+    :margin 0
+    :display -webkit-box
+    :-webkit-box-orient vertical
   .message_bar
     :font-size 13px
     &.loading
