@@ -207,7 +207,7 @@ app.main = ->
     if request.type is "open"
       app.message.send("open", url: request.query)
 
-  #書き込み完了メッセージの監視
+  #TODO 書き込み完了メッセージの監視
   chrome.extension.onRequest.addListener (request) ->
     if request.type is "written"
       $(".view_thread[data-url=\"#{request.url}\"]")
@@ -219,11 +219,8 @@ app.main = ->
       return
 
     message = JSON.parse(e.data)
-    #タブ内コンテンツがopenを送出した場合、対応するviewを開く
-    if message.type is "open"
-      app.message.send("open", url: message.url)
     #タブ内コンテンツがtitle_updatedを送出した場合、タブのタイトルを更新する
-    else if message.type is "title_updated"
+    if message.type is "title_updated"
       for iframe in document.querySelectorAll("iframe.tab_content")
         if iframe.contentWindow is e.source
           $iframe = $(iframe)
@@ -233,15 +230,17 @@ app.main = ->
               title: message.title
             })
           break
-    #タブ内コンテンツがrequest_killmeを送って来た場合、タブを閉じる。
+    #request_killmeの処理
     else if message.type is "request_killme"
       for iframe in document.getElementsByTagName("iframe")
         if iframe.contentWindow is e.source
           $iframe = $(iframe)
+          #タブ内のviewが送ってきた場合
           if $iframe.is(".tab_content")
             $iframe
               .closest(".tab")
                 .tab("remove", tab_id: $iframe.attr("data-tab_id"))
+          #モーダルのviewが送ってきた場合
           else if $iframe.is("#modal > iframe")
             $iframe.fadeOut "fast", ->
               $iframe.remove()
@@ -249,7 +248,7 @@ app.main = ->
     return
 
   $(window)
-    #更新系のキーが押された時の処理
+    #TODO 更新系のキーが押された時の処理
     .bind "keydown", (e) ->
       if e.which is 116 or (e.ctrlKey and e.which is 82) #F5 or Ctrl+R
         e.preventDefault()
@@ -267,12 +266,7 @@ app.main = ->
       return
 
   $(document.documentElement)
-    #tab_removedイベントをview_unloadに翻訳
-    .delegate ".tab_content", "tab_removed", ->
-      $(this).trigger("view_unload")
-      return
-
-    #フォーカス管理
+    #TODO フォーカス管理
     #タブの内容がクリックされた時にフォーカスを移動
     .delegate ".tab_content", "mousedown", ->
       if not this.classList.contains("tab_focused")

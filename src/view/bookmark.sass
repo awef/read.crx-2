@@ -10,6 +10,11 @@ html
 tr.expired td:first-child:before
   :content "[dat落ち] "
   :color #f00
+
+td
+  &:nth-child(2), &:nth-child(3), &:nth-child(4)
+    :text-align right
+
 .loading_overlay
   .loading
     &:before
@@ -23,6 +28,3 @@ tr.expired td:first-child:before
     &:before
       :content "更新失敗 : "
 
-tr > td
-  &:nth-child(2), &:nth-child(3), &:nth-child(4)
-    :text-align right

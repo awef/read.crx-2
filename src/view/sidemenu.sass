@@ -7,11 +7,11 @@ body
 body:not(.accordion)
   :visibility hidden
 
-.view_sidemenu .search
+.search
   :display -webkit-box
   :padding 2px
 
-.view_sidemenu .search > input
+.search > input
   :display block
   :box-sizing content-box
   :border 1px solid #999
@@ -20,14 +20,14 @@ body:not(.accordion)
   :margin 0
   :padding 0
 
-.view_sidemenu .search > input:first-child
-  :-webkit-box-flex 1
-  :margin-right 2px
+  &:first-child
+    :-webkit-box-flex 1
+    :margin-right 2px
 
-.view_sidemenu .search > input:last-child
-  :background-color #eee
-  :background-image url(/img/search2_19x19.png)
-  :width 19px
+  &:last-child
+    :background-color #eee
+    :background-image url(/img/search2_19x19.png)
+    :width 19px
 
 .view_sidemenu_bookmark:before
   :content "ブックマーク"

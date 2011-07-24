@@ -18,8 +18,7 @@ app.view_module.view = ($view) ->
     e.preventDefault()
     url = this.href or this.getAttribute("data-href")
     if frameElement
-      message = {type: "open", url}
-      parent.postMessage(JSON.stringify(message), location.origin)
+      app.message.send("open", {url})
     else
       tmp = chrome.extension.getURL("/view/index.html?")
       tmp += app.url.build_param(q: url)
