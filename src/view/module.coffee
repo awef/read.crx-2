@@ -86,7 +86,10 @@ app.view_module.reload = ($view) ->
     if e.origin is location.origin
       message = JSON.parse(e.data)
       if message.type is "request_reload"
-        $view.trigger("request_reload")
+        if message.force_update is true
+          $view.trigger("request_reload", force_update: true)
+        else
+          $view.trigger("request_reload")
 
   #更新系のキーが押された場合の処理
   $(window)

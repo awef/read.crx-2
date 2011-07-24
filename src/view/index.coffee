@@ -207,11 +207,13 @@ app.main = ->
     if request.type is "open"
       app.message.send("open", url: request.query)
 
-  #TODO 書き込み完了メッセージの監視
+  #書き込み完了メッセージの監視
   chrome.extension.onRequest.addListener (request) ->
     if request.type is "written"
-      $(".view_thread[data-url=\"#{request.url}\"]")
-        .trigger("request_reload", force_update: true)
+      iframe = document.querySelector("iframe[data-url=\"#{request.url}\"]")
+      if iframe
+        tmp = JSON.stringify(type: "request_reload", force_update: true)
+        iframe.contentWindow.postMessage(tmp, location.origin)
 
   #viewからのメッセージを監視
   window.addEventListener "message", (e) ->
