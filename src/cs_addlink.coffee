@@ -29,7 +29,7 @@ if (regs.some (a) -> a.test(location.href))
   open_button.style["cursor"] = "pointer"
   open_button.style["text-decoration"] = "underline"
   open_button.addEventListener "click", ->
-    url = chrome.extension.getURL("app.html")
+    url = chrome.extension.getURL("/view/index.html")
     url += "?q=#{encodeURIComponent(location.href)}"
     open(url)
     return

@@ -21,7 +21,7 @@ app.view_module.view = ($view) ->
       message = {type: "open", url}
       parent.postMessage(JSON.stringify(message), location.origin)
     else
-      tmp = chrome.extension.getURL("/app.html?")
+      tmp = chrome.extension.getURL("/view/index.html?")
       tmp += app.url.build_param(q: url)
       open(tmp)
 

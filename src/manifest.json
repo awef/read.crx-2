@@ -4,7 +4,7 @@
   "description" : "2chブラウザ",
   "minimum_chrome_version" : "12",
   "incognito" : "split",
-  "options_page" : "app.html?q=config",
+  "options_page" : "/view/index.html?q=config",
   "permissions" : [
     "bookmarks",
     "cookies",
@@ -15,7 +15,7 @@
   ],
   "app" : {
     "launch" : {
-      "local_path" : "app.html"
+      "local_path" : "/view/index.html"
     }
   },
   "icons" : {

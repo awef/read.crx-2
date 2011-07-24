@@ -20,6 +20,8 @@ svg = convert\
 all:\
   ${DBG_DIR}\
   ${DBG_DIR}/manifest.json\
+  ${DBG_DIR}/ui.css\
+  ${DBG_DIR}/ui.js\
   ${DBG_DIR}/app.js\
   ${DBG_DIR}/app_core.js\
   ${DBG_DIR}/view/\
@@ -63,11 +65,6 @@ all:\
   ${DBG_DIR}/view/bookmark_source_selector.css\
   ${DBG_DIR}/view/bookmark_source_selector.js\
 \
-  ${DBG_DIR}/app.html\
-  ${DBG_DIR}/app_html.js\
-  ${DBG_DIR}/ui.js\
-  ${DBG_DIR}/ui.css\
-  ${DBG_DIR}/app.css\
   ${DBG_DIR}/cs_addlink.js\
   ${DBG_DIR}/cs_search.js\
   ${DBG_DIR}/lib/\
@@ -188,12 +185,6 @@ ${DBG_DIR}/view/bookmark_source_selector.css:\
 ${DBG_DIR}/view/bookmark_source_selector.js: ${SRC_DIR}/view/bookmark_source_selector.coffee
 	$(call coffee, ${SRC_DIR}/view/bookmark_source_selector.coffee, ${DBG_DIR}/view/bookmark_source_selector.js)
 
-${DBG_DIR}/app.html: ${SRC_DIR}/app.haml
-	$(call haml, ${SRC_DIR}/app.haml, ${DBG_DIR}/app.html)
-
-${DBG_DIR}/app_html.js: ${SRC_DIR}/app.*.coffee
-	$(call coffee, ${SRC_DIR}/app.*.coffee, ${DBG_DIR}/app_html.js)
-
 ${DBG_DIR}/ui.js: ${SRC_DIR}/ui/*.coffee
 	$(call coffee, ${SRC_DIR}/ui/*.coffee, ${DBG_DIR}/ui.js)
 
@@ -201,12 +192,6 @@ ${DBG_DIR}/ui.css:\
   ${SRC_DIR}/common.sass\
   ${SRC_DIR}/ui/*.sass
 	$(call sass, ${SRC_DIR}/ui/ui.sass, ${DBG_DIR}/ui.css)
-
-${DBG_DIR}/app.css:\
-  ${SRC_DIR}/common.sass\
-  ${SRC_DIR}/app.sass\
-  ${SRC_DIR}/sass/*.sass
-	$(call sass, ${SRC_DIR}/app.sass, ${DBG_DIR}/app.css)
 
 ${DBG_DIR}/cs_addlink.js: ${SRC_DIR}/cs_addlink.coffee
 	$(call coffee, ${SRC_DIR}/cs_addlink.coffee, ${DBG_DIR}/cs_addlink.js)
