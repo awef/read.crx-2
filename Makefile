@@ -59,6 +59,10 @@ all:\
   ${DBG_DIR}/view/config.css\
   ${DBG_DIR}/view/config.js\
 \
+  ${DBG_DIR}/view/bookmark_source_selector.html\
+  ${DBG_DIR}/view/bookmark_source_selector.css\
+  ${DBG_DIR}/view/bookmark_source_selector.js\
+\
   ${DBG_DIR}/app.html\
   ${DBG_DIR}/app_html.js\
   ${DBG_DIR}/ui.js\
@@ -174,6 +178,15 @@ ${DBG_DIR}/view/config.css:\
 	$(call sass, ${SRC_DIR}/view/config.sass, ${DBG_DIR}/view/config.css)
 ${DBG_DIR}/view/config.js: ${SRC_DIR}/view/config.coffee
 	$(call coffee, ${SRC_DIR}/view/config.coffee, ${DBG_DIR}/view/config.js)
+
+${DBG_DIR}/view/bookmark_source_selector.html: ${SRC_DIR}/view/bookmark_source_selector.haml
+	$(call haml, ${SRC_DIR}/view/bookmark_source_selector.haml, ${DBG_DIR}/view/bookmark_source_selector.html)
+${DBG_DIR}/view/bookmark_source_selector.css:\
+  ${SRC_DIR}/view/bookmark_source_selector.sass\
+  ${SRC_DIR}/view/bookmark_source_selector.sass
+	$(call sass, ${SRC_DIR}/view/bookmark_source_selector.sass, ${DBG_DIR}/view/bookmark_source_selector.css)
+${DBG_DIR}/view/bookmark_source_selector.js: ${SRC_DIR}/view/bookmark_source_selector.coffee
+	$(call coffee, ${SRC_DIR}/view/bookmark_source_selector.coffee, ${DBG_DIR}/view/bookmark_source_selector.js)
 
 ${DBG_DIR}/app.html: ${SRC_DIR}/app.haml
 	$(call haml, ${SRC_DIR}/app.haml, ${DBG_DIR}/app.html)

@@ -1,0 +1,22 @@
+:ruby
+  app_version = "0.12"
+
+!!! 5
+%html.view.view_bookmark_source_selector(data-app-version="#{app_version}")
+  %head
+    %meta(charset="utf-8")
+    %title ブックマークフォルダの設定
+    %link(rel="stylesheet" href="bookmark_source_selector.css?v=#{app_version}")
+    %script(src="/lib/jquery/jquery-1.6.2.min.js?v=#{app_version}")
+    %script(src="/ui.js?v=#{app_version}")
+    %script(src="/app.js?v=#{app_version}")
+    %script(src="app_proxy.js?v=#{app_version}")
+    %script(src="module.js?v=#{app_version}")
+    %script(src="bookmark_source_selector.js?v=#{app_version}")
+  %body
+    %p read.crxのブックマークの保存先として使用するフォルダを指定して下さい
+    .node_list
+      %ul
+    %button.submit(disabled) 決定
+    %p read.crx内で掲示板をブックマークに登録すると、ここで指定したフォルダ内にブックマークが保存されます
+    %p ブックマーク同期を利用して既読数等を同期するため、ここで指定したフォルダ内のブックマークは編集される事が有ります

@@ -169,6 +169,10 @@ app.main = ->
       else if url is "inputurl"
         src: "/view/inputurl.html"
         url: "inputurl"
+      else if url is "bookmark_source_selector"
+        src: "/view/bookmark_source_selector.html"
+        url: "bookmark_source_selector"
+        modal: true
       else if guess_result.type is "board"
         src: "/view/board.html?#{app.url.build_param(q: message.url)}"
         url: app.url.fix(message.url)
@@ -188,12 +192,15 @@ app.main = ->
         .attr("data-url", iframe_info.url)
         .attr("data-title", iframe_info.url)
 
-      target = "#tab_a"
-      if iframe_info.src[0..16] is "/view/thread.html"
-        target = document.getElementById("tab_b") or target
+      if iframe_info.modal
+        $iframe.appendTo("#modal")
+      else
+        target = "#tab_a"
+        if iframe_info.src[0..16] is "/view/thread.html"
+          target = document.getElementById("tab_b") or target
 
-      $(target)
-        .tab("add", element: $iframe[0], title: $iframe.attr("data-title"))
+        $(target)
+          .tab("add", element: $iframe[0], title: $iframe.attr("data-title"))
 
   #openリクエストの監視
   chrome.extension.onRequest.addListener (request) ->
@@ -228,12 +235,16 @@ app.main = ->
           break
     #タブ内コンテンツがrequest_killmeを送って来た場合、タブを閉じる。
     else if message.type is "request_killme"
-      for iframe in document.querySelectorAll("iframe.tab_content")
+      for iframe in document.getElementsByTagName("iframe")
         if iframe.contentWindow is e.source
           $iframe = $(iframe)
-          $iframe
-            .closest(".tab")
-              .tab("remove", tab_id: $iframe.attr("data-tab_id"))
+          if $iframe.is(".tab_content")
+            $iframe
+              .closest(".tab")
+                .tab("remove", tab_id: $iframe.attr("data-tab_id"))
+          else if $iframe.is("#modal > iframe")
+            $iframe.fadeOut "fast", ->
+              $iframe.remove()
 
     return
 
