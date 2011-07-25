@@ -1,6 +1,15 @@
 app.boot "/view/index.html", ->
-  reg_res = /[\?&]q=([^&]+)/.exec(location.search)
-  query = decodeURIComponent(reg_res?[1] or "app")
+  arg = app.url.parse_query(location.href)
+  query = arg.q or "app"
+
+  #chromeのバグ回避措置
+  expected = (parseInt(app.config.get("avoider") or "0") + 1).toString()
+  if arg.avoider isnt expected
+    arg.avoider = expected
+    location.search = app.url.build_param(arg)
+    return
+  else
+    app.config.set("avoider", expected)
 
   chrome.tabs.getCurrent (current_tab) ->
     chrome.windows.getAll {populate: true}, (windows) ->
