@@ -48,8 +48,13 @@ app.view_module.view = ($view) ->
         e.preventDefault()
         $view.trigger("request_reload")
 
-  #view内リロードボタンの処理
   $view
+    #view_loaded翻訳処理
+    .bind "view_loaded", ->
+      tmp = JSON.stringify(type: "view_loaded")
+      parent.postMessage(tmp, location.origin)
+
+    #view内リロードボタンの処理
     .find(".button_reload")
       .bind "click", ->
         if not $(this).hasClass("disabled")

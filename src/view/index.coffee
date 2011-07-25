@@ -260,6 +260,11 @@ app.main = ->
             $iframe.fadeOut "fast", ->
               $iframe.remove()
 
+    else if message.type is "view_loaded"
+      for iframe in document.getElementsByTagName("iframe")
+        if iframe.contentWindow is e.source
+          $(iframe).trigger("view_loaded")
+
     return
 
   $view
@@ -303,8 +308,8 @@ app.main = ->
       $(".tab_focused").removeClass("tab_focused")
       $(this).closest(".tab").find(".tab_selected").addClass("tab_focused")
       #クリックでタブを選択した時にフォーカスが移らなくなるため、deferで飛ばす
-      app.defer ->
-        $(".tab_focused .content").focus()
+      app.defer =>
+        this.contentDocument.getElementsByClassName("content")[0]?.focus()
       return
 
     #フォーカスしているタブが削除された時にフォーカスを移動
@@ -315,12 +320,13 @@ app.main = ->
           $(".tab:has(.tab_selected):first")
             .find(".tab_selected")
               .addClass("tab_focused")
-              .find(".content")
-                .focus()
+
+          iframe = document.querySelector("iframe.tab_focused")
+          iframe?.contentDocument.getElementsByClassName("content")[0]?.focus()
       return
 
     #フォーカスしているタブ内のコンテンツが再描画された場合、フォーカスを合わせ直す
     .delegate ".tab_content", "view_loaded", ->
       if this.classList.contains("tab_focused")
-        this.getElementsByClassName("content")[0]?.focus()
+        this.contentDocument.getElementsByClassName("content")[0]?.focus()
       return
