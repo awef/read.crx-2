@@ -1,6 +1,6 @@
 app.boot "/view/index.html", ->
   arg = app.url.parse_query(location.href)
-  query = arg.q or "app"
+  query = arg.q
 
   #chromeのバグ回避措置
   expected = (parseInt(app.config.get("avoider") or "0") + 1).toString()
@@ -19,13 +19,13 @@ app.boot "/view/index.html", ->
           if tab.id isnt current_tab.id and tab.url is app_path
             chrome.windows.update(win.id, focused: true)
             chrome.tabs.update(tab.id, selected: true)
-            if query isnt "app"
+            if query
               chrome.tabs.sendRequest(tab.id, {type: "open", query})
             chrome.tabs.remove(current_tab.id)
             return
       history.pushState(null, null, "/view/index.html")
       app.main()
-      if query isnt "app"
+      if query
         app.message.send("open", url: query)
 
 # #app.view_tab_state
