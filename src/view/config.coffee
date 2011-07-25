@@ -80,7 +80,11 @@ app.boot "/view/config.html", ->
           .addClass("done")
           .text("更新完了")
 
-        $(".view_sidemenu").trigger("request_reload")
+        iframe = parent.document.querySelector("iframe[src^=\"/view/sidemenu.html\"]")
+        if iframe
+          tmp = JSON.stringify(type: "request_reload")
+          iframe.contentWindow.postMessage(tmp, location.origin)
+
         #TODO [board_title_solver]も更新するよう変更
       else
         $status
