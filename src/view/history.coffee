@@ -21,7 +21,6 @@ app.boot "/view/history.html", ->
           tr.appendChild(td)
           frag.appendChild(tr)
         $view.find("tbody").append(frag)
-        #TODO
         $view.trigger("view_loaded")
 
   load()
