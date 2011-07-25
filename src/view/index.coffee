@@ -234,36 +234,39 @@ app.main = ->
       return
 
     message = JSON.parse(e.data)
-    #タブ内コンテンツがtitle_updatedを送出した場合、タブのタイトルを更新する
-    if message.type is "title_updated"
-      for iframe in document.querySelectorAll("iframe.tab_content")
-        if iframe.contentWindow is e.source
-          $iframe = $(iframe)
-          $iframe.closest(".tab")
-            .tab("update_title", {
-              tab_id: $iframe.attr("data-tab_id")
-              title: message.title
-            })
-          break
-    #request_killmeの処理
-    else if message.type is "request_killme"
-      for iframe in document.getElementsByTagName("iframe")
-        if iframe.contentWindow is e.source
-          $iframe = $(iframe)
-          #タブ内のviewが送ってきた場合
-          if $iframe.is(".tab_content")
-            $iframe
-              .closest(".tab")
-                .tab("remove", tab_id: $iframe.attr("data-tab_id"))
-          #モーダルのviewが送ってきた場合
-          else if $iframe.is("#modal > iframe")
-            $iframe.fadeOut "fast", ->
-              $iframe.remove()
 
-    else if message.type is "view_loaded"
-      for iframe in document.getElementsByTagName("iframe")
-        if iframe.contentWindow is e.source
-          $(iframe).trigger("view_loaded")
+    for iframe in document.querySelectorAll("iframe.tab_content")
+      if iframe.contentWindow is e.source
+        $iframe = $(iframe)
+        break
+
+    if not $iframe?
+      return
+
+    switch message.type
+      #タブ内コンテンツがtitle_updatedを送出した場合、タブのタイトルを更新
+      when "title_updated"
+        $iframe.closest(".tab")
+          .tab("update_title", {
+            tab_id: $iframe.attr("data-tab_id")
+            title: message.title
+          })
+
+      #request_killmeの処理
+      when "request_killme"
+        #タブ内のviewが送ってきた場合
+        if $iframe.is(".tab_content")
+          $iframe
+            .closest(".tab")
+              .tab("remove", tab_id: $iframe.attr("data-tab_id"))
+        #モーダルのviewが送ってきた場合
+        else if $iframe.is("#modal > iframe")
+          $iframe.fadeOut "fast", ->
+            $iframe.remove()
+
+      #view_loadedの翻訳
+      when "view_loaded"
+        $iframe.trigger("view_loaded")
 
     return
 
