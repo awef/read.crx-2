@@ -278,6 +278,11 @@ app.main = ->
       return
 
   $(document.documentElement)
+    #tab_selected(event) -> tab_selected(postMessage) 翻訳処理
+    .delegate "iframe.tab_content", "tab_selected", ->
+      tmp = JSON.stringify(type: "tab_selected")
+      this.contentWindow.postMessage(tmp, location.origin)
+
     #TODO フォーカス管理
     #タブの内容がクリックされた時にフォーカスを移動
     .delegate ".tab_content", "mousedown", ->

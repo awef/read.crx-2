@@ -28,15 +28,18 @@ app.view_module.view = ($view) ->
   window.addEventListener "unload", ->
     $view.trigger("view_unload")
 
-  #request_reload(postMessage) -> request_reload(event) 翻訳処理
   window.addEventListener "message", (e) ->
     if e.origin is location.origin
       message = JSON.parse(e.data)
+      #request_reload(postMessage) -> request_reload(event) 翻訳処理
       if message.type is "request_reload"
         if message.force_update is true
           $view.trigger("request_reload", force_update: true)
         else
           $view.trigger("request_reload")
+      #tab_selected(postMessage) -> tab_selected(event) 翻訳処理
+      else if message.type is "tab_selected"
+        $view.trigger("tab_selected")
 
   #更新系のキーが押された場合の処理
   $(window)

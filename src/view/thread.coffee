@@ -348,7 +348,6 @@ app.boot "/view/thread.html", ->
       $view.find("footer").hide()
 
   $view
-    #TODO iframe_view対応
     .bind "tab_selected", ->
       update_footer()
       return
