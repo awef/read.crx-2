@@ -235,7 +235,7 @@ app.main = ->
 
     message = JSON.parse(e.data)
 
-    for iframe in document.querySelectorAll("iframe.tab_content")
+    for iframe in document.getElementsByTagName("iframe")
       if iframe.contentWindow is e.source
         $iframe = $(iframe)
         break
