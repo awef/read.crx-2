@@ -246,16 +246,17 @@ app.main = ->
     switch message.type
       #タブ内コンテンツがtitle_updatedを送出した場合、タブのタイトルを更新
       when "title_updated"
-        $iframe.closest(".tab")
-          .tab("update_title", {
-            tab_id: $iframe.attr("data-tab_id")
-            title: message.title
-          })
+        $iframe
+          .closest(".tab")
+            .tab("update_title", {
+              tab_id: $iframe.attr("data-tab_id")
+              title: message.title
+            })
 
       #request_killmeの処理
       when "request_killme"
         #タブ内のviewが送ってきた場合
-        if $iframe.is(".tab_content")
+        if $iframe.hasClass("tab_content")
           $iframe
             .closest(".tab")
               .tab("remove", tab_id: $iframe.attr("data-tab_id"))
