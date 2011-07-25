@@ -49,6 +49,11 @@ app.view_module.view = ($view) ->
         $view.trigger("request_reload")
 
   $view
+    #mousedown通知
+    .bind "mousedown", ->
+      tmp = JSON.stringify(type: "view_mousedown")
+      parent.postMessage(tmp, location.origin)
+
     #view_loaded翻訳処理
     .bind "view_loaded", ->
       tmp = JSON.stringify(type: "view_loaded")

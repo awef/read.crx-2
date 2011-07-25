@@ -269,6 +269,10 @@ app.main = ->
       when "view_loaded"
         $iframe.trigger("view_loaded")
 
+      #view_mousedownの翻訳
+      when "view_mousedown"
+        $iframe.trigger("view_mousedown")
+
     return
 
   $view
@@ -292,9 +296,8 @@ app.main = ->
       tmp = JSON.stringify(type: "tab_selected")
       this.contentWindow.postMessage(tmp, location.origin)
 
-    #TODO フォーカス管理
     #タブの内容がクリックされた時にフォーカスを移動
-    .delegate ".tab_content", "mousedown", ->
+    .delegate ".tab_content", "view_mousedown", ->
       if not this.classList.contains("tab_focused")
         $(".tab_focused")
           .removeClass("tab_focused")
@@ -303,8 +306,10 @@ app.main = ->
           .closest(".tab")
             .find(".tab_selected")
               .addClass("tab_focused")
-              .find(".content")
-                .focus()
+              .filter("iframe")
+                .contents()
+                  .find(".content")
+                    .focus()
       return
 
     #タブが選択された時にフォーカスを移動
