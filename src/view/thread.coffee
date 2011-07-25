@@ -322,8 +322,7 @@ app.boot "/view/thread.html", ->
           if bookmark.res_count - (bookmark.read_state?.read or 0) is 0
             continue
 
-        #TODO iframe_view対応
-        if document.querySelector("[data-url=\"#{bookmark.url}\"]")
+        if parent.document.querySelector("[data-url=\"#{bookmark.url}\"]")
           continue
         else
           next = bookmark
