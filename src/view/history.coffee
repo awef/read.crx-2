@@ -2,7 +2,6 @@ app.boot "/view/history.html", ->
   $view = $(document.documentElement)
 
   app.view_module.view($view)
-  app.view_module.reload($view)
 
   load = ->
     app.history.get(undefined, 500)

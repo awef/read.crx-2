@@ -129,7 +129,6 @@ app.main = ->
   $view = $(document.documentElement)
 
   app.view_module.view($view)
-  app.view_module.reload($view)
 
   document.title = app.manifest.name
 

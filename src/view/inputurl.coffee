@@ -2,7 +2,6 @@ app.boot "/view/inputurl.html", ->
   $view = $(document.documentElement)
 
   app.view_module.view($view)
-  app.view_module.reload($view)
 
   $view.find("form").bind "submit", ->
     url = this.url.value

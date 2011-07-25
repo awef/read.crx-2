@@ -67,7 +67,6 @@ app.boot "/view/bookmark.html", ->
     return
 
   app.view_module.view($view)
-  app.view_module.reload($view)
   app.view_module.searchbox_thread_title($view, 0)
   app.view_module.board_contextmenu($view)
 

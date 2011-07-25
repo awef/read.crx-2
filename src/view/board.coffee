@@ -15,7 +15,6 @@ app.boot "/view/board.html", ->
   app.view_module.searchbox_thread_title($view, 1)
   app.view_module.bookmark_button($view)
   app.view_module.link_button($view)
-  app.view_module.reload($view)
   app.view_module.board_contextmenu($view)
 
   app.board_title_solver.ask url, (title) ->

@@ -1,7 +1,6 @@
 app.boot "/view/sidemenu.html", ->
   $view = $(document.documentElement)
 
-  app.view_module.reload($view)
   app.view_module.view($view)
 
   #スレタイ検索ボックス
