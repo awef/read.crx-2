@@ -126,6 +126,11 @@ app.view_setup_resizer = ->
       return
 
 app.main = ->
+  $view = $(document.documentElement)
+
+  app.view_module.view($view)
+  app.view_module.reload($view)
+
   document.title = app.manifest.name
 
   #タブ・ペインセットアップ
@@ -258,18 +263,15 @@ app.main = ->
 
     return
 
-  $(window)
-    #TODO 更新系のキーが押された時の処理
-    .bind "keydown", (e) ->
-      if e.which is 116 or (e.ctrlKey and e.which is 82) #F5 or Ctrl+R
-        e.preventDefault()
-        iframe = document.querySelector("iframe.tab_focused")
-        if iframe
-          iframe.contentWindow.postMessage(
-            JSON.stringify(type: "request_reload"), location.origin
-          )
-      return
+  $view
+    .bind "request_reload", ->
+      iframe = document.querySelector("iframe.tab_focused")
+      if iframe
+        iframe.contentWindow.postMessage(
+          JSON.stringify(type: "request_reload"), location.origin
+        )
 
+  $(window)
     #データ保存等の後片付けを行なってくれるzombie.html起動
     .bind "unload", ->
       if localStorage.zombie_read_state?
