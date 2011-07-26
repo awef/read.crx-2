@@ -60,7 +60,7 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
           deferred.resolve(tmp_awef)
 
       catch e
-        $(-> app.view_bookmark_source_selector.open())
+        app.message.send("open", url: "bookmark_source_selector")
         deferred.reject()
     .promise()
 
@@ -88,10 +88,17 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
     now_awef = new_awef
 
   update_all = ->
-    scan_awef().done (new_awef) ->
-      update_awef(new_awef)
-      unless app.bookmark._deferred_first_scan.isResolved()
-        app.bookmark._deferred_first_scan.resolve()
+    scan_awef()
+      .done (new_awef) ->
+        update_awef(new_awef)
+        unless app.bookmark._deferred_first_scan.isResolved() or
+            app.bookmark._deferred_first_scan.isRejected()
+          app.bookmark._deferred_first_scan.resolve()
+
+      .fail ->
+        unless app.bookmark._deferred_first_scan.isResolved() or
+            app.bookmark._deferred_first_scan.isRejected()
+          app.bookmark._deferred_first_scan.reject()
 
   update_all()
 

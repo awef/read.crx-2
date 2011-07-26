@@ -215,6 +215,11 @@ app.main = ->
         $(target)
           .tab("add", element: $iframe[0], title: $iframe.attr("data-title"))
 
+  #初回スキャンに失敗した場合、タイミングの問題でopenメッセージを取得できな
+  #いので、promiseを見てview_bookmark_source_selectorを呼び出す
+  app.bookmark.promise_first_scan.fail ->
+    app.message.send("open", url: "bookmark_source_selector")
+
   #openリクエストの監視
   chrome.extension.onRequest.addListener (request) ->
     if request.type is "open"
