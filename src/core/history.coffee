@@ -14,7 +14,7 @@ app.history = {}
       if db.version is "1"
         deferred.resolve(db)
       else
-        req = db.setVersion("1")
+        req = db.setVersion("0.1")
         req.onerror = ->
           app.log("error", "app.history: db.setVersion失敗(#{db.version} -> 1)")
           deferred.reject(db)
@@ -22,7 +22,10 @@ app.history = {}
           db.createObjectStore("history", autoIncrement: true)
             .createIndex("date", "date")
           app.log("info", "app.history: db.setVersion成功(#{db.version} -> 1)")
-          deferred.resolve(db)
+          app.defer ->
+            req = db.setVersion("1")
+            req.onsuccess = -> deferred.resolve(db)
+            req.onerror = -> deferred.reject(db)
 
   .fail (db) ->
     db and db.close()

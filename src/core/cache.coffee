@@ -14,14 +14,17 @@ app.cache = {}
       if db.version is "1"
         deferred.resolve(db)
       else
-        req = db.setVersion("1")
+        req = db.setVersion("0.1")
         req.onerror = ->
           app.log("error", "app.cache: db.setVersion失敗(#{db.version} -> 1)")
           deferred.reject(db)
-        req.onsuccess = (e) ->
+        req.onsuccess = ->
           db.createObjectStore("cache", keyPath: "url")
           app.log("info", "app.cache: db.setVersion成功(#{db.version} -> 1)")
-          deferred.resolve(db)
+          app.defer ->
+            req = db.setVersion("1")
+            req.onsuccess = -> deferred.resolve(db)
+            req.onerror = -> deferred.reject(db)
 
   .fail (db) ->
     db and db.close()
