@@ -11,16 +11,17 @@ app.cache = {}
 
   .pipe (db) ->
     $.Deferred (deferred) ->
+      app.log("debug", "cache now v#{db.version or "n/a"}")
       if db.version is "1"
         deferred.resolve(db)
       else
         req = db.setVersion("0.1")
         req.onerror = ->
-          app.log("error", "app.cache: db.setVersion失敗(#{db.version} -> 1)")
+          app.log("error", "app.cache: db.setVersion onerror")
           deferred.reject(db)
         req.onsuccess = ->
+          app.log("info", "app.cache: db.setVersion onsuccess")
           db.createObjectStore("cache", keyPath: "url")
-          app.log("info", "app.cache: db.setVersion成功(#{db.version} -> 1)")
           app.defer ->
             req = db.setVersion("1")
             req.onsuccess = -> deferred.resolve(db)

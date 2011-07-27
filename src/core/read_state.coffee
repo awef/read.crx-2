@@ -11,17 +11,18 @@ app.read_state = {}
 
   .pipe (db) ->
     $.Deferred (deferred) ->
+      app.log("debug", "read_state now v#{db.version or "n/a"}")
       if db.version is "1"
         deferred.resolve(db)
       else
         req = db.setVersion("0.1")
         req.onerror = ->
-          app.log("error", "app.read_state: db.setVersion失敗(#{db.version} -> 1)")
+          app.log("error", "app.read_state: db.setVersioni onerror")
           deferred.reject(db)
         req.onsuccess = ->
+          app.log("info", "app.read_state: db.setVersion onsuccess")
           db.createObjectStore("read_state", keyPath: "url")
             .createIndex("board_url", "board_url")
-          app.log("info", "app.read_state: db.setVersion成功(#{db.version} -> 1)")
           app.defer ->
             req = db.setVersion("1")
             req.onsuccess = -> deferred.resolve(db)

@@ -11,17 +11,18 @@ app.history = {}
 
   .pipe (db) ->
     $.Deferred (deferred) ->
+      app.log("debug", "history now v#{db.version or "n/a"}")
       if db.version is "1"
         deferred.resolve(db)
       else
         req = db.setVersion("0.1")
         req.onerror = ->
-          app.log("error", "app.history: db.setVersion失敗(#{db.version} -> 1)")
+          app.log("error", "app.history: db.setVersion onerror")
           deferred.reject(db)
         req.onsuccess = ->
+          app.log("info", "app.history: db.setVersion onsuccess")
           db.createObjectStore("history", autoIncrement: true)
             .createIndex("date", "date")
-          app.log("info", "app.history: db.setVersion成功(#{db.version} -> 1)")
           app.defer ->
             req = db.setVersion("1")
             req.onsuccess = -> deferred.resolve(db)
