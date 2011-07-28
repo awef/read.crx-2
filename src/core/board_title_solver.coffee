@@ -1,6 +1,8 @@
 app.board_title_solver = {}
 
 (->
+  deferred_first_bbsmenu_update = $.Deferred()
+
   dic_bbsmenu = {}
 
   update_dic_bbsmenu = ->
@@ -9,7 +11,7 @@ app.board_title_solver = {}
         for category in result.data
           for board in category.board
             dic_bbsmenu[board.url] = board.title
-        null
+      deferred_first_bbsmenu_update.resolve()
 
   $(-> update_dic_bbsmenu())
 
@@ -23,13 +25,14 @@ app.board_title_solver = {}
       app.defer ->
         _callback(res)
 
-    if dic_bbsmenu[url]?
-      callback(dic_bbsmenu[url])
-    else if bookmark = app.bookmark.get(url)
-      if /// ^http://\w+\.2ch\.net/ ///.test(bookmark.url)
-        callback(bookmark.title.replace("＠2ch掲示板", ""))
+    deferred_first_bbsmenu_update.done ->
+      if dic_bbsmenu[url]?
+        callback(dic_bbsmenu[url])
+      else if bookmark = app.bookmark.get(url)
+        if /// ^http://\w+\.2ch\.net/ ///.test(bookmark.url)
+          callback(bookmark.title.replace("＠2ch掲示板", ""))
+        else
+          callback(bookmark.title)
       else
-        callback(bookmark.title)
-    else
-      callback(null)
+        callback(null)
 )()
