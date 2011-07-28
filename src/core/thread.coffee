@@ -268,5 +268,5 @@ app.thread._parse_jbbs = (text) ->
       name: reg_res[2]
       mail: reg_res[3]
       message: reg_res[5]
-      other: reg_res[4] + " ID:" + reg_res[7]
+      other: reg_res[4] + if reg_res[7] then " ID:" + reg_res[7] else ""
   if thread.res.length > 0 then thread else null

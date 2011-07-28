@@ -135,6 +135,7 @@ test "app.thread._get_xhr_info", ->
   2<>名無しさん<><>2010/12/03(金) 02:50:42<>試験用削除<><>ABCD0eFg
   5<>名無しさん<>sage<>2010/12/04(土) 22:57:40<><a href="/bbs/read.cgi/computer/42710/1290070091/2" target="_blank">&gt&gt2</a><br>少なくとも、今のブックマーク表示は、他の板とそれ程区別する必要は無いと思ってます<br><br><a href="/bbs/read.cgi/computer/42710/1290070091/4" target="_blank">&gt&gt4</a><br>サッとプロトコル見てみましたけど、多分無理っすね<br>こちら側も鯖立てないとムリっぽいし<><>.aBCefGh
   """
+
   jbbs_expected =
     title: "read.crx総合 part2"
     res: [
@@ -170,10 +171,68 @@ test "app.thread._get_xhr_info", ->
       }
     ]
 
+  jbbs_url_2 = "http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1310968239/"
+  jbbs_text_2 = """
+1<><font color=#FF0000>awef★</font><><>2011/07/18(月) 14:50:39<>テスト<>削除レスとかの動作を確認するためのスレ<>???
+2<><font color=#FF0000>awef★</font><><>2011/07/18(月) 14:51:47<>テスト2<><>???
+3<>＜削除＞<>＜削除＞<>＜削除＞<>＜削除＞<><>
+4<><font color=#FF0000>awef★</font><><>2011/07/18(月) 14:53:07<><a href="/bbs/read.cgi/computer/42710/1310968239/3" target="_blank">&gt;&gt;3</a><br>削除<><>???
+6<><font color=#FF0000>awef★</font><><>2011/07/18(月) 14:54:08<><a href="/bbs/read.cgi/computer/42710/1310968239/5" target="_blank">&gt;&gt;5</a><br>透明削除<><>???
+7<><font color=#FF0000>awef★</font><><>2011/07/18(月) 14:55:04<><a href="/bbs/read.cgi/computer/42710/1310968239/8" target="_blank">&gt;&gt;8</a>, 9<br>透明削除<><>???
+  """
+
+  jbbs_expected_2 =
+    title: "削除レスとかの動作を確認するためのスレ"
+    res: [
+      {
+        name: "<font color=#FF0000>awef★</font>"
+        mail: ""
+        message: "テスト"
+        other: "2011/07/18(月) 14:50:39 ID:???"
+      }
+      {
+        name: "<font color=#FF0000>awef★</font>"
+        mail: ""
+        message: "テスト2"
+        other: "2011/07/18(月) 14:51:47 ID:???"
+      }
+      {
+        name: "＜削除＞"
+        mail: "＜削除＞"
+        message: "＜削除＞"
+        other: "＜削除＞"
+      }
+      {
+        name: "<font color=#FF0000>awef★</font>"
+        mail: ""
+        message: """<a href="/bbs/read.cgi/computer/42710/1310968239/3" target="_blank">&gt;&gt;3</a><br>削除"""
+        other: "2011/07/18(月) 14:53:07 ID:???"
+      }
+      {
+        name: "あぼーん"
+        mail: "あぼーん"
+        message: "あぼーん"
+        other: "あぼーん"
+      }
+      {
+        name: "<font color=#FF0000>awef★</font>"
+        mail: ""
+        message: """<a href="/bbs/read.cgi/computer/42710/1310968239/5" target="_blank">&gt;&gt;5</a><br>透明削除"""
+        other: "2011/07/18(月) 14:54:08 ID:???"
+      }
+      {
+        name: "<font color=#FF0000>awef★</font>"
+        mail: ""
+        message: """<a href="/bbs/read.cgi/computer/42710/1310968239/8" target="_blank">&gt;&gt;8</a>, 9<br>透明削除"""
+        other: "2011/07/18(月) 14:55:04 ID:???"
+      }
+    ]
+
   test "実例パーステスト", ->
     deepEqual(app.thread.parse(ch_url, ch_text), ch_expected, "2ch")
     deepEqual(app.thread.parse(machi_url, machi_text), machi_expected, "まちBBS")
     deepEqual(app.thread.parse(jbbs_url, jbbs_text), jbbs_expected, "したらば")
+    deepEqual(app.thread.parse(jbbs_url_2, jbbs_text_2), jbbs_expected_2, "したらば(2)")
 
   test "パースエラーテスト", ->
     strictEqual(app.thread.parse(ch_url, ""), null, "2ch系URL + 空dat")
