@@ -74,6 +74,11 @@ app.safe_href = (url) ->
 )()
 
 app.boot = (path, fn) ->
+  #Chromeがiframeのsrcと無関係な内容を読み込むバグへの対応
+  if frameElement and frameElement.src isnt location.href
+    location.href = frameElement.src
+    return
+
   if location.pathname is path
     html_version = document.documentElement.getAttribute("data-app-version")
     if app.manifest.version isnt html_version

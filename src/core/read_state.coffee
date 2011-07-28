@@ -15,18 +15,15 @@ app.read_state = {}
       if db.version is "1"
         deferred.resolve(db)
       else
-        req = db.setVersion("0.1")
+        req = db.setVersion("1")
         req.onerror = ->
-          app.log("error", "app.read_state: db.setVersioni onerror")
+          app.log("error", "app.read_state: db.setVersion(1) onerror")
           deferred.reject(db)
         req.onsuccess = ->
-          app.log("info", "app.read_state: db.setVersion onsuccess")
+          app.log("info", "app.read_state: db.setVersion(1) onsuccess")
           db.createObjectStore("read_state", keyPath: "url")
             .createIndex("board_url", "board_url")
-          app.defer ->
-            req = db.setVersion("1")
-            req.onsuccess = -> deferred.resolve(db)
-            req.onerror = -> deferred.reject(db)
+          deferred.resolve(db)
 
   .fail (db) ->
     db and db.close()

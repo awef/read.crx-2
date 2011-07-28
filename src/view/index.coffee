@@ -2,15 +2,6 @@ app.boot "/view/index.html", ->
   arg = app.url.parse_query(location.href)
   query = arg.q
 
-  #chromeのバグ回避措置
-  expected = (parseInt(app.config.get("avoider") or "0") + 1).toString()
-  if arg.avoider isnt expected
-    arg.avoider = expected
-    location.search = app.url.build_param(arg)
-    return
-  else
-    app.config.set("avoider", expected)
-
   chrome.tabs.getCurrent (current_tab) ->
     chrome.windows.getAll {populate: true}, (windows) ->
       app_path = chrome.extension.getURL("/view/index.html")
