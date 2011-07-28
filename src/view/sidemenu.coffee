@@ -6,6 +6,11 @@ app.boot "/view/sidemenu.html", ->
   #スレタイ検索ボックス
   $view
     .find(".search")
+      .bind "keydown", (e) ->
+        if e.which is 27 #Esc
+          this.STR.value = ""
+        return
+
       .bind "submit", ->
         app.defer =>
           this.STR.value = ""
