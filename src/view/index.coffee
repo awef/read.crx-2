@@ -19,6 +19,25 @@ app.boot "/view/index.html", ->
       if query
         app.message.send("open", url: query)
 
+# #app.notice
+app.notice = {}
+app.notice.push = (text) ->
+  $("<div>")
+    .append(
+      $("<div>", {text}),
+      $("<button>")
+        .bind "click", ->
+          $(this)
+            .parent()
+            .animate({opacity: 0}, "fast")
+            .delay("fast")
+            .slideUp("fast", -> $(this).remove())
+          return
+      )
+    .hide()
+    .appendTo("#app_notice_container")
+    .fadeIn()
+
 # #app.view_tab_state
 # タブの状態の保存/復元を行う
 app.view_tab_state = {}
