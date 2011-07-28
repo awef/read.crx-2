@@ -211,7 +211,8 @@ app.boot "/view/thread.html", ->
         $view
           .find(".id:contains(\"#{this.textContent}\")")
             .closest("article")
-              .clone()
+              .filter(".content > article")
+                .clone()
       )
       $.popup($view, $container, e.clientX, e.clientY, this)
       return
