@@ -33,7 +33,7 @@ app.boot "/view/sidemenu.html", ->
   load = ->
     app.bbsmenu.get (res) ->
       if res.message?
-        app.notice.push(res.message)
+        parent.app.notice.push(res.message)
 
       if res.data?
         frag = document.createDocumentFragment()
