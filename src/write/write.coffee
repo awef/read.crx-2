@@ -89,10 +89,13 @@ app.main = ->
           iframe_arg.key = res[3]
 
         iframe_url = "http://#{app.config.get("p2_server")}"
-        iframe_url += "/p2/post_form.php?#{app.url.build_param(iframe_arg)}"
+        iframe_url += "/p2/post_form.php?"
+        iframe_arg.expected_url = iframe_url
+        iframe_url += app.url.build_param(iframe_arg)
 
       else
         iframe_url = app.url.fix(arg.url) + "1?"
+        iframe_arg.expected_url = iframe_url
         iframe_url += app.url.build_param(iframe_arg)
 
       $("<iframe>")

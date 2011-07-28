@@ -41,6 +41,11 @@
       form.method = "POST"
 
       arg = app.url.parse_query(location.href)
+
+      if arg.expected_url isnt location.href.slice(0, arg.expected_url.length)
+        send_message_error("error: unexpected url")
+        return
+
       form_data =
         submit: "書きこむ"
         time: Math.floor(Date.now() / 1000) - 60
@@ -79,6 +84,10 @@
 
       arg = app.url.parse_query(location.href)
 
+      if arg.expected_url isnt location.href.slice(0, arg.expected_url.length)
+        send_message_error("error: unexpected url")
+        return
+
       form_data =
         TIME: Math.floor(Date.now() / 1000) - 60
         DIR: tmp[5]
@@ -109,9 +118,12 @@
     #p2
     else if ///^http://w\d+\.p2\.2ch\.net/p2/post_form\.php///.test(location.href)
       if form = document.getElementById("resform")
-        console.log form
-
         arg = app.url.parse_query(location.href)
+
+        if arg.expected_url isnt location.href.slice(0, arg.expected_url.length)
+          send_message_error("error: unexpected url")
+          return
+
         form.FROM.value = arg.rcrx_name
         form.mail.value = arg.rcrx_mail
         form.MESSAGE.value = arg.rcrx_message
