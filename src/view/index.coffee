@@ -175,8 +175,8 @@ app.main = ->
 
   #openメッセージ受信部
   app.message.add_listener "open", (message) ->
-    $iframe = $(".tab_container")
-      .find("> [data-url=\"#{app.url.fix(message.url)}\"]")
+    $iframe = $view
+      .find("iframe[data-url=\"#{app.url.fix(message.url)}\"]")
 
     get_iframe_info = (url) ->
       guess_result = app.url.guess_type(url)
@@ -206,9 +206,10 @@ app.main = ->
         null
 
     if $iframe.length is 1
-      $iframe
-        .closest(".tab")
-          .tab("select", tab_id: $iframe.attr("data-tab_id"))
+      if $iframe.hasClass("tab_content")
+        $iframe
+          .closest(".tab")
+            .tab("select", tab_id: $iframe.attr("data-tab_id"))
     else if iframe_info = get_iframe_info(message.url)
       $iframe = $("<iframe>")
         .attr("src", iframe_info.src)
