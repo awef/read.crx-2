@@ -2,12 +2,14 @@ app.read_state = {}
 
 (->
   app.read_state._db_open = $.Deferred (deferred) ->
-    req = webkitIndexedDB.open("read_state")
-    req.onerror = ->
-      deferred.reject()
-      app.log("error", "app.read_state: db.open失敗")
-    req.onsuccess = ->
-      deferred.resolve(req.result)
+    $ ->
+      app.cache._db_open.always ->
+        req = webkitIndexedDB.open("read_state")
+        req.onerror = ->
+          deferred.reject()
+          app.log("error", "app.read_state: db.open失敗")
+        req.onsuccess = ->
+          deferred.resolve(req.result)
 
   .pipe (db) ->
     $.Deferred (deferred) ->
@@ -18,12 +20,12 @@ app.read_state = {}
         req = db.setVersion("1")
         req.onerror = ->
           app.log("error", "app.read_state: db.setVersion(1) onerror")
-          deferred.reject(db)
+          app.defer -> deferred.reject(db)
         req.onsuccess = ->
           app.log("info", "app.read_state: db.setVersion(1) onsuccess")
           db.createObjectStore("read_state", keyPath: "url")
             .createIndex("board_url", "board_url")
-          deferred.resolve(db)
+          app.defer -> deferred.resolve(db)
 
   .fail (db) ->
     db and db.close()

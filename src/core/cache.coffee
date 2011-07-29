@@ -2,12 +2,13 @@ app.cache = {}
 
 (->
   app.cache._db_open = $.Deferred (deferred) ->
-    req = webkitIndexedDB.open("cache")
-    req.onerror = ->
-      deferred.reject()
-      app.log("error", "app.cache: db.open失敗")
-    req.onsuccess = ->
-      deferred.resolve(req.result)
+    $ ->
+      req = webkitIndexedDB.open("cache")
+      req.onerror = ->
+        deferred.reject()
+        app.log("error", "app.cache: db.open失敗")
+      req.onsuccess = ->
+        deferred.resolve(req.result)
 
   .pipe (db) ->
     $.Deferred (deferred) ->
@@ -18,11 +19,11 @@ app.cache = {}
         req = db.setVersion("1")
         req.onerror = ->
           app.log("error", "app.cache: db.setVersion(1) onerror")
-          deferred.reject(db)
+          app.defer -> deferred.reject(db)
         req.onsuccess = ->
           app.log("info", "app.cache: db.setVersion(1) onsuccess")
           db.createObjectStore("cache", keyPath: "url")
-          deferred.resolve(db)
+          app.defer -> deferred.resolve(db)
 
   .fail (db) ->
     db and db.close()

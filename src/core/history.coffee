@@ -2,12 +2,14 @@ app.history = {}
 
 (->
   app.history._open_db = $.Deferred (deferred) ->
-    req = webkitIndexedDB.open("history")
-    req.onerror = ->
-      deferred.reject()
-      app.log("error", "app.history: db.open失敗")
-    req.onsuccess = ->
-      deferred.resolve(req.result)
+    $ ->
+      app.read_state._db_open.always ->
+        req = webkitIndexedDB.open("history")
+        req.onerror = ->
+          deferred.reject()
+          app.log("error", "app.history: db.open失敗")
+        req.onsuccess = ->
+          deferred.resolve(req.result)
 
   .pipe (db) ->
     $.Deferred (deferred) ->
@@ -18,12 +20,12 @@ app.history = {}
         req = db.setVersion("1")
         req.onerror = ->
           app.log("error", "app.history: db.setVersion(1) onerror")
-          deferred.reject(db)
+          app.defer -> deferred.reject(db)
         req.onsuccess = ->
           app.log("info", "app.history: db.setVersion(1) onsuccess")
           db.createObjectStore("history", autoIncrement: true)
             .createIndex("date", "date")
-          deferred.resolve(db)
+          app.defer -> deferred.resolve(db)
 
   .fail (db) ->
     db and db.close()

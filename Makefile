@@ -287,12 +287,16 @@ ${DBG_DIR}/zombie.html: ${SRC_DIR}/zombie.haml
 
 ${DBG_DIR}/zombie.js:\
   ${SRC_DIR}/core/url.coffee\
+  ${SRC_DIR}/core/cache.coffee\
   ${SRC_DIR}/core/read_state.coffee\
+  ${SRC_DIR}/core/history.coffee\
   ${SRC_DIR}/core/bookmark.coffee\
   ${SRC_DIR}/zombie.coffee
 	$(call coffee,\
     ${SRC_DIR}/core/url.coffee\
+    ${SRC_DIR}/core/cache.coffee\
     ${SRC_DIR}/core/read_state.coffee\
+    ${SRC_DIR}/core/history.coffee\
     ${SRC_DIR}/core/bookmark.coffee\
     ${SRC_DIR}/zombie.coffee\
     , ${DBG_DIR}/zombie.js)
