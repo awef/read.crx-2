@@ -161,10 +161,12 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
 
   #res_countはオプショナル
   app.bookmark.add = (url, title, res_count) ->
-    if app.assert_arg("app.bookmark.add", ["string", "string"], arguments)
-      return
+    deferred = $.Deferred()
+    promise = deferred.promise()
 
-    unless now_awef.index_url[url]?
+    if app.assert_arg("app.bookmark.add", ["string", "string"], arguments)
+      deferred.reject()
+    else if not now_awef.index_url[url]?
       url = app.url.fix(url)
       app.read_state.get(url).done (read_state) ->
         data = {}
@@ -179,19 +181,27 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
           data.res_count = res_count
 
         url += "#" + app.url.build_param(data)
-        chrome.bookmarks.create({parentId: source_id, url, title})
+        chrome.bookmarks.create {parentId: source_id, url, title}, ->
+          deferred.resolve()
     else
       app.log("error", "app.bookmark.add: 既にブックマークされいてるURLをブックマークに追加しようとしています", arguments)
+      deferred.reject()
+    return promise
 
   app.bookmark.remove = (url) ->
-    if app.assert_arg("app.bookmark.remove", ["string"], arguments)
-      return
+    deferred = $.Deferred()
+    promise = deferred.promise()
 
-    id = now_awef.index_url_id[app.url.fix(url)]
-    if typeof id is "string"
-      chrome.bookmarks.remove(id)
+    if app.assert_arg("app.bookmark.remove", ["string"], arguments)
+      deferred.reject()
     else
-      app.log("error", "app.bookmark.remove: ブックマークされていないURLをブックマークから削除しようとしています", arguments)
+      id = now_awef.index_url_id[app.url.fix(url)]
+      if typeof id is "string"
+        chrome.bookmarks.remove id, -> deferred.resolve()
+      else
+        app.log("error", "app.bookmark.remove: ブックマークされていないURLをブックマークから削除しようとしています", arguments)
+        deferred.reject()
+    return promise
 
   app.bookmark.update_read_state = (read_state) ->
     $.Deferred (deferred) ->
