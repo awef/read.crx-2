@@ -31,8 +31,7 @@ app.boot "/view/thread.html", ->
       'width=600,height=300'
     )
 
-  tsld = app.url.tsld(url)
-  if tsld is "2ch.net" or tsld is "livedoor.jp"
+  if app.url.tsld(url) in ["2ch.net", "livedoor.jp"]
     $view.find(".button_write").bind "click", ->
       write()
       return
@@ -109,8 +108,7 @@ app.boot "/view/thread.html", ->
         $menu = $("#template > .view_thread_resmenu").clone()
         $menu.data("contextmenu_source", this)
 
-        tsld = app.url.tsld(url)
-        unless tsld is "2ch.net" or tsld is "livedoor.jp"
+        if not app.url.tsld(url) in ["2ch.net", "livedoor.jp"]
           $menu.find(".res_to_this, .res_to_this2").remove()
 
         $menu.appendTo($view)
