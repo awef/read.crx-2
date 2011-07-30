@@ -174,7 +174,7 @@ app.boot "/view/thread.html", ->
 
     #通常リンク
     .delegate ".message a:not(.anchor)", "click", (e) ->
-      url = this.href
+      target_url = this.href
 
       #http、httpsスキーム以外ならクリックを無効化する
       if not /// ^https?:// ///.test(url)
@@ -183,7 +183,7 @@ app.boot "/view/thread.html", ->
 
       #read.crxで開けるURLかどうかを判定
       flg = false
-      tmp = app.url.guess_type(url)
+      tmp = app.url.guess_type(target_url)
       #スレのURLはほぼ確実に判定できるので、そのままok
       if tmp.type is "thread"
         flg = true
@@ -193,15 +193,15 @@ app.boot "/view/thread.html", ->
       #2chタイプの板は誤爆率が高いので、もう少し細かく判定する
       else if tmp.type is "board" and tmp.bbs_type is "2ch"
         #2ch自体の場合の判断はguess_typeを信じて板判定
-        if app.url.tsld(url) is "2ch.net"
+        if app.url.tsld(target_url) is "2ch.net"
           flg = true
         #ブックマークされている場合も板として判定
-        else if app.bookmark.get(app.url.fix(url))
+        else if app.bookmark.get(app.url.fix(target_url))
           flg = true
       #read.crxで開ける板だった場合はpreventDefaultしてopenメッセージを送出
       if flg
         e.preventDefault()
-        app.message.send("open", {url})
+        app.message.send("open", url: target_url)
       return
 
     #IDポップアップ
