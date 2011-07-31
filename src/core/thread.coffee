@@ -2,7 +2,7 @@ app.thread = {}
 
 app.thread._get_xhr_info = (thread_url) ->
   tmp = ///^http://(\w+\.(\w+\.\w+))/(?:test|bbs)/read\.cgi/
-    (\w+)/(\d+)/(?:(\d+)/)?$///.exec(thread_url);
+    (\w+)/(\d+)/(?:(\d+)/)?$///.exec(thread_url)
   if not tmp
     return null
 
