@@ -184,12 +184,19 @@ app.thread.get = (url, callback, force_update) ->
           cache.etag = etag
 
         app.cache.set(cache)
-        app.bookmark.update_res_count(url, thread.res.length)
 
       #304だった場合はアップデート時刻のみ更新
       else if cache?.status is "success" and xhr?.status is 304
         cache.data.last_updated = Date.now()
         app.cache.set(cache.data)
+
+    #ブックマーク更新部
+    .always (cache, xhr, thread) ->
+      #キャッシュが残っていればthreadはキャッシュになるので、
+      #そのままレス数更新処理を行って大丈夫
+      if thread?
+        if xhr?.status is 200 or xhr?.status is 203
+          app.bookmark.update_res_count(url, thread.res.length)
 
     #dat落ち検出
     .fail (cache, xhr, thread) ->
