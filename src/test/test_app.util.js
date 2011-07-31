@@ -59,18 +59,18 @@ asyncTest("htmlとして不正な文字列を渡された場合はrejectする",
 
 asyncTest("実例テスト: pc11/linux → hibari/linux (html)", 1, function(){
   var html = '\
-<html>\
-<head>\
-<script language="javascript">\
-window.location.href="http://hibari.2ch.net/linux/"</script>\
-<title>2chbbs..</title>\
-<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=Shift_JIS">\
-</head>\
-<body bgcolor="#FFFFFF">\
-Change your bookmark ASAP.\
-<a href="http://hibari.2ch.net/linux/">GO !</a>\
-</body>\
-</html>\
+<html>\n\
+<head>\n\
+<script language="javascript">\n\
+window.location.href="http://hibari.2ch.net/linux/"</script>\n\
+<title>2chbbs..</title>\n\
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=Shift_JIS">\n\
+</head>\n\
+<body bgcolor="#FFFFFF">\n\
+Change your bookmark ASAP.\n\
+<a href="http://hibari.2ch.net/linux/">GO !</a>\n\
+</body>\n\
+</html>\n\
 ';
 
   app.util.ch_server_move_detect("http://pc11.2ch.net/linux/", html)
