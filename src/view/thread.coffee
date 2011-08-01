@@ -146,7 +146,7 @@ app.boot "/view/thread.html", ->
       tmp = $view.find(".content")[0].children
 
       frag = document.createDocumentFragment()
-      for anchor in app.util.parse_anchor(this.textContent).data
+      for anchor in app.util.parse_anchor(this.innerHTML).data
         for segment in anchor.segments
           now = segment[0] - 1
           end = segment[1] - 1
@@ -164,7 +164,7 @@ app.boot "/view/thread.html", ->
 
     #アンカーリンク
     .delegate ".anchor:not(.disabled)", "click", ->
-      tmp = app.util.parse_anchor(this.textContent)
+      tmp = app.util.parse_anchor(this.innerHTML)
       target_res_num = tmp.data[0]?.segments[0]?[0]
       if target_res_num?
         app.view_thread._jump_to_res($view, target_res_num, true)

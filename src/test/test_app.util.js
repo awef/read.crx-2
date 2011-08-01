@@ -46,6 +46,10 @@ test("全角の\"＞\"も開始文字として認識する", 1, function(){
     {data: [{segments: [[1, 1], [2, 10], [12, 12]], target: 11}], target: 11});
 });
 
+test("半角\">\"は開始文字として認識しない", 1, function(){
+  deepEqual(app.util.parse_anchor(">>1,2-10,12 ,"), {data: [], target: 0});
+});
+
 module("app.util.ch_sever_move_detect");
 
 asyncTest("htmlとして不正な文字列を渡された場合はrejectする", 1, function(){

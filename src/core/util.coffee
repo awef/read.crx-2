@@ -23,7 +23,7 @@ app.util.parse_anchor = (str) ->
     data: []
     target: 0
 
-  anchor_reg = /(?:>|&gt;|＞){1,2}[\d\uff10-\uff19]+(?:[\-ー][\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:[\-ー][\d\uff10-\uff19]+)?)*/g
+  anchor_reg = /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:[\-ー][\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:[\-ー][\d\uff10-\uff19]+)?)*/g
   while anchor_res = anchor_reg.exec(str)
     anchor_str = anchor_res[0]
       .replace(/ー/g, "-")
