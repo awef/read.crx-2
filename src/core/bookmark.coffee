@@ -6,16 +6,16 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
   source_id = app.config.get("bookmark_id")
 
   #ブックマークの状態を管理する処理群
-  empty_awef =
+  empty_cache =
     data: []
     index_url: {} #urlからdataのキーを導く
     index_id: {} #idからdataのキーを導く
     index_url_id: {} #urlからidを導く
     index_board_url: {} #板urlからキーの配列を導く
 
-  scan_awef = ->
+  scan_cache = ->
     $.Deferred (deferred) ->
-      tmp_awef = app.deep_copy(empty_awef)
+      tmp_cache = app.deep_copy(empty_cache)
       try
         chrome.bookmarks.getChildren source_id, (array_of_tree) ->
           for tree in array_of_tree
@@ -48,49 +48,49 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
                 if arg.expired is true
                   tmp_bookmark.expired = true
 
-                tmp_awef.data.push(tmp_bookmark)
-                key = tmp_awef.data.length - 1
-                tmp_awef.index_url[url] = key
-                tmp_awef.index_id[tree.id] = key
-                tmp_awef.index_url_id[url] = tree.id
+                tmp_cache.data.push(tmp_bookmark)
+                key = tmp_cache.data.length - 1
+                tmp_cache.index_url[url] = key
+                tmp_cache.index_id[tree.id] = key
+                tmp_cache.index_url_id[url] = tree.id
                 if tmp_bookmark.type is "thread"
                   board_url = app.url.thread_to_board(url)
-                  tmp_awef.index_board_url[board_url] or= []
-                  tmp_awef.index_board_url[board_url].push(key)
-          deferred.resolve(tmp_awef)
+                  tmp_cache.index_board_url[board_url] or= []
+                  tmp_cache.index_board_url[board_url].push(key)
+          deferred.resolve(tmp_cache)
 
       catch e
         app.message.send("open", url: "bookmark_source_selector")
         deferred.reject()
     .promise()
 
-  now_awef = app.deep_copy(empty_awef)
+  now_cache = app.deep_copy(empty_cache)
 
-  update_awef = (new_awef) ->
-    old_awef = now_awef or app.deep_copy(empty_awef)
+  update_cache = (new_cache) ->
+    old_cache = now_cache or app.deep_copy(empty_cache)
 
     #追加されたブックマークの検出
-    for new_bookmark in new_awef.data
-      if not old_awef.index_url[new_bookmark.url]?
+    for new_bookmark in new_cache.data
+      if not old_cache.index_url[new_bookmark.url]?
         app.message.send("bookmark_updated",
           {type: "added", bookmark: new_bookmark})
 
-      else if new_bookmark.expired isnt old_awef.data[old_awef.index_url[new_bookmark.url]].expired
+      else if new_bookmark.expired isnt old_cache.data[old_cache.index_url[new_bookmark.url]].expired
         app.message.send("bookmark_updated",
           {type: "expired", bookmark: new_bookmark})
 
     #削除されたブックマークの抽出
-    for old_bookmark in old_awef.data
-      if not new_awef.index_url[old_bookmark.url]?
+    for old_bookmark in old_cache.data
+      if not new_cache.index_url[old_bookmark.url]?
         app.message.send("bookmark_updated",
           {type: "removed", bookmark: old_bookmark})
 
-    now_awef = new_awef
+    now_cache = new_cache
 
   update_all = ->
-    scan_awef()
-      .done (new_awef) ->
-        update_awef(new_awef)
+    scan_cache()
+      .done (new_cache) ->
+        update_cache(new_cache)
         unless app.bookmark._deferred_first_scan.isResolved() or
             app.bookmark._deferred_first_scan.isRejected()
           app.bookmark._deferred_first_scan.resolve()
@@ -117,11 +117,11 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
       update_all()
 
   chrome.bookmarks.onRemoved.addListener (id, e) ->
-    if watcher_wakeflg and now_awef.index_id[id]?
+    if watcher_wakeflg and now_cache.index_id[id]?
       update_all()
 
   chrome.bookmarks.onChanged.addListener (id, e) ->
-    if watcher_wakeflg and now_awef.index_id[id]?
+    if watcher_wakeflg and now_cache.index_id[id]?
       update_all()
 
   chrome.bookmarks.onMoved.addListener (id, e) ->
@@ -135,20 +135,20 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
   # 与えられたURLがブックマークされていた場合はbookmarkオブジェクトを  
   # そうでなかった場合はnullを返す
   app.bookmark.get = (url) ->
-    if now_awef.index_url[url]?
-      app.deep_copy(now_awef.data[now_awef.index_url[url]])
+    if now_cache.index_url[url]?
+      app.deep_copy(now_cache.data[now_cache.index_url[url]])
     else
       null
 
   # ##app.bookmark.get_all
   # 全てのbookmarkを格納した配列を返す
   app.bookmark.get_all = ->
-    app.deep_copy(now_awef.data)
+    app.deep_copy(now_cache.data)
 
   app.bookmark.get_by_board = (board_url) ->
     data = []
-    for key in now_awef.index_board_url[board_url] or []
-      data.push(now_awef.data[key])
+    for key in now_cache.index_board_url[board_url] or []
+      data.push(now_cache.data[key])
     app.deep_copy(data)
 
   app.bookmark.change_source = (new_source_id) ->
@@ -166,7 +166,7 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
 
     if app.assert_arg("app.bookmark.add", ["string", "string"], arguments)
       deferred.reject()
-    else if not now_awef.index_url[url]?
+    else if not now_cache.index_url[url]?
       url = app.url.fix(url)
       app.read_state.get(url).done (read_state) ->
         data = {}
@@ -195,7 +195,7 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
     if app.assert_arg("app.bookmark.remove", ["string"], arguments)
       deferred.reject()
     else
-      id = now_awef.index_url_id[app.url.fix(url)]
+      id = now_cache.index_url_id[app.url.fix(url)]
       if typeof id is "string"
         chrome.bookmarks.remove id, -> deferred.resolve()
       else
@@ -227,7 +227,7 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
           data.expired = true
 
         chrome.bookmarks.update(
-          now_awef.index_url_id[url],
+          now_cache.index_url_id[url],
           url: read_state.url + "#" + app.url.build_param(data),
           ->
             deferred.resolve()
@@ -251,7 +251,7 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
       if bookmark.expired is true
         data.expired = true
 
-      chrome.bookmarks.update(now_awef.index_url_id[url],
+      chrome.bookmarks.update(now_cache.index_url_id[url],
         url: url + "#" + app.url.build_param(data))
 
   app.bookmark.update_expired = (url, expired) ->
@@ -269,7 +269,7 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
       if bookmark.res_count
         data.res_count = bookmark.res_count
 
-      chrome.bookmarks.update(now_awef.index_url_id[url],
+      chrome.bookmarks.update(now_cache.index_url_id[url],
         url: url + "#" + app.url.build_param(data))
 
   #dat落ち検出時の処理
