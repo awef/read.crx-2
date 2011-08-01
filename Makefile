@@ -252,8 +252,8 @@ ${DBG_DIR}/test/: ${QUNIT_FILES}
 	cp ${SRC_DIR}/test/test.html ${DBG_DIR}/test/test.html
 	cp -r ${SRC_DIR}/test/qunit/ ${DBG_DIR}/test/qunit/
 
-${DBG_DIR}/test/test.js: ${DBG_DIR}/test/ ${SRC_DIR}/test/*.coffee
-	$(call coffee, ${SRC_DIR}/test/*.coffee, ${DBG_DIR}/test/test.js)
+${DBG_DIR}/test/test.js: ${DBG_DIR}/test/ ${SRC_DIR}/test/test_*.js
+	cat ${SRC_DIR}/test/test_*.js > ${DBG_DIR}/test/test.js
 
 ${DBG_DIR}/write/:
 	mkdir ${DBG_DIR}/write/
