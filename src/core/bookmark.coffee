@@ -256,6 +256,9 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
 
   app.bookmark.update_expired = (url, expired) ->
     if bookmark = app.bookmark.get(url)
+      if Boolean(bookmark.expired) is Boolean(expired)
+        return
+
       data = {}
 
       if expired is true
