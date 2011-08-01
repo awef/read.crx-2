@@ -149,6 +149,7 @@ app.board.get = (url, callback) ->
         for thread in board
           if dict[thread.url]?
             delete dict[thread.url]
+            app.bookmark.update_expired(thread.url, false)
 
         for thread_url of dict
           app.bookmark.update_expired(thread_url, true)
