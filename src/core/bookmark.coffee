@@ -275,10 +275,6 @@ app.bookmark.promise_first_scan = app.bookmark._deferred_first_scan.promise()
       chrome.bookmarks.update(now_awef.index_url_id[url],
         url: url + "#" + app.url.build_param(data))
 
-  #dat落ち検出時の処理
-  app.message.add_listener "detected_removed_dat", (message) ->
-    app.bookmark.update_expired(message.url, true)
-
   #鯖移転検出時の処理
   app.message.add_listener "detected_ch_server_move", (message) ->
     #板ブックマークの更新

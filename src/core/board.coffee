@@ -151,7 +151,7 @@ app.board.get = (url, callback) ->
             delete dict[thread.url]
 
         for thread_url of dict
-          app.message.send("detected_removed_dat", url: thread_url)
+          app.bookmark.update_expired(thread_url, true)
         null
 
 app.board.parse = (url, text) ->
