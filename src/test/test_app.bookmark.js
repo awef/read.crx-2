@@ -380,13 +380,23 @@ asyncTest("板のブックマークを保存/取得/削除出来る", 6, functio
     read_state: null,
     expired: false
   };
-  //追加
-  var deferred_on_added = $.Deferred();
-  that.one("bookmark_updated", function(message){
-    deepEqual(message, {type: "added", bookmark: expect_bookmark});
-    deferred_on_added.resolve();
-  });
-  $.when(app.bookmark.add(url, title), deferred_on_added)
+  app.bookmark.promise_first_scan
+    .pipe(function(){
+      return $.Deferred(function(deferred){
+        setTimeout(function(){
+          deferred.resolve();
+        }, 300)
+      });
+    })
+    .pipe(function(){
+      //追加
+      var deferred_on_added = $.Deferred();
+      that.one("bookmark_updated", function(message){
+        deepEqual(message, {type: "added", bookmark: expect_bookmark});
+        deferred_on_added.resolve();
+      });
+      return $.when(app.bookmark.add(url, title), deferred_on_added);
+    })
     .pipe(function(){
       var deferred = $.Deferred();
       //取得確認
@@ -446,13 +456,23 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 7, func
     read_state: null,
     expired: false
   };
-  //追加
-  var deferred_on_added = $.Deferred();
-  that.one("bookmark_updated", function(message){
-    deepEqual(message, {type: "added", bookmark: expect_bookmark});
-    deferred_on_added.resolve();
-  });
-  $.when(app.bookmark.add(url, title), deferred_on_added)
+  app.bookmark.promise_first_scan
+    .pipe(function(){
+      return $.Deferred(function(deferred){
+        setTimeout(function(){
+          deferred.resolve();
+        }, 300)
+      });
+    })
+    .pipe(function(){
+      //追加
+      var deferred_on_added = $.Deferred();
+      that.one("bookmark_updated", function(message){
+        deepEqual(message, {type: "added", bookmark: expect_bookmark});
+        deferred_on_added.resolve();
+      });
+      return $.when(app.bookmark.add(url, title), deferred_on_added);
+    })
     .pipe(function(){
       var deferred = $.Deferred();
       //取得確認
