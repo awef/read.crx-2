@@ -1,10 +1,21 @@
-module("app.bookmark");
+module("app.bookmark", {
+  setup: function(){
+    this.one = function(type, listener){
+      var wrapper = function(){
+        listener.apply(this, arguments);
+        app.message.remove_listener(type, wrapper);
+      };
+      app.message.add_listener(type, wrapper);
+    };
+  }
+});
 
 test("ブックマークされていないURLを取得しようとした時は、nullを返す", 1, function(){
   strictEqual(app.bookmark.get("http://__dummy.2ch.net/dummy/"), null);
 });
 
 asyncTest("板のブックマークを保存/取得/削除出来る", 6, function(){
+  var that = this;
   var url = "http://__dummy.2ch.net/dummy/";
   var title = "ダミー板";
   var expect_bookmark = {
@@ -16,23 +27,12 @@ asyncTest("板のブックマークを保存/取得/削除出来る", 6, functio
     read_state: null,
     expired: false
   };
-
+  //追加
   var deferred_on_added = $.Deferred();
-  var on_added = function(message){
+  that.one("bookmark_updated", function(message){
     deepEqual(message, {type: "added", bookmark: expect_bookmark});
     deferred_on_added.resolve();
-    app.message.remove_listener("bookmark_updated", on_added);
-  };
-
-  var deferred_on_removed = $.Deferred();
-  var on_removed = function(message){
-    deepEqual(message, {type: "removed", bookmark: expect_bookmark});
-    deferred_on_removed.resolve();
-    app.message.remove_listener("bookmark_updated", on_removed);
-  };
-
-  //追加
-  app.message.add_listener("bookmark_updated", on_added);
+  });
   $.when(app.bookmark.add(url, title), deferred_on_added)
     .pipe(function(){
       var deferred = $.Deferred();
@@ -52,7 +52,11 @@ asyncTest("板のブックマークを保存/取得/削除出来る", 6, functio
     })
     .pipe(function(){
       //削除
-      app.message.add_listener("bookmark_updated", on_removed);
+      var deferred_on_removed = $.Deferred();
+      that.one("bookmark_updated", function(message){
+        deepEqual(message, {type: "removed", bookmark: expect_bookmark});
+        deferred_on_removed.resolve();
+      });
       return $.when(app.bookmark.remove(url), deferred_on_removed);
     })
     .pipe(function(){
@@ -77,6 +81,7 @@ asyncTest("板のブックマークを保存/取得/削除出来る", 6, functio
 });
 
 asyncTest("スレのブックマークを保存/取得/削除出来る", 7, function(){
+  var that = this;
   var url = "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/";
   var title = "ダミースレ";
   var expect_bookmark = {
@@ -88,23 +93,12 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 7, func
     read_state: null,
     expired: false
   };
-
+  //追加
   var deferred_on_added = $.Deferred();
-  var on_added = function(message){
+  that.one("bookmark_updated", function(message){
     deepEqual(message, {type: "added", bookmark: expect_bookmark});
     deferred_on_added.resolve();
-    app.message.remove_listener("bookmark_updated", on_added);
-  };
-
-  var deferred_on_removed = $.Deferred();
-  var on_removed = function(message){
-    deepEqual(message, {type: "removed", bookmark: expect_bookmark});
-    deferred_on_removed.resolve();
-    app.message.remove_listener("bookmark_updated", on_removed);
-  };
-
-  //追加
-  app.message.add_listener("bookmark_updated", on_added);
+  });
   $.when(app.bookmark.add(url, title), deferred_on_added)
     .pipe(function(){
       var deferred = $.Deferred();
@@ -125,7 +119,11 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 7, func
     })
     .pipe(function(){
       //削除
-      app.message.add_listener("bookmark_updated", on_removed);
+      var deferred_on_removed = $.Deferred();
+      that.one("bookmark_updated", function(message){
+        deepEqual(message, {type: "removed", bookmark: expect_bookmark});
+        deferred_on_removed.resolve();
+      });
       return $.when(app.bookmark.remove(url), deferred_on_removed);
     })
     .pipe(function(){
