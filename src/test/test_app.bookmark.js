@@ -248,6 +248,109 @@ test("URLからブックマークオブジェクトを作成する", 16, functio
   );
 });
 
+module("app.bookmark.bookmark_to_url");
+
+test("ブックマークオブジェクトをURLに変換する", 10, function(){
+  var fixed_url = "http://__dummy.2ch.net/dummy/";
+  var base_bookmark = {
+    type: "board",
+    bbs_type: "2ch",
+    url: fixed_url,
+    title: fixed_url,
+    res_count: null,
+    read_state: null,
+    expired: false
+  };
+  var bookmark;
+  var result;
+
+  bookmark = app.deep_copy(base_bookmark);
+  strictEqual(
+    app.bookmark.bookmark_to_url(bookmark),
+    fixed_url,
+    "板ブックマーク"
+  );
+
+  fixed_url = "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/";
+  base_bookmark = {
+    type: "thread",
+    bbs_type: "2ch",
+    url: fixed_url,
+    title: fixed_url,
+    res_count: null,
+    read_state: null,
+    expired: false
+  };
+
+  bookmark = app.deep_copy(base_bookmark);
+  strictEqual(
+    app.bookmark.bookmark_to_url(bookmark),
+    fixed_url,
+    "スレブックマーク"
+  );
+
+  bookmark = app.deep_copy(base_bookmark);
+  bookmark.res_count = 123;
+  strictEqual(
+    app.bookmark.bookmark_to_url(bookmark),
+    fixed_url + "#res_count=123",
+    "スレブックマーク(res_count)"
+  );
+
+  bookmark = app.deep_copy(base_bookmark);
+  bookmark.expired = true;
+  strictEqual(
+    app.bookmark.bookmark_to_url(bookmark),
+    fixed_url + "#expired",
+    "スレブックマーク(expired)"
+  );
+
+  bookmark = app.deep_copy(base_bookmark);
+  bookmark.read_state = {
+    url: fixed_url,
+    last: 123,
+    read: 234,
+    received: 345
+  };
+  result = app.bookmark.bookmark_to_url(bookmark);
+  deepEqual(
+    app.url.parse_hashquery(result), {
+      last: "123", read: "234", received: "345"
+    }, "スレブックマーク(read_state)");
+  strictEqual(app.url.fix(result), fixed_url, "スレブックマーク(read_state)");
+
+  bookmark = app.deep_copy(base_bookmark);
+  bookmark.read_state = {
+    url: fixed_url,
+    last: 123,
+    read: 234,
+    received: 345
+  };
+  bookmark.expired = true;
+  result = app.bookmark.bookmark_to_url(bookmark);
+  deepEqual(
+    app.url.parse_hashquery(result), {
+      last: "123", read: "234", received: "345", expired: true
+    }, "スレブックマーク(read_state)");
+  strictEqual(app.url.fix(result), fixed_url, "スレブックマーク(res_count + read_state)");
+
+  bookmark = app.deep_copy(base_bookmark);
+  bookmark.read_state = {
+    url: fixed_url,
+    last: 123,
+    read: 234,
+    received: 345
+  };
+  bookmark.expired = true;
+  bookmark.res_count = 456;
+  result = app.bookmark.bookmark_to_url(bookmark);
+  deepEqual(
+    app.url.parse_hashquery(result), {
+      last: "123", read: "234", received: "345", expired: true, res_count: "456"
+    }, "スレブックマーク(read_state)");
+  strictEqual(app.url.fix(result), fixed_url, "スレブックマーク(res_count + read_state + res_count)");
+});
+
 module("app.bookmark", {
   setup: function(){
     this.one = function(type, listener){
