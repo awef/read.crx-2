@@ -17,7 +17,9 @@
     %script(src="sidemenu.js?v=#{app_version}")
   %body
     %form.search(action="http://find.2ch.net/#rcrx" accept-charset="euc-jp" target="_blank")
-      %input(name="STR" placeholder="スレッド検索")
+      %input(type="hidden" name="BBS" value="ALL")
+      %input(type="hidden" name="TYPE" value="TITLE")
+      %input(type="text" name="STR" placeholder="スレッド検索")
       %input(type="submit" value="")
     %h3 read.crx
     %ul

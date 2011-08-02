@@ -11,20 +11,20 @@ body:not(.accordion)
   :display -webkit-box
   :padding 2px
 
-.search > input
-  :display block
-  :box-sizing content-box
-  :border 1px solid #999
-  :border-radius 2px
-  :height 19px
-  :margin 0
-  :padding 0
+  > input:not([type="hidden"])
+    :display block
+    :box-sizing content-box
+    :border 1px solid #999
+    :border-radius 2px
+    :height 19px
+    :margin 0
+    :padding 0
 
-  &:first-child
+  > input[type="text"]
     :-webkit-box-flex 1
     :margin-right 2px
 
-  &:last-child
+  > input[type="submit"]
     :background-color #eee
     :background-image url(/img/search2_19x19.png)
     :width 19px
