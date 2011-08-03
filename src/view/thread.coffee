@@ -108,7 +108,7 @@ app.boot "/view/thread.html", ->
         $menu = $("#template > .view_thread_resmenu").clone()
         $menu.data("contextmenu_source", this)
 
-        if not app.url.tsld(url) in ["2ch.net", "livedoor.jp"]
+        if not(app.url.tsld(url) in ["2ch.net", "livedoor.jp"])
           $menu.find(".res_to_this, .res_to_this2").remove()
 
         $menu.appendTo($view)
