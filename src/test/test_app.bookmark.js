@@ -443,7 +443,7 @@ asyncTest("板のブックマークを保存/取得/削除出来る", 6, functio
     });
 });
 
-asyncTest("スレのブックマークを保存/取得/削除出来る", 19, function(){
+asyncTest("スレのブックマークを保存/取得/削除出来る", 23, function(){
   var that = this;
   var url = "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/";
   var title = "ダミースレ";
@@ -596,6 +596,56 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 19, fun
       strictEqual(app.bookmark.get(url).expired, false, "expired解除、キャッシュ更新チェック");
 
       return $.when(deferred_on_updated, deferred_on_changed);
+    })
+    //read_state付与テスト
+    .pipe(function(){
+      var deferred_on_change = $.Deferred(function(deferred){
+        var tmp_fn = function(id, info){
+          chrome.bookmarks.onChanged.removeListener(tmp_fn);
+          var tmp_expect = app.deep_copy(expect_bookmark);
+          tmp_expect.title = url;
+          deepEqual(app.bookmark.url_to_bookmark(info.url), tmp_expect, "read_state付与 - ブックマーク更新チェック");
+          deferred.resolve();
+        };
+        chrome.bookmarks.onChanged.addListener(tmp_fn);
+      });
+
+      var read_state = {
+        url: url,
+        read: 50,
+        last: 25,
+        received: 100
+      };
+      expect_bookmark.read_state = read_state;
+      app.bookmark.update_read_state(read_state);
+      deepEqual(app.bookmark.get(url), expect_bookmark, "read_state付与テスト - キャッシュ更新チェック");
+
+      return deferred_on_change;
+    })
+    //read_state更新テスト
+    .pipe(function(){
+      var deferred_on_change = $.Deferred(function(deferred){
+        var tmp_fn = function(id, info){
+          chrome.bookmarks.onChanged.removeListener(tmp_fn);
+          var tmp_expect = app.deep_copy(expect_bookmark);
+          tmp_expect.title = url;
+          deepEqual(app.bookmark.url_to_bookmark(info.url), tmp_expect, "read_state更新 - ブックマーク更新チェック");
+          deferred.resolve();
+        };
+        chrome.bookmarks.onChanged.addListener(tmp_fn);
+      });
+
+      var read_state = {
+        url: url,
+        read: 119,
+        last: 118,
+        received: 120
+      };
+      expect_bookmark.read_state = read_state;
+      app.bookmark.update_read_state(read_state);
+      deepEqual(app.bookmark.get(url), expect_bookmark, "read_state更新テスト - キャッシュ更新チェック");
+
+      return deferred_on_change;
     })
     //削除
     .pipe(function(){
