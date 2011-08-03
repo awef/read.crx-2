@@ -548,11 +548,7 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 19, fun
     .pipe(function(){
       var deferred_on_updated = $.Deferred(function(deferred){
         that.one("bookmark_updated", function(message){
-          var tmp_expect = app.deep_copy(expect_bookmark);
-          tmp_expect.expired = true;
-
-          deepEqual(message, {type: "expired", bookmark: tmp_expect}, "expired指定、更新メッセージチェック");
-
+          deepEqual(message, {type: "expired", bookmark: expect_bookmark}, "expired指定、更新メッセージチェック");
           deferred.resolve();
         });
       });
@@ -562,7 +558,6 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 19, fun
           chrome.bookmarks.onChanged.removeListener(tmp_fn);
           var tmp_expect = app.deep_copy(expect_bookmark);
           tmp_expect.title = url;
-          tmp_expect.expired = true;
 
           deepEqual(app.bookmark.url_to_bookmark(info.url), tmp_expect, "expired指定、ブックマーク更新チェック");
 
@@ -571,6 +566,7 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 19, fun
         chrome.bookmarks.onChanged.addListener(tmp_fn);
       });
 
+      expect_bookmark.expired = true;
       app.bookmark.update_expired(url, true);
       strictEqual(app.bookmark.get(url).expired, true, "expired指定、キャッシュ更新チェック");
 
@@ -595,6 +591,7 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 19, fun
       };
       chrome.bookmarks.onChanged.addListener(tmp_fn);
 
+      expect_bookmark.expired = false;
       app.bookmark.update_expired(url, false);
       strictEqual(app.bookmark.get(url).expired, false, "expired解除、キャッシュ更新チェック");
 
