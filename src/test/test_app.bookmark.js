@@ -466,28 +466,33 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 13, fun
     })
     .pipe(function(){
       //追加
-      var deferred_on_added = $.Deferred();
-      that.one("bookmark_updated", function(message){
-        deepEqual(message, {type: "added", bookmark: expect_bookmark});
-        deferred_on_added.resolve();
+      var deferred_on_added = $.Deferred(function(deferred){
+        that.one("bookmark_updated", function(message){
+          deepEqual(message, {type: "added", bookmark: expect_bookmark});
+          deferred.resolve();
+        });
       });
+
       return $.when(app.bookmark.add(url, title), deferred_on_added);
     })
+    //取得
     .pipe(function(){
-      var deferred = $.Deferred();
-      //取得確認
       deepEqual(app.bookmark.get(url), expect_bookmark);
       deepEqual(app.bookmark.get_by_board(app.url.thread_to_board(url)), [expect_bookmark]);
-      chrome.bookmarks.getChildren(app.config.get("bookmark_id"), function(array_of_tree){
-        if(array_of_tree.some(function(tree){ return tree.url === url; })){
-          ok(true);
-          deferred.resolve();
-        }
-        else{
-          ok(false);
-          deferred.reject();
-        }
+
+      var deferred = $.Deferred(function(deferred){
+        chrome.bookmarks.getChildren(app.config.get("bookmark_id"), function(array_of_tree){
+          if(array_of_tree.some(function(tree){ return tree.url === url; })){
+            ok(true);
+            deferred.resolve();
+          }
+          else{
+            ok(false);
+            deferred.reject();
+          }
+        });
       });
+
       return deferred;
     })
     //expired指定テスト
@@ -546,28 +551,30 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 13, fun
 
       return $.when(deferred_on_updated, deferred_on_changed);
     })
+    //削除
     .pipe(function(){
-      //削除
-      var deferred_on_removed = $.Deferred();
-      that.one("bookmark_updated", function(message){
-        deepEqual(message, {type: "removed", bookmark: expect_bookmark});
-        deferred_on_removed.resolve();
+      var deferred_on_removed = $.Deferred(function(deferred){
+        that.one("bookmark_updated", function(message){
+          deepEqual(message, {type: "removed", bookmark: expect_bookmark}, "削除メッセージ");
+          deferred.resolve();
+        });
       });
       return $.when(app.bookmark.remove(url), deferred_on_removed);
     })
+    //削除確認
     .pipe(function(){
-      var deferred = $.Deferred();
-      //削除確認
-      strictEqual(app.bookmark.get(url), null);
-      chrome.bookmarks.getChildren(app.config.get("bookmark_id"), function(array_of_tree){
-        if(array_of_tree.some(function(tree){ return tree.url === url; })){
-          ok(false);
-          deferred.resolve();
-        }
-        else{
-          ok(true);
-          deferred.reject();
-        }
+      var deferred = $.Deferred(function(deferred){
+        strictEqual(app.bookmark.get(url), null);
+        chrome.bookmarks.getChildren(app.config.get("bookmark_id"), function(array_of_tree){
+          if(array_of_tree.some(function(tree){ return tree.url === url; })){
+            ok(false, "削除確認");
+            deferred.resolve();
+          }
+          else{
+            ok(true, "削除確認");
+            deferred.reject();
+          }
+        });
       });
       return deferred;
     })
