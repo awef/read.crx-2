@@ -443,7 +443,7 @@ asyncTest("板のブックマークを保存/取得/削除出来る", 6, functio
     });
 });
 
-asyncTest("スレのブックマークを保存/取得/削除出来る", 16, function(){
+asyncTest("スレのブックマークを保存/取得/削除出来る", 19, function(){
   var that = this;
   var url = "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/";
   var title = "ダミースレ";
@@ -513,6 +513,33 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 16, fun
 
       expect_bookmark.res_count = 123;
       app.bookmark.update_res_count(url, 123);
+      deepEqual(app.bookmark.get(url), expect_bookmark, "res_count付与テスト - キャッシュ更新チェック");
+
+      return $.when(deferred_on_message, deferred_on_change);
+    })
+    //res_count更新テスト
+    .pipe(function(){
+      //メッセージ確認
+      var deferred_on_message = $.Deferred(function(deferred){
+        that.one("bookmark_updated", function(message){
+          deepEqual(message, {type: "res_count", bookmark: expect_bookmark}, "res_count更新 - 更新メッセージチェック");
+          deferred.resolve();
+        });
+      });
+
+      var deferred_on_change = $.Deferred(function(deferred){
+        var tmp_fn = function(id, info){
+          chrome.bookmarks.onChanged.removeListener(tmp_fn);
+          var tmp_expect = app.deep_copy(expect_bookmark);
+          tmp_expect.title = url;
+          deepEqual(app.bookmark.url_to_bookmark(info.url), tmp_expect, "rescount更新 - ブックマーク更新チェック");
+          deferred.resolve();
+        };
+        chrome.bookmarks.onChanged.addListener(tmp_fn);
+      });
+
+      expect_bookmark.res_count = 234;
+      app.bookmark.update_res_count(url, 234);
       deepEqual(app.bookmark.get(url), expect_bookmark, "res_count付与テスト - キャッシュ更新チェック");
 
       return $.when(deferred_on_message, deferred_on_change);
