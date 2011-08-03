@@ -443,7 +443,7 @@ asyncTest("板のブックマークを保存/取得/削除出来る", 6, functio
     });
 });
 
-asyncTest("スレのブックマークを保存/取得/削除出来る", 7, function(){
+asyncTest("スレのブックマークを保存/取得/削除出来る", 13, function(){
   var that = this;
   var url = "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/";
   var title = "ダミースレ";
@@ -489,6 +489,62 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 7, func
         }
       });
       return deferred;
+    })
+    //expired指定テスト
+    .pipe(function(){
+      var deferred_on_updated = $.Deferred(function(deferred){
+        that.one("bookmark_updated", function(message){
+          var tmp_expect = app.deep_copy(expect_bookmark);
+          tmp_expect.expired = true;
+
+          deepEqual(message, {type: "expired", bookmark: tmp_expect}, "expired指定、更新メッセージチェック");
+
+          deferred.resolve();
+        });
+      });
+
+      var deferred_on_changed = $.Deferred(function(deferred){
+        var tmp_fn = function(id, info){
+          chrome.bookmarks.onChanged.removeListener(tmp_fn);
+          var tmp_expect = app.deep_copy(expect_bookmark);
+          tmp_expect.title = url;
+          tmp_expect.expired = true;
+
+          deepEqual(app.bookmark.url_to_bookmark(info.url), tmp_expect, "expired指定、ブックマーク更新チェック");
+
+          deferred.resolve();
+        };
+        chrome.bookmarks.onChanged.addListener(tmp_fn);
+      });
+
+      app.bookmark.update_expired(url, true);
+      strictEqual(app.bookmark.get(url).expired, true, "expired指定、キャッシュ更新チェック");
+
+      return $.when(deferred_on_updated, deferred_on_changed);
+    })
+    //expired指定解除テスト
+    .pipe(function(){
+      var deferred_on_updated = $.Deferred();
+      that.one("bookmark_updated", function(message){
+        deepEqual(message, {type: "expired", bookmark: expect_bookmark}, "expired解除、更新メッセージチェック");
+        deferred_on_updated.resolve();
+      });
+      
+      var deferred_on_changed = $.Deferred();
+      var tmp_fn = function(id, info){
+        chrome.bookmarks.onChanged.removeListener(tmp_fn);
+        var tmp_expect = app.deep_copy(expect_bookmark);
+        tmp_expect.title = url;
+
+        deepEqual(app.bookmark.url_to_bookmark(info.url), tmp_expect, "expired指定、ブックマーク更新チェック");
+        deferred_on_changed.resolve();
+      };
+      chrome.bookmarks.onChanged.addListener(tmp_fn);
+
+      app.bookmark.update_expired(url, false);
+      strictEqual(app.bookmark.get(url).expired, false, "expired解除、キャッシュ更新チェック");
+
+      return $.when(deferred_on_updated, deferred_on_changed);
     })
     .pipe(function(){
       //削除
