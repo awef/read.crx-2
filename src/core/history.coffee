@@ -1,7 +1,7 @@
 app.history = {}
 
 (->
-  app.history._open_db = $.Deferred (deferred) ->
+  app.history._db_open = $.Deferred (deferred) ->
     $ ->
       app.read_state._db_open.always ->
         req = webkitIndexedDB.open("history")
@@ -43,7 +43,7 @@ app.history.add = (url, title, date) ->
     app.log("error", "app.history.add: 引数が不正です", arguments)
     return $.Deferred().reject().promise()
 
-  app.history._open_db
+  app.history._db_open
 
     .pipe (db) ->
       $.Deferred (deferred) ->
@@ -59,7 +59,7 @@ app.history.add = (url, title, date) ->
     .promise()
 
 app.history.get = (offset, count) ->
-  app.history._open_db
+  app.history._db_open
 
     .pipe (db) ->
       $.Deferred (deferred) ->
@@ -87,7 +87,7 @@ app.history.get = (offset, count) ->
     .promise()
 
 app.history.clear = ->
-  app.history._open_db
+  app.history._db_open
 
     .pipe (db) ->
       $.Deferred (deferred) ->
