@@ -457,6 +457,16 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 24, fun
     expired: false
   };
   var node_id;
+
+  var get_deferred_on_message = function(type, label){
+    return $.Deferred(function(deferred){
+      that.one("bookmark_updated", function(message){
+        deepEqual(message, {type: type, bookmark: expect_bookmark}, label);
+        deferred.resolve();
+      });
+    });
+  };
+
   app.bookmark.promise_first_scan
     .pipe(function(){
       return $.Deferred(function(deferred){
@@ -467,12 +477,7 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 24, fun
     })
     //ブックマーク追加テスト
     .pipe(function(){
-      var deferred_on_added = $.Deferred(function(deferred){
-        that.one("bookmark_updated", function(message){
-          deepEqual(message, {type: "added", bookmark: expect_bookmark}, "ブックマーク追加 - 更新メッセージチェック");
-          deferred.resolve();
-        });
-      });
+      var deferred_on_added = get_deferred_on_message("added", "ブックマーク追加 - 更新メッセージチェック");
 
       var deferred_on_created = $.Deferred(function(deferred){
         var tmp_fn = function(id, tree){
@@ -494,13 +499,7 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 24, fun
     })
     //res_count付与テスト
     .pipe(function(){
-      //メッセージ確認
-      var deferred_on_message = $.Deferred(function(deferred){
-        that.one("bookmark_updated", function(message){
-          deepEqual(message, {type: "res_count", bookmark: expect_bookmark}, "res_count付与 - 更新メッセージチェック");
-          deferred.resolve();
-        });
-      });
+      var deferred_on_message = get_deferred_on_message("res_count", "res_count付与 - 更新メッセージチェック");
 
       var deferred_on_change = $.Deferred(function(deferred){
         var tmp_fn = function(id, info){
@@ -521,13 +520,7 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 24, fun
     })
     //res_count更新テスト
     .pipe(function(){
-      //メッセージ確認
-      var deferred_on_message = $.Deferred(function(deferred){
-        that.one("bookmark_updated", function(message){
-          deepEqual(message, {type: "res_count", bookmark: expect_bookmark}, "res_count更新 - 更新メッセージチェック");
-          deferred.resolve();
-        });
-      });
+      var deferred_on_message = get_deferred_on_message("res_count", "res_count更新 - 更新メッセージチェック");
 
       var deferred_on_change = $.Deferred(function(deferred){
         var tmp_fn = function(id, info){
@@ -548,12 +541,7 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 24, fun
     })
     //expired指定テスト
     .pipe(function(){
-      var deferred_on_updated = $.Deferred(function(deferred){
-        that.one("bookmark_updated", function(message){
-          deepEqual(message, {type: "expired", bookmark: expect_bookmark}, "expired指定、更新メッセージチェック");
-          deferred.resolve();
-        });
-      });
+      var deferred_on_updated = get_deferred_on_message("expired", "expired指定、更新メッセージチェック");
 
       var deferred_on_changed = $.Deferred(function(deferred){
         var tmp_fn = function(id, info){
@@ -576,11 +564,7 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 24, fun
     })
     //expired指定解除テスト
     .pipe(function(){
-      var deferred_on_updated = $.Deferred();
-      that.one("bookmark_updated", function(message){
-        deepEqual(message, {type: "expired", bookmark: expect_bookmark}, "expired解除、更新メッセージチェック");
-        deferred_on_updated.resolve();
-      });
+      var deferred_on_updated = get_deferred_on_message("expired", "expired解除、更新メッセージチェック");
       
       var deferred_on_changed = $.Deferred();
       var tmp_fn = function(id, info){
@@ -651,12 +635,7 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 24, fun
     })
     //ブックマーク編集(res_count変更)テスト
     .pipe(function(){
-      var deferred_on_message = $.Deferred(function(deferred){
-        that.one("bookmark_updated", function(message){
-          deepEqual(message, {type: "res_count", bookmark: expect_bookmark}, "ブックマーク編集(res_count変更)テスト");
-          deferred.resolve();
-        });
-      });
+      var deferred_on_message = get_deferred_on_message("res_count", "ブックマーク編集(res_count変更)テスト");
 
       expect_bookmark.res_count = 123;
       chrome.bookmarks.update(node_id, {
@@ -667,12 +646,7 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 24, fun
     })
     //削除
     .pipe(function(){
-      var deferred_on_removed = $.Deferred(function(deferred){
-        that.one("bookmark_updated", function(message){
-          deepEqual(message, {type: "removed", bookmark: expect_bookmark}, "削除メッセージ");
-          deferred.resolve();
-        });
-      });
+      var deferred_on_removed = get_deferred_on_message("removed", "削除メッセージ");
       return $.when(app.bookmark.remove(url), deferred_on_removed);
     })
     //削除確認
