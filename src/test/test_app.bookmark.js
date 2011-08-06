@@ -764,3 +764,73 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 32, fun
     });
 });
 
+asyncTest("パラメータ付きのスレURLも認識出来る", 2, function(){
+  var that = this;
+  var url = "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/";
+  url += "#res_count=123&last=10&read=20&received=100";
+  var title = "ダミースレ";
+  var expect_bookmark = {
+    type: "thread",
+    bbs_type: "2ch",
+    title: title,
+    url: app.url.fix(url),
+    res_count: 123,
+    read_state: {
+      url: app.url.fix(url),
+      last: 10,
+      read: 20,
+      received: 100
+    },
+    expired: false
+  };
+  var node_id;
+
+  app.bookmark.promise_first_scan
+    .pipe(function(){
+      return $.Deferred(function(deferred){
+        setTimeout(function(){
+          deferred.resolve();
+        }, 300);
+      });
+    })
+    .pipe(function(){
+      var deferred_added_message = $.Deferred(function(deferred){
+        that.one("bookmark_updated", function(message){
+          deepEqual(message, {type: "added", bookmark: expect_bookmark});
+          deferred.resolve();
+        });
+      });
+
+      var deferred_create = $.Deferred(function(deferred){
+        chrome.bookmarks.create({
+            parentId: app.config.get("bookmark_id"),
+            url: url,
+            title: title
+          }, function(node){
+            node_id = node.id;
+            deferred.resolve();
+        });
+      });
+
+      return $.when(deferred_create, deferred_added_message);
+    })
+    .pipe(function(){
+     var deferred_removed_message = $.Deferred(function(deferred){
+        that.one("bookmark_updated", function(message){
+          deepEqual(message, {type: "removed", bookmark: expect_bookmark});
+          deferred.resolve();
+        });
+      });
+
+      var deferred_remove = $.Deferred(function(deferred){
+        chrome.bookmarks.remove(node_id, function(){
+          deferred.resolve()
+        });
+      });
+
+      return $.when(deferred_remove, deferred_removed_message);
+    })
+    .always(function(){
+      start();
+    });
+});
