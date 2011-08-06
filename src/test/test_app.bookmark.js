@@ -385,7 +385,7 @@ asyncTest("板のブックマークを保存/取得/削除出来る", 6, functio
       return $.Deferred(function(deferred){
         setTimeout(function(){
           deferred.resolve();
-        }, 300)
+        }, 300);
       });
     })
     .pipe(function(){
@@ -472,7 +472,7 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 32, fun
       return $.Deferred(function(deferred){
         setTimeout(function(){
           deferred.resolve();
-        }, 300)
+        }, 300);
       });
     })
     //ブックマーク追加テスト
