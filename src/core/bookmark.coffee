@@ -175,7 +175,7 @@ app.bookmark.bookmark_to_url = (bookmark) ->
         board_url = app.url.thread_to_board(bookmark.url)
         tmp = @index_board_url[board_url].indexOf(id)
         @index_board_url[board_url].splice(tmp, 1)
-    app.message.send("bookmark_updated", {type: "removed", bookmark})
+      app.message.send("bookmark_updated", {type: "removed", bookmark})
 
   cache.full_scan = ->
     $.Deferred (deferred) ->
