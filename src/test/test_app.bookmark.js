@@ -443,7 +443,7 @@ asyncTest("板のブックマークを保存/取得/削除出来る", 6, functio
     });
 });
 
-asyncTest("スレのブックマークを保存/取得/削除出来る", 30, function(){
+asyncTest("スレのブックマークを保存/取得/削除出来る", 32, function(){
   var that = this;
   var url = "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/";
   var title = "ダミースレ";
@@ -505,6 +505,31 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 30, fun
             ok(true, "既に存在するブックマークを追加しようとしても失敗する");
             deferred.resolve();
           });
+      });
+    })
+    //重複ブックマーク作成時テスト
+    .pipe(function(){
+      return $.Deferred(function(deferred){
+        chrome.bookmarks.create({
+            parentId: app.config.get("bookmark_id"),
+            url: url,
+            title: "重複テスト"
+          }, function(node){ deferred.resolve(node); });
+      });
+    })
+    .pipe(function(node){
+      return $.Deferred(function(deferred){
+        setTimeout(function(){ deferred.resolve(node); }, 300);
+      });
+    })
+    .pipe(function(node){
+      return $.Deferred(function(deferred){
+        deepEqual(app.bookmark.get(url), expect_bookmark, "重複したブックマークが検出されても既存のブックマークには影響が無い");
+        deepEqual(app.bookmark.get_by_board(app.url.thread_to_board(url))
+          , [expect_bookmark], "重複したブックマークが検出されても既存のブックマークには影響が無い(2)");
+        chrome.bookmarks.remove(node.id, function(){
+          deferred.resolve();
+        });
       });
     })
     //res_count付与テスト
