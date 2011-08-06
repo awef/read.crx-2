@@ -126,8 +126,9 @@ app.bookmark.bookmark_to_url = (bookmark) ->
 
     #bookmarkが渡された場合に新規登録が必要になることは無いので、
     #treeが渡された場合のみcache.add_bookmarkに派生する
-    if not cached
-      if prop.tree?
+    if not cached and prop.tree?
+      #既に同一URLのブックマークが存在する場合は無視する
+      if not app.bookmark.get(new_url)
         cache.add_bookmark(prop.tree)
       return
 
