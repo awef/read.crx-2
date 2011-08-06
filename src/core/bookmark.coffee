@@ -250,8 +250,8 @@ app.bookmark.bookmark_to_url = (bookmark) ->
       deferred.reject()
     else
       id = cache.get_id({url})
-      cache.remove_bookmark({id})
       if typeof id is "string"
+        cache.remove_bookmark({id})
         chrome.bookmarks.remove id, ->
           deferred.resolve()
       else
