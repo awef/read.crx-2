@@ -178,7 +178,7 @@ app.bookmark.bookmark_to_url = (bookmark) ->
               cache.update_bookmark({tree})
           deferred.resolve()
       catch e
-        console.log e
+        app.log("warn", "ブックマークスキャン失敗", e)
         app.message.send("open", url: "bookmark_source_selector")
         deferred.reject()
     .promise()
