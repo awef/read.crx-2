@@ -688,11 +688,11 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 27, fun
         chrome.bookmarks.getChildren(app.config.get("bookmark_id"), function(array_of_tree){
           if(array_of_tree.some(function(tree){ return tree.url === url; })){
             ok(false, "削除確認");
-            deferred.resolve();
+            deferred.reject();
           }
           else{
             ok(true, "削除確認");
-            deferred.reject();
+            deferred.resolve();
           }
         });
       });
