@@ -443,7 +443,7 @@ asyncTest("板のブックマークを保存/取得/削除出来る", 6, functio
     });
 });
 
-asyncTest("スレのブックマークを保存/取得/削除出来る", 26, function(){
+asyncTest("スレのブックマークを保存/取得/削除出来る", 27, function(){
   var that = this;
   var url = "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/";
   var title = "ダミースレ";
@@ -496,6 +496,16 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 26, fun
     .pipe(function(){
       deepEqual(app.bookmark.get(url), expect_bookmark, "ブックマーク追加 - キャッシュ更新チェック");
       deepEqual(app.bookmark.get_by_board(app.url.thread_to_board(url)), [expect_bookmark], "ブックマーク追加 - キャッシュ更新チェック(2)");
+    })
+    //重複追加テスト
+    .pipe(function(){
+      return $.Deferred(function(deferred){
+        app.bookmark.add(url, title)
+          .fail(function(){
+            ok(true, "既に存在するブックマークを追加しようとしても失敗する");
+            deferred.resolve();
+          });
+      });
     })
     //res_count付与テスト
     .pipe(function(){
