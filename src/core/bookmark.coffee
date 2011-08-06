@@ -135,14 +135,22 @@ app.bookmark.bookmark_to_url = (bookmark) ->
     new_bookmark.title = new_title
 
     #read_state更新
-    cached.read_state = new_bookmark.read_state
-    if cached.read_state?
-      if cached.read_state.last isnt new_bookmark.read_state.last or
-          cached.read_state.read isnt new_bookmark.read_state.read or
-          cached.read_state.received isnt new_bookmark.read_state.received
+    (->
+      update_flg = false
+      if (not cached.read_state?) and new_bookmark.read_state?
+        update_flg = true
+      else if cached.read_state? and new_bookmark.read_state?
+        if cached.read_state.last isnt new_bookmark.read_state.last or
+            cached.read_state.read isnt new_bookmark.read_state.read or
+            cached.read_state.received isnt new_bookmark.read_state.received
+          update_flg = true
+
+      if update_flg
+        cached.read_state = new_bookmark.read_state
         board_url = app.url.thread_to_board(cached.read_state.url)
         app.message.send("read_state_updated",
           {board_url, read_state: cached.read_state})
+    )()
 
     #res_count更新
     if cached.res_count isnt new_bookmark.res_count
