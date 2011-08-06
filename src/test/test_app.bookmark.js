@@ -575,7 +575,7 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 30, fun
     //expired指定解除テスト
     .pipe(function(){
       var deferred_on_updated = get_deferred_on_message("expired", "expired解除、更新メッセージチェック");
-      
+
       var deferred_on_changed = $.Deferred();
       var tmp_fn = function(id, info){
         chrome.bookmarks.onChanged.removeListener(tmp_fn);
