@@ -38,9 +38,8 @@ app.message = {}
   app.message.send = (type, data) ->
     app.defer ->
       if listener_store[type]?
-        for listener in listener_store[type]
+        listener_store[type].forEach (listener) ->
           listener(app.deep_copy(data))
-        null
 
   app.message.add_listener = (type, fn) ->
     listener_store[type] or= []
