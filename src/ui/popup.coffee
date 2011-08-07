@@ -24,9 +24,13 @@
 
     #画面内に収まるよう、表示位置を修正
     if x < document.body.offsetWidth / 5 * 3
-      $popup.css("left", "#{x + 20}px")
+      left = x + 20
+      $popup.css("left", "#{left}px")
+      $popup.css("max-width", document.body.offsetWidth - left - 20)
     else
-      $popup.css("right", "#{document.body.offsetWidth - x + 20}px")
+      right = document.body.offsetWidth - x + 20
+      $popup.css("right", "#{right}px")
+      $popup.css("max-width", document.body.offsetWidth - right - 20)
     $popup.css("top", "#{Math.min(y, document.body.offsetHeight - $popup.outerHeight()) - 20}px")
 
     #ポップアップ削除関連の処理
