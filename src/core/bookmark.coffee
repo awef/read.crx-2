@@ -117,8 +117,8 @@ app.bookmark.bookmark_to_url = (bookmark) ->
       cached = @data[cache.get_id(url: prop.bookmark.url)]
       new_url = app.bookmark.bookmark_to_url(prop.bookmark)
       new_title = prop.bookmark.title
-    else if prop.url? and prop.title?
-      cached = @data[cache.get_id(url: prop.url)]
+    else if prop.id? and prop.url? and prop.title?
+      cached = @data[prop.id]
       new_url = prop.url
       new_title = prop.title
 
@@ -131,6 +131,11 @@ app.bookmark.bookmark_to_url = (bookmark) ->
       if not app.bookmark.get(new_url)
         cache.add_bookmark(prop.tree)
       return
+
+    #同一IDのノードでfixed_urlが変わった場合の対応
+    if cached? and (app.url.fix(new_url) isnt cached.url)
+      cache.remove_bookmark(id: prop.id)
+      cache.add_bookmark(prop)
 
     new_bookmark = app.bookmark.url_to_bookmark(new_url)
     new_bookmark.title = new_title
@@ -382,7 +387,7 @@ app.bookmark.bookmark_to_url = (bookmark) ->
       return unless watcher_wakeflg
 
       if cache.get_bookmark({id})
-        cache.update_bookmark(url: info.url, title: info.title)
+        cache.update_bookmark({id, url: info.url, title: info.title})
       return
 
     chrome.bookmarks.onMoved.addListener (id, e) ->
