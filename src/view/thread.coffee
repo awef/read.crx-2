@@ -37,6 +37,7 @@ app.boot "/view/thread.html", ->
     else
       $popup = fn()
       return if $popup.children().length is 0
+      $popup.find("article").removeClass("last read received")
       $.popup($view, $popup, e.clientX, e.clientY, that)
 
   if app.url.tsld(url) in ["2ch.net", "livedoor.jp"]
