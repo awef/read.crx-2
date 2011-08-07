@@ -31,6 +31,11 @@ app.boot "/view/thread.html", ->
       'width=600,height=300'
     )
 
+  popup_helper = (that, e, fn) ->
+    $popup = fn()
+    return if $popup.children().length is 0
+    $.popup($view, $popup, e.clientX, e.clientY, that)
+
   if app.url.tsld(url) in ["2ch.net", "livedoor.jp"]
     $view.find(".button_write").bind "click", ->
       write()
@@ -93,10 +98,9 @@ app.boot "/view/thread.html", ->
       return
 
     .delegate ".name_num", "click", (e) ->
-      res = $view.find(".content")[0].children[+this.textContent - 1]
-      if res
-        $popup = $("<div>").append(res.cloneNode(true))
-        $.popup($view, $popup, e.clientX, e.clientY, this)
+      popup_helper this, e, =>
+        res = $view.find(".content")[0].children[+this.textContent - 1]
+        $("<div>").append($(res).clone())
       return
 
     #コンテキストメニュー 表示
@@ -143,23 +147,20 @@ app.boot "/view/thread.html", ->
 
     #アンカーポップアップ
     .delegate ".anchor:not(.disabled)", "mouseenter", (e) ->
-      tmp = $view.find(".content")[0].children
-
-      frag = document.createDocumentFragment()
-      for anchor in app.util.parse_anchor(this.innerHTML).data
-        for segment in anchor.segments
-          now = segment[0] - 1
-          end = segment[1] - 1
-          while now <= end
-            if tmp[now]
-              frag.appendChild(tmp[now].cloneNode(true))
-            else
-              break
-            now++
-
-      $popup = $("<div>").append(frag)
-      $.popup($view, $popup, e.clientX, e.clientY, this)
-
+      popup_helper this, e, =>
+        $popup = $("<div>")
+        tmp = $view.find(".content")[0].children
+        for anchor in app.util.parse_anchor(this.innerHTML).data
+          for segment in anchor.segments
+            now = segment[0] - 1
+            end = segment[1] - 1
+            while now <= end
+              if tmp[now]
+                $popup.append(tmp[now].cloneNode(true))
+              else
+                break
+              now++
+        $popup
       return
 
     #アンカーリンク
@@ -204,27 +205,28 @@ app.boot "/view/thread.html", ->
 
     #IDポップアップ
     .delegate ".id.link, .id.freq", "click", (e) ->
-      $container = $("<div>")
-      $container.append(
-        $view
-          .find(".id:contains(\"#{this.textContent}\")")
-            .closest("article")
-              .filter(".content > article")
-                .clone()
-      )
-      $.popup($view, $container, e.clientX, e.clientY, this)
+      popup_helper this, e, =>
+        $popup = $("<div>")
+        $popup.append(
+          $view
+            .find(".id:contains(\"#{this.textContent}\")")
+              .closest("article")
+                .filter(".content > article")
+                  .clone()
+        )
+        $popup
       return
 
     #リプライポップアップ
     .delegate ".rep", "click", (e) ->
-      tmp = $view.find(".content")[0].children
+      popup_helper this, e, =>
+        tmp = $view.find(".content")[0].children
 
-      frag = document.createDocumentFragment()
-      for num in JSON.parse(this.getAttribute("data-replist"))
-        frag.appendChild(tmp[num].cloneNode(true))
+        frag = document.createDocumentFragment()
+        for num in JSON.parse(this.getAttribute("data-replist"))
+          frag.appendChild(tmp[num].cloneNode(true))
 
-      $popup = $("<div>").append(frag)
-      $.popup($view, $popup, e.clientX, e.clientY, this)
+        $popup = $("<div>").append(frag)
       return
 
   #クイックジャンプパネル
