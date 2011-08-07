@@ -32,13 +32,10 @@ app.boot "/view/thread.html", ->
     )
 
   popup_helper = (that, e, fn) ->
-    if $(that).is(".popup *") and e.type is "mouseenter"
-      return
-    else
-      $popup = fn()
-      return if $popup.children().length is 0
-      $popup.find("article").removeClass("last read received")
-      $.popup($view, $popup, e.clientX, e.clientY, that)
+    $popup = fn()
+    return if $popup.children().length is 0
+    $popup.find("article").removeClass("last read received")
+    $.popup($view, $popup, e.clientX, e.clientY, that)
 
   if app.url.tsld(url) in ["2ch.net", "livedoor.jp"]
     $view.find(".button_write").bind "click", ->
@@ -150,7 +147,7 @@ app.boot "/view/thread.html", ->
       return
 
     #アンカーポップアップ
-    .delegate ".anchor:not(.disabled)", "mouseenter click", (e) ->
+    .delegate ".anchor:not(.disabled)", "mouseenter", (e) ->
       popup_helper this, e, =>
         $popup = $("<div>")
         tmp = $view.find(".content")[0].children
