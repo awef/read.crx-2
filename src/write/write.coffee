@@ -65,7 +65,7 @@ app.main = ->
     e.preventDefault()
 
     $view.find("input, textarea").attr("disabled", true)
-    $view.find("#cancel").removeAttr("disabled")
+    $view.find(".cancel").removeAttr("disabled")
 
     iframe_arg =
       rcrx_name: $view.find(".name").val()
