@@ -250,3 +250,37 @@ test("したらばのスレをパース出来る(削除系確認)", 1, function(
   deepEqual(app.thread.parse(url, text), expected);
 });
 
+test("BBSPINKのスレをパース出来る", 1, function(){
+  //簡略化のため、>>8を>>2に移動
+  var url = "http://pele.bbspink.com/test/read.cgi/erobbs/23455435345543/";
+  var text = '\
+名無し編集部員<><>2008/03/22(土) 03:34:04 ID:aBcD0Ef1<> てすとてすとてすと <>レス削除練習用のスレ\n\
+うふ～ん<>うふ～ん<>うふ～ん ID:DELETED<>うふ～ん<>うふ～ん<>\n\
+ </b>◆ABC/1/DEF. <b><><>2008/03/22(土) 03:53:57 ID:aB+C0Def<> てすと <>\n\
+';
+  var expected = {
+    title: "レス削除練習用のスレ",
+    res: [
+      {
+        name: "名無し編集部員",
+        mail: "",
+        message: " てすとてすとてすと ",
+        other: "2008/03/22(土) 03:34:04 ID:aBcD0Ef1"
+      },
+      {
+        name: "うふ～ん",
+        mail: "うふ～ん",
+        message: "うふ～ん",
+        other: "うふ～ん ID:DELETED"
+      },
+      {
+        name: " </b>◆ABC/1/DEF. <b>",
+        mail: "",
+        message: " てすと ",
+        other: "2008/03/22(土) 03:53:57 ID:aB+C0Def"
+      }
+    ]
+  };
+  deepEqual(app.thread.parse(url, text), expected);
+});
+

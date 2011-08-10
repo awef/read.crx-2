@@ -216,7 +216,7 @@ app.thread.parse = (url, text) ->
 
 app.thread._parse_ch = (text) ->
   # name, mail, other, message, thread_title
-  reg = /^(.*)<>(.*)<>(.*)<>(.*)<>(.*)$/gm
+  reg = /^(.*?)<>(.*?)<>(.*?)<>(.*?)<>(.*?)(?:<>)?$/gm
 
   thread = {res: []}
   first_flg = true
