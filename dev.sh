@@ -4,6 +4,6 @@ while true
 do
   clear
   date
-  make
+  rake
   inotifywait -r -e create,delete,move,close_write $SOURCE_DIR
 done
