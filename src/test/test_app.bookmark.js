@@ -940,3 +940,72 @@ asyncTest("ノードのURL変更にも追随する", 4, function(){
       start();
     });
 });
+
+asyncTest("detected_ch_server_moveメッセージを受信すると、板やスレのブックマークを移転に対応して変更する", 4, function(){
+  var that = this;
+  var board_title = "ダミー板（移転テスト）";
+  var before_board_url = "http://__dummy_before.2ch.net/dummy/";
+  var after_board_url = "http://__dummy_after.2ch.net/dummy/";
+  var before_board_expect_bookmark = {
+    type: "board",
+    bbs_type: "2ch",
+    title: board_title,
+    url: before_board_url,
+    res_count: null,
+    read_state: null,
+    expired: false
+  };
+  var after_board_expect_bookmark = app.deep_copy(before_board_expect_bookmark);
+  after_board_expect_bookmark.url = after_board_url;
+
+  app.bookmark.promise_first_scan
+    .pipe(function(){
+      return $.Deferred(function(deferred){
+        setTimeout(function(){
+          deferred.resolve();
+        }, 300);
+      });
+    })
+    .pipe(function(){
+      var deferred_added_message = $.Deferred(function(deferred){
+        that.one("bookmark_updated", function(message){
+          deepEqual(message, {type: "added", bookmark: before_board_expect_bookmark});
+          deferred.resolve();
+        });
+      });
+      app.bookmark.add(before_board_url, board_title);
+      return deferred_added_message;
+    })
+    .pipe(function(){
+      var deferred_removed_message = $.Deferred(function(deferred){
+        that.one("bookmark_updated", function(message){
+          deepEqual(message, {type: "removed", bookmark: before_board_expect_bookmark});
+          deferred.resolve();
+        });
+      });
+      var deferred_added_message = $.Deferred(function(deferred){
+        that.one("bookmark_updated", function(message){
+          deepEqual(message, {type: "added", bookmark: after_board_expect_bookmark});
+          deferred.resolve();
+        });
+      });
+      app.message.send("detected_ch_server_move", {
+        before: before_board_url,
+        after: after_board_url
+      });
+      return $.when(deferred_removed_message, deferred_added_message);
+    })
+    .pipe(function(){
+      var deferred_removed_message = $.Deferred(function(deferred){
+        that.one("bookmark_updated", function(message){
+          deepEqual(message, {type: "removed", bookmark: after_board_expect_bookmark});
+          deferred.resolve();
+        });
+      });
+      app.bookmark.remove(after_board_url);
+      return deferred_removed_message;
+    })
+    .always(function(){
+      start();
+    });
+});
