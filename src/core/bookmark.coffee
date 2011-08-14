@@ -335,22 +335,12 @@ app.bookmark.bookmark_to_url = (bookmark) ->
     tmp = ///^http://(\w+)\.2ch\.net/ ///.exec(message.after)[1]
     for bookmark in app.bookmark.get_by_board(message.before)
       app.bookmark.remove(bookmark.url)
-      bookmark.url = bookmark.url.replace(
-        ///^(http://)\w+(\.2ch\.net/test/read\.cgi/\w+/\d+/)$///,
+      tmp_url = app.bookmark.bookmark_to_url(bookmark)
+      tmp_url = tmp_url.replace(
+        ///^(http://)\w+(\.2ch\.net/) ///,
         ($0, $1, $2) -> $1 + tmp + $2
       )
-
-      app.bookmark.add(bookmark.url, bookmark.title)
-
-      if bookmark.read_state?
-        bookmark.read_state.url = bookmark.url
-        app.bookmark.update_read_state(bookmark.read_state)
-
-      if bookmark.res_count?
-        app.bookmark.update_res_count(bookmark.url, bookmark.res_count)
-
-      if bookmark.expired?
-        app.bookmark.update_expired(bookmark.url, bookmark.expired)
+      app.bookmark.add(tmp_url, bookmark.title)
     return
 
   #Chromeのブックマークの変更を検出してキャッシュを更新する処理群
