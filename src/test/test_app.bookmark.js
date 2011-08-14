@@ -941,7 +941,7 @@ asyncTest("ノードのURL変更にも追随する", 4, function(){
     });
 });
 
-asyncTest("detected_ch_server_moveメッセージを受信すると、板やスレのブックマークを移転に対応して変更する", 4, function(){
+asyncTest("detected_ch_server_moveメッセージを受信すると、板やスレのブックマークを移転に対応して変更する", 8, function(){
   var that = this;
   var board_title = "ダミー板（移転テスト）";
   var before_board_url = "http://__dummy_before.2ch.net/dummy/";
@@ -958,6 +958,21 @@ asyncTest("detected_ch_server_moveメッセージを受信すると、板やス�
   var after_board_expect_bookmark = app.deep_copy(before_board_expect_bookmark);
   after_board_expect_bookmark.url = after_board_url;
 
+  var before_thread_url = "http://__dummy_before.2ch.net/test/read.cgi/dummy/1234567890/#res_count=123";
+  var thread_title = "ダミースレ";
+  var before_thread_expect_bookmark = {
+    type: "thread",
+    bbs_type: "2ch",
+    title: thread_title,
+    url: app.url.fix(before_thread_url),
+    res_count: 123,
+    read_state: null,
+    expired: false
+  };
+  var after_thread_url = "http://__dummy_after.2ch.net/test/read.cgi/dummy/1234567890/";
+  var after_thread_expect_bookmark = app.deep_copy(before_thread_expect_bookmark);
+  after_thread_expect_bookmark.url = after_thread_url;
+
   app.bookmark.promise_first_scan
     .pipe(function(){
       return $.Deferred(function(deferred){
@@ -966,6 +981,7 @@ asyncTest("detected_ch_server_moveメッセージを受信すると、板やス�
         }, 300);
       });
     })
+    //板ブックマーク追加
     .pipe(function(){
       var deferred_added_message = $.Deferred(function(deferred){
         that.one("bookmark_updated", function(message){
@@ -976,25 +992,55 @@ asyncTest("detected_ch_server_moveメッセージを受信すると、板やス�
       app.bookmark.add(before_board_url, board_title);
       return deferred_added_message;
     })
+    //スレブックマーク追加
     .pipe(function(){
-      var deferred_removed_message = $.Deferred(function(deferred){
+      var deferred_added_message = $.Deferred(function(deferred){
         that.one("bookmark_updated", function(message){
-          deepEqual(message, {type: "removed", bookmark: before_board_expect_bookmark});
+          deepEqual(message, {type: "added", bookmark: before_thread_expect_bookmark});
           deferred.resolve();
         });
       });
-      var deferred_added_message = $.Deferred(function(deferred){
-        that.one("bookmark_updated", function(message){
-          deepEqual(message, {type: "added", bookmark: after_board_expect_bookmark});
-          deferred.resolve();
-        });
+      app.bookmark.add(before_thread_url, thread_title);
+      return deferred_added_message;
+    })
+    //板ブックマーク移転確認
+    .pipe(function(){
+      var message_check = function(message){
+        if (message.type === "removed") {
+          if (message.bookmark.title === board_title) {
+            deepEqual(message, {type: "removed", bookmark: before_board_expect_bookmark});
+          }
+          else {
+            deepEqual(message, {type: "removed", bookmark: before_thread_expect_bookmark});
+          }
+        }
+        else {
+          if (message.bookmark.title === board_title) {
+            deepEqual(message, {type: "added", bookmark: after_board_expect_bookmark});
+          }
+          else {
+            deepEqual(message, {type: "added", bookmark: after_thread_expect_bookmark});
+          }
+        }
+      };
+      var deferred_message_check = $.Deferred(function(deferred){
+        var count = 0;
+        var listener = function(message){
+          message_check(message);
+          if (++count === 4) {
+            app.message.remove_listener("bookmark_updated", listener);
+            deferred.resolve();
+          }
+        };
+        app.message.add_listener("bookmark_updated", listener);
       });
       app.message.send("detected_ch_server_move", {
         before: before_board_url,
         after: after_board_url
       });
-      return $.when(deferred_removed_message, deferred_added_message);
+      return deferred_message_check;
     })
+    //板ブックマーク削除
     .pipe(function(){
       var deferred_removed_message = $.Deferred(function(deferred){
         that.one("bookmark_updated", function(message){
@@ -1003,6 +1049,17 @@ asyncTest("detected_ch_server_moveメッセージを受信すると、板やス�
         });
       });
       app.bookmark.remove(after_board_url);
+      return deferred_removed_message;
+    })
+    //スレブックマーク削除
+    .pipe(function(){
+      var deferred_removed_message = $.Deferred(function(deferred){
+        that.one("bookmark_updated", function(message){
+          deepEqual(message, {type: "removed", bookmark: after_thread_expect_bookmark});
+          deferred.resolve();
+        });
+      });
+      app.bookmark.remove(after_thread_url);
       return deferred_removed_message;
     })
     .always(function(){
