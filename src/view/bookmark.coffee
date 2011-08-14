@@ -1,17 +1,5 @@
 app.view_bookmark = {}
 
-app.view_bookmark._draw = ($view) ->
-  frag = document.createDocumentFragment()
-
-  for bookmark in app.bookmark.get_all()
-    if bookmark.type is "thread"
-      frag.appendChild(app.view_bookmark._bookmark_to_tr(bookmark))
-
-  $view.find("tbody").append(frag)
-  $view.find("table").trigger("table_sort_update")
-  $view.removeClass("loading")
-  $view.trigger("view_loaded")
-
 app.view_bookmark._bookmark_to_tr = (bookmark) ->
   tr = document.createElement("tr")
   tr.className = "open_in_rcrx"
@@ -56,8 +44,6 @@ app.view_bookmark._bookmark_to_tr = (bookmark) ->
 app.boot "/view/bookmark.html", ->
   $view = $(document.documentElement)
 
-  $loading_overlay = $view.find(".loading_overlay")
-
   $view.find("table").table_sort()
 
   $view.find(".button_link").bind "click", ->
@@ -70,14 +56,16 @@ app.boot "/view/bookmark.html", ->
   app.view_module.searchbox_thread_title($view, 0)
   app.view_module.board_contextmenu($view)
 
+  #リロード時処理
   $view.bind "request_reload", ->
-    if $view.hasClass("loading")
-      return
+    return if $view.hasClass("loading")
 
     $view
       .addClass("loading")
       .find(".searchbox_thread_title")
         .val("")
+
+    $loading_overlay = $view.find(".loading_overlay")
 
     board_list = []
     for bookmark in app.bookmark.get_all()
@@ -101,49 +89,62 @@ app.boot "/view/bookmark.html", ->
         $prev.prependTo($loading_overlay)
         app.board.get(board_url, fn)
       else
-        $view.find("tbody").empty()
-        app.view_bookmark._draw($view)
-        $loading_overlay.empty()
+        location.reload(true)
     fn()
     return
 
   #ブックマーク更新時処理
-  on_updated = (message) ->
-    if message.type is "added" and message.bookmark.type is "thread"
-      $view
-        .find("tbody")
-          .append(app.view_bookmark._bookmark_to_tr(message.bookmark))
-        .end()
-        .find("table")
-          .trigger("table_sort_update")
+  (->
+    on_updated = (message) ->
+      if message.type is "added" and message.bookmark.type is "thread"
+        $view
+          .find("tbody")
+            .append(app.view_bookmark._bookmark_to_tr(message.bookmark))
+          .end()
+          .find("table")
+            .trigger("table_sort_update")
 
-    else if message.type is "removed"
-      $view.find("tr[data-href=\"#{message.bookmark.url}\"]").remove()
+      else if message.type is "removed"
+        $view.find("tr[data-href=\"#{message.bookmark.url}\"]").remove()
 
-    else if message.type is "expired"
-      $tr = $view.find("tr[data-href=\"#{message.bookmark.url}\"]")
-      if $tr.length is 1
-        $tr.replaceWith(app.view_bookmark._bookmark_to_tr(message.bookmark))
+      else if message.type is "expired"
+        $tr = $view.find("tr[data-href=\"#{message.bookmark.url}\"]")
+        if $tr.length is 1
+          $tr.replaceWith(app.view_bookmark._bookmark_to_tr(message.bookmark))
 
-  app.message.add_listener("bookmark_updated", on_updated)
+    app.message.add_listener("bookmark_updated", on_updated)
 
-  $view.bind "view_unload", ->
-    app.message.remove_listener("bookmark_updated", on_updated)
-    return
+    $view.bind "view_unload", ->
+      app.message.remove_listener("bookmark_updated", on_updated)
+      return
+  )()
 
   #read_state更新時処理
-  on_read_state_updated = (message) ->
-    if bookmark = app.bookmark.get(message.read_state.url)
-      $tr = $view.find("tr[data-href=\"#{message.read_state.url}\"]")
-      if $tr.length is 1
-        bookmark.read_state = message.read_state
-        $tr.replaceWith(app.view_bookmark._bookmark_to_tr(bookmark))
+  (->
+    on_read_state_updated = (message) ->
+      if bookmark = app.bookmark.get(message.read_state.url)
+        $tr = $view.find("tr[data-href=\"#{message.read_state.url}\"]")
+        if $tr.length is 1
+          bookmark.read_state = message.read_state
+          $tr.replaceWith(app.view_bookmark._bookmark_to_tr(bookmark))
 
-  app.message.add_listener("read_state_updated", on_read_state_updated)
+    app.message.add_listener("read_state_updated", on_read_state_updated)
 
-  $view.bind "view_unload", ->
-    app.message.remove_listener("read_state_updated", on_read_state_updated)
-    return
+    $view.bind "view_unload", ->
+      app.message.remove_listener("read_state_updated", on_read_state_updated)
+      return
+  )()
 
-  app.view_bookmark._draw($view)
+  #描画処理
+  (->
+    frag = document.createDocumentFragment()
+
+    for bookmark in app.bookmark.get_all()
+      if bookmark.type is "thread"
+        frag.appendChild(app.view_bookmark._bookmark_to_tr(bookmark))
+
+    $view.find("tbody").append(frag)
+    $view.find("table").trigger("table_sort_update")
+    $view.trigger("view_loaded")
+  )()
 
