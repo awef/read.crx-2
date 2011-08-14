@@ -11,6 +11,8 @@ app.boot "/view/board.html", ->
     .attr("data-url", url)
     .addClass("loading")
 
+  $view.find("table").table_sort()
+
   app.view_module.view($view)
   app.view_module.searchbox_thread_title($view, 1)
   app.view_module.bookmark_button($view)
@@ -22,65 +24,51 @@ app.boot "/view/board.html", ->
       document.title = title
     app.history.add(url, title or url, opened_at)
 
-  #リロードボタンを一時的に無効化する
-  suspend_reload_button = ->
-    $button = $view.find(".button_reload")
-    $button.addClass("disabled")
-    setTimeout ->
-      $button.removeClass("disabled")
-    , 1000 * 5
-
   $view.bind "request_reload", ->
-    if $view.hasClass("loading")
-      return
-
-    $view
-      .addClass("loading")
-      .find("tbody")
-        .empty()
-      .end()
-      .find(".searchbox_thread_title")
-        .val("")
-
-    app.view_board._draw($view)
-      .done ->
-        suspend_reload_button()
+    return if $view.hasClass("loading")
+    location.reload(true)
     return
 
   #ブックマーク更新処理
-  on_bookmark_updated = (message) ->
-    if app.url.thread_to_board(message.bookmark.url) is url
-      if message.type is "added" or message.type is "removed"
-        $view
-          .find("tr[data-href=\"#{message.bookmark.url}\"]")
-            .find("td:nth-child(1)")
-              .text(if message.type is "added" then "★" else "")
+  (->
+    on_bookmark_updated = (message) ->
+      if app.url.thread_to_board(message.bookmark.url) is url
+        if message.type is "added" or message.type is "removed"
+          $view
+            .find("tr[data-href=\"#{message.bookmark.url}\"]")
+              .find("td:nth-child(1)")
+                .text(if message.type is "added" then "★" else "")
 
-  app.message.add_listener("bookmark_updated", on_bookmark_updated)
+    app.message.add_listener("bookmark_updated", on_bookmark_updated)
 
-  $view.bind "view_unload", ->
-    app.message.remove_listener("bookmark_updated", on_bookmark_updated)
-    return
+    $view.bind "view_unload", ->
+      app.message.remove_listener("bookmark_updated", on_bookmark_updated)
+      return
+  )()
 
   #read_state更新時処理
-  on_read_state_updated = (message) ->
-    if message.board_url is url
-      tr = $view.find("tr[data-href=\"#{message.read_state.url}\"]")[0]
-      if tr
-        unread = message.read_state.received - message.read_state.read
-        tr.children[3].textContent = Math.max(unread, 0) or ""
+  (->
+    on_read_state_updated = (message) ->
+      if message.board_url is url
+        tr = $view.find("tr[data-href=\"#{message.read_state.url}\"]")[0]
+        if tr
+          unread = message.read_state.received - message.read_state.read
+          tr.children[3].textContent = Math.max(unread, 0) or ""
 
-  app.message.add_listener("read_state_updated", on_read_state_updated)
+    app.message.add_listener("read_state_updated", on_read_state_updated)
 
-  $view.bind "view_unload", ->
-    app.message.remove_listener("read_state_updated", on_read_state_updated)
-    return
+    $view.bind "view_unload", ->
+      app.message.remove_listener("read_state_updated", on_read_state_updated)
+      return
+  )()
 
   app.view_board._draw($view)
     .done ->
-      suspend_reload_button()
-
-  $view.find("table").table_sort()
+      $button = $view.find(".button_reload")
+      $button.addClass("disabled")
+      setTimeout ->
+        $button.removeClass("disabled")
+      , 1000 * 5
 
 app.view_board = {}
 
@@ -102,6 +90,8 @@ app.view_board._draw = ($view) ->
 
   $.when(deferred_get_read_state, deferred_board_get)
     .done (array_of_read_state, board) ->
+      return unless document
+
       read_state_index = {}
       for read_state, key in array_of_read_state
         read_state_index[read_state.url] = key
