@@ -2,19 +2,34 @@
 
 html
   @include common_view_style_1
-  :font-size 14px
-  :padding 5px
+  :font-size 13px
   :box-sizing border-box
   :overflow auto
+  :padding-top 30px
+
+header
+  :box-shadow 0 2px 8px #333
+  :background-image -webkit-linear-gradient(#666, #222)
+  :position fixed
+  :top 0
+  :width 100%
+  :padding-left 5px
+
+  button
+    :background-color transparent !important
+    :color #fff
+
+section
+  :display -webkit-box
+  :padding 15px
+  :border-top 1px solid #ddd
+  div
+    :-webkit-box-flex 1
 
 h2
-  :margin 15px 0 5px 0
-  :padding-bottom 5px
-  :font-size 16px
-  :font-weight normal
-  :border-bottom 1px solid #999
-  &:first-of-type
-    :margin-top 5px
+  :margin 0
+  :width 130px
+  :font-size inherit
 
 h3
   :font-size 14px
@@ -26,11 +41,19 @@ h2 + h3
 label
   :cursor pointer
 
+input:focus
+  :outline-color rgba(#07f, 0.5)
+
+input[type="text"]
+  :border 1px solid #aaa
+  :border-radius 2px
+  :padding 3px
+
 button
   :cursor pointer
   :background-color #f0f0f0
   :border 1px solid #bbb
-    :radius 3px
+    :radius 2px
   :padding 5px
   :color #222
   &:hover

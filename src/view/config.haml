@@ -14,64 +14,78 @@
     %script(src="module.js?v=#{app_version}")
     %script(src="config.js?v=#{app_version}")
   %body
-    %button.button_close 閉じる
+    %header
+      %button.button_close 閉じる
 
-    %h2 バージョン情報
-    .version_info
+    %section
+      %h2 バージョン情報
+      %div
+        .version_info
 
-    %h2 レイアウト設定
-    %label
-      /TODO cloneするのでこのcheckedは機能しない
-      %input.direct(name="layout" type="radio" value="pane-3" checked)
-      3ペイン
-    %label
-      %input.direct(name="layout" type="radio" value="pane-3h")
-      3ペイン（横一列）
-    %label
-      %input.direct(name="layout" type="radio" value="pane-2")
-      2ペイン
+    %section
+      %h2 レイアウト設定
+      %div
+        %label
+          /TODO cloneするのでこのcheckedは機能しない
+          %input.direct(name="layout" type="radio" value="pane-3" checked)
+          3ペイン
+        %label
+          %input.direct(name="layout" type="radio" value="pane-3h")
+          3ペイン（横一列）
+        %label
+          %input.direct(name="layout" type="radio" value="pane-2")
+          2ペイン
 
-    ※変更を反映するにはリロードして下さい
+        ※変更を反映するにはリロードして下さい
 
-    %h2 スレッド表示設定
-    %label
-      %input.direct(type="checkbox" name="thumbnail_supported")
-      対応サイトのサムネイルを表示する
-    %br
-    %label
-      %input.direct(type="checkbox" name="thumbnail_ext")
-      拡張子が画像ファイルなURLのサムネイルを表示する
+    %section
+      %h2 スレッド表示設定
+      %div
+        %label
+          %input.direct(type="checkbox" name="thumbnail_supported")
+          対応サイトのサムネイルを表示する
+        %br
+        %label
+          %input.direct(type="checkbox" name="thumbnail_ext")
+          拡張子が画像ファイルなURLのサムネイルを表示する
 
-    %h2 書き込み設定
-    %table
-      %tbody
-        %tr
-          %td
-            デフォルトの名前
-          %td
-            %input.direct(type="text" name="default_name")
-        %tr
-          %td
-            デフォルトのメールアドレス
-          %td
-            %input.direct(type="text" name="default_mail")
-    %h2 p2連携
-    %label
-      %input.direct(type="checkbox" name="p2_write")
-      公式p2経由で書き込む
-    %table
-      %tbody
-        %tr
-          %td
-            p2のサーバー
-          %td
-            %input.direct(type="text" name="p2_server" placeholder="w1.p2.2ch.net" pattern="w\\d\\.p2\\.2ch\\.net")
-    %br
-    ※現時点では公式p2のみに対応しています
+    %section
+      %h2 書き込み設定
+      %div
+        %table
+          %tbody
+            %tr
+              %td
+                デフォルトの名前
+              %td
+                %input.direct(type="text" name="default_name")
+            %tr
+              %td
+                デフォルトのメールアドレス
+              %td
+                %input.direct(type="text" name="default_mail")
 
-    %h2 プライバシー
-    %button.history_clear(type="button") 閲覧履歴を削除する
-    %span.history_clear_status
+    %section
+      %h2 p2連携
+      %div
+        %label
+          %input.direct(type="checkbox" name="p2_write")
+          公式p2経由で書き込む
+        %table
+          %tbody
+            %tr
+              %td
+                p2のサーバー
+              %td
+                %input.direct(type="text" name="p2_server" placeholder="w1.p2.2ch.net" pattern="w\\d\\.p2\\.2ch\\.net")
+        %br
+        ※現時点では公式p2のみに対応しています
+
+    %section
+      %h2 プライバシー
+      %div
+        %button.history_clear(type="button") 閲覧履歴を削除する
+        %span.history_clear_status
 
     -#
       %h2 忍法帖
@@ -86,17 +100,19 @@
         %a(href="http://ninja.2ch.net/" target="_blank") http://ninja.2ch.net/
         %span をご覧下さい
 
-    %h2 その他
-    %button.bookmark_source_change ブックマークのフォルダを変更する
+    %section
+      %h2 その他
+      %div
+        %button.bookmark_source_change ブックマークのフォルダを変更する
 
-    %br
+        %br
 
-    %button.bbsmenu_reload(type="button") 板一覧の更新
-    %span.bbsmenu_reload_status
-    %span ※このボタンを押さなくても、read.crxは定期的に板一覧の更新を行います
+        %button.bbsmenu_reload(type="button") 板一覧の更新
+        %span.bbsmenu_reload_status
+        %span ※このボタンを押さなくても、read.crxは定期的に板一覧の更新を行います
 
-    %br
+        %br
 
-    %button.cache_clear(type="button") キャッシュの削除
-    %span.cache_clear_status
+        %button.cache_clear(type="button") キャッシュの削除
+        %span.cache_clear_status
 
