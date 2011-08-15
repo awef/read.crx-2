@@ -3,6 +3,13 @@ app.boot "/view/config.html", ->
 
   app.view_module.view($view)
 
+  #閉じるボタン
+  $view.find(".button_close").bind "click", ->
+    if frameElement
+      tmp = type: "request_killme"
+      parent.postMessage(JSON.stringify(tmp), location.origin)
+    return
+
   #汎用設定項目
   $view
     .find("input.direct[type=\"text\"]")

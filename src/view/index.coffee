@@ -183,6 +183,7 @@ app.main = ->
       if url is "config"
         src: "/view/config.html"
         url: "config"
+        modal: true
       else if url is "history"
         src: "/view/history.html"
         url: "history"
