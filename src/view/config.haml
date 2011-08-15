@@ -50,6 +50,17 @@
           拡張子が画像ファイルなURLのサムネイルを表示する
 
     %section
+      %h2 ID/参照ポップアップの表示方法
+      %div
+        %label
+          %input.direct(name="popup_trigger" type="radio" value="click" checked)
+          クリック
+        %br
+        %label
+          %input.direct(name="popup_trigger" type="radio" value="mouseenter")
+          マウスを重ねる
+
+    %section
       %h2 書き込み設定
       %div
         %table

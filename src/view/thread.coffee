@@ -204,7 +204,7 @@ app.boot "/view/thread.html", ->
       return
 
     #IDポップアップ
-    .delegate ".id.link, .id.freq", "click", (e) ->
+    .delegate ".id.link, .id.freq", (app.config.get("popup_trigger") or "click"), (e) ->
       popup_helper this, e, =>
         $popup = $("<div>")
         $popup.append(
@@ -218,7 +218,7 @@ app.boot "/view/thread.html", ->
       return
 
     #リプライポップアップ
-    .delegate ".rep", "click", (e) ->
+    .delegate ".rep", (app.config.get("popup_trigger") or "click"), (e) ->
       popup_helper this, e, =>
         tmp = $view.find(".content")[0].children
 
