@@ -56,8 +56,7 @@ app.boot "/view/thread.html", ->
   $view.bind "request_reload", (e, ex) ->
     #read_state保存処理を先に行わせるため、処理を飛ばす
     app.defer ->
-      if $view.hasClass("loading")
-        return
+      return if $view.hasClass("loading")
 
       $view
         .addClass("loading")
