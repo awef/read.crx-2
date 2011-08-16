@@ -49,31 +49,36 @@ module("app.url.fix", {
 });
 
 test("既に整っているURLは変更しない", function(){
-  [].concat(this.special_url, this.fixed_board_url, this.fixed_thread_url)
-    .forEach(function(url){
-      strictEqual(app.url.fix(url), url);
-    });
+  var tmp = [].concat(this.special_url, this.fixed_board_url, this.fixed_thread_url);
+  expect(tmp.length);
+  tmp.forEach(function(url){
+    strictEqual(app.url.fix(url), url);
+  });
 });
 
 test("明確にスレでも板でも無いURL形式は無視する", function(){
+  expect(this.other_url.length);
   this.other_url.forEach(function(url){
     strictEqual(app.url.fix(url), url);
   });
 });
 
 test("板URLの#以降を削除する", function(){
+  expect(this.fixed_board_url.length);
   this.fixed_board_url.forEach(function(url){
     strictEqual(app.url.fix(url + "#5"), url);
   });
 });
 
 test("スレURL末尾の/を補完する", function(){
+  expect(this.fixed_thread_url.length);
   this.fixed_thread_url.forEach(function(url){
     strictEqual(app.url.fix(url.slice(0, -1)), url);
   });
 });
 
 test("スレURLのURLオプションを削除する", function(){
+  expect(this.fixed_thread_url.length * 5);
   this.fixed_thread_url.forEach(function(url){
     strictEqual(app.url.fix(url + "l50"), url);
     strictEqual(app.url.fix(url + "50"), url);
