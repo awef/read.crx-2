@@ -50,6 +50,12 @@ test("半角\">\"は開始文字として認識しない", 1, function(){
   deepEqual(app.util.parse_anchor(">>1,2-10,12 ,"), {data: [], target: 0});
 });
 
+test("ありえない範囲のアンカーは無視する", 2, function(){
+  deepEqual(app.util.parse_anchor("&gt;&gt;2-1"), {data: [], target: 0});
+  deepEqual(app.util.parse_anchor("&gt;&gt;1-3, 5-1, 4-6, 2002-1"),
+    {data: [{segments: [[1, 3], [4, 6]], target: 6}], target: 6});
+});
+
 module("app.util.ch_sever_move_detect");
 
 asyncTest("htmlとして不正な文字列を渡された場合はrejectする", 1, function(){
