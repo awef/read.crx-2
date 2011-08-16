@@ -1,4 +1,4 @@
-app.main = ->
+app.boot "/write/write.html", ->
   $view = $(".view_write")
 
   arg = app.url.parse_query(location.href)
@@ -104,7 +104,3 @@ app.main = ->
 
       $view.find(".notice").text("書き込み中")
     return
-
-app.boot "/write/write.html", ->
-  app.main()
-
