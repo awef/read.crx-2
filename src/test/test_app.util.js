@@ -56,6 +56,29 @@ test("ありえない範囲のアンカーは無視する", 2, function(){
     {data: [{segments: [[1, 3], [4, 6]], target: 6}], target: 6});
 });
 
+test("実例テスト", 3, function(){
+  var text;
+
+  text = "test";
+  deepEqual(app.util.parse_anchor(text), {data: [], target: 0});
+
+  text = '<a href="/bbs/read.cgi/computer/42710/1273732874/11" target="_blank">&gt;&gt;11</a>';
+  deepEqual(app.util.parse_anchor(text),
+    {data: [{segments: [[11, 11]], target: 1}], target: 1});
+
+  text = '\
+<a href="/bbs/read.cgi/computer/42710/1273732874/1-5" target="_blank">&gt;&gt;1-5</a><br><a href="/bbs/read.cgi/computer/42710/1273732874/2-5" target="_blank">&gt;&gt;2-5</a><br><a href="/bbs/read.cgi/computer/42710/1273732874/1-1000" target="_blank">&gt;&gt;1-1000</a><br><br><a href="/bbs/read.cgi/computer/42710/1273732874/3" target="_blank">&gt;&gt;3</a>--4<br><a href="/bbs/read.cgi/computer/42710/1273732874/3-0" target="_blank">&gt;&gt;3-0</a><br><a href="/bbs/read.cgi/computer/42710/1273732874/3" target="_blank">&gt;&gt;3</a>-a\
+';
+  deepEqual(app.util.parse_anchor(text),
+    {data: [
+      {segments: [[1, 5]], target: 5},
+      {segments: [[2, 5]], target: 4},
+      {segments: [[1, 1000]], target: 1000},
+      {segments: [[3, 3]], target: 1},
+      {segments: [[3, 3]], target: 1}
+    ], target: 1011});
+});
+
 module("app.util.ch_sever_move_detect");
 
 asyncTest("htmlとして不正な文字列を渡された場合はrejectする", 1, function(){
