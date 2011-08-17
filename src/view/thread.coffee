@@ -2,14 +2,13 @@ app.view_thread = {}
 
 app.boot "/view/thread.html", ->
   url = app.url.parse_query(location.href).q
-  if not url?
-    alert("不正な引数です")
-    return
+  return alert("不正な引数です") unless url
   url = app.url.fix(url)
-  opened_at = Date.now()
+
+  document.title = url
+
   $view = $(document.documentElement)
   $view.attr("data-url", url)
-  document.title = url
   $view.addClass("loading")
 
   app.view_module.view($view)
@@ -77,13 +76,16 @@ app.boot "/view/thread.html", ->
     return
 
   app.view_thread._read_state_manager($view)
-  app.view_thread._draw($view)
-    .fail ->
-      $view.removeClass("loading")
-    .always ->
-      app.history.add(url, document.title, opened_at)
-      $view.find(".content").lazy_img()
-      suspend_reload_button()
+  (->
+    opened_at = Date.now()
+    app.view_thread._draw($view)
+      .fail ->
+         $view.removeClass("loading")
+      .always ->
+        app.history.add(url, document.title, opened_at)
+        $view.find(".content").lazy_img()
+        suspend_reload_button()
+  )()
 
   $view
     .bind "view_unload", ->
@@ -230,40 +232,42 @@ app.boot "/view/thread.html", ->
       return
 
   #クイックジャンプパネル
-  _jump_hoge =
-    jump_one: "article:nth-child(1)"
-    jump_newest: "article:last-child"
-    jump_not_read: "article.read + article"
-    jump_new: "article.received + article"
-    jump_last: "article.last"
+  (->
+    jump_hoge =
+      jump_one: "article:nth-child(1)"
+      jump_newest: "article:last-child"
+      jump_not_read: "article.read + article"
+      jump_new: "article.received + article"
+      jump_last: "article.last"
 
-  $view.bind "read_state_attached", ->
-    already = {}
-    for key, val of _jump_hoge
-      $tmp = $view.find(val)
-      if $tmp.length is 1 and not already[$tmp.index()]?
-        $view.find(".#{key}").show()
-        already[$tmp.index()] = true
-      else
-        $view.find(".#{key}").hide()
-    return
+    $view.bind "read_state_attached", ->
+      already = {}
+      for key, val of jump_hoge
+        $tmp = $view.find(val)
+        if $tmp.length is 1 and not already[$tmp.index()]?
+          $view.find(".#{key}").show()
+          already[$tmp.index()] = true
+        else
+          $view.find(".#{key}").hide()
+      return
 
-  $view.find(".jump_panel").bind "click", (e) ->
-    $target = $(e.target)
+    $view.find(".jump_panel").bind "click", (e) ->
+      $target = $(e.target)
 
-    for key, val of _jump_hoge
-      if $target.hasClass(key)
-        selector = val
-        break
+      for key, val of jump_hoge
+        if $target.hasClass(key)
+          selector = val
+          break
 
-    if selector
-      res_num = $view.find(selector).index() + 1
+      if selector
+        res_num = $view.find(selector).index() + 1
 
-      if typeof res_num is "number"
-        app.view_thread._jump_to_res($view, res_num, true)
-      else
-        app.log("warn", "[view_thread] .jump_panel: ターゲットが存在しません")
-    return
+        if typeof res_num is "number"
+          app.view_thread._jump_to_res($view, res_num, true)
+        else
+          app.log("warn", "[view_thread] .jump_panel: ターゲットが存在しません")
+      return
+  )()
 
   #検索ボックス
   search_stored_scrollTop = null
