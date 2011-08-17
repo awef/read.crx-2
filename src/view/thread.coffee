@@ -440,7 +440,7 @@ app.view_thread._draw_messages = (thread) ->
           i = Math.max(1, segment[0])
           while i <= Math.min(thread.res.length, segment[1])
             rep_index[i] or= []
-            rep_index[i].push(res_key)
+            rep_index[i].push(res_key) unless res_key in rep_index[i]
             i++
 
   #設定値キャッシュ
