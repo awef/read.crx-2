@@ -73,7 +73,7 @@ app.view_tab_state.restore = ->
   if localStorage["tab_state"]
     for tab in JSON.parse(localStorage["tab_state"])
       is_restored = true
-      app.message.send("open", url: tab.url)
+      app.message.send("open", url: tab.url, lazy: true)
 
   is_restored
 
@@ -212,8 +212,10 @@ app.main = ->
           .closest(".tab")
             .tab("select", tab_id: $iframe.attr("data-tab_id"))
     else if iframe_info = get_iframe_info(message.url)
+      lazy = message.lazy and (not message.modal)
+
       $iframe = $("<iframe>")
-        .attr("src", iframe_info.src)
+        .attr("src", if lazy then "/view/empty.html" else  iframe_info.src)
         .attr("data-url", iframe_info.url)
         .attr("data-title", iframe_info.url)
 
@@ -225,7 +227,19 @@ app.main = ->
           target = document.getElementById("tab_b") or target
 
         $(target)
-          .tab("add", element: $iframe[0], title: $iframe.attr("data-title"))
+          .tab("add", {
+            element: $iframe[0],
+            title: $iframe.attr("data-title"),
+            background: lazy
+          })
+
+        if lazy
+          if $iframe.hasClass("tab_selected")
+            $iframe.attr("src", get_iframe_info($iframe.attr("data-url")).src)
+          else
+            $iframe.one "tab_selected", ->
+              $this = $(@)
+              $this.attr("src", get_iframe_info($this.attr("data-url")).src)
 
   #初回スキャンに失敗した場合、タイミングの問題でopenメッセージを取得できな
   #いので、promiseを見てview_bookmark_source_selectorを呼び出す
