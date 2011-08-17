@@ -42,7 +42,7 @@
       .attr("data-tab_id", tab_id)
       .appendTo($tab.find(".tab_container"))
 
-    unless prop.background and $this.find(".tab_tabbar li").length isnt 1
+    unless prop.background and $tab.find(".tab_tabbar li").length isnt 1
       tab_select.call(this, {tab_id: tab_id})
 
   # prop.tab_id
