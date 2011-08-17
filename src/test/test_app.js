@@ -75,6 +75,18 @@ asyncTest("リスナがメッセージを編集しても他には反映されな
   app.message.send("__test2", {test: 123});
 });
 
+asyncTest("リスナ中でもリスナを削除出来る", 1, function(){
+  var listener1, listener2;
+  app.message.add_listener("__test3", listener1 = function(){
+    ok(true);
+    app.message.remove_listener("__test3", listener1);
+    app.message.remove_listener("__test3", listener2);
+    setTimeout(function(){ start(); }, 100);
+  });
+  app.message.add_listener("__test3", listener2 = function(){ ok(true); });
+  app.message.send("__test3", {});
+});
+
 module("app.config");
 
 test("文字列を保存/取得できる", function(){
