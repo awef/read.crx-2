@@ -19,10 +19,11 @@ app.boot "/view/board.html", ->
   app.view_module.link_button($view)
   app.view_module.board_contextmenu($view)
 
-  app.board_title_solver.ask url, (title) ->
-    if title
-      document.title = title
-    app.history.add(url, title or url, opened_at)
+  app.board_title_solver.ask({url})
+    .always (title) ->
+      if title
+        document.title = title if title
+      app.history.add(url, title or url, opened_at)
 
   $view.bind "request_reload", ->
     return if $view.hasClass("loading")
