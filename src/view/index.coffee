@@ -73,7 +73,7 @@ app.view_tab_state.restore = ->
   if localStorage["tab_state"]
     for tab in JSON.parse(localStorage["tab_state"])
       is_restored = true
-      app.message.send("open", url: tab.url, lazy: true)
+      app.message.send("open", url: tab.url, title: tab.title, lazy: true)
 
   is_restored
 
