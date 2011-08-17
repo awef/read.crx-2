@@ -82,11 +82,15 @@
   # prop.tab_id, prop.title
   tab_update_title = (prop) ->
     $(this)
-      .find("> .tab_tabbar")
-        .find("[data-tab_id=\"#{prop.tab_id}\"] span")
-          .text(prop.title)
-            .parent()
-              .attr("title", prop.title)
+      .find("[data-tab_id=\"#{prop.tab_id}\"]")
+        .filter(".tab_tabbar > li")
+          .attr("title", prop.title)
+          .find("span")
+            .text(prop.title)
+          .end()
+        .end()
+        .filter(".tab_content")
+          .attr("data-title", prop.title)
 
   $.fn.tab = (method, prop) ->
     $(this)
