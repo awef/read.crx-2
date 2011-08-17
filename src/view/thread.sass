@@ -97,17 +97,26 @@ header
     :max-height 100px
 
 .popup
-  > article
-    :margin 10px
-  :box-shadow 0 3px 10px rgba(#000, 0.75)
-  :border 3px solid #666
-  :border-radius 3px
-  :z-index $z-index_popup
   :position fixed
-  :background-color #fff
+  :z-index $z-index_popup
   :max-width 500px
   :max-height 300px
   :overflow auto
+  :box-shadow 0 3px 10px rgba(#000, 0.75)
+  :border-radius 3px
+  &:not(.popup_linkinfo)
+    > article
+      :margin 10px
+    :border 3px solid #666
+    :background-color #fff
+  &.popup_linkinfo
+    :overflow hidden
+    :padding 5px
+    :background-color rgba(#000, 0.8)
+    :color #eee
+    :-webkit-animation-name fade_in
+    :-webkit-animation-duration 150ms
+    :-webkit-timing-function ease-out
 
 .jump_panel
   @include drop_shadow

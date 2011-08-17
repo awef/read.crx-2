@@ -205,6 +205,26 @@ app.boot "/view/thread.html", ->
         app.message.send("open", url: target_url)
       return
 
+    #リンク先情報ポップアップ
+    .delegate ".message a:not(.anchor)", "mouseenter", (e) ->
+      tmp = app.url.guess_type(@href)
+      if tmp.type is "board"
+        board_url = app.url.fix(@href)
+        after = ""
+      else if tmp.type is "thread"
+        board_url = app.url.thread_to_board(@href)
+        after = "のスレ"
+      else
+        return
+
+      app.board_title_solver.ask({url: board_url, offline: true})
+        .done (title) =>
+          popup_helper this, e, =>
+            $("<div>")
+              .addClass("popup_linkinfo")
+              .append($("<div>").text(title + after))
+      return
+
     #IDポップアップ
     .delegate ".id.link, .id.freq", (app.config.get("popup_trigger") or "click"), (e) ->
       popup_helper this, e, =>
