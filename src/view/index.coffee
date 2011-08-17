@@ -217,7 +217,7 @@ app.main = ->
       $iframe = $("<iframe>")
         .attr("src", if lazy then "/view/empty.html" else  iframe_info.src)
         .attr("data-url", iframe_info.url)
-        .attr("data-title", iframe_info.url)
+        .attr("data-title", message.title or iframe_info.url)
 
       if iframe_info.modal
         $iframe.appendTo("#modal")
