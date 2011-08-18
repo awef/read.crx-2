@@ -45,28 +45,49 @@ app.boot "/view/config.html", ->
     .text("#{app.manifest.name} v#{app.manifest.version} + #{navigator.userAgent}")
 
   #忍法帖関連機能
-  ###
-  fn = (res, $ul) ->
-    if res.length is 0
-      $ul.remove()
-    else
-      $ul.next().remove()
-      frag = document.createDocumentFragment()
+  (->
+    fn = (res, $ul) ->
+      if res.length is 0
+        $ul.remove()
+      else
+        frag = document.createDocumentFragment()
 
-      text = ""
-      for info in res
-        li = document.createElement("li")
-        li.textContent = "#{info.site.site_name} : #{info.value}\n"
-        frag.appendChild(li)
+        for info in res
+          li = document.createElement("li")
+          li.setAttribute("data-site_id", info.site.site_id)
 
-      $ul.append(frag)
+          div = document.createElement("div")
+          div.textContent = "#{info.site.site_name} : #{info.value}"
+          li.appendChild(div)
 
-  app.ninja.get_info_cookie().done (res) ->
-    fn(res, $view.find(".ninja_info_cookie"))
+          button = document.createElement("button")
+          button.type = "button"
+          button.textContent = "削除"
+          button.className = "del_ninja_cookie"
+          li.appendChild(button)
 
-  app.ninja.get_info_stored().done (res) ->
-    fn(res, $view.find(".ninja_info_stored"))
-  ###
+          frag.appendChild(li)
+
+        $ul.append(frag)
+
+    app.ninja.get_cookie().done (res) ->
+      fn(res, $view.find(".ninja_cookie_info"))
+
+    $view.delegate ".del_ninja_cookie", "click", ->
+      $this = $(@)
+      $this
+        .attr("disabled", true)
+        .text("削除中")
+      site_id = $this.parent().attr("data-site_id")
+      app.ninja.delete_cookie(site_id)
+        .done ->
+          $this.parent().fadeOut ->
+            $this = $(@)
+            $parent = $this.parent()
+            $this.remove()
+            if $parent.children().length is 0
+              $parent.remove()
+  )()
 
   #板覧更新ボタン
   $view.find(".bbsmenu_reload").bind "click", ->

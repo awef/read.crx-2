@@ -7,6 +7,7 @@
     "bookmark"
     "cache"
     "history"
+    "ninja"
     "read_state"
     "thread"
     "url"

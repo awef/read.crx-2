@@ -1,4 +1,3 @@
-###
 app.ninja = {}
 
 app.ninja._site_info =
@@ -7,12 +6,12 @@ app.ninja._site_info =
     site_name: "2ちゃんねる"
     cookie_info: {url: "http://www.2ch.net/", name: "HAP"}
 
-  "bbspink":
-    site_id: "bbspink"
-    site_name: "BBSPINK"
-    cookie_info: {url: "http://www.bbspink.com/", name: "HAP"}
+#  "bbspink":
+#    site_id: "bbspink"
+#    site_name: "BBSPINK"
+#    cookie_info: {url: "http://www.bbspink.com/", name: "HAP"}
 
-app.ninja.get_info_cookie = ->
+app.ninja.get_cookie = ->
   data = []
   promises = []
 
@@ -30,6 +29,13 @@ app.ninja.get_info_cookie = ->
     .pipe ->
       $.Deferred().resolve(data)
 
+app.ninja.delete_cookie = (site_id) ->
+  $.Deferred (deferred) ->
+    chrome.cookies.remove app.ninja._site_info[site_id].cookie_info, ->
+      deferred.resolve()
+  .promise()
+
+###
 app.ninja.get_info_stored = ->
   data = []
   for site_id, site of app.ninja._site_info
@@ -61,12 +67,6 @@ app.ninja.restore_cookie = (site_id) ->
         deferred.resolve()
     else
       deferred.reject()
-  .promise()
-
-app.ninja.delete_cookie = (site_id) ->
-  $.Deferred (deferred) ->
-    chrome.cookies.remove app.ninja._site_info[site_id].cookie_info, ->
-      deferred.resolve()
   .promise()
 
 app.ninja.delete_stored_cookie = (site_id) ->

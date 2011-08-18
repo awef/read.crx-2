@@ -28,9 +28,9 @@ section
     :-webkit-box-flex 1
 
 h2
+  :font-size 14px
   :margin 0
   :width 130px
-  :font-size inherit
 
 h3
   :font-size 14px
@@ -51,17 +51,20 @@ input[type="text"]
   :padding 3px
 
 button
-  :cursor pointer
   :background-color #f0f0f0
   :border 1px solid #bbb
     :radius 2px
   :padding 5px
   :color #222
-  &:hover
-    :background-color #eaeaea
-    :border-color #aaa
-  &:active
-    :background-color #e5e5e5
+  &:not([disabled="disabled"])
+    :cursor pointer
+    &:hover
+      :background-color #eaeaea
+      :border-color #aaa
+    &:active
+      :background-color #e5e5e5
+  &[disabled="disabled"]
+    :color #999
 
 .notation
   :font-size 14px
@@ -74,7 +77,7 @@ button
   :border-radius 3px
   :border 1px solid #aaa
 
-//.ninja_info_cookie, .ninja_info_stored
+.ninja_cookie_info
   :list-style-type none
   :margin 5px
   :padding 5px
@@ -82,9 +85,15 @@ button
   :border 1px solid #aaa
   :font-size 12px
   li
-    :white-space nowrap
-    :text-overflow ellipsis
-    :overflow hidden
+    :display -webkit-box
+    > div
+      :white-space nowrap
+      :text-overflow ellipsis
+      :overflow hidden
+      :-webkit-box-flex 1
+
+.ninja_cookie_info + .ninja_cookie_empty_message
+  :display none
 
 .bbsmenu_reload_status
   &.done
