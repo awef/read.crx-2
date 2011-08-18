@@ -51,17 +51,20 @@ input[type="text"]
   :padding 3px
 
 button
-  :cursor pointer
   :background-color #f0f0f0
   :border 1px solid #bbb
     :radius 2px
   :padding 5px
   :color #222
-  &:hover
-    :background-color #eaeaea
-    :border-color #aaa
-  &:active
-    :background-color #e5e5e5
+  &:not([disabled="disabled"])
+    :cursor pointer
+    &:hover
+      :background-color #eaeaea
+      :border-color #aaa
+    &:active
+      :background-color #e5e5e5
+  &[disabled="disabled"]
+    :color #999
 
 .notation
   :font-size 14px
