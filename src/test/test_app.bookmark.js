@@ -1066,3 +1066,71 @@ asyncTest("detected_ch_server_moveメッセージを受信すると、板やス�
       start();
     });
 });
+
+asyncTest("ノードのフォルダ内での移動は無視する", 2, function(){
+  var that = this;
+  var url = "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/";
+  var title = "ダミースレ";
+  var expect_bookmark = {
+    type: "thread",
+    bbs_type: "2ch",
+    title: title,
+    url: app.url.fix(url),
+    res_count: null,
+    read_state: null,
+    expired: false
+  };
+  var node_id;
+
+  app.bookmark.promise_first_scan
+    .pipe(function(){
+      return $.Deferred(function(deferred){
+        setTimeout(function(){
+          deferred.resolve();
+        }, 300);
+      });
+    })
+    .pipe(function(){
+      var deferred_added_message = $.Deferred(function(deferred){
+        that.one("bookmark_updated", function(message){
+          deepEqual(message, {type: "added", bookmark: expect_bookmark});
+          deferred.resolve();
+        });
+      });
+
+      var deferred_create = $.Deferred(function(deferred){
+        chrome.bookmarks.create({
+            parentId: app.config.get("bookmark_id"),
+            url: url,
+            title: title
+          }, function(node){
+            node_id = node.id;
+            deferred.resolve();
+        });
+      });
+
+      return $.when(deferred_create, deferred_added_message);
+    })
+    .pipe(function(){
+      var deferred_removed_message = $.Deferred(function(deferred){
+        that.one("bookmark_updated", function(message){
+          deepEqual(message, {type: "removed", bookmark: expect_bookmark});
+          deferred.resolve();
+        });
+      });
+
+      $.Deferred(function(deferred){
+        chrome.bookmarks.move(node_id, {parentId: app.config.get("bookmark_id"), index: 0}, function(){
+          deferred.resolve();
+        });
+      })
+      .done(function(){
+        chrome.bookmarks.remove(node_id);
+      });
+
+      return deferred_removed_message;
+    })
+    .always(function(){
+      start();
+    });
+});
