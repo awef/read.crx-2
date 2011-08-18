@@ -360,6 +360,16 @@ module("app.bookmark", {
       };
       app.message.add_listener(type, wrapper);
     };
+
+    this.start = app.bookmark.promise_first_scan
+      .pipe(function(){
+        return $.Deferred(function(deferred){
+          setTimeout(function(){
+            deferred.resolve();
+          }, 300);
+        });
+      })
+      .promise();
   }
 });
 
@@ -380,14 +390,7 @@ asyncTest("板のブックマークを保存/取得/削除出来る", 6, functio
     read_state: null,
     expired: false
   };
-  app.bookmark.promise_first_scan
-    .pipe(function(){
-      return $.Deferred(function(deferred){
-        setTimeout(function(){
-          deferred.resolve();
-        }, 300);
-      });
-    })
+  this.start
     .pipe(function(){
       //追加
       var deferred_on_added = $.Deferred();
@@ -467,14 +470,7 @@ asyncTest("スレのブックマークを保存/取得/削除出来る", 32, fun
     });
   };
 
-  app.bookmark.promise_first_scan
-    .pipe(function(){
-      return $.Deferred(function(deferred){
-        setTimeout(function(){
-          deferred.resolve();
-        }, 300);
-      });
-    })
+  this.start
     //ブックマーク追加テスト
     .pipe(function(){
       var deferred_on_added = get_deferred_on_message("added", "ブックマーク追加 - 更新メッセージチェック");
@@ -785,14 +781,7 @@ asyncTest("パラメータ付きのスレURLも認識出来る", 2, function(){
   };
   var node_id;
 
-  app.bookmark.promise_first_scan
-    .pipe(function(){
-      return $.Deferred(function(deferred){
-        setTimeout(function(){
-          deferred.resolve();
-        }, 300);
-      });
-    })
+  this.start
     .pipe(function(){
       var deferred_added_message = $.Deferred(function(deferred){
         that.one("bookmark_updated", function(message){
@@ -856,14 +845,7 @@ asyncTest("ノードのURL変更にも追随する", 4, function(){
   };
   var node_id;
 
-  app.bookmark.promise_first_scan
-    .pipe(function(){
-      return $.Deferred(function(deferred){
-        setTimeout(function(){
-          deferred.resolve();
-        }, 300);
-      });
-    })
+  this.start
     .pipe(function(){
       var deferred_added_message = $.Deferred(function(deferred){
         that.one("bookmark_updated", function(message){
@@ -973,15 +955,8 @@ asyncTest("detected_ch_server_moveメッセージを受信すると、板やス�
   var after_thread_expect_bookmark = app.deep_copy(before_thread_expect_bookmark);
   after_thread_expect_bookmark.url = after_thread_url;
 
-  app.bookmark.promise_first_scan
-    .pipe(function(){
-      return $.Deferred(function(deferred){
-        setTimeout(function(){
-          deferred.resolve();
-        }, 300);
-      });
-    })
-    //板ブックマーク追加
+  this.start
+   //板ブックマーク追加
     .pipe(function(){
       var deferred_added_message = $.Deferred(function(deferred){
         that.one("bookmark_updated", function(message){
@@ -1082,14 +1057,7 @@ asyncTest("ノードのフォルダ内での移動は無視する", 2, function(
   };
   var node_id;
 
-  app.bookmark.promise_first_scan
-    .pipe(function(){
-      return $.Deferred(function(deferred){
-        setTimeout(function(){
-          deferred.resolve();
-        }, 300);
-      });
-    })
+  this.start
     .pipe(function(){
       var deferred_added_message = $.Deferred(function(deferred){
         that.one("bookmark_updated", function(message){
