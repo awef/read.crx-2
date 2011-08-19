@@ -23,6 +23,10 @@
           .call(that, {tab_id: $(this).attr("data-tab_id")})
         return
 
+      .delegate ".tab_tabbar img", "mousedown", (e) ->
+        e.preventDefault()
+        return
+
       .delegate ".tab_tabbar img", "click", ->
         tab_remove.call(that, tab_id: $(this).parent().attr("data-tab_id"))
         return
