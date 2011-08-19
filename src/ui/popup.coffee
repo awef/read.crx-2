@@ -1,8 +1,38 @@
 (($) ->
+  $root = null
+
+  popup_destroy = ($popup) ->
+    $popup.find(".popup").andSelf()
+      .each ->
+        $($(@).data("popup_source"))
+          .unbind("mouseleave", on_mouseenter)
+          .unbind("mouseenter", on_mouseleave)
+    $popup.remove()
+
+  remove = ->
+    $root.find(".popup").andSelf().filter(":not(.active)")
+      .each ->
+        $this = $(@)
+        if $this.has(".popup.active").length is 0
+          popup_destroy($this)
+
+  on_mouseenter = ->
+    $this = $(@)
+    $popup = if $this.is(".popup") then $this else $($this.data("popup"))
+    $popup.addClass("active")
+    return
+
+  on_mouseleave = ->
+    $this = $(@)
+    $popup = if $this.is(".popup") then $this else $($this.data("popup"))
+    $popup.removeClass("active")
+    setTimeout(remove, 300)
+    return
+
   $.popup = (default_parent, popup, x, y, source) ->
     $popup = $(popup)
     $popup
-      .addClass("popup")
+      .addClass("popup active")
       .data("popup_source", source)
 
     #.popup内にsourceが有った場合はネスト
@@ -11,6 +41,8 @@
     if $parent.length is 1
       $parent.append($popup)
     else
+      popup_destroy($root) if $root
+      $root = $popup
       $(default_parent).append($popup)
 
     #同一ソースからのポップアップが既に有る場合は、処理を中断
@@ -21,6 +53,11 @@
     if flg
       $popup.remove()
       return
+
+    #兄弟ノードの削除
+    $parent.children(".popup").each ->
+      if not ($this = $(@)).is($popup)
+        popup_destroy($this)
 
     #画面内に収まるよう、表示位置を修正
     if x < document.body.offsetWidth / 5 * 3
@@ -33,35 +70,11 @@
       $popup.css("max-width", document.body.offsetWidth - right - 20)
     $popup.css("top", "#{Math.min(y, document.body.offsetHeight - $popup.outerHeight()) - 20}px")
 
-    #ポップアップ削除関連の処理
-    remove = ->
-      if $popup.find(".popup.active").length >= 1
-        return
-
-      $popup.remove()
-      $(source)
-        .unbind("mouseleave", start_rmtimer)
-        .unbind("mouseenter", stop_rmtimer)
-
-    rmtimer = null
-
-    start_rmtimer = ->
-      $popup.addClass("active")
-      rmtimer = setTimeout(remove, 300)
-      return
-
-    stop_rmtimer = ->
-      $popup.removeClass("active")
-      clearTimeout(rmtimer)
-      rmtimer = null
-      return
-
-    $popup
-      .bind("mouseleave", start_rmtimer)
-      .bind("mouseenter", stop_rmtimer)
-
     $(source)
-      .bind("mouseleave", start_rmtimer)
-      .bind("mouseenter", stop_rmtimer)
+      .data("popup", $popup[0])
+      .add($popup)
+        .bind("mouseenter", on_mouseenter)
+        .bind("mouseleave", on_mouseleave)
 
 )(jQuery)
+
