@@ -261,11 +261,28 @@ test("パー速VIPのスレ覧をパース出来る", 1, function(){
   deepEqual(app.board.parse(url, text), expected);
 });
 
-test("パースに失敗した場合はnullを返す", 5, function(){
-  strictEqual(app.board.parse("http://qb5.2ch.net/operate/", ""), null, "2ch URL + 空文字列");
-  strictEqual(app.board.parse("http://www.machi.to/tawara/", ""), null, "まちBBS URL + 空文字列");
-  strictEqual(app.board.parse("http://jbbs.livedoor.jp/computer/42710/", ""), null, "したらばURL + 空文字列");
-  strictEqual(app.board.parse("http://pele.bbspink.com/erobbs/", ""), null, "BBSPINK URL + 空文字列");
-  strictEqual(app.board.parse("http://ex14.vip2ch.com/part4vip/", ""), null, "パー速URL + 空文字列");
+test("パースに失敗した場合はnullを返す", 70, function(){
+  var fn = function(text){
+    strictEqual(app.board.parse("http://qb5.2ch.net/operate/", text), null);
+    strictEqual(app.board.parse("http://www.machi.to/tawara/", text), null);
+    strictEqual(app.board.parse("http://jbbs.livedoor.jp/computer/42710/", text), null);
+    strictEqual(app.board.parse("http://pele.bbspink.com/erobbs/", text), null);
+    strictEqual(app.board.parse("http://ex14.vip2ch.com/part4vip/", text), null);
+  };
+
+  fn("");
+  fn("<>");
+  fn("dummy");
+  fn("<>dummy");
+  fn("dummy<>");
+  fn("<>dummy<>");
+  fn("<><>");
+  fn("dummy<>dummy");
+  fn("<>dummy<>dummy");
+  fn("dummy<>dummy<>");
+  fn("<>dummy<>dummy<>");
+  fn("<>dummy<><>");
+  fn("<><>dummy<>");
+  fn("<><><>");
 });
 
