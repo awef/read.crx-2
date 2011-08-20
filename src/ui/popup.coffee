@@ -10,10 +10,12 @@
     $popup.remove()
 
   remove = ->
+    return unless $root
     $root.find(".popup").andSelf().filter(":not(.active)")
       .each ->
         $this = $(@)
         if $this.has(".popup.active").length is 0
+          $root = null if $this.is($root)
           popup_destroy($this)
 
   on_mouseenter = ->
