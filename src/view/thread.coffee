@@ -178,7 +178,7 @@ app.boot "/view/thread.html", ->
       target_url = this.href
 
       #http、httpsスキーム以外ならクリックを無効化する
-      if not /// ^https?:// ///.test(url)
+      if not /// ^https?:// ///.test(target_url)
         e.preventDefault()
         return
 
