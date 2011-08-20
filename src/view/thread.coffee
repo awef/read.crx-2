@@ -1,14 +1,14 @@
 app.view_thread = {}
 
 app.boot "/view/thread.html", ->
-  url = app.url.parse_query(location.href).q
-  return alert("不正な引数です") unless url
-  url = app.url.fix(url)
+  view_url = app.url.parse_query(location.href).q
+  return alert("不正な引数です") unless view_url
+  view_url = app.url.fix(view_url)
 
-  document.title = url
+  document.title = view_url
 
   $view = $(document.documentElement)
-  $view.attr("data-url", url)
+  $view.attr("data-url", view_url)
   $view.addClass("loading")
 
   app.view_module.view($view)
@@ -16,13 +16,13 @@ app.boot "/view/thread.html", ->
   app.view_module.link_button($view)
 
   $("<a>", {
-    href: app.safe_href(app.url.thread_to_board(url))
+    href: app.safe_href(app.url.thread_to_board(view_url))
     class: "open_in_rcrx"
   }).appendTo($view.find(".button_board"))
 
   write = (param) ->
     param or= {}
-    param.url = url
+    param.url = view_url
     param.title = document.title
     open(
       "/write/write.html?#{app.url.build_param(param)}"
@@ -36,7 +36,7 @@ app.boot "/view/thread.html", ->
     $popup.find("article").removeClass("last read received")
     $.popup($view, $popup, e.clientX, e.clientY, that)
 
-  if app.url.tsld(url) in ["2ch.net", "livedoor.jp"]
+  if app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"]
     $view.find(".button_write").bind "click", ->
       write()
       return
@@ -82,7 +82,7 @@ app.boot "/view/thread.html", ->
       .fail ->
          $view.removeClass("loading")
       .always ->
-        app.history.add(url, document.title, opened_at)
+        app.history.add(view_url, document.title, opened_at)
         $view.find(".content").lazy_img()
         suspend_reload_button()
   )()
@@ -114,7 +114,7 @@ app.boot "/view/thread.html", ->
         $menu = $("#template > .view_thread_resmenu").clone()
         $menu.data("contextmenu_source", this)
 
-        if not(app.url.tsld(url) in ["2ch.net", "livedoor.jp"])
+        if not(app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"])
           $menu.find(".res_to_this, .res_to_this2").remove()
 
         $menu.appendTo($view)
@@ -141,7 +141,7 @@ app.boot "/view/thread.html", ->
         $res.toggleClass("aa")
 
       else if $this.hasClass("res_permalink")
-        open(url + $res.find(".num").text())
+        open(view_url + $res.find(".num").text())
 
       $this.parent().remove()
 
@@ -340,7 +340,7 @@ app.boot "/view/thread.html", ->
       #表示するべき未読ブックマークが有るかをスキャン
       next = null
       for bookmark in app.bookmark.get_all()
-        if bookmark.type isnt "thread" or bookmark.url is url
+        if bookmark.type isnt "thread" or bookmark.url is view_url
           continue
 
         if bookmark.res_count?
@@ -397,10 +397,10 @@ app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
       $content.scrollTop($target[0].offsetTop)
 
 app.view_thread._draw = ($view, force_update) ->
-  url = $view.attr("data-url")
+  view_url = $view.attr("data-url")
   deferred = $.Deferred()
 
-  app.thread.get url, (result) ->
+  app.thread.get view_url, (result) ->
     $message_bar = $view.find(".message_bar")
     if result.status is "error"
       $message_bar.addClass("error").html(result.message)
@@ -600,20 +600,20 @@ app.view_thread._draw_messages = (thread) ->
   frag
 
 app.view_thread._read_state_manager = ($view) ->
-  url = $view.attr("data-url")
+  view_url = $view.attr("data-url")
 
   read_state = null
   read_state_updated = false
 
   #read_stateの取得
   promise_get_read_state = $.Deferred (deferred) ->
-    if (bookmark = app.bookmark.get(url)) and bookmark.read_state?
+    if (bookmark = app.bookmark.get(view_url)) and bookmark.read_state?
       read_state = bookmark.read_state
       deferred.resolve()
     else
-      app.read_state.get(url)
+      app.read_state.get(view_url)
         .always (_read_state) ->
-          read_state = _read_state or {received: 0, read: 0, last: 0, url}
+          read_state = _read_state or {received: 0, read: 0, last: 0, url: view_url}
           deferred.resolve()
   .promise()
 
