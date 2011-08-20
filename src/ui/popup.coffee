@@ -31,6 +31,12 @@
     setTimeout(remove, 300)
     return
 
+  $(document.documentElement).bind "mousewheel", (e) ->
+    if $root
+      popup_destroy($root)
+      $root = null
+    return
+
   $.popup = (default_parent, popup, x, y, source) ->
     $popup = $(popup)
     $popup
