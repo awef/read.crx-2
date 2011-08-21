@@ -75,18 +75,25 @@ app.boot "/view/config.html", ->
 
     $view.delegate ".del_ninja_cookie", "click", ->
       $this = $(@)
-      $this
-        .attr("disabled", true)
-        .text("削除中")
-      site_id = $this.parent().attr("data-site_id")
-      app.ninja.delete_cookie(site_id)
-        .done ->
-          $this.parent().fadeOut ->
-            $this = $(@)
-            $parent = $this.parent()
-            $this.remove()
-            if $parent.children().length is 0
-              $parent.remove()
+      $.dialog("confirm",
+          message: "本当に削除しますか？",
+          label_ok: "はい",
+          label_no: "いいえ"
+        )
+        .done (result) ->
+          if result
+            $this
+              .attr("disabled", true)
+              .text("削除中")
+            site_id = $this.parent().attr("data-site_id")
+            app.ninja.delete_cookie(site_id)
+              .done ->
+                $this.parent().fadeOut ->
+                  $this = $(@)
+                  $parent = $this.parent()
+                  $this.remove()
+                  if $parent.children().length is 0
+                    $parent.remove()
   )()
 
   #板覧更新ボタン
