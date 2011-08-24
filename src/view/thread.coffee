@@ -56,30 +56,34 @@ app.boot "/view/thread.html", ->
 
   #リロード処理
   $view.bind "request_reload", (e, ex) ->
-    #read_state保存処理を先に行わせるため、処理を飛ばす
-    app.defer ->
-      return if $view.hasClass("loading")
+    return if $view.hasClass("loading")
 
-      $view
-        .addClass("loading")
-        .find(".content")
-          .removeClass("searching")
-          .trigger("lazy_img_destroy")
-        .end()
-        .find(".searchbox")
-          .val("")
+    $view
+      .addClass("loading")
+      .find(".content")
+        .removeClass("searching")
+        .trigger("lazy_img_destroy")
+      .end()
+      .find(".searchbox")
+        .val("")
 
-      app.view_thread._draw($view, ex?.force_update)
-        .done ->
-          $view.find(".content").lazy_img()
-          suspend_reload_button()
-        .fail ->
-          $view.removeClass("loading")
+    app.view_thread._draw($view, ex?.force_update)
+      .done ->
+        $view.find(".content").lazy_img()
+        suspend_reload_button()
+      .always ->
+        $view.removeClass("loading")
+
     return
 
-  app.view_thread._read_state_manager($view)
+  #初回ロード処理
   (->
     opened_at = Date.now()
+
+    app.view_thread._read_state_manager($view)
+    $view.one "read_state_attached", ->
+      $view.removeClass("loading")
+
     app.view_thread._draw($view)
       .fail ->
          $view.removeClass("loading")
@@ -644,8 +648,8 @@ app.view_thread._read_state_manager = ($view) ->
           deferred.resolve()
   .promise()
 
-  #スレが描画される度に、read_state関連のクラスを付与する
-  $view.bind "view_loaded", ->
+  #スレの初回描画時に、read_state関連のクラスを付与する
+  $view.one "view_loaded", ->
     promise_get_read_state.done ->
       content = $view.find(".content")[0]
 
@@ -658,8 +662,6 @@ app.view_thread._read_state_manager = ($view) ->
       content.children[read_state.received - 1]?.classList.add("received")
 
       $view.triggerHandler("read_state_attached")
-
-      $view.removeClass("loading")
       app.view_thread._jump_to_res($view, read_state.last, false)
     return
 
@@ -716,11 +718,6 @@ app.view_thread._read_state_manager = ($view) ->
       .end()
 
       .bind "request_reload", ->
-        scan()
-        if read_state_updated
-          app.read_state.set(read_state)
-          app.bookmark.update_read_state(read_state)
-          read_state_updated = false
         scan_watcher_suspend = true
         return
 
