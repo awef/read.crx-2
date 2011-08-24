@@ -247,7 +247,8 @@ app.boot "/view/thread.html", ->
         tmp = $view.find(".content")[0].children
 
         frag = document.createDocumentFragment()
-        for num in JSON.parse(this.getAttribute("data-replist"))
+        res_key = +$(@).closest("article").find(".num").text()
+        for num in $view.data("rep_index")[res_key]
           frag.appendChild(tmp[num].cloneNode(true))
 
         $popup = $("<div>").append(frag)
@@ -461,8 +462,6 @@ app.view_thread._draw = ($view, force_update) ->
             elm = document.createElement("span")
             elm.className = "rep"
             res.getElementsByClassName("other")[0].appendChild(elm)
-          #TODO replist廃止
-          elm.setAttribute("data-replist", JSON.stringify(index))
           elm.textContent = "返信 (#{res_count})"
 
           if res_count >= 5
