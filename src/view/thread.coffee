@@ -58,6 +58,8 @@ app.boot "/view/thread.html", ->
   $view.bind "request_reload", (e, ex) ->
     return if $view.hasClass("loading")
 
+    tmp_scrollTop = $view.find(".content").scrollTop()
+
     $view
       .addClass("loading")
       .find(".content")
@@ -73,6 +75,7 @@ app.boot "/view/thread.html", ->
         suspend_reload_button()
       .always ->
         $view.removeClass("loading")
+        $view.find(".content").scrollTop(tmp_scrollTop)
 
     return
 
