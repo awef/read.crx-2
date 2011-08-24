@@ -570,27 +570,18 @@ app.view_thread._const_res = (res_key, res, $view) ->
   #.other
   other = document.createElement("span")
   other.className = "other"
-  other.textContent = res.other
+  other.innerHTML = res.other
+    #タグ除去
+    .replace(/<.*?(?:>|$)/g, "")
+    #.id
+    .replace /(^| )(ID:(?!\?\?\?)[^ <>"']+)/, ($0, $1, $2) ->
+      article.setAttribute("data-id", $2)
 
-  #.other内のid表示を.idに分離
-  tmp = /(^| )(ID:(?!\?\?\?)[^ ]+)/.exec(res.other)
-  if tmp
-    article.setAttribute("data-id", tmp[2])
+      id_index = $view.data("id_index")
+      id_index[$2] = [] unless id_index[$2]?
+      id_index[$2].push(res_key)
 
-    elm_id = document.createElement("span")
-    elm_id.className = "id"
-    elm_id.textContent = tmp[2]
-
-    range = document.createRange()
-    range.setStart(other.firstChild, tmp.index + tmp[1].length)
-    range.setEnd(other.firstChild, tmp.index + tmp[1].length + tmp[2].length)
-    range.deleteContents()
-    range.insertNode(elm_id)
-    range.detach()
-
-    id_index = $view.data("id_index")
-    id_index[tmp[2]] = [] unless id_index[tmp[2]]?
-    id_index[tmp[2]].push(res_key)
+      """#{$1}<span class="id">#{$2}</span>"""
 
   header.appendChild(other)
 
