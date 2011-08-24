@@ -11,6 +11,9 @@ app.boot "/view/thread.html", ->
   $view.attr("data-url", view_url)
   $view.addClass("loading")
 
+  $view.data("id_index", {})
+  $view.data("rep_index", {})
+
   app.view_module.view($view)
   app.view_module.bookmark_button($view)
   app.view_module.link_button($view)
@@ -60,7 +63,6 @@ app.boot "/view/thread.html", ->
       $view
         .addClass("loading")
         .find(".content")
-          .empty()
           .removeClass("searching")
           .trigger("lazy_img_destroy")
         .end()
@@ -397,207 +399,233 @@ app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
       $content.scrollTop($target[0].offsetTop)
 
 app.view_thread._draw = ($view, force_update) ->
-  view_url = $view.attr("data-url")
   deferred = $.Deferred()
 
-  app.thread.get view_url, (result) ->
-    $message_bar = $view.find(".message_bar")
+  app.thread.get $view.attr("data-url"), (result) ->
+    $content = $view.find(".content")
+    content = $content[0]
+
     if result.status is "error"
-      $message_bar.addClass("error").html(result.message)
+      $view.find(".message_bar").addClass("error").html(result.message)
 
-    if result.data?
-      thread = result.data
-      document.title = thread.title
+    (deferred.reject(); return) unless result.data?
 
-      $view.find(".content").append(app.view_thread._draw_messages(thread))
-      $view.trigger("view_loaded")
+    thread = result.data
+    document.title = thread.title
 
-      deferred.resolve()
-    else
-      deferred.reject()
+    #DOM構築
+    (->
+      completed = content.childNodes.length
+      frag = document.createDocumentFragment()
+      for res, res_key in thread.res
+        continue if res_key < completed
+        frag.appendChild(app.view_thread._const_res(res_key, res, $view))
+      content.appendChild(frag)
+    )()
+    #idカウント, .freq/.link更新
+    (->
+      for id, index of $view.data("id_index")
+        for res_key in index
+          id_count = index.length
+          elm = content.childNodes[res_key].getElementsByClassName("id")[0]
+
+          if /\(\d+\)$/.test(elm.textContent)
+            elm.textContent =
+              elm.textContent.replace(/\(\d+\)$/, "(#{id_count})")
+          else
+            elm.textContent += "(#{id_count})"
+
+          if id_count >= 5
+            elm.classList.remove("link")
+            elm.classList.add("freq")
+          else if id_count >= 2
+            elm.classList.add("link")
+          null
+        null
+    )()
+    #.one付与
+    (->
+      one_id = content.firstChild?.getAttribute("data-id")
+      if one_id?
+        for id in $view.data("id_index")[one_id]
+          content.children[id].classList.add("one")
+    )()
+    #参照関係再構築
+    (->
+      for res_key, index of $view.data("rep_index")
+        res = content.childNodes[res_key - 1]
+        if res
+          res_count = index.length
+          elm = res.getElementsByClassName("rep")[0]
+          unless elm
+            elm = document.createElement("span")
+            elm.className = "rep"
+            res.getElementsByClassName("other")[0].appendChild(elm)
+          #TODO replist廃止
+          elm.setAttribute("data-replist", JSON.stringify(index))
+          elm.textContent = "返信 (#{res_count})"
+
+          if res_count >= 5
+            elm.classList.remove("link")
+            elm.classList.add("freq")
+          else
+            elm.classList.add("link")
+    )()
+    #サムネイル追加処理
+    (->
+      fn_add_thumbnail = (source_a, thumb_path) ->
+        source_a.classList.add("has_thumbnail")
+
+        thumb = document.createElement("a")
+        thumb.className = "thumbnail"
+        thumb.href = app.safe_href(source_a.href)
+        thumb.target = "_blank"
+        thumb.rel = "noreferrer"
+
+        thumb_img = document.createElement("img")
+        thumb_img.src = "/img/dummy_1x1.png"
+        thumb_img.setAttribute("data-lazy_img_original_path", thumb_path)
+        thumb.appendChild(thumb_img)
+
+        sib = source_a
+        while true
+          pre = sib
+          sib = pre.nextSibling
+          if sib is null or sib.nodeName is "BR"
+            if sib?.nextSibling?.classList?.contains("thumbnail")
+              continue
+            if not pre.classList?.contains("thumbnail")
+              source_a.parentNode.insertBefore(document.createElement("br"), sib)
+            source_a.parentNode.insertBefore(thumb, sib)
+            break
+        null
+
+      config_thumbnail_supported =
+        app.config.get("thumbnail_supported") is "on"
+      config_thumbnail_ext =
+        app.config.get("thumbnail_ext") is "on"
+
+      for a in content.querySelectorAll(".message > a:not(.thumbnail):not(.has_thumbnail)")
+        #サムネイル表示(対応サイト)
+        if config_thumbnail_supported
+          #YouTube
+          if res = /// ^http://
+              (?:www\.youtube\.com/watch\?v=|youtu\.be/)
+              ([\w\-]+).*
+            ///.exec(a.href)
+            fn_add_thumbnail(a, "http://img.youtube.com/vi/#{res[1]}/default.jpg")
+          #ニコニコ動画
+          else if res = /// ^http://(?:www\.nicovideo\.jp/watch/|nico\.ms/)
+              (?:sm|nm)(\d+) ///.exec(a.href)
+            tmp = "http://tn-skr#{parseInt(res[1], 10) % 4 + 1}.smilevideo.jp"
+            tmp += "/smile?i=#{res[1]}"
+            fn_add_thumbnail(a, tmp)
+
+        #サムネイル表示(画像っぽいURL)
+        if config_thumbnail_ext
+          if /\.(?:png|jpg|jpeg|gif|bmp)$/i.test(a.href)
+            fn_add_thumbnail(a, a.href)
+    )()
+
+    $view.trigger("view_loaded")
+
+    deferred.resolve()
 
   , force_update
-  deferred
 
-app.view_thread._draw_messages = (thread) ->
-  #idをキーにレスを取得出来るインデックスを作成
-  id_index = {}
-  for res, res_key in thread.res
-    tmp = /(?:^| )(ID:(?!\?\?\?)[^ ]+)/.exec(res.other)
-    if tmp
-      id_index[tmp[1]] or= []
-      id_index[tmp[1]].push(res_key)
-      #>>1のIDを保存しておく
-      if res_key is 0
-        one_id = tmp[1]
+  deferred.promise()
 
-  #参照インデックス構築
-  rep_index = {}
-  for res, res_key in thread.res
-    for anchor in app.util.parse_anchor(res.message).data
-      if anchor.target < 25
-        for segment in anchor.segments
-          i = Math.max(1, segment[0])
-          while i <= Math.min(thread.res.length, segment[1])
-            rep_index[i] or= []
-            rep_index[i].push(res_key) unless res_key in rep_index[i]
-            i++
+app.view_thread._const_res = (res_key, res, $view) ->
+  article = document.createElement("article")
+  article.className = "aa" if /\　\ (?!<br>|$)/i.test(res.message)
 
-  #設定値キャッシュ
-  config_thumbnail_supported = app.config.get("thumbnail_supported") is "on"
-  config_thumbnail_ext = app.config.get("thumbnail_ext") is "on"
+  header = document.createElement("header")
 
-  #サムネイル追加処理
-  fn_add_thumbnail = (source_a, thumb_path) ->
-    thumb = document.createElement("a")
-    thumb.className = "thumbnail"
-    thumb.href = app.safe_href(source_a.href)
-    thumb.target = "_blank"
-    thumb.rel = "noreferrer"
+  #.num
+  num = document.createElement("span")
+  num.className = "num"
+  num.textContent = res_key + 1
+  header.appendChild(num)
 
-    thumb_img = document.createElement("img")
-    thumb_img.src = "/img/dummy_1x1.png"
-    thumb_img.setAttribute("data-lazy_img_original_path", thumb_path)
-    thumb.appendChild(thumb_img)
+  #.name
+  name = document.createElement("span")
+  name.className = "name"
+  name.innerHTML = res.name
+    .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")
+    .replace(/<\/b>(.*?)<b>/g, '<span class="ob">$1</span>')
+  header.appendChild(name)
 
-    sib = source_a
-    while true
-      pre = sib
-      sib = pre.nextSibling
-      if sib is null or sib.nodeName is "BR"
-        if sib?.nextSibling?.classList?.contains("thumbnail")
-          continue
-        if not pre.classList?.contains("thumbnail")
-          source_a.parentNode.insertBefore(document.createElement("br"), sib)
-        source_a.parentNode.insertBefore(thumb, sib)
-        break
-    null
+  #.mail
+  mail = document.createElement("span")
+  mail.className = "mail"
+  mail.textContent = res.mail
+  header.appendChild(mail)
 
-  #DOM構築
-  frag = document.createDocumentFragment()
-  for res, res_key in thread.res
-    article = document.createElement("article")
-    if /\　\ (?!<br>|$)/i.test(res.message)
-      article.className = "aa"
+  #.other
+  other = document.createElement("span")
+  other.className = "other"
+  other.textContent = res.other
 
-    header = document.createElement("header")
-    article.appendChild(header)
+  #.other内のid表示を.idに分離
+  tmp = /(^| )(ID:(?!\?\?\?)[^ ]+)/.exec(res.other)
+  if tmp
+    article.setAttribute("data-id", tmp[2])
 
-    num = document.createElement("span")
-    num.className = "num"
-    num.textContent = res_key + 1
-    header.appendChild(num)
+    elm_id = document.createElement("span")
+    elm_id.className = "id"
+    elm_id.textContent = tmp[2]
 
-    name = document.createElement("span")
-    name.className = "name"
-    name.innerHTML = res.name
-      .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")
-      .replace(/<\/b>(.*?)<b>/g, '<span class="ob">$1</span>')
-    header.appendChild(name)
+    range = document.createRange()
+    range.setStart(other.firstChild, tmp.index + tmp[1].length)
+    range.setEnd(other.firstChild, tmp.index + tmp[1].length + tmp[2].length)
+    range.deleteContents()
+    range.insertNode(elm_id)
+    range.detach()
 
-    mail = document.createElement("span")
-    mail.className = "mail"
-    mail.textContent = res.mail
-    header.appendChild(mail)
+    id_index = $view.data("id_index")
+    id_index[tmp[2]] = [] unless id_index[tmp[2]]?
+    id_index[tmp[2]].push(res_key)
 
-    other = document.createElement("span")
-    other.className = "other"
-    other.textContent = res.other
+  header.appendChild(other)
 
-    #.other内のid表示を.idに分離
-    tmp = /(^| )(ID:(?!\?\?\?)[^ ]+)/.exec(res.other)
-    if tmp
-      id_count = id_index[tmp[2]].length
+  article.appendChild(header)
 
-      elm_id = document.createElement("span")
+  message = document.createElement("div")
+  message.className = "message"
+  message.innerHTML = res.message
+    #タグ除去
+    .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
+    #URLリンク
+    .replace(/(h)?(ttps?:\/\/(?:\w|\-|\.|\!|\~|\*|\'|\(|\)|\;|\/|\?|\:|\@|\=|\+|\$|\,|\%|\#|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));))+)/g,
+      '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
+    #Beアイコン埋め込み表示
+    .replace(///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///,
+      '<img class="beicon" src="http://$1" /><br />')
+    #アンカーリンク
+    .replace /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?)*/g, ($0) ->
+      str = $0.replace /[\uff10-\uff19]/g, ($0) ->
+        String.fromCharCode($0.charCodeAt(0) - 65248)
 
-      elm_id.className = "id"
-      if id_count >= 5
-        elm_id.className += " freq"
-      else if id_count >= 2
-        elm_id.className += " link"
+      anchor = app.util.parse_anchor($0)
+      disabled = anchor.target >= 25 or anchor.data.length is 0
 
-      elm_id.textContent = "#{tmp[2]} (#{id_count})"
+      #rep_index更新
+      if not disabled
+        rep_index = $view.data("rep_index")
+        #アンカー一つづつしか来ない処理なので、決め打ちで
+        for segment in anchor.data[0].segments
+          target = Math.max(1, segment[0])
+          while target <= segment[1]
+            rep_index[target] = [] unless rep_index[target]?
+            rep_index[target].push(res_key) unless res_key in rep_index[target]
+            target++
 
-      range = document.createRange()
-      range.setStart(other.firstChild, tmp.index + tmp[1].length)
-      range.setEnd(other.firstChild, tmp.index + tmp[1].length + tmp[2].length)
-      range.deleteContents()
-      range.insertNode(elm_id)
-      range.detach()
+      "<a href=\"javascript:undefined;\" class=\"anchor" +
+      "#{if disabled then " disabled" else ""}\">#{$0}</a>"
 
-      #>>1と同じIDだった場合、articleにoneクラスを付ける
-      if one_id and one_id is tmp[2]
-        article.classList.add("one")
+  article.appendChild(message)
 
-    #リプライ数表示追加
-    if rep_index[res_key + 1]
-      rep_count = rep_index[res_key + 1].length
-      rep = document.createElement("span")
-      rep.className = "rep #{if rep_count >= 5 then " freq" else " link"}"
-      rep.textContent = "返信 (#{rep_count})"
-      rep.setAttribute("data-replist", JSON.stringify(rep_index[res_key + 1]))
-      other.appendChild(rep)
-
-    header.appendChild(other)
-
-    message = document.createElement("div")
-    message.className = "message"
-    message.innerHTML = res.message
-      #タグ除去
-      .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
-      #URLリンク
-      .replace(/(h)?(ttps?:\/\/(?:\w|\-|\.|\!|\~|\*|\'|\(|\)|\;|\/|\?|\:|\@|\=|\+|\$|\,|\%|\#|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));))+)/g,
-        '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
-      #Beアイコン埋め込み表示
-      .replace(///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///,
-        '<img class="beicon" src="http://$1" /><br />')
-      #アンカーリンク
-      .replace /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?)*/g, ($0) ->
-        str = $0.replace /[\uff10-\uff19]/g, ($0) ->
-          String.fromCharCode($0.charCodeAt(0) - 65248)
-
-        reg = /(\d+)(?:-(\d+))?/g
-        target_max = 25
-        target_count = 0
-        while ((res = reg.exec(str)) and target_count <= target_max)
-          if res[2]
-            if +res[2] > +res[1]
-              target_count += +res[2] - +res[1]
-          else
-            target_count++
-
-        disabled = target_count >= target_max
-
-        "<a href=\"javascript:undefined;\" class=\"anchor" +
-        "#{if disabled then " disabled" else ""}\">#{$0}</a>"
-
-    #サムネイル表示(対応サイト)
-    if config_thumbnail_supported
-      for a in Array::slice.apply(message.getElementsByTagName("a"))
-        #YouTube
-        if res = /// ^http://
-            (?:www\.youtube\.com/watch\?v=|youtu\.be/)
-            ([\w\-]+).*
-          ///.exec(a.href)
-          fn_add_thumbnail(a, "http://img.youtube.com/vi/#{res[1]}/default.jpg")
-        #ニコニコ動画
-        else if res = /// ^http://(?:www\.nicovideo\.jp/watch/|nico\.ms/)
-            (?:sm|nm)(\d+) ///.exec(a.href)
-          tmp = "http://tn-skr#{parseInt(res[1], 10) % 4 + 1}.smilevideo.jp"
-          tmp += "/smile?i=#{res[1]}"
-          fn_add_thumbnail(a, tmp)
-
-    #サムネイル表示(画像っぽいURL)
-    if config_thumbnail_ext
-      for a in Array::slice.apply(message.getElementsByTagName("a"))
-        if /\.(?:png|jpg|jpeg|gif|bmp)$/i.test(a.href)
-          fn_add_thumbnail(a, a.href)
-
-    article.appendChild(message)
-
-    frag.appendChild(article)
-  frag
+  article
 
 app.view_thread._read_state_manager = ($view) ->
   view_url = $view.attr("data-url")
