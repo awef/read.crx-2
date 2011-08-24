@@ -718,11 +718,11 @@ app.view_thread._read_state_manager = ($view) ->
       .end()
 
       .bind "request_reload", ->
-        scan_watcher_suspend = true
+        scroll_watcher_suspend = true
         return
 
       .bind "view_loaded", ->
-        scan_watcher_suspend = false
+        scroll_watcher_suspend = false
         return
 
       .bind "view_unload", ->
