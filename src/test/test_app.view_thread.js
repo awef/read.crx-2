@@ -52,4 +52,30 @@ $(function(){
     deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0, 1]});
     deepEqual(this.$view.data("rep_index"), {1: [1]});
   });
+
+  test("もし元データにscriptタグ等が入っていても、無視する", 3, function(){
+    //基本的にタグは除去
+    //ただし名前欄はニダーのAAが入る事が有るのでエスケープに
+    var expected1 = '\
+<article data-id="ID:iTGL5FKU">\
+<header>\
+<span class="num">1</span>\
+<span class="name">&lt;script&gt;名無しさん&lt;/script&gt;</span>\
+<span class="mail">alert();sage</span>\
+<span class="other">2010/05/14(木) 15:41:14 <span class="id">ID:iTGL5FKU</span></span>\
+</header>\
+<div class="message">testalert();</div>\
+</article>\
+';
+    var $container1 = $("<div>");
+    $container1.append(app.view_thread._const_res(0, {
+      name: "<script>名無しさん</script>",
+      mail: "<script>alert();</script>sage",
+      other: "2010/05/14(木) 15:41:14 <script>ID:iTGL5FKU</script>",
+      message: "test<script>alert();</script>"
+    }, this.$view));
+    strictEqual($container1.html(), expected1);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {});
+  });
 });
