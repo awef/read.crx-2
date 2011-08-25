@@ -564,7 +564,8 @@ app.view_thread._const_res = (res_key, res, $view) ->
   #.mail
   mail = document.createElement("span")
   mail.className = "mail"
-  mail.textContent = res.mail
+  #タグ除去
+  mail.innerHTML = res.mail.replace(/<.*?(?:>|$)/g, "")
   header.appendChild(mail)
 
   #.other
