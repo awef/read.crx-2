@@ -96,4 +96,48 @@ $(function(){
     deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
     deepEqual(this.$view.data("rep_index"), {});
   });
+
+  test("本文中のbrタグは容認される", 3, function(){
+    var tmp_dom;
+
+    this.example1_data.message = "test<br>test<br><br>test";
+    this.example1_dom.querySelector(".message").innerHTML = "test<br>test<br><br>test";
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {});
+  });
+
+  test("本文中のhrタグは容認される", 3, function(){
+    var tmp_dom;
+
+    this.example1_data.message = "test<hr>test<hr><hr>test";
+    this.example1_dom.querySelector(".message").innerHTML = "test<hr>test<hr><hr>test";
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {});
+  });
+
+  test("本文中のbタグは容認される", 3, function(){
+    var tmp_dom;
+
+    this.example1_data.message = "test<b>test</b><b></b>test<b>test2</b>";
+    this.example1_dom.querySelector(".message").innerHTML = "test<b>test</b><b></b>test<b>test2</b>";
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {});
+  });
+
+  test("本文中の許可されていないタグは削除される", 3, function(){
+    var tmp_dom;
+
+    this.example1_data.message = 'test<div>test</div>test<a href="test">test</a>test<script>test</script>test<style>test</style>test<test></test></test/><test';
+    this.example1_dom.querySelector(".message").innerHTML = "testtesttesttesttesttesttesttesttest";
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {});
+  });
 });
