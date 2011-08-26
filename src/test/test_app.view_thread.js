@@ -67,4 +67,33 @@ $(function(){
     deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
     deepEqual(this.$view.data("rep_index"), {});
   });
+
+  test("名前欄の</b><b>はspan.obに置換する", 6, function(){
+    var tmp_dom;
+
+    this.example1_data.name = "******** </b>◆ABCDEFGH1iJ2 <b>";
+    this.example1_dom.querySelector(".name").innerHTML = '******** <span class="ob">◆ABCDEFGH1iJ2 </span>';
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {});
+
+    this.example1_data.name = "</b>名無しの報告 <b></b>(北海道)<b>";
+    this.example1_dom.querySelector(".name").innerHTML = '<span class="ob">名無しの報告 </span><span class="ob">(北海道)</span>';
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0, 0]});
+    deepEqual(this.$view.data("rep_index"), {});
+  });
+
+  test("名前欄のフォントタグは容認される", 3, function(){
+    var tmp_dom;
+
+    this.example1_data.name = "<font color=#FF0000>awef★</font>";
+    this.example1_dom.querySelector(".name").innerHTML = "<font color=#FF0000>awef★</font>";
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {});
+  });
 });
