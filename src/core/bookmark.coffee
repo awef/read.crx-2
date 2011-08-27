@@ -58,15 +58,18 @@ app.bookmark.bookmark_to_url = (bookmark) ->
 (->
   source_id = app.config.get("bookmark_id")
 
-  cache = {}
+  cache = {
+    #キーはChromeのブックマークID
+    data: {}
+    #key: url, value: bookmark_id
+    index_url: {}
+    #key: board url, value: array of bookmark_id
+    index_board_url: {}
+  }
 
   cache.empty = ->
-    #キーはChromeのブックマークID
-    @data = {}
-    #key: url, value: bookmark_id
-    @index_url = {}
-    #key: board url, value: array of bookmark_id
-    @index_board_url = {}
+    for id of @data
+      cache.remove_bookmark({id})
 
   cache.get_id = (prop) ->
     if prop.id?
@@ -197,7 +200,6 @@ app.bookmark.bookmark_to_url = (bookmark) ->
         deferred.reject()
     .promise()
 
-  cache.empty()
   cache.full_scan()
     .done ->
       unless app.bookmark._deferred_first_scan.isResolved() or
