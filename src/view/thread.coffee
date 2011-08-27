@@ -662,10 +662,15 @@ app.view_thread._read_state_manager = ($view) ->
 
   promise_get_read_state.done ->
     scan = ->
-      last = read_state.received
       content = $view[0].querySelector(".content")
       bottom = content.scrollTop + content.clientHeight
 
+      received = content.childNodes.length
+      if read_state.received isnt received
+        read_state.received = received
+        read_state_updated = true
+
+      last = read_state.received
       for res, res_num in content.children
         if res.offsetTop > bottom
           last = res_num - 1
