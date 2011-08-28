@@ -142,6 +142,9 @@ app.main = ->
 
   document.title = app.manifest.name
 
+  app.message.add_listener "notify", (message) ->
+    app.notice.push(message.message)
+
   #タブ・ペインセットアップ
   layout = app.config.get("layout") or "pane-3"
 
