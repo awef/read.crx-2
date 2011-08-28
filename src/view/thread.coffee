@@ -87,6 +87,10 @@ app.boot "/view/thread.html", ->
     $view.one "read_state_attached", ->
       $view.removeClass("loading")
 
+      $last = $view.find(".content > .last")
+      if $last.length is 1
+        app.view_thread._jump_to_res($view, +$last.find(".num").text(), false)
+
     app.view_thread._draw($view)
       .fail ->
          $view.removeClass("loading")
@@ -643,21 +647,21 @@ app.view_thread._read_state_manager = ($view) ->
           deferred.resolve()
   .promise()
 
-  #スレの初回描画時に、read_state関連のクラスを付与する
-  $view.one "view_loaded", ->
+  #スレの描画時に、read_state関連のクラスを付与する
+  $view.bind "view_loaded", ->
     promise_get_read_state.done ->
-      content = $view.find(".content")[0]
+      $content = $view.find(".content")
+      content = $content[0]
 
-      if read_state.received isnt content.children.length
-        read_state.received = content.children.length
-        read_state_updated = true
+      $content
+        .find("> .last, > .read, .received")
+          .removeClass("last read received")
 
       content.children[read_state.last - 1]?.classList.add("last")
       content.children[read_state.read - 1]?.classList.add("read")
       content.children[read_state.received - 1]?.classList.add("received")
 
       $view.triggerHandler("read_state_attached")
-      app.view_thread._jump_to_res($view, read_state.last, false)
     return
 
   promise_get_read_state.done ->
