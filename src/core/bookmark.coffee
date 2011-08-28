@@ -185,19 +185,24 @@ app.bookmark.bookmark_to_url = (bookmark) ->
         @index_board_url[board_url].splice(tmp, 1)
       app.message.send("bookmark_updated", {type: "removed", bookmark})
 
+  on_bookmark_api_error = ->
+    cache.empty()
+    app.message.send("open", url: "bookmark_source_selector")
+    app.message.send("notify", message: "ブックマークAPIへのアクセスに失敗しました。ブックマークフォルダを再設定して下さい。")
+
   cache.full_scan = ->
     $.Deferred (deferred) ->
-      try
-        chrome.bookmarks.getChildren source_id, (array_of_tree) ->
+      chrome.bookmarks.getChildren source_id, (array_of_tree) ->
+        if array_of_tree?
           cache.empty()
           for tree in array_of_tree
             if tree.url
               cache.update_bookmark({tree})
           deferred.resolve()
-      catch e
-        app.log("warn", "ブックマークスキャン失敗", e)
-        app.message.send("open", url: "bookmark_source_selector")
-        deferred.reject()
+        else
+          app.log("warn", "ブックマークスキャン失敗")
+          on_bookmark_api_error()
+          deferred.reject()
     .promise()
 
   cache.full_scan()
@@ -250,8 +255,13 @@ app.bookmark.bookmark_to_url = (bookmark) ->
           bookmark.res_count = res_count
         url = app.bookmark.bookmark_to_url(bookmark)
         chrome.bookmarks.create {parentId: source_id, url, title}, (tree) ->
-          cache.update_bookmark({tree})
-          deferred.resolve()
+          if tree?
+            cache.update_bookmark({tree})
+            deferred.resolve()
+          else
+            app.log("warn", "ブックマーク追加失敗")
+            on_bookmark_api_error()
+            deferred.reject()
     else
       app.log("error", "app.bookmark.add: 既にブックマークされいてるURLをブックマークに追加しようとしています", arguments)
       deferred.reject()
@@ -267,6 +277,7 @@ app.bookmark.bookmark_to_url = (bookmark) ->
       id = cache.get_id({url})
       if typeof id is "string"
         cache.remove_bookmark({id})
+        #TODO 失敗時の処理
         chrome.bookmarks.remove id, ->
           deferred.resolve()
       else
@@ -298,8 +309,13 @@ app.bookmark.bookmark_to_url = (bookmark) ->
         chrome.bookmarks.update(
           cache.get_id({url}),
           url: app.bookmark.bookmark_to_url(bookmark),
-          ->
-            deferred.resolve()
+          (tree) ->
+            if tree?
+              deferred.resolve()
+            else
+              app.log("warn", "ブックマーク更新失敗(read_state)")
+              on_bookmark_api_error()
+              deferred.reject()
         )
       else
         deferred.reject()
@@ -312,8 +328,14 @@ app.bookmark.bookmark_to_url = (bookmark) ->
       bookmark.res_count = res_count
       cache.update_bookmark({bookmark})
 
-      chrome.bookmarks.update(cache.get_id({url}),
-        url: app.bookmark.bookmark_to_url(bookmark))
+      chrome.bookmarks.update(
+        cache.get_id({url}),
+        url: app.bookmark.bookmark_to_url(bookmark),
+        (tree) ->
+          unless tree?
+            app.log("warn", "ブックマーク更新失敗(res_count)")
+            on_bookmark_api_error()
+      )
 
   app.bookmark.update_expired = (url, expired) ->
     if bookmark = app.bookmark.get(url)
@@ -322,8 +344,14 @@ app.bookmark.bookmark_to_url = (bookmark) ->
       bookmark.expired = (expired is true)
       cache.update_bookmark({bookmark})
 
-      chrome.bookmarks.update(cache.get_id({url}),
-        url: app.bookmark.bookmark_to_url(bookmark))
+      chrome.bookmarks.update(
+        cache.get_id({url}),
+        url: app.bookmark.bookmark_to_url(bookmark),
+        (tree) ->
+          unless tree?
+            app.log("warn", "ブックマーク更新失敗(expired)")
+            on_bookmark_api_error()
+      )
 
   #鯖移転検出時の処理
   app.message.add_listener "detected_ch_server_move", (message) ->
