@@ -192,6 +192,7 @@ app.bookmark.bookmark_to_url = (bookmark) ->
 
   cache.full_scan = ->
     $.Deferred (deferred) ->
+      (deferred.reject(); return) unless source_id?
       chrome.bookmarks.getChildren source_id, (array_of_tree) ->
         if array_of_tree?
           cache.empty()
