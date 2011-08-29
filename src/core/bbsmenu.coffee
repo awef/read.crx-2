@@ -14,8 +14,7 @@ app.bbsmenu._respond = (arg) ->
 app.bbsmenu.get = (callback, force_reload) ->
   app.bbsmenu._callback.push(callback)
 
-  if app.bbsmenu._callback.length isnt 1
-    return
+  return if app.bbsmenu._callback.length isnt 1
 
   url = "http://menu.2ch.net/bbsmenu.html"
 
