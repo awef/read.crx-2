@@ -38,7 +38,7 @@ p_coffee = proc do |t|
 end
 
 task :clean do
-  sh "rm -r #{DBG}"
+  sh "rm -rf #{DBG}"
 end
 
 task :default => [
