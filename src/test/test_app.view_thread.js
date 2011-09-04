@@ -140,4 +140,26 @@ $(function(){
     deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
     deepEqual(this.$view.data("rep_index"), {});
   });
+
+  test("本文中のURLはA要素に置換される", 3, function(){
+    var tmp_dom;
+
+    this.example1_data.message = 'test http://example.com/test test';
+    this.example1_dom.querySelector(".message").innerHTML = 'test <a href="http://example.com/test" target="_blank" rel="noreferrer">http://example.com/test</a> test';
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {});
+  });
+
+  test("本文のURL中にアンカーと解釈出来る文字列が出現した場合、該当する部分はアンカーとして扱う", 3, function(){
+    var tmp_dom;
+
+    this.example1_data.message = 'test http://example.com/test&gt;1 test';
+    this.example1_dom.querySelector(".message").innerHTML = 'test <a href="http://example.com/test" target="_blank" rel="noreferrer">http://example.com/test</a><a href="javascript:undefined;" class="anchor">&gt;1</a> test';
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {1: [0]});
+  });
 });
