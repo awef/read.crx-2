@@ -547,7 +547,7 @@ app.view_thread._draw = ($view, force_update) ->
 
 app.view_thread._const_res = (res_key, res, $view) ->
   article = document.createElement("article")
-  article.className = "aa" if /\　\ (?!<br>|$)/i.test(res.message)
+  article.className = "aa" if /(?:\　{5}|\　\ )(?!<br>|$)/i.test(res.message)
 
   header = document.createElement("header")
 
