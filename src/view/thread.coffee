@@ -598,7 +598,7 @@ app.view_thread._const_res = (res_key, res, $view) ->
     #タグ除去
     .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
     #URLリンク
-    .replace(/(h)?(ttps?:\/\/(?:\w|\-|\.|\!|\~|\*|\'|\(|\)|\;|\/|\?|\:|\@|\=|\+|\$|\,|\%|\#|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));))+)/g,
+    .replace(/(h)?(ttps?:\/\/(?:[\w\-.!~*'();\/?:@=+$,%#]|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));))+)/g,
       '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
     #Beアイコン埋め込み表示
     .replace(///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///,
