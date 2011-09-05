@@ -241,10 +241,11 @@ app.boot "/view/thread.html", ->
     #IDポップアップ
     .delegate ".id.link, .id.freq, .anchor_id", (app.config.get("popup_trigger") or "click"), (e) ->
       popup_helper this, e, =>
+        anchor_text = this.textContent.replace(/^id:/i, "ID:")
         $popup = $("<div>")
         $popup.append(
           $view
-            .find(".id:contains(\"#{this.textContent}\")")
+            .find(".id:contains(\"#{anchor_text}\")")
               .closest("article")
                 .filter(".content > article")
                   .clone()
