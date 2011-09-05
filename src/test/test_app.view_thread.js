@@ -162,4 +162,37 @@ $(function(){
     deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
     deepEqual(this.$view.data("rep_index"), {1: [0]});
   });
+
+  test("本文中のID表記はIDリンクに置換される", 3, function(){
+    var tmp_dom;
+
+    this.example1_data.message = 'test ID:iTGL5FKU test';
+    this.example1_dom.querySelector(".message").innerHTML = 'test <a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a> test';
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {});
+  });
+
+  test("本文中の連続したID表記もきちんと識別出来る", 3, function(){
+    var tmp_dom;
+
+    this.example1_data.message = 'test ID:iTGL5FKUiD:iTGL5FKUId:iTGL5FKUid:iTGL5FKU test';
+    this.example1_dom.querySelector(".message").innerHTML = 'test <a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a><a href="javascript:undefined;" class="anchor_id">iD:iTGL5FKU</a><a href="javascript:undefined;" class="anchor_id">Id:iTGL5FKU</a><a href="javascript:undefined;" class="anchor_id">id:iTGL5FKU</a> test';
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {});
+  });
+
+  test("本文のURL中にID表記と解釈出来る文字列が出現した場合、該当する部分はIDリンクとして扱う", 3, function(){
+    var tmp_dom;
+
+    this.example1_data.message = 'test http://example.com/testID:iTGL5FKU test';
+    this.example1_dom.querySelector(".message").innerHTML = 'test <a href="http://example.com/test" target="_blank" rel="noreferrer">http://example.com/test</a><a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a> test';
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {});
+  });
 });

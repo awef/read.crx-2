@@ -239,7 +239,7 @@ app.boot "/view/thread.html", ->
       return
 
     #IDポップアップ
-    .delegate ".id.link, .id.freq", (app.config.get("popup_trigger") or "click"), (e) ->
+    .delegate ".id.link, .id.freq, .anchor_id", (app.config.get("popup_trigger") or "click"), (e) ->
       popup_helper this, e, =>
         $popup = $("<div>")
         $popup.append(
@@ -598,7 +598,7 @@ app.view_thread._const_res = (res_key, res, $view) ->
     #タグ除去
     .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
     #URLリンク
-    .replace(/(h)?(ttps?:\/\/(?:[\w\-.!~*'();\/?:@=+$,%#]|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));))+)/g,
+    .replace(/(h)?(ttps?:\/\/(?:[a-hj-zA-HJ-Z\d_\-.!~*'();\/?:@=+$,%#]|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));)|[iI](?![dD]:)+)+)/g,
       '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
     #Beアイコン埋め込み表示
     .replace(///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///,
@@ -624,6 +624,9 @@ app.view_thread._const_res = (res_key, res, $view) ->
 
       "<a href=\"javascript:undefined;\" class=\"anchor" +
       "#{if disabled then " disabled" else ""}\">#{$0}</a>"
+    #IDリンク
+    .replace /ID:(?:[^I <>'"]|I(?!D:))+/ig, ($0) ->
+      "<a href=\"javascript:undefined;\" class=\"anchor_id\">#{$0}</a>"
 
   article.appendChild(message)
 
