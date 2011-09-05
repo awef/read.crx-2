@@ -56,7 +56,14 @@ app.config =
   set: (key, val) ->
     localStorage["config_#{key}"] = val
   get: (key) ->
-    localStorage["config_#{key}"]
+    def =
+      thumbnail_supported: "on"
+    if localStorage["config_#{key}"]?
+      localStorage["config_#{key}"]
+    else if def[key]?
+      def[key]
+    else
+      undefined
   del: (key) ->
     delete localStorage["config_#{key}"]
 
