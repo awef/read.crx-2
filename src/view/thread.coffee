@@ -64,14 +64,12 @@ app.boot "/view/thread.html", ->
       .addClass("loading")
       .find(".content")
         .removeClass("searching")
-        .trigger("lazy_img_destroy")
       .end()
       .find(".searchbox")
         .val("")
 
     app.view_thread._draw($view, ex?.force_update)
       .done ->
-        $view.find(".content").lazy_img()
         suspend_reload_button()
       .always ->
         $view.removeClass("loading")
@@ -96,15 +94,10 @@ app.boot "/view/thread.html", ->
          $view.removeClass("loading")
       .always ->
         app.history.add(view_url, document.title, opened_at)
-        $view.find(".content").lazy_img()
         suspend_reload_button()
   )()
 
   $view
-    .bind "view_unload", ->
-      $view.find(".content").triggerHandler("lazy_img_destroy")
-      return
-
     #名前欄が数字だった場合のポップアップ
     .delegate ".name", "mouseenter", ->
       if /^\d+$/.test(this.textContent)
@@ -484,6 +477,7 @@ app.view_thread._draw = ($view, force_update) ->
     )()
     #サムネイル追加処理
     (->
+      imgs = []
       fn_add_thumbnail = (source_a, thumb_path) ->
         source_a.classList.add("has_thumbnail")
 
@@ -494,9 +488,11 @@ app.view_thread._draw = ($view, force_update) ->
         thumb.rel = "noreferrer"
 
         thumb_img = document.createElement("img")
-        thumb_img.src = "/img/dummy_1x1.png"
-        thumb_img.setAttribute("data-lazy_img_original_path", thumb_path)
+        thumb_img.src = "/img/loading.svg"
+        thumb_img.setAttribute("data-href", thumb_path)
         thumb.appendChild(thumb_img)
+
+        imgs.push(thumb_img)
 
         sib = source_a
         while true
@@ -536,6 +532,12 @@ app.view_thread._draw = ($view, force_update) ->
         if config_thumbnail_ext
           if /\.(?:png|jpg|jpeg|gif|bmp)$/i.test(a.href)
             fn_add_thumbnail(a, a.href)
+
+      $(imgs).jail(
+        timeout: 20
+        effect: "fadeIn"
+        selector: ".content"
+      )
     )()
 
     $view.trigger("view_loaded")

@@ -1,6 +1,10 @@
 SRC = "src"
 DBG = "debug"
 
+p_cp = proc do |t|
+  sh "cp #{t.prerequisites} #{t.name}"
+end
+
 def haml(src, output)
   sh "haml -q #{src} #{output}"
 end
@@ -92,7 +96,8 @@ lambda {
     "#{DBG}/img/reload_19x19.png",
     "#{DBG}/img/pencil_19x19.png",
     "#{DBG}/img/arrow_19x19.png",
-    "#{DBG}/img/dummy_1x1.png"
+    "#{DBG}/img/dummy_1x1.png",
+    "#{DBG}/img/loading.svg"
   ]
 
   directory "#{DBG}/img"
@@ -118,6 +123,8 @@ lambda {
 
     sh "rm #{DBG}/img/tmp_alpha_badge.png"
   end
+
+  file "#{DBG}/img/loading.svg" => "#{SRC}/image/svg/loading.svg", &p_cp
 }.call()
 
 #ui
