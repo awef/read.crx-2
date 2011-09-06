@@ -1,10 +1,6 @@
 SRC = "src"
 DBG = "debug"
 
-p_cp = proc do |t|
-  sh "cp #{t.prerequisites} #{t.name}"
-end
-
 def haml(src, output)
   sh "haml -q #{src} #{output}"
 end
@@ -15,6 +11,14 @@ end
 
 def coffee(src, output)
   sh "cat #{src} | coffee -cbsp > #{output}"
+end
+
+p_cp = proc do |t|
+  sh "cp #{t.prerequisites} #{t.name}"
+end
+
+p_coffee = proc do |t|
+  coffee(t.prerequisites.join(" "), t.name)
 end
 
 rule ".html" => "%{^#{DBG}/,#{SRC}/}X.haml" do |t|
@@ -35,10 +39,6 @@ rule ".png" => "#{SRC}/image/svg/%{_\\d+x\\d+$,}n.svg" do |t|
     -background transparent\
     -resize #{$1}x#{$2}\
     #{t.prerequisites} #{t.name}"
-end
-
-p_coffee = proc do |t|
-  coffee(t.prerequisites.join(" "), t.name)
 end
 
 task :clean do
@@ -63,10 +63,7 @@ task :default => [
 
 directory DBG
 
-file "#{DBG}/manifest.json" => "#{SRC}/manifest.json" do |t|
-  sh "cp #{t.prerequisites} #{t.name}"
-end
-
+file "#{DBG}/manifest.json" => "#{SRC}/manifest.json", &p_cp
 desc "ライブラリをコピー"
 file "#{DBG}/lib" => FileList["#{SRC}/lib/**/*"] do |t|
   sh "rm -rf #{DBG}/lib"
@@ -216,9 +213,7 @@ lambda {
     sh "cp -r #{SRC}/test/qunit #{DBG}/test"
   end
 
-  file "#{DBG}/test/test.html" => "#{SRC}/test/test.html" do |t|
-    sh "cp #{t.prerequisites} #{t.name}"
-  end
+  file "#{DBG}/test/test.html" => "#{SRC}/test/test.html", &p_cp
 
   file "#{DBG}/test/test.js" => FileList["#{SRC}/test/test_*.js"] do |t|
     sh "cat #{t.prerequisites.join(" ")} > #{t.name}"
