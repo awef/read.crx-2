@@ -174,6 +174,17 @@ $(function(){
     deepEqual(this.$view.data("rep_index"), {});
   });
 
+  test("ID表記は空白文字以外と隣接していても認識する", 3, function(){
+    var tmp_dom;
+
+    this.example1_data.message = 'テストID:iTGL5FKUテスト';
+    this.example1_dom.querySelector(".message").innerHTML = 'テスト<a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a>テスト';
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {});
+  });
+
   test("本文中の連続したID表記もきちんと識別出来る", 3, function(){
     var tmp_dom;
 

@@ -628,7 +628,7 @@ app.view_thread._const_res = (res_key, res, $view) ->
       "<a href=\"javascript:undefined;\" class=\"anchor" +
       "#{if disabled then " disabled" else ""}\">#{$0}</a>"
     #IDリンク
-    .replace /ID:(?:[^I <>'"]|I(?!D:))+/ig, ($0) ->
+    .replace /id:(?:[a-hj-z\d_\+\/\.]|i(?!d:))+/ig, ($0) ->
       "<a href=\"javascript:undefined;\" class=\"anchor_id\">#{$0}</a>"
 
   article.appendChild(message)
