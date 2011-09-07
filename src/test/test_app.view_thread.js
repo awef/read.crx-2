@@ -152,6 +152,28 @@ $(function(){
     deepEqual(this.$view.data("rep_index"), {});
   });
 
+  test("本文中のURLは空白文字以外と隣接していても認識される", 3, function(){
+    var tmp_dom;
+
+    this.example1_data.message = 'テストhttp://example.com/testテスト';
+    this.example1_dom.querySelector(".message").innerHTML = 'テスト<a href="http://example.com/test" target="_blank" rel="noreferrer">http://example.com/test</a>テスト';
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {});
+  });
+
+  test("アンカー表記は空白文字以外と隣接していても認識する", 3, function(){
+    var tmp_dom;
+
+    this.example1_data.message = 'test&gt;1test';
+    this.example1_dom.querySelector(".message").innerHTML = 'test<a href="javascript:undefined;" class="anchor">&gt;1</a>test';
+    tmp_dom = app.view_thread._const_res(0, this.example1_data, this.$view);
+    strictEqual(tmp_dom.outerHTML, this.example1_dom.outerHTML);
+    deepEqual(this.$view.data("id_index"), {"ID:iTGL5FKU": [0]});
+    deepEqual(this.$view.data("rep_index"), {1: [0]});
+  });
+
   test("アンカーとURLが隣接していた場合、分離して解釈する", 3, function(){
     var tmp_dom;
 
