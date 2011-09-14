@@ -22,8 +22,7 @@
 
       .bind "table_sort_update", ->
         $th = $(this).find(".table_sort_asc, .table_sort_desc")
-        if $th.length isnt 1
-          return
+        return if $th.length isnt 1
 
         this.style["display"] = "none"
 
