@@ -1,8 +1,6 @@
 app.boot "/view/board.html", ->
   url = app.url.parse_query(location.href).q
-  if not url?
-    alert("不正な引数です")
-    return
+  (alert("不正な引数です"); return) unless url?
   url = app.url.fix(url)
   opened_at = Date.now()
 
