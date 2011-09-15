@@ -89,8 +89,6 @@ app.view_board._draw = ($view) ->
 
   $.when(deferred_get_read_state, deferred_board_get)
     .done (array_of_read_state, board) ->
-      return unless document
-
       read_state_index = {}
       for read_state, key in array_of_read_state
         read_state_index[read_state.url] = key
