@@ -221,3 +221,45 @@ $ ->
     strictEqual(tmp_dom.outerHTML, @example1_dom.outerHTML)
     deepEqual(@$view.data("id_index"), {"ID:iTGL5FKU": [0]})
     deepEqual(@$view.data("rep_index"), {1: [0]})
+
+  test "本文中にAAが含まれていると判定した場合は、.aaを付与する", 3, ->
+    @example1_data.message = """
+      　　 ∩＿＿＿∩<br>
+      　　 | ノ　　　　　 ヽ<br>
+      　　/　　●　　　● |<br>
+      　 |　　　　( _●_)　 ミ<br>
+      　彡､　　　|∪|　　､｀＼<br>
+      /　＿＿　 ヽノ　/´>　 )<br>
+      (＿＿＿）　　　/　(_／<br>
+      　|　　　　　　 /<br>
+        　|　　／＼　＼<br>
+        　|　/　　　 )　 )<br>
+      　∪　　　 （　 ＼<br>
+      　　　　　　 ＼＿)<br>
+    """
+    @example1_dom.querySelector(".message").innerHTML = """
+      　　 ∩＿＿＿∩<br>
+      　　 | ノ　　　　　 ヽ<br>
+      　　/　　●　　　● |<br>
+      　 |　　　　( _●_)　 ミ<br>
+      　彡､　　　|∪|　　､｀＼<br>
+      /　＿＿　 ヽノ　/´>　 )<br>
+      (＿＿＿）　　　/　(_／<br>
+      　|　　　　　　 /<br>
+        　|　　／＼　＼<br>
+        　|　/　　　 )　 )<br>
+      　∪　　　 （　 ＼<br>
+      　　　　　　 ＼＿)<br>
+    """
+    @example1_dom.classList.add("aa")
+
+    #HTMLの順序を調整
+    tmp = @example1_dom.getAttribute("data-id")
+    @example1_dom.removeAttribute("data-id")
+    @example1_dom.setAttribute("data-id", "ID:iTGL5FKU")
+
+    tmp_dom = app.view_thread._const_res(0, @example1_data, @$view)
+    strictEqual(tmp_dom.outerHTML, @example1_dom.outerHTML)
+    deepEqual(@$view.data("id_index"), {"ID:iTGL5FKU": [0]})
+    deepEqual(@$view.data("rep_index"), {})
+
