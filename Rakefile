@@ -215,7 +215,5 @@ lambda {
 
   file "#{DBG}/test/test.html" => "#{SRC}/test/test.html", &p_cp
 
-  file "#{DBG}/test/test.js" => FileList["#{SRC}/test/test_*.js"] do |t|
-    sh "cat #{t.prerequisites.join(" ")} > #{t.name}"
-  end
+  file "#{DBG}/test/test.js" => FileList["#{SRC}/test/test_*.coffee"], &p_coffee
 }.call()
