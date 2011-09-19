@@ -37,6 +37,25 @@ app.board_title_solver = {}
               deferred.resolve(bookmark.title)
           else
             deferred.reject()
+      #SETTING.TXTからの取得を試みる
+      .pipe null, ->
+        $.Deferred (deferred) ->
+          if (not prop.offline) and app.url.guess_type(url).bbs_type is "2ch"
+            xhr = new XMLHttpRequest()
+            xhr_timer = setTimeout((-> xhr.abort()), 1000 * 30)
+            xhr.onreadystatechange = ->
+              if xhr.readyState is 4
+                clearTimeout(xhr_timer)
+                if (xhr.status is 200) and
+                    (res = /^BBS_TITLE=(.+)$/m.exec(xhr.responseText))
+                  deferred.resolve(res[1])
+                else
+                  deferred.reject()
+            xhr.overrideMimeType("text/plain; charset=Shift-JIS")
+            xhr.open("GET", url + "SETTING.TXT")
+            xhr.send(null)
+          else
+            deferred.reject()
       #したらばのAPIから取得を試みる
       .pipe null, ->
         $.Deferred (deferred) ->
