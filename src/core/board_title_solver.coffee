@@ -39,43 +39,37 @@ app.board_title_solver = {}
             deferred.reject()
       #SETTING.TXTからの取得を試みる
       .pipe null, ->
-        $.Deferred (deferred) ->
-          if (not prop.offline) and app.url.guess_type(url).bbs_type is "2ch"
-            xhr = new XMLHttpRequest()
-            xhr_timer = setTimeout((-> xhr.abort()), 1000 * 30)
-            xhr.onreadystatechange = ->
-              if xhr.readyState is 4
-                clearTimeout(xhr_timer)
-                if (xhr.status is 200) and
-                    (res = /^BBS_TITLE=(.+)$/m.exec(xhr.responseText))
-                  deferred.resolve(res[1])
-                else
-                  deferred.reject()
-            xhr.overrideMimeType("text/plain; charset=Shift-JIS")
-            xhr.open("GET", url + "SETTING.TXT")
-            xhr.send(null)
-          else
-            deferred.reject()
+        return if prop.offline or app.url.guess_type(url).bbs_type isnt "2ch"
+        $.ajax url + "SETTING.TXT",
+          dataType: "text"
+          timeout: 1000 * 10
+          beforeSend: (jqxhr) ->
+            jqxhr.overrideMimeType("text/plain; charset=Shift_JIS")
+        .pipe (text) ->
+          $.Deferred (deferred) ->
+            if res = /^BBS_TITLE=(.+)$/m.exec(text)
+              deferred.resolve(res[1])
+            else
+              deferred.reject()
+        #$.ajaxの吐く余分なデータの削除
+        , -> $.Deferred().reject()
       #したらばのAPIから取得を試みる
       .pipe null, ->
-        $.Deferred (deferred) ->
-          if (not prop.offline) and app.url.guess_type(url).bbs_type is "jbbs"
-            xhr = new XMLHttpRequest()
-            tmp = ///^http://(\w+\.(\w+\.\w+))/(\w+)/(?:(\d+)/)?$///.exec(url)
-            xhr_path = "http://jbbs.livedoor.jp/bbs/api/setting.cgi/#{tmp[3]}/#{tmp[4]}/"
-            xhr_timer = setTimeout((-> xhr.abort()), 1000 * 30)
-            xhr.onreadystatechange = ->
-              if xhr.readyState is 4
-                clearTimeout(xhr_timer)
-                if (xhr.status is 200) and
-                    (res = /^BBS_TITLE=(.+)$/m.exec(xhr.responseText))
-                  deferred.resolve(res[1])
-                else
-                  deferred.reject()
-            xhr.overrideMimeType("text/plain; charset=EUC-JP")
-            xhr.open("GET", xhr_path)
-            xhr.send(null)
-          else
-            deferred.reject()
+        return if prop.offline or app.url.guess_type(url).bbs_type isnt "jbbs"
+        tmp = url.split("/")
+        ajax_path = "http://jbbs.livedoor.jp/bbs/api/setting.cgi/#{tmp[3]}/#{tmp[4]}/"
+        $.ajax ajax_path,
+          dataType: "text"
+          timeout: 1000 * 10
+          beforeSend: (jqxhr) ->
+            jqxhr.overrideMimeType("text/plain; charset=EUC-JP")
+        .pipe (text) ->
+          $.Deferred (deferred) ->
+            if res = /^BBS_TITLE=(.+)$/m.exec(text)
+              deferred.resolve(res[1])
+            else
+              deferred.reject()
+        #$.ajaxの吐く余分なデータの削除
+        , -> $.Deferred().reject()
       .promise()
 )()
