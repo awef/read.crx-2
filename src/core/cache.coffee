@@ -17,6 +17,7 @@ app.cache = {}
         deferred.resolve(db)
       else
         req = db.setVersion("1")
+        window.__req = req #おまじない
         req.onerror = ->
           app.log("error", "app.cache: db.setVersion(1) onerror")
           app.defer -> deferred.reject(db)

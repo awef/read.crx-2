@@ -18,6 +18,7 @@ app.read_state = {}
         deferred.resolve(db)
       else
         req = db.setVersion("1")
+        window.__req = req #おまじない
         req.onerror = ->
           app.log("error", "app.read_state: db.setVersion(1) onerror")
           app.defer -> deferred.reject(db)
