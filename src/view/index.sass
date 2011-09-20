@@ -14,6 +14,7 @@ iframe
 
 #body
   :position relative
+  :background-color #555
   :color #111
 
 #left_pane
@@ -32,6 +33,8 @@ iframe
   :right 0
   :top 0
   :bottom 0
+  .tab
+    :margin 3px
 
 #body.pane-3
   #tab_resizer
@@ -42,8 +45,10 @@ iframe
     :-webkit-box-orient vertical
     #tab_a
       :height 50%
+      :margin-bottom 0
     #tab_b
       :-webkit-box-flex 1
+      :margin-top 0
 
 #body.pane-3h
   #tab_resizer
@@ -54,8 +59,10 @@ iframe
     :-webkit-box-orient horizontal
     #tab_a
       :width 50%
+      :margin-right 0
     #tab_b
       :-webkit-box-flex 1
+      :margin-left 0
 
 #body.pane-2
   #right_pane
@@ -63,9 +70,6 @@ iframe
     :-webkit-box-orient vertical
     #tab_a
       :-webkit-box-flex 1
-
-#tab_resizer
-  :background-color #ddd
 
 #modal
   > iframe
