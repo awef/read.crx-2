@@ -11,6 +11,15 @@ $z-index_notification: 8
 *
   :font-family inherit
 
+::-webkit-scrollbar
+  :width 8px
+  :background-color #ddd
+
+::-webkit-scrollbar-thumb
+  :background-color #777
+  &:hover
+    :background-color #999
+
 @mixin ascii_art
   :font
     :size 16px
@@ -85,6 +94,7 @@ $z-index_notification: 8
     :overflow-x hidden
     :overflow-y auto
     :position relative
+    :outline none
   .loading_overlay
     :z-index $z-index_tabbed_view_overlay
     :position absolute
@@ -94,7 +104,7 @@ $z-index_notification: 8
     :height 100%
     :padding 5px
     :box-sizing border-box
-    :background-color rgba(#000, 0.75)
+    :background-color rgba(#555, 0.75)
     :font-size 13px
     :color #eee
     :-webkit-user-select none
