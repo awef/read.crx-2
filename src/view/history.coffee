@@ -4,6 +4,7 @@ app.boot "/view/history.html", ->
   app.view_module.view($view)
 
   load = ->
+    $view.addClass("loading")
     app.history.get(undefined, 500)
       .done (data) ->
         frag = document.createDocumentFragment()
@@ -21,6 +22,7 @@ app.boot "/view/history.html", ->
           tr.appendChild(td)
           frag.appendChild(tr)
         $view.find("tbody").append(frag)
+        $view.removeClass("loading")
         $view.trigger("view_loaded")
 
   load()
