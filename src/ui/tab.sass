@@ -3,10 +3,8 @@
   :-webkit-box-orient vertical
 
 .tab_tabbar
-  :position relative
   :margin 0
   :padding 0
-  :min-height 26px
 
   :list-style-type none
 
@@ -33,12 +31,13 @@
     :border-top-right-radius 2px
     :min-width 1em
     :min-height 1em
-    :top 1px
+
     &
       :background-color #ccc
+      :border-bottom 1px solid #aaa
     &.tab_selected
       :background-color #fff
-      :padding-bottom 4px
+      :border-bottom 1px solid #fff
     > img
       :visibility hidden
       :position absolute
