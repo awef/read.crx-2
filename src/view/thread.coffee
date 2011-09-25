@@ -700,7 +700,7 @@ app.view_thread._read_state_manager = ($view) ->
       scan()
       if read_state_updated
         if localStorage.zombie_read_state?
-          data = JSON.parse(localStorege["zombie_read_state"])
+          data = JSON.parse(localStorage["zombie_read_state"])
         else
           data = []
         data.push(read_state)
