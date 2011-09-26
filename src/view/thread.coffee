@@ -37,6 +37,11 @@ app.boot "/view/thread.html", ->
     $popup = fn()
     return if $popup.children().length is 0
     $popup.find("article").removeClass("last read received")
+    #ポップアップ内のサムネイルの遅延ロードを解除
+    $popup.find("img[data-href]").each ->
+      @src = @getAttribute("data-href")
+      @removeAttribute("data-href")
+      return
     $.popup($view, $popup, e.clientX, e.clientY, that)
 
   if app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"]
