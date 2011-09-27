@@ -6,6 +6,8 @@ app.boot "/view/inputurl.html", ->
   $view.find("form").bind "submit", ->
     url = @url.value
     url = url.replace(/// ^ttp:// ///, "http://")
+    unless /// ^h?ttp:// ///.test(url)
+      url = "http://" + url
     guess_res = app.url.guess_type(url)
     if guess_res.type is "thread" or guess_res.type is "board"
       app.message.send("open", {url})
