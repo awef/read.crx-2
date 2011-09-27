@@ -2,16 +2,18 @@ app.view_module = {}
 
 app.view_module.view = ($view) ->
   #title_updatedメッセージ送出処理
-  send_title_updated = ->
-    tmp =
-      type: "title_updated"
-      title: document.title
-    parent.postMessage(JSON.stringify(tmp), location.origin)
+  (->
+    send_title_updated = ->
+      tmp =
+        type: "title_updated"
+        title: document.title
+      parent.postMessage(JSON.stringify(tmp), location.origin)
 
-  send_title_updated()
-  $view
-    .find("title")
-      .bind("DOMSubtreeModified", send_title_updated)
+    send_title_updated()
+    $view
+      .find("title")
+        .bind("DOMSubtreeModified", send_title_updated)
+  )()
 
   #.open_in_rcrx
   $view.delegate ".open_in_rcrx", "click", (e) ->
