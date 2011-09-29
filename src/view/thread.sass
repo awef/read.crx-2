@@ -15,6 +15,16 @@ html
 
 .content
   :padding-bottom 50px
+  &[data-res_search_hit_count="0"]
+    &:after
+      :display block
+      :position absolute
+      :width 100%
+      :padding 10px
+      :text-align center
+      :font-size 18px
+      :color #444
+      :content "検索にヒットするレスが有りませんでした"
 
 article
   :margin 20px 5px
