@@ -69,6 +69,7 @@ app.boot "/view/thread.html", ->
       .addClass("loading")
       .find(".content")
         .removeClass("searching")
+        .removeAttr("data-res_search_hit_count")
       .end()
       .find(".searchbox")
         .val("")
@@ -311,6 +312,7 @@ app.boot "/view/thread.html", ->
           if typeof search_stored_scrollTop isnt "number"
             search_stored_scrollTop = $view.find(".content").scrollTop()
 
+          hit_count = 0
           query = this.value.toLowerCase()
 
           $view
@@ -320,13 +322,17 @@ app.boot "/view/thread.html", ->
               .each ->
                 if this.textContent.toLowerCase().indexOf(query) isnt -1
                   this.classList.add("search_hit")
+                  hit_count++
                 else
                   this.classList.remove("search_hit")
                 null
+            .end()
+            .attr("data-res_search_hit_count", hit_count)
         else
           $view
             .find(".content")
               .removeClass("searching")
+              .removeAttr("data-res_search_hit_count")
               .find(".search_hit")
                 .removeClass("search_hit")
 
