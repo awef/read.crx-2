@@ -142,7 +142,8 @@ $z-index_notification: 8
     :padding 3px
     :white-space nowrap
 
-  table[data-table_search_hit_count="0"]
+  table[data-table_search_hit_count="0"] > tbody:not(:empty)
+    :display block
     &:after
       :display block
       :position absolute
