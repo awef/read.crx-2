@@ -142,16 +142,18 @@ $z-index_notification: 8
     :padding 3px
     :white-space nowrap
 
+  tbody:after
+    :display block
+    :position absolute
+    :width 100%
+    :padding 10px
+    :text-align center
+    :font-size 18px
+    :color #444
+
   table[data-table_search_hit_count="0"] > tbody:not(:empty)
     :display block
     &:after
-      :display block
-      :position absolute
-      :width 100%
-      :padding 10px
-      :text-align center
-      :font-size 18px
-      :color #444
       :content "検索にヒットするスレッドが有りませんでした"
 
 @-webkit-keyframes fade_in

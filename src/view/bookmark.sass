@@ -6,16 +6,10 @@ html
 
 .content
   :overflow auto
-  > table > tbody:empty
+
+  tbody:empty
     :display block
     &:after
-      :display block
-      :position absolute
-      :width 100%
-      :padding 10px
-      :text-align center
-      :font-size 18px
-      :color #444
       :content "ブックマークされているスレッドが有りません"
 
 tr.expired td:first-child:before
