@@ -185,6 +185,13 @@ lambda {
 
   directory "#{DBG}/write"
 
+  file "#{DBG}/write/write.css" => [
+      "#{SRC}/common.sass",
+      "#{SRC}/write/write.sass"
+    ] do |t|
+    sass("#{SRC}/write/write.sass", t.name)
+  end
+
   file "#{DBG}/write/write.js" => [
     "#{SRC}/core/url.coffee",
     "#{SRC}/write/write.coffee"
