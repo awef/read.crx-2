@@ -4,18 +4,18 @@ module "app.cache",
     @cache_pattern = []
     #最小構成
     @cache_pattern.push
-      url: "__test"
+      url: "'; DELETE FROM History --"
       data: "hogehoge"
       last_updated: (new Date("2010-01-01T05:00")).getTime()
     #last_modified
     @cache_pattern.push
-      url: "__test"
+      url: "'; DELETE FROM History --"
       data: "hogehoge"
       last_updated: (new Date("2010-01-01T05:00")).getTime()
       last_modified: (new Date("2010-01-01T00:00")).getTime()
     #etag
     @cache_pattern.push
-      url: "__test"
+      url: "'; DELETE FROM History --"
       data: "hogehoge"
       last_updated: (new Date("2010-01-01T05:00")).getTime()
       #実際のetagの使用可能文字列を知らないので適当な文字列を入れる
@@ -23,26 +23,26 @@ module "app.cache",
       etag: "testtest-test313rttest4wtw4-23425234"
     #res_length
     @cache_pattern.push
-      url: "__test"
+      url: "'; DELETE FROM History --"
       data: "hogehoge"
       last_updated: (new Date("2010-01-01T05:00")).getTime()
       res_length: 123
     #dat_size
     @cache_pattern.push
-      url: "__test"
+      url: "'; DELETE FROM History --"
       data: "hogehoge"
       last_updated: (new Date("2010-01-01T05:00")).getTime()
       dat_size: 1234
     #last_modified, etag
     @cache_pattern.push
-      url: "__test"
+      url: "'; DELETE FROM History --"
       data: "hogehoge"
       last_updated: (new Date("2010-01-01T05:00")).getTime()
       last_modified: (new Date("2010-01-01T00:00")).getTime()
       etag: "testtest-test313rttest4wtw4-23425234"
     #last_modified, etag, res_length
     @cache_pattern.push
-      url: "__test"
+      url: "'; DELETE FROM History --"
       data: "hogehoge"
       last_updated: (new Date("2010-01-01T05:00")).getTime()
       last_modified: (new Date("2010-01-01T00:00")).getTime()
@@ -50,7 +50,7 @@ module "app.cache",
       res_length: 123
     #last_modified, etag, res_length, dat_size
     @cache_pattern.push
-      url: "__test"
+      url: "'; DELETE FROM History --"
       data: "hogehoge"
       last_updated: (new Date("2010-01-01T05:00")).getTime()
       last_modified: (new Date("2010-01-01T00:00")).getTime()
@@ -59,7 +59,7 @@ module "app.cache",
       dat_size: 1234
     #last_modified, etag, res_length, dat_size
     @cache_pattern.push
-      url: "__test"
+      url: "'; DELETE FROM History --"
       data: "hogehoge"
       last_updated: (new Date("2010-01-01T05:00")).getTime()
       last_modified: (new Date("2010-01-01T00:00")).getTime()
@@ -68,7 +68,7 @@ module "app.cache",
       dat_size: 1234
     #インジェクション系テスト
     @cache_pattern.push
-      url: "__test"
+      url: "'; DELETE FROM History --"
       data: "'; DELETE FROM History --"
       last_updated: (new Date("2010-01-01T05:00")).getTime()
       last_modified: (new Date("2010-01-01T00:00")).getTime()
