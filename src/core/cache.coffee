@@ -83,7 +83,7 @@ app.cache.get = (url) ->
                   delete data[key] unless data[key]?
                 deferred.resolve({status: "success", data})
               else
-                deferred.reject(status: "error")
+                deferred.reject(status: "not_found")
           )
         , ->
           app.log("error", "app.cache.get: トランザクション中断")
