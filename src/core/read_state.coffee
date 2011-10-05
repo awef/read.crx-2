@@ -1,40 +1,5 @@
 app.read_state = {}
 
-(->
-  app.read_state._db_open = $.Deferred (deferred) ->
-    $ ->
-      app.cache._db_open.always ->
-        req = webkitIndexedDB.open("read_state")
-        req.onerror = ->
-          deferred.reject()
-          app.log("error", "app.read_state: db.open失敗")
-        req.onsuccess = ->
-          deferred.resolve(req.result)
-
-  .pipe (db) ->
-    $.Deferred (deferred) ->
-      app.log("debug", "read_state now v#{db.version or "n/a"}")
-      if db.version is "1"
-        deferred.resolve(db)
-      else
-        req = db.setVersion("1")
-        window.__req = req #おまじない
-        req.onerror = ->
-          app.log("error", "app.read_state: db.setVersion(1) onerror")
-          app.defer -> deferred.reject(db)
-        req.onsuccess = ->
-          app.log("info", "app.read_state: db.setVersion(1) onsuccess")
-          db.createObjectStore("read_state", keyPath: "url")
-            .createIndex("board_url", "board_url")
-          app.defer -> deferred.resolve(db)
-
-  .fail (db) ->
-    db and db.close()
-    app.critical_error("既読情報管理システムの起動に失敗しました")
-
-  .promise()
-)()
-
 app.read_state._url_filter = (original_url) ->
   original_url = app.url.fix(original_url)
 
@@ -45,75 +10,42 @@ app.read_state._url_filter = (original_url) ->
     .replace(/// ^(http://\w+\.2ch\.net)/.* ///, "$1")
   replaced_origin: "http://*.2ch.net"
 
-app.read_state.get = (url) ->
-  url = app.read_state._url_filter(url)
-
-  app.read_state._db_open
-
-    .pipe (db) ->
-      $.Deferred (deferred) ->
-        transaction = db.transaction(["read_state"])
-        objectStore = transaction.objectStore("read_state")
-
-        req = objectStore.get(url.replaced)
-        req.onsuccess = ->
-          if typeof req.result is "object"
-            read_state = req.result
-            read_state.url =
-              read_state.url.replace(url.replaced, url.original)
-            delete read_state.board_url
-            deferred.resolve(read_state)
-          else
-            deferred.resolve()
-        req.onerror = ->
-          deferred.reject()
-
-    .promise()
-
-app.read_state.get_by_board = (board_url) ->
-  board_url = app.read_state._url_filter(board_url)
-
-  app.read_state._db_open
-
-    .pipe (db) ->
-      $.Deferred (deferred) ->
-        data = []
-
-        transaction = db.transaction(["read_state"])
-        transaction.onerror = ->
-          app.log("error", "app.read_state.get_by_board:
- トランザクション中断")
-          deferred.reject()
-        transaction.oncomplete = ->
-          deferred.resolve(data)
-
-        object_store = transaction.objectStore("read_state")
-        req = object_store
-          .index("board_url")
-          .openCursor(webkitIDBKeyRange.only(board_url.replaced))
-        req.onsuccess = ->
-          cursor = req.result
-          if cursor
-            read_state = cursor.value
-            read_state.url =
-              read_state.url.replace(board_url.replaced_origin, board_url.original_origin)
-            delete read_state.board_url
-            data.push(read_state)
-            cursor.continue()
-
-    .promise()
+(->
+  app.read_state._db_open = $.Deferred (deferred) ->
+    db = openDatabase("ReadState", "", "Read State", 0)
+    db.transaction(
+      (transaction) ->
+        transaction.executeSql """
+          CREATE TABLE IF NOT EXISTS ReadState(
+            url TEXT NOT NULL PRIMARY KEY,
+            board_url TEXT NOT NULL,
+            last INTEGER NOT NULL,
+            read INTEGER NOT NULL,
+            received INTEGER NOT NULL
+          )
+        """
+      -> deferred.reject()
+      -> deferred.resolve(db)
+    )
+  .promise()
+  .fail ->
+    app.critical_error("既読情報管理システムの起動に失敗しました")
+)()
 
 app.read_state.set = (read_state) ->
-  read_state = app.deep_copy(read_state)
-
-  if (
-    typeof read_state.url isnt "string" or
-    typeof read_state.last isnt "number" or
-    typeof read_state.read isnt "number" or
-    typeof read_state.received isnt "number"
-  )
+  if not read_state? or
+      typeof read_state isnt "object" or
+      typeof read_state.url isnt "string" or
+      typeof read_state.last isnt "number" or
+      isNaN(read_state.last) or
+      typeof read_state.read isnt "number" or
+      isNaN(read_state.read) or
+      typeof read_state.received isnt "number" or
+      isNaN(read_state.received)
     app.log("error", "app.read_state.set: 引数が不正です", arguments)
     return $.Deferred().reject().promise()
+
+  read_state = app.deep_copy(read_state)
 
   url = app.read_state._url_filter(read_state.url)
   read_state.url = url.replaced
@@ -124,13 +56,21 @@ app.read_state.set = (read_state) ->
 
     .pipe (db) ->
       $.Deferred (deferred) ->
-        transaction = db.transaction(["read_state"], webkitIDBTransaction.READ_WRITE)
-        transaction.onerror = ->
-          app.log("error", "app.read_state.set: 保存失敗")
-          deferred.reject()
-        transaction.oncomplete = ->
-          deferred.resolve()
-        transaction.objectStore("read_state").put(read_state)
+        db.transaction(
+          (transaction) ->
+            transaction.executeSql(
+              "INSERT OR REPLACE INTO ReadState values(?, ?, ?, ?, ?)"
+              [
+                read_state.url
+                read_state.board_url
+                read_state.last
+                read_state.read
+                read_state.received
+              ]
+            )
+          -> deferred.reject()
+          -> deferred.resolve()
+        )
 
     .always ->
       delete read_state.board_url
@@ -139,34 +79,89 @@ app.read_state.set = (read_state) ->
 
     .promise()
 
-app.read_state.remove = (url) ->
+app.read_state.get = (url) ->
+  if app.assert_arg("app.read_state.get", ["string"], arguments)
+    return $.Deferred().reject().promise()
+
   url = app.read_state._url_filter(url)
 
   app.read_state._db_open
 
     .pipe (db) ->
       $.Deferred (deferred) ->
-        transaction = db.transaction(["read_state"], webkitIDBTransaction.READ_WRITE)
-        transaction.onerror = ->
-          app.log("error", "app.read_state.remove: 削除失敗")
+        db.transaction (transaction) ->
+          transaction.executeSql("""
+              SELECT url, last, read, received FROM ReadState
+                WHERE url = ?
+            """
+            [url.replaced]
+            (transaction, result) ->
+              if result.rows.length is 1
+                data = app.deep_copy(result.rows.item(0))
+                data.url = url.original
+                deferred.resolve(data)
+              else
+                deferred.resolve()
+          )
+        , ->
+          app.log("error", "app.read_state.get: トランザクション中断")
           deferred.reject()
-        transaction.oncomplete = ->
-          deferred.resolve()
-        transaction.objectStore("read_state").delete(url.replaced)
 
     .promise()
 
-app.read_state.clear = ->
+app.read_state.get_by_board = (url) ->
+  if app.assert_arg("app.read_state.get_by_board", ["string"], arguments)
+    return $.Deferred().reject().promise()
+
+  url = app.read_state._url_filter(url)
+
   app.read_state._db_open
 
     .pipe (db) ->
       $.Deferred (deferred) ->
-        transaction = db.transaction(["read_state"], webkitIDBTransaction.READ_WRITE)
-        transaction.objectStore("read_state").clear()
-        transaction.oncomplete = ->
-          deferred.resolve()
-        transaction.onerror = ->
-          app.log("error", "app.read_state.clear: トランザクション中断")
+        db.transaction (transaction) ->
+          transaction.executeSql("""
+              SELECT url, last, read, received FROM ReadState
+                WHERE board_url = ?
+            """
+            [url.replaced]
+            (transaction, result) ->
+              data = []
+              key = 0
+              length = result.rows.length
+              while key < length
+                tmp = app.deep_copy(result.rows.item(key))
+                tmp.url =
+                  tmp.url.replace(url.replaced_origin, url.original_origin)
+                data.push(tmp)
+                key++
+              deferred.resolve(data)
+          )
+        , ->
+          app.log("error", "app.read_state.get: トランザクション中断")
           deferred.reject()
+
+    .promise()
+
+app.read_state.remove = (url) ->
+  if app.assert_arg("app.read_state.remove", ["string"], arguments)
+    return $.Deferred().reject().promise()
+
+  url = app.read_state._url_filter(url)
+
+  app.read_state._db_open
+
+    .pipe (db) ->
+      $.Deferred (deferred) ->
+        db.transaction (transaction) ->
+          transaction.executeSql("""
+            DELETE FROM ReadState
+              WHERE url = ?
+          """, [url.replaced])
+        , ->
+          app.log("error", "app.read_state.remove: トランザクション失敗")
+          deferred.reject()
+        , ->
+          deferred.resolve()
 
     .promise()
