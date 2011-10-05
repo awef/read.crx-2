@@ -165,3 +165,18 @@ app.read_state.remove = (url) ->
           deferred.resolve()
 
     .promise()
+
+app.read_state.clear = ->
+  app.read_state._db_open
+
+    .pipe (db) ->
+      $.Deferred (deferred) ->
+        db.transaction (transaction) ->
+          transaction.executeSql("DELETE FROM ReadState")
+        , ->
+          app.log("error", "app.read_state.clear: トランザクション中断")
+          deferred.reject()
+        , ->
+          deferred.resolve()
+
+    .promise()
