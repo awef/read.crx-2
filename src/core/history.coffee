@@ -2,88 +2,75 @@ app.history = {}
 
 (->
   app.history._db_open = $.Deferred (deferred) ->
-    $ ->
-      app.read_state._db_open.always ->
-        req = webkitIndexedDB.open("history")
-        req.onerror = ->
-          deferred.reject()
-          app.log("error", "app.history: db.open失敗")
-        req.onsuccess = ->
-          deferred.resolve(req.result)
-
-  .pipe (db) ->
-    $.Deferred (deferred) ->
-      app.log("debug", "history now v#{db.version or "n/a"}")
-      if db.version is "1"
-        deferred.resolve(db)
-      else
-        req = db.setVersion("1")
-        window.__req = req #おまじない
-        req.onerror = ->
-          app.log("error", "app.history: db.setVersion(1) onerror")
-          app.defer -> deferred.reject(db)
-        req.onsuccess = ->
-          app.log("info", "app.history: db.setVersion(1) onsuccess")
-          db.createObjectStore("history", autoIncrement: true)
-            .createIndex("date", "date")
-          app.defer -> deferred.resolve(db)
-
-  .fail (db) ->
-    db and db.close()
-    app.critical_error("履歴管理システムの起動に失敗しました")
-
+    db = openDatabase("History", "", "History", 0)
+    db.transaction(
+      (transaction) ->
+        transaction.executeSql """
+          CREATE TABLE IF NOT EXISTS History(
+            url TEXT NOT NULL,
+            title TEXT NOT NULL,
+            date INTEGER NOT NULL
+          )
+        """
+      -> deferred.reject()
+      -> deferred.resolve(db)
+    )
   .promise()
+  .fail ->
+    app.critical_error("履歴管理システムの起動に失敗しました")
 )()
 
 app.history.add = (url, title, date) ->
-  if (
-    typeof url isnt "string" or
-    typeof title isnt "string" or
-    typeof date isnt "number"
-  )
-    app.log("error", "app.history.add: 引数が不正です", arguments)
+  if app.assert_arg("app.history.add", ["string", "string", "number"], arguments)
     return $.Deferred().reject().promise()
 
   app.history._db_open
 
     .pipe (db) ->
       $.Deferred (deferred) ->
-        transaction = db.transaction(["history"], webkitIDBTransaction.READ_WRITE)
-        transaction.oncomplete = ->
-          deferred.resolve()
-        transaction.onerror = (e) ->
+        db.transaction (transaction) ->
+          transaction.executeSql(
+            "INSERT INTO History values(?, ?, ?)"
+            [url, title, date]
+          )
+        , ->
           app.log("error", "app.history.add: データの格納に失敗しました")
           deferred.reject()
-
-        transaction.objectStore("history").put({url, title, date})
+        , ->
+          deferred.resolve()
 
     .promise()
 
-app.history.get = (offset, count) ->
+app.history.get = (offset, limit) ->
+  offset ?= -1
+  limit ?= -1
+
+  if app.assert_arg("app.history.get", ["number", "number"], arguments)
+    return $.Deferred().reject().promise()
+
   app.history._db_open
 
     .pipe (db) ->
       $.Deferred (deferred) ->
-        data = []
-        data_length = 0
-
-        transaction = db.transaction(["history"])
-        object_store = transaction.objectStore("history")
-
-        req_cursor = object_store
-          .index("date")
-          .openCursor(null, webkitIDBCursor.PREV)
-        req_cursor.onsuccess = ->
-          cursor = req_cursor.result
-          if cursor
-            data.push(cursor.value)
-            if ++data_length < count
-              cursor.continue()
-        transaction.onerror = ->
+        db.readTransaction (transaction) ->
+          transaction.executeSql("""
+              SELECT * FROM History
+                ORDER BY date DESC
+                LIMIT ? OFFSET ?
+            """
+            [limit, offset]
+            (transaction, result) ->
+              data = []
+              key = 0
+              length = result.rows.length
+              while key < length
+                data.push(result.rows.item(key))
+                key++
+              deferred.resolve(data)
+          )
+        , ->
           app.log("error", "app.history.get: トランザクション中断")
           deferred.reject()
-        transaction.oncomplete = ->
-          deferred.resolve(data)
 
     .promise()
 
@@ -92,12 +79,12 @@ app.history.clear = ->
 
     .pipe (db) ->
       $.Deferred (deferred) ->
-        transaction = db.transaction(["history"], webkitIDBTransaction.READ_WRITE)
-        transaction.objectStore("history").clear()
-        transaction.oncomplete = ->
-          deferred.resolve()
-        transaction.onerror = ->
+        db.transaction (transaction) ->
+          transaction.executeSql("DELETE FROM History")
+        , ->
           app.log("error", "app.history.clear: トランザクション中断")
           deferred.reject()
+        , ->
+          deferred.resolve()
 
     .promise()

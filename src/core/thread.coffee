@@ -43,7 +43,7 @@ app.thread.get = (url, callback, force_update) ->
         if app.url.tsld(url) is "livedoor.jp" or app.url.tsld(url) is "machi.to"
           if cache.status is "success"
             delta_flg = true
-            tmp_xhr_path += (+cache.data.received_res_length + 1) + "-"
+            tmp_xhr_path += (+cache.data.res_length + 1) + "-"
 
         xhr = new XMLHttpRequest()
         xhr_timer = setTimeout((-> xhr.abort()), 1000 * 30)
@@ -165,7 +165,7 @@ app.thread.get = (url, callback, force_update) ->
         cache =
           url: xhr_path
           last_updated: Date.now()
-          received_res_length: thread.res.length.toString(10)
+          res_length: thread.res.length
 
         if delta_flg
           cache.data = old_cache.data.data + xhr.responseText
