@@ -78,6 +78,8 @@ app.view_tab_state.restore = ->
   is_restored
 
 app.view_setup_resizer = ->
+  MIN_TAB_HEIGHT = 100
+
   $body = $("#body")
 
   if $body.hasClass("pane-3")
@@ -96,8 +98,8 @@ app.view_setup_resizer = ->
   tab_a = $tab_a[0]
   offset = $tab_a["outer#{val_c}"]() - $tab_a[val]()
 
-  min = 50
-  max = document.body["offset#{val_c}"] - 50
+  min = MIN_TAB_HEIGHT
+  max = document.body["offset#{val_c}"] - MIN_TAB_HEIGHT
 
   tmp = app.config.get("tab_a_#{val}")
   if tmp
@@ -109,8 +111,8 @@ app.view_setup_resizer = ->
       that = this
       e.preventDefault()
 
-      min = 50
-      max = document.body["offset#{val_c}"] - 50
+      min = MIN_TAB_HEIGHT
+      max = document.body["offset#{val_c}"] - MIN_TAB_HEIGHT
 
       $("<div>", {css: {
         position: "absolute"
