@@ -408,8 +408,9 @@ app.boot "/view/thread.html", ->
 
 app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
   $content = $(view).find(".content")
-  $target = $content.children(":nth-child(#{res_num}):visible")
+  $target = $content.children(":nth-child(#{res_num})")
   if $target.length > 0
+    return if $content.hasClass("searching") and not $target.hasClass("search_hit")
     if animate_flg
       $content.animate(scrollTop: $target[0].offsetTop)
     else
