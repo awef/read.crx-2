@@ -447,11 +447,8 @@ app.view_thread._draw = ($view, force_update) ->
           id_count = index.length
           elm = content.childNodes[res_key].getElementsByClassName("id")[0]
 
-          if /\(\d+\)$/.test(elm.textContent)
-            elm.textContent =
-              elm.textContent.replace(/\(\d+\)$/, "(#{id_count})")
-          else
-            elm.textContent += "(#{id_count})"
+          elm.textContent =
+            elm.textContent.replace(/(?:\(\d+\))?$/, "(#{id_count})")
 
           if id_count >= 5
             elm.classList.remove("link")
