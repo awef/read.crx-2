@@ -279,10 +279,10 @@ app.boot "/view/thread.html", ->
       for key, val of jump_hoge
         $tmp = $view.find(val)
         if $tmp.length is 1 and not already[$tmp.index()]?
-          $view.find(".#{key}").show()
+          $view.find(".#{key}").css("display", "block")
           already[$tmp.index()] = true
         else
-          $view.find(".#{key}").hide()
+          $view.find(".#{key}").css("display", "none")
       return
 
     $view.find(".jump_panel").bind "click", (e) ->
