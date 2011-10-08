@@ -10,7 +10,6 @@ app.boot "/write/write.html", ->
 
   on_error = (message) ->
     $view.find("form input, form textarea").removeAttr("disabled")
-    $view.find(".cancel").attr("disabled", true)
 
     if message
       $view.find(".notice").text("書き込み失敗 - #{message}")
@@ -23,7 +22,6 @@ app.boot "/write/write.html", ->
     if message.type is "ping"
       e.source.postMessage("write_iframe_pong", "*")
     else if message.type is "success"
-      $view.find(".cancel").attr("disabled", true)
       $view.find(".notice").text("書き込み成功")
       setTimeout ->
         chrome.extension.sendRequest(type: "written", url: arg.url)
@@ -36,14 +34,13 @@ app.boot "/write/write.html", ->
       on_error(message.message)
     return
 
-  $view.find(".cancel, .hide_iframe").bind "click", ->
+  $view.find(".hide_iframe").bind "click", ->
     $view.find(".iframe_container").find("iframe").remove().end().fadeOut("fast")
     $view.find("form input, form textarea").removeAttr("disabled")
-    $view.find(".cacnel").attr("disabled", true)
     $view.find(".notice").text("")
     return
 
-  $view.find(".cancel, .hide_iframe").bind "click", ->
+  $view.find(".hide_iframe").bind "click", ->
     $view
       .find(".iframe_container")
         .find("iframe")
@@ -51,7 +48,6 @@ app.boot "/write/write.html", ->
         .end()
       .fadeOut("fast")
     $view.find("input, textarea").removeAttr("disabled")
-    $view.find(".cancel").attr("disabled", true)
     $view.find(".notice").text("")
     return
 
@@ -65,7 +61,6 @@ app.boot "/write/write.html", ->
     e.preventDefault()
 
     $view.find("input, textarea").attr("disabled", true)
-    $view.find(".cancel").removeAttr("disabled")
 
     iframe_arg =
       rcrx_name: $view.find(".name").val()
