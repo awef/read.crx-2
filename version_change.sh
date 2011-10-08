@@ -7,4 +7,6 @@ rake
 rm ./read.crx_2.zip
 zip -9 -r -X -T ./read.crx_2.zip ./debug -x ./debug/test/\*
 
+clamscan ./read.crx_2.zip
+
 google-chrome chrome-extension://pjgcfbpjgcmblkffcjfmdgcgmdhdaohh/test/test.html
