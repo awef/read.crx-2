@@ -254,6 +254,8 @@ app.bookmark.bookmark_to_url = (bookmark) ->
           bookmark.read_state = read_state
         if res_count?
           bookmark.res_count = res_count
+        else if read_state?.received?
+          bookmark.res_count = read_state.received
         url = app.bookmark.bookmark_to_url(bookmark)
         chrome.bookmarks.create {parentId: source_id, url, title}, (tree) ->
           if tree?
