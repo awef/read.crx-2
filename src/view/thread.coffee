@@ -89,11 +89,19 @@ app.boot "/view/thread.html", ->
 
     app.view_thread._read_state_manager($view)
     $view.one "read_state_attached", ->
+      on_scroll = false
+      $view.find(".content").one "scroll", ->
+        on_scroll = true
+
       $view.removeClass("loading")
 
       $last = $view.find(".content > .last")
       if $last.length is 1
         app.view_thread._jump_to_res($view, +$last.find(".num").text(), false)
+
+      #スクロールされなかった場合も余所の処理を走らすためにscrollを発火
+      unless on_scroll
+        $view.find(".content").triggerHandler("scroll")
 
     app.view_thread._draw($view)
       .fail ->
