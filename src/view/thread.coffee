@@ -138,7 +138,7 @@ app.boot "/view/thread.html", ->
           $menu.find(".res_to_this, .res_to_this2").remove()
 
         $menu.appendTo($view)
-        $.contextmenu($menu, e.clientX, e.clientY)
+        $.contextmenu($menu, e.clientX, e.clientY).appendTo(@parentNode)
 
       return
 
