@@ -1,13 +1,18 @@
 app.boot "/view/sidemenu.html", ->
   $view = $(document.documentElement)
 
-  bookmark_to_li = board_to_li = (board) ->
+  board_to_li = (board) ->
     li = document.createElement("li")
     a = document.createElement("a")
     a.className = "open_in_rcrx"
     a.textContent = board.title
     a.href = app.safe_href(board.url)
     li.appendChild(a)
+    li
+
+  bookmark_to_li = (bookmark) ->
+    li = board_to_li(bookmark)
+    li.classList.add("bookmark")
     li
 
   app.view_module.view($view)
@@ -36,7 +41,7 @@ app.boot "/view/sidemenu.html", ->
           frag.appendChild(bookmark_to_li(bookmark))
 
       $view
-        .find(".view_sidemenu_bookmark")
+        .find("ul:first-of-type")
           .append(frag)
         .end()
         .find("body")
@@ -45,12 +50,12 @@ app.boot "/view/sidemenu.html", ->
     #ブックマーク更新時処理
     listener = (message) ->
       if message.type is "added" and message.bookmark.type is "board"
-        $tmp =  $view.find(".view_sidemenu_bookmark")
+        $tmp = $view.find("ul:first-of-type")
         if $tmp.find("a[href=\"#{message.bookmark.url}\"]").length is 0
           $tmp.append(bookmark_to_li(message.bookmark))
       else if message.type is "removed"
         $view
-          .find(".view_sidemenu_bookmark")
+          .find("ul:first-of-type")
             .find("a[href=\"#{message.bookmark.url}\"]")
               .parent()
                 .remove()

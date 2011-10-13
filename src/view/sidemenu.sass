@@ -33,7 +33,7 @@ a
     :background-image url(/img/search2_19x19.png)
     :width 19px
 
-.view_sidemenu_bookmark:not(:empty):before
+li:not(.bookmark) + li.bookmark:before
   :content "ブックマーク"
   :display block
   :margin 5px
