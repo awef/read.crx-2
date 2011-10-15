@@ -35,12 +35,6 @@ app.boot "/write/write.html", ->
     return
 
   $view.find(".hide_iframe").bind "click", ->
-    $view.find(".iframe_container").find("iframe").remove().end().fadeOut("fast")
-    $view.find("form input, form textarea").removeAttr("disabled")
-    $view.find(".notice").text("")
-    return
-
-  $view.find(".hide_iframe").bind "click", ->
     $view
       .find(".iframe_container")
         .find("iframe")
