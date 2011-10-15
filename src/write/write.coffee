@@ -17,6 +17,8 @@ app.boot "/write/write.html", ->
       $view.find(".notice").text("")
       $view.find(".iframe_container").fadeIn("fast")
 
+    chrome.extension.sendRequest(type: "written?", url: arg.url)
+
   write_timer =
     wake: ->
       if @timer? then @kill()

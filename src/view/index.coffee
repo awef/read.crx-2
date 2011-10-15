@@ -258,7 +258,7 @@ app.main = ->
 
   #書き込み完了メッセージの監視
   chrome.extension.onRequest.addListener (request) ->
-    if request.type is "written"
+    if request.type in ["written", "written?"]
       iframe = document.querySelector("iframe[data-url=\"#{request.url}\"]")
       if iframe
         tmp = JSON.stringify(type: "request_reload", force_update: true)
