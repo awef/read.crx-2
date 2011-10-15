@@ -17,10 +17,21 @@ app.boot "/write/write.html", ->
       $view.find(".notice").text("")
       $view.find(".iframe_container").fadeIn("fast")
 
+  write_timer =
+    wake: ->
+      if @timer? then @kill()
+      @timer = setTimeout ->
+        on_error("一定時間経過しても応答が無いため、処理を中断しました")
+      , 1000 * 30
+    kill: ->
+      clearTimeout(@timer)
+      @timer = null
+
   window.addEventListener "message", (e) ->
     message = JSON.parse(e.data)
     if message.type is "ping"
       e.source.postMessage("write_iframe_pong", "*")
+      write_timer.wake()
     else if message.type is "success"
       $view.find(".notice").text("書き込み成功")
       setTimeout ->
@@ -28,13 +39,17 @@ app.boot "/write/write.html", ->
         chrome.tabs.getCurrent (tab) ->
           chrome.tabs.remove(tab.id)
       , 2000
+      write_timer.kill()
     else if message.type is "confirm"
       $view.find(".iframe_container").fadeIn("fast")
+      write_timer.kill()
     else if message.type is "error"
       on_error(message.message)
+      write_timer.kill()
     return
 
   $view.find(".hide_iframe").bind "click", ->
+    write_timer.kill()
     $view
       .find(".iframe_container")
         .find("iframe")
@@ -90,6 +105,7 @@ app.boot "/write/write.html", ->
       $("<iframe>")
         .attr("src", iframe_url)
         .appendTo($view.find(".iframe_container"))
+      write_timer.wake()
 
       $view.find(".notice").text("書き込み中")
     return
