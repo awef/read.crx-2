@@ -72,7 +72,7 @@ asyncTest "read_stateの保存/更新/取得/削除が出来る", 21, ->
   .pipe ->
     ok(true, "remove: 成功")
     app.read_state.get(original_read_state_1.url)
-  .pipe (res) ->
+  .pipe null, (res) ->
     ok(true, "get: 成功")
     deepEqual(res, undefined, "get: 削除確認")
     app.read_state.get_by_board(app.url.thread_to_board(original_read_state_1.url))
@@ -184,7 +184,7 @@ asyncTest "SQLインジェクションを引き起こす文字列も問題なく
   .pipe ->
     ok(true, "remove: 成功")
     app.read_state.get(read_state.url)
-  .pipe (res) ->
+  .pipe null, (res) ->
     ok(true, "get: 成功")
     deepEqual(res, undefined, "get: データ確認")
     start()

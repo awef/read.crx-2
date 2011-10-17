@@ -248,7 +248,7 @@ app.bookmark.bookmark_to_url = (bookmark) ->
     if app.assert_arg("app.bookmark.add", ["string", "string"], arguments)
       deferred.reject()
     else if not cache.get_bookmark({url})?
-      app.read_state.get(app.url.fix(url)).done (read_state) ->
+      app.read_state.get(app.url.fix(url)).always (read_state) ->
         bookmark = app.bookmark.url_to_bookmark(url)
         if read_state
           bookmark.read_state = read_state

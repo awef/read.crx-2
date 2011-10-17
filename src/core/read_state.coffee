@@ -101,7 +101,7 @@ app.read_state.get = (url) ->
                 data.url = url.original
                 deferred.resolve(data)
               else
-                deferred.resolve()
+                deferred.reject()
           )
         , ->
           app.log("error", "app.read_state.get: トランザクション中断")
