@@ -81,6 +81,8 @@ app.view_board._draw = ($view) ->
       $message_bar = $view.find(".message_bar")
       if res.status is "error"
         $message_bar.addClass("error").html(res.message)
+      else
+        $message_bar.removeClass("error").empty()
 
       if res.data?
         deferred.resolve(res.data)

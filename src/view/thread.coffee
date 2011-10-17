@@ -433,6 +433,8 @@ app.view_thread._draw = ($view, force_update) ->
 
     if result.status is "error"
       $view.find(".message_bar").addClass("error").html(result.message)
+    else
+      $view.find(".message_bar").removeClass("error").empty()
 
     (deferred.reject(); return) unless result.data?
 
