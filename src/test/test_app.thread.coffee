@@ -93,6 +93,45 @@ test "2chのスレをパース出来る", 1, ->
     ]
   deepEqual(app.thread.parse(url, text), expected)
 
+test "2chのDATの破損部分は、破損メッセージで代替する", 1, ->
+  # >>1, 45-47の範囲分のみ抜粋
+  url = "http://raicho.2ch.net/test/read.cgi/twwatch/3526345446225/"
+  text = """
+    偽*** ★<><>2011/10/21(金) 19:26:30.52 ID:???<> てすと　試験テスト <>***を追跡する #dummy
+    </b> dummy <b><><>11/10/21(金) 20:49:40 ID:ehenfox<>62¥¥¥
+    ぬふあ <br> <>twitter
+    ***<><>2011/10/21(金) 20:50:00.66 ID:abcDeFgh<> よ <>
+  """
+  expected =
+    title: "***を追跡する #dummy"
+    res: [
+      {
+        name: "偽*** ★"
+        mail: ""
+        message: " てすと　試験テスト "
+        other: "2011/10/21(金) 19:26:30.52 ID:???"
+      }
+      {
+        name: "</b>データ破損<b>"
+        mail: ""
+        message: "データが破損しています"
+        other: ""
+      }
+      {
+        name: "</b>データ破損<b>"
+        mail: ""
+        message: "データが破損しています"
+        other: ""
+      }
+      {
+        name: "***"
+        mail: ""
+        message: " よ "
+        other: "2011/10/21(金) 20:50:00.66 ID:abcDeFgh"
+      }
+    ]
+  deepEqual(app.thread.parse(url, text), expected)
+
 test "まちBBSのスレをパース出来る", 1, ->
   #削除時の挙動確認用に>>3-4を削除
   #メール欄の確認用に>>5を改変

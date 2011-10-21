@@ -216,19 +216,28 @@ app.thread.parse = (url, text) ->
 
 app.thread._parse_ch = (text) ->
   # name, mail, other, message, thread_title
-  reg = /^(.*?)<>(.*?)<>(.*?)<>(.*?)<>(.*?)(?:<>)?$/gm
+  reg = /^(.*?)<>(.*?)<>(.*?)<>(.*?)<>(.*?)(?:<>)?$/
 
-  thread = {res: []}
+  thread = res: []
   first_flg = true
-  while (reg_res = reg.exec(text))
-    if first_flg
-      thread.title = app.util.decode_char_reference(reg_res[5])
-      first_flg = false
-    thread.res.push
-      name: reg_res[1]
-      mail: reg_res[2]
-      message: reg_res[4]
-      other: reg_res[3]
+  for line in text.split("\n")
+    reg_res = reg.exec(line)
+    if reg_res
+      if first_flg
+        thread.title = app.util.decode_char_reference(reg_res[5])
+        first_flg = false
+      thread.res.push
+        name: reg_res[1]
+        mail: reg_res[2]
+        message: reg_res[4]
+        other: reg_res[3]
+    else
+      continue if line is ""
+      thread.res.push
+        name: "</b>データ破損<b>"
+        mail: ""
+        message: "データが破損しています"
+        other: ""
   if thread.res.length > 0 then thread else null
 
 app.thread._parse_machi = (text) ->
