@@ -69,6 +69,7 @@ app.boot "/view/sidemenu.html", ->
   #板覧関連
   (->
     load = ->
+      $view.addClass("loading")
       app.bbsmenu.get (res) ->
         if res.message?
           parent.app.notice.push(res.message)
@@ -89,6 +90,7 @@ app.boot "/view/sidemenu.html", ->
           .find("body")
             .append(frag)
             .accordion()
+        $view.removeClass("loading")
 
     $view.bind "request_reload", ->
       $view.find("h3:not(:first-of-type), ul:not(:first-of-type)").remove()
