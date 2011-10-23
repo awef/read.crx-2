@@ -247,16 +247,22 @@ app.boot "/view/thread.html", ->
 
     #IDポップアップ
     .delegate ".id.link, .id.freq, .anchor_id", (app.config.get("popup_trigger") or "click"), (e) ->
-      popup_helper this, e, =>
-        anchor_text = this.textContent.replace(/^id:/i, "ID:")
+      popup_helper @, e, =>
+        id_text = @textContent
+          .replace(/^id:/i, "ID:")
+          .replace(/\(\d+\)$/, "")
+
         $popup = $("<div>")
-        $popup.append(
-          $view
-            .find(".id:contains(\"#{anchor_text}\")")
+        $view
+          .find(".id")
+            .filter(->
+              @textContent[0...id_text.length] is id_text and
+                /^\(\d+\)$/.test(@textContent[id_text.length...])
+            )
               .closest("article")
                 .filter(".content > article")
                   .clone()
-        )
+                    .appendTo($popup)
         $popup
       return
 
