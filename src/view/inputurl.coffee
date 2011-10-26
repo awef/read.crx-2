@@ -3,7 +3,9 @@ app.boot "/view/inputurl.html", ->
 
   app.view_module.view($view)
 
-  $view.find("form").bind "submit", ->
+  $view.find("form").bind "submit", (e) ->
+    e.preventDefault()
+
     url = @url.value
     url = url.replace(/// ^ttp:// ///, "http://")
     unless /// ^h?ttp:// ///.test(url)
