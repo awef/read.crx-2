@@ -186,8 +186,9 @@ app.boot "/view/thread.html", ->
       return
 
     #アンカーリンク
-    .delegate ".anchor:not(.disabled)", "click", (e) ->
+    .delegate ".anchor", "click", (e) ->
       e.preventDefault()
+      return unless @classList.contains("disabled")
 
       tmp = app.util.parse_anchor(this.innerHTML)
       target_res_num = tmp.data[0]?.segments[0]?[0]
