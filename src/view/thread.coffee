@@ -168,20 +168,27 @@ app.boot "/view/thread.html", ->
       return
 
     #アンカーポップアップ
-    .delegate ".anchor:not(.disabled)", "mouseenter", (e) ->
+    .delegate ".anchor", "mouseenter", (e) ->
       popup_helper this, e, =>
         $popup = $("<div>")
-        tmp = $view.find(".content")[0].children
-        for anchor in app.util.parse_anchor(this.innerHTML).data
-          for segment in anchor.segments
-            now = segment[0] - 1
-            end = segment[1] - 1
-            while now <= end
-              if tmp[now]
-                $popup.append(tmp[now].cloneNode(true))
-              else
-                break
-              now++
+        if not @classList.contains("disabled")
+          tmp = $view.find(".content")[0].children
+          for anchor in app.util.parse_anchor(this.innerHTML).data
+            for segment in anchor.segments
+              now = segment[0] - 1
+              end = segment[1] - 1
+              while now <= end
+                if tmp[now]
+                  $popup.append(tmp[now].cloneNode(true))
+                else
+                  break
+                now++
+        else
+          $("<div>", {
+              text: "指定されたレスの量が極端に多いため、ポップアップを表示しません"
+              class: "anchor_popup_disabled_message"
+            })
+            .appendTo($popup)
         $popup
       return
 
