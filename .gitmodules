@@ -4,3 +4,6 @@
 [submodule "lib/jail"]
 	path = lib/jail
 	url = https://github.com/sebarmeli/JAIL.git
+[submodule "lib/qunit"]
+	path = lib/qunit
+	url = https://github.com/jquery/qunit.git

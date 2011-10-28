@@ -217,9 +217,9 @@ lambda {
 
   directory "#{DBG}/test"
 
-  file "#{DBG}/test/qunit" => FileList["#{SRC}/test/qunit/**/*"] do
+  file "#{DBG}/test/qunit" => FileList["lib/qunit/qunit/**/*"] do
     sh "rm -rf #{DBG}/test/qunit"
-    sh "cp -r #{SRC}/test/qunit #{DBG}/test"
+    sh "cp -r lib/qunit/qunit #{DBG}/test"
   end
 
   file "#{DBG}/test/test.html" => "#{SRC}/test/test.html", &p_cp
