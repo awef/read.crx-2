@@ -43,6 +43,11 @@ end
 
 task :clean do
   sh "rm -rf #{DBG}"
+  #jQuery
+  cd "lib/jquery" do
+    sh "git checkout -f"
+    sh "make clean"
+  end
 end
 
 task :default => [
@@ -58,7 +63,8 @@ task :default => [
   :view,
   :zombie,
   :write,
-  :test
+  :test,
+  :jquery
 ]
 
 directory DBG
@@ -223,4 +229,25 @@ lambda {
   file "#{DBG}/test/test.html" => "#{SRC}/test/test.html", &p_cp
 
   file "#{DBG}/test/test.js" => FileList["#{SRC}/test/test_*.coffee"], &p_coffee
+}.call()
+
+#jQuery
+lambda {
+  task :jquery => [
+    "#{DBG}/lib/jquery",
+    "#{DBG}/lib/jquery/jquery.min.js"
+  ]
+
+  directory "#{DBG}/lib/jquery"
+  file "#{DBG}/lib/jquery/jquery.min.js" => "lib/jquery/dist/jquery.min.js", &p_cp
+  file "lib/jquery/dist/jquery.min.js" => [
+    "lib/jquery_csp.patch",
+    "lib/jquery/version.txt"
+  ] do
+    cd "lib/jquery" do
+      sh "git checkout -f"
+      sh "patch -p0 -i ../jquery_csp.patch"
+      sh "make min"
+    end
+  end
 }.call()

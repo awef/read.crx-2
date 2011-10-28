@@ -193,7 +193,10 @@ app.boot "/view/thread.html", ->
       return
 
     #アンカーリンク
-    .delegate ".anchor:not(.disabled)", "click", ->
+    .delegate ".anchor", "click", (e) ->
+      e.preventDefault()
+      return unless @classList.contains("disabled")
+
       tmp = app.util.parse_anchor(this.innerHTML)
       target_res_num = tmp.data[0]?.segments[0]?[0]
       if target_res_num?
@@ -254,6 +257,8 @@ app.boot "/view/thread.html", ->
 
     #IDポップアップ
     .delegate ".id.link, .id.freq, .anchor_id", (app.config.get("popup_trigger") or "click"), (e) ->
+      e.preventDefault()
+
       popup_helper @, e, =>
         id_text = @textContent
           .replace(/^id:/i, "ID:")

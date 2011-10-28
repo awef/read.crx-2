@@ -3,6 +3,7 @@
   "version" : "0.29",
   "description" : "2chブラウザ",
   "minimum_chrome_version" : "14",
+  "content_security_policy": "default-src 'self'; img-src 'self' http://* https://*; style-src 'self' 'unsafe-inline'; connect-src 'self' http://*; frame-src 'self' http://*",
   "incognito" : "split",
   "options_page" : "view/index.html?q=config",
   "permissions" : [
