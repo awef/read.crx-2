@@ -413,7 +413,7 @@ app.bookmark.bookmark_to_url = (bookmark) ->
 
       if e.parentId is source_id
         chrome.bookmarks.get id, (array_of_tree) ->
-          if array_of_tree.length is 1
+          if array_of_tree.length is 1 and array_of_tree[0].url?
             cache.update_bookmark(tree: array_of_tree[0])
       else if e.oldParentId is source_id
         cache.remove_bookmark({id})
