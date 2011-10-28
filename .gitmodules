@@ -1,3 +1,6 @@
 [submodule "lib/jquery"]
 	path = lib/jquery
 	url = https://github.com/jquery/jquery.git
+[submodule "lib/jail"]
+	path = lib/jail
+	url = https://github.com/sebarmeli/JAIL.git

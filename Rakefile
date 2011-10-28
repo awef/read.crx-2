@@ -64,17 +64,13 @@ task :default => [
   :zombie,
   :write,
   :test,
-  :jquery
+  :jquery,
+  :jail
 ]
 
 directory DBG
 
 file "#{DBG}/manifest.json" => "#{SRC}/manifest.json", &p_cp
-desc "ライブラリをコピー"
-file "#{DBG}/lib" => FileList["#{SRC}/lib/**/*"] do |t|
-  sh "rm -rf #{DBG}/lib"
-  sh "cp -r #{SRC}/lib #{DBG}"
-end
 
 file "#{DBG}/app_core.js" => FileList["#{SRC}/core/*.coffee"], &p_coffee
 
@@ -250,4 +246,15 @@ lambda {
       sh "make min"
     end
   end
+}.call()
+
+#jail
+lambda {
+  task :jail => [
+    "#{DBG}/lib/jail",
+    "#{DBG}/lib/jail/jail.min.js"
+  ]
+
+  directory "#{DBG}/lib/jail"
+  file "#{DBG}/lib/jail/jail.min.js" => "lib/jail/jail.min.js", &p_cp
 }.call()
