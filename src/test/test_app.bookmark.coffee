@@ -338,23 +338,33 @@ test "ブックマークオブジェクトをURLに変換する", 10, ->
     }, "スレブックマーク(read_state)")
   strictEqual(app.url.fix(result), fixed_url, "スレブックマーク(res_count + read_state + res_count)")
 
-module "app.bookmark",
-  setup: ->
-    @one = (type, listener) ->
-      wrapper = ->
-        listener.apply(this, arguments)
-        app.message.remove_listener(type, wrapper)
-      app.message.add_listener(type, wrapper)
+(->
+  last_bookmark_updated = 0
 
-    @start = app.bookmark.promise_first_scan
+  module "app.bookmark",
+    setup: ->
+      @one = (type, listener) ->
+        wrapper = ->
+          listener.apply(this, arguments)
+          app.message.remove_listener(type, wrapper)
+        app.message.add_listener(type, wrapper)
 
-      .pipe ->
-        $.Deferred (deferred) ->
-          setTimeout ->
-            deferred.resolve()
-          , 300
+      @start = app.bookmark.promise_first_scan
 
-      .promise()
+        .pipe ->
+          $.Deferred (deferred) ->
+            setTimeout ->
+              deferred.resolve()
+            , 300
+
+        .promise()
+
+      @last_updated = ->
+        last_bookmark_updated
+
+  app.message.add_listener "bookmark_updated", ->
+    last_bookmark_updated = Date.now()
+)()
 
 test "ブックマークされていないURLを取得しようとした時は、nullを返す", 1, ->
   strictEqual(app.bookmark.get("http://__dummy.2ch.net/dummy/"), null)
@@ -935,3 +945,60 @@ asyncTest "ノードのフォルダ内での移動は無視する", 2, ->
       deferred_removed_message
     .always ->
       start()
+
+asyncTest "ブックマークフォルダ中のフォルダに関する変更は無視する", 6, ->
+  node_id = null
+
+  fn = (=>
+    tmp = @last_updated()
+    (deferred) =>
+      setTimeout =>
+        ok(tmp is @last_updated())
+        deferred.resolve()
+      , 1000
+  )()
+
+  @start
+    #フォルダ作成
+    .pipe => $.Deferred (deferred) =>
+      chrome.bookmarks.create {
+          parentId: app.config.get("bookmark_id")
+          title: "ダミースレ"
+        }, (tree) =>
+          node_id = tree.id
+          fn(deferred)
+
+    #フォルダタイトル変更
+    .pipe => $.Deferred (deferred) =>
+      chrome.bookmarks.update node_id, {title: "ダミースレ_"}, =>
+        fn(deferred)
+
+    #フォルダ移動（ブックマークフォルダ→外部）
+    .pipe => $.Deferred (deferred) =>
+      chrome.bookmarks.move node_id, {parentId: "1"}, =>
+        fn(deferred)
+
+    #フォルダ移動（外部→ブックマークフォルダ）
+    .pipe => $.Deferred (deferred) =>
+      chrome.bookmarks.move node_id, {
+          parentId: app.config.get("bookmark_id")
+        }, =>
+          fn(deferred)
+
+    #フォルダ移動(ブックマークフォルダ内)
+    #TODO: 予めフォルダ内にブックマークが存在している事前提なのをなんとかする
+    .pipe => $.Deferred (deferred) =>
+      chrome.bookmarks.move node_id, {
+          parentId: app.config.get("bookmark_id")
+          index: 0
+        }, =>
+          fn(deferred)
+
+    #フォルダ削除
+    .pipe => $.Deferred (deferred) =>
+      chrome.bookmarks.removeTree node_id, =>
+        fn(deferred)
+
+    .done ->
+      start()
+
