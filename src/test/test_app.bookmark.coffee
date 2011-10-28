@@ -338,23 +338,33 @@ test "ブックマークオブジェクトをURLに変換する", 10, ->
     }, "スレブックマーク(read_state)")
   strictEqual(app.url.fix(result), fixed_url, "スレブックマーク(res_count + read_state + res_count)")
 
-module "app.bookmark",
-  setup: ->
-    @one = (type, listener) ->
-      wrapper = ->
-        listener.apply(this, arguments)
-        app.message.remove_listener(type, wrapper)
-      app.message.add_listener(type, wrapper)
+(->
+  last_bookmark_updated = 0
 
-    @start = app.bookmark.promise_first_scan
+  module "app.bookmark",
+    setup: ->
+      @one = (type, listener) ->
+        wrapper = ->
+          listener.apply(this, arguments)
+          app.message.remove_listener(type, wrapper)
+        app.message.add_listener(type, wrapper)
 
-      .pipe ->
-        $.Deferred (deferred) ->
-          setTimeout ->
-            deferred.resolve()
-          , 300
+      @start = app.bookmark.promise_first_scan
 
-      .promise()
+        .pipe ->
+          $.Deferred (deferred) ->
+            setTimeout ->
+              deferred.resolve()
+            , 300
+
+        .promise()
+
+      @last_updated = ->
+        last_bookmark_updated
+
+  app.message.add_listener "bookmark_updated", ->
+    last_bookmark_updated = Date.now()
+)()
 
 test "ブックマークされていないURLを取得しようとした時は、nullを返す", 1, ->
   strictEqual(app.bookmark.get("http://__dummy.2ch.net/dummy/"), null)
