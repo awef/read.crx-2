@@ -1,0 +1,13 @@
+diff --git build/post-compile.js build/post-compile.js
+index 98b8b84..55aa457 100644
+--- build/post-compile.js
++++ build/post-compile.js
+@@ -6,7 +6,7 @@ var print = require( "sys" ).print,
+ 	version = fs.readFileSync( "version.txt", "utf8" ),
+ 	// License Template
+ 	license = "/*! jQuery v@VERSION http://jquery.com/ | http://jquery.org/license */";
+-
++	license += "\n/* このファイルは、オリジナルのjQueryをread.crx用にawefがカスタマイズした物です。 */"
+ 
+ // Previously done in sed but reimplemented here due to portability issues
+ src = src.replace( /^(\s*\*\/)(.+)/m, "$1\n$2" ) + ";";
