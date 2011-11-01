@@ -255,7 +255,7 @@ app.main = ->
   #openリクエストの監視
   chrome.extension.onRequest.addListener (request) ->
     if request.type is "open"
-      app.message.send("open", url: request.query)
+      app.message.send("open", url: request.query, new_tab: true)
 
   #書き込み完了メッセージの監視
   chrome.extension.onRequest.addListener (request) ->
