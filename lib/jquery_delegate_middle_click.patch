@@ -1,0 +1,16 @@
+diff --git src/event.js src/event.js
+index 1161386..9d2ccce 100644
+--- src/event.js
++++ src/event.js
+@@ -1089,11 +1089,6 @@ function liveHandler( event ) {
+ 		selectors = [],
+ 		events = jQuery._data( this, "events" );
+ 
+-	// Make sure we avoid non-left-click bubbling in Firefox (#3861) and disabled elements in IE (#6911)
+-	if ( event.liveFired === this || !events || !events.live || event.target.disabled || event.button && event.type === "click" ) {
+-		return;
+-	}
+-
+ 	if ( event.namespace ) {
+ 		namespace = new RegExp("(^|\\.)" + event.namespace.split(".").join("\\.(?:.*\\.)?") + "(\\.|$)");
+ 	}

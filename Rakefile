@@ -239,12 +239,14 @@ lambda {
   file "lib/jquery/dist/jquery.min.js" => [
     "lib/jquery_license.patch",
     "lib/jquery_csp.patch",
+    "lib/jquery_delegate_middle_click.patch",
     "lib/jquery/version.txt"
   ] do
     cd "lib/jquery" do
       sh "git checkout -f"
       sh "patch -p0 -i ../jquery_license.patch"
       sh "patch -p0 -i ../jquery_csp.patch"
+      sh "patch -p0 -i ../jquery_delegate_middle_click.patch"
       sh "make min"
     end
   end
