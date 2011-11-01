@@ -235,7 +235,8 @@ app.main = ->
           .tab("add", {
             element: $iframe[0],
             title: $iframe.attr("data-title"),
-            background: lazy
+            background: lazy,
+            new_tab: message.new_tab is true
           })
 
         if lazy
