@@ -117,3 +117,29 @@ app.util.ch_server_move_detect = (old_board_url, html) ->
       else
         $0
 )()
+
+#マウスクリックのイベントオブジェクトから、リンク先をどう開くべきかの情報を導く
+app.util.get_how_to_open = (e) ->
+  def = {new_tab: false, new_window: false, background: false}
+  if e.type is "click"
+    if e.which is 1 and not e.shiftKey and not e.ctrlKey
+      {new_tab: false, new_window: false, background: false}
+    else if e.which is 1 and e.shiftKey and not e.ctrlKey
+      {new_tab: false, new_window: true, background: false}
+    else if e.which is 1 and not e.shiftKey and e.ctrlKey
+      {new_tab: true, new_window: false, background: true}
+    else if e.which is 1 and e.shiftKey and e.ctrlKey
+      {new_tab: true, new_window: false, background: false}
+    else if e.which is 2 and not e.shiftKey and not e.ctrlKey
+      {new_tab: true, new_window: false, background: true}
+    else if e.which is 2 and e.shiftKey and not e.ctrlKey
+      {new_tab: true, new_window: false, background: false}
+    else if e.which is 2 and not e.shiftKey and e.ctrlKey
+      {new_tab: true, new_window: false, background: true}
+    else if e.which is 2 and e.shiftKey and e.ctrlKey
+      {new_tab: true, new_window: false, background: false}
+    else
+      def
+  else
+    def
+
