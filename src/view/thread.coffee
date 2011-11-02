@@ -426,12 +426,6 @@ app.boot "/view/thread.html", ->
         update_footer()
         return
 
-  $view.find(".next_unread").bind "click", ->
-    if frameElement
-      tmp = {type: "request_killme"}
-      parent.postMessage(JSON.stringify(tmp), location.origin)
-    return
-
 app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
   $content = $(view).find(".content")
   $target = $content.children(":nth-child(#{res_num})")

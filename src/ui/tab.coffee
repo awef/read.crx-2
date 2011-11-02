@@ -31,15 +31,24 @@
         tab_remove.call(that, tab_id: $(this).parent().attr("data-tab_id"))
         return
 
-  # prop.element, prop.title, [prop.background]
+  # prop.element, prop.title, [prop.background], [prop.new_tab]
   tab_add = (prop) ->
     $tab = $(this)
     tab_id = uid()
 
-    $("<li>", {"data-tab_id": tab_id, title: prop.title})
+    if prop.new_tab isnt true
+      $li = $tab.find("li.tab_selected").empty()
+      $tab
+        .find(".tab_content[data-tab_id=\"#{$li.attr("data-tab_id")}\"]")
+          .trigger("tab_removed")
+          .remove()
+    if not $li? or $li.length is 0
+      $li = $("<li>").appendTo($tab.find(".tab_tabbar"))
+
+    $li
+      .attr("data-tab_id": tab_id, title: prop.title)
       .append($("<span>", {text: prop.title}))
       .append($("<img>", {src: "/img/close_16x16.png", title: "閉じる"}))
-      .appendTo($tab.find(".tab_tabbar"))
 
     $(prop.element)
       .addClass("tab_content")

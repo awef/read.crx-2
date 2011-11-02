@@ -73,7 +73,7 @@ app.view_tab_state.restore = ->
   if localStorage["tab_state"]
     for tab in JSON.parse(localStorage["tab_state"])
       is_restored = true
-      app.message.send("open", url: tab.url, title: tab.title, lazy: true)
+      app.message.send("open", url: tab.url, title: tab.title, lazy: true, new_tab: true)
 
   is_restored
 
@@ -235,7 +235,8 @@ app.main = ->
           .tab("add", {
             element: $iframe[0],
             title: $iframe.attr("data-title"),
-            background: lazy
+            background: lazy,
+            new_tab: message.new_tab is true
           })
 
         if lazy
@@ -254,7 +255,7 @@ app.main = ->
   #openリクエストの監視
   chrome.extension.onRequest.addListener (request) ->
     if request.type is "open"
-      app.message.send("open", url: request.query)
+      app.message.send("open", url: request.query, new_tab: true)
 
   #書き込み完了メッセージの監視
   chrome.extension.onRequest.addListener (request) ->
