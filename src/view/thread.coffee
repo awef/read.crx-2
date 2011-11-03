@@ -232,7 +232,9 @@ app.boot "/view/thread.html", ->
       #read.crxで開ける板だった場合はpreventDefaultしてopenメッセージを送出
       if flg
         e.preventDefault()
-        app.message.send("open", url: target_url)
+        how_to_open = app.util.get_how_to_open(e)
+        new_tab = how_to_open.new_tab or how_to_open.new_window or false
+        app.message.send("open", {url: target_url, new_tab})
       return
 
     #リンク先情報ポップアップ
