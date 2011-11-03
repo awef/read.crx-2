@@ -119,7 +119,9 @@ app.util.ch_server_move_detect = (old_board_url, html) ->
 )()
 
 #マウスクリックのイベントオブジェクトから、リンク先をどう開くべきかの情報を導く
-app.util.get_how_to_open = (e) ->
+app.util.get_how_to_open = (original_e) ->
+  e = {which, shiftKey, ctrlKey} = original_e
+  e.ctrlKey or= original_e.metaKey
   def = {new_tab: false, new_window: false, background: false}
   if e.type is "click"
     if e.which is 1 and not e.shiftKey and not e.ctrlKey
