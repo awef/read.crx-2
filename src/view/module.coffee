@@ -16,19 +16,25 @@ app.view_module.view = ($view) ->
   )()
 
   #.open_in_rcrx
-  $view.delegate ".open_in_rcrx", "click", (e) ->
-    e.preventDefault()
-    how_to_open = app.util.get_how_to_open(e)
-    url = this.href or this.getAttribute("data-href")
-    if frameElement
-      app.message.send("open", {
-        url,
-        new_tab: how_to_open.new_tab or how_to_open.new_window
-      })
-    else
-      tmp = chrome.extension.getURL("/view/index.html?")
-      tmp += app.url.build_param(q: url)
-      open(tmp)
+  $view
+    #windowsのオートスクロール対策
+    .delegate ".open_in_rcrx", "mousedown", (e) ->
+      if e.which is 2
+        e.preventDefault()
+      return
+    .delegate ".open_in_rcrx", "click", (e) ->
+      e.preventDefault()
+      how_to_open = app.util.get_how_to_open(e)
+      url = this.href or this.getAttribute("data-href")
+      if frameElement
+        app.message.send("open", {
+          url,
+          new_tab: how_to_open.new_tab or how_to_open.new_window
+        })
+      else
+        tmp = chrome.extension.getURL("/view/index.html?")
+        tmp += app.url.build_param(q: url)
+        open(tmp)
 
   #unloadイベント → view_unloadイベント
   window.addEventListener "unload", ->
