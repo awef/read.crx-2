@@ -212,6 +212,9 @@ app.boot "/view/thread.html", ->
         e.preventDefault()
         return
 
+      #.open_in_rcrxが付与されている場合、処理は他モジュールに任せる
+      return if @classList.contains("open_in_rcrx")
+
       #read.crxで開けるURLかどうかを判定
       flg = false
       tmp = app.url.guess_type(target_url)
@@ -229,12 +232,12 @@ app.boot "/view/thread.html", ->
         #ブックマークされている場合も板として判定
         else if app.bookmark.get(app.url.fix(target_url))
           flg = true
-      #read.crxで開ける板だった場合はpreventDefaultしてopenメッセージを送出
+      #read.crxで開ける板だった場合は.open_in_rcrxを付与して再度クリックイベント送出
       if flg
         e.preventDefault()
-        how_to_open = app.util.get_how_to_open(e)
-        new_tab = how_to_open.new_tab or how_to_open.new_window or false
-        app.message.send("open", {url: target_url, new_tab})
+        @classList.add("open_in_rcrx")
+        app.defer =>
+          $(@).trigger(e)
       return
 
     #リンク先情報ポップアップ
