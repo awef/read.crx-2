@@ -35,6 +35,7 @@ app.view_module.view = ($view) ->
         tmp = chrome.extension.getURL("/view/index.html?")
         tmp += app.url.build_param(q: url)
         open(tmp)
+      return
 
   #unloadイベント → view_unloadイベント
   window.addEventListener "unload", ->
