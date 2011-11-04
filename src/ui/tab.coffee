@@ -11,7 +11,7 @@
       .append('<ul class="tab_tabbar">', '<div class="tab_container">')
       .delegate ".tab_tabbar", "mousewheel", (e) ->
         e.preventDefault()
-        tmp = if e.wheelDelta > 0 then "previousSibling" else "nextSibling"
+        tmp = if e.originalEvent.wheelDelta > 0 then "previousSibling" else "nextSibling"
         next = that.querySelector(".tab_tabbar li.tab_selected")?[tmp]
 
         if next
