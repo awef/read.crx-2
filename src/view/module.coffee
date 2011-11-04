@@ -29,7 +29,8 @@ app.view_module.view = ($view) ->
       if frameElement
         app.message.send("open", {
           url,
-          new_tab: how_to_open.new_tab or how_to_open.new_window
+          new_tab: how_to_open.new_tab or how_to_open.new_window,
+          background: how_to_open.background
         })
       else
         tmp = chrome.extension.getURL("/view/index.html?")
