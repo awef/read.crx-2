@@ -25,11 +25,13 @@ app.view_module.view = ($view) ->
     .delegate ".open_in_rcrx", "click", (e) ->
       e.preventDefault()
       how_to_open = app.util.get_how_to_open(e)
+      new_tab = app.config.get("always_new_tab") is "on"
+      new_tab or= how_to_open.new_tab or how_to_open.new_window
       url = this.href or this.getAttribute("data-href")
       if frameElement
         app.message.send("open", {
-          url,
-          new_tab: how_to_open.new_tab or how_to_open.new_window,
+          url
+          new_tab
           background: how_to_open.background
         })
       else

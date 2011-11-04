@@ -58,6 +58,7 @@ app.config =
   get: (key) ->
     def =
       thumbnail_supported: "on"
+      always_new_tab: "on"
     if localStorage["config_#{key}"]?
       localStorage["config_#{key}"]
     else if def[key]?
