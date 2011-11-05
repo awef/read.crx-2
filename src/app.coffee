@@ -59,6 +59,10 @@ app.config =
     def =
       thumbnail_supported: "on"
       always_new_tab: "on"
+      layout: "pane-3"
+      default_name: ""
+      default_mail: ""
+      popup_trigger: "click"
     if localStorage["config_#{key}"]?
       localStorage["config_#{key}"]
     else if def[key]?

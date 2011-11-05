@@ -148,7 +148,7 @@ app.main = ->
     app.notice.push(message.message)
 
   #タブ・ペインセットアップ
-  layout = app.config.get("layout") or "pane-3"
+  layout = app.config.get("layout")
 
   if layout is "pane-3"
     $("#body").addClass("pane-3")

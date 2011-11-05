@@ -261,7 +261,7 @@ app.boot "/view/thread.html", ->
       return
 
     #IDポップアップ
-    .delegate ".id.link, .id.freq, .anchor_id", (app.config.get("popup_trigger") or "click"), (e) ->
+    .delegate ".id.link, .id.freq, .anchor_id", app.config.get("popup_trigger"), (e) ->
       e.preventDefault()
 
       popup_helper @, e, =>
@@ -284,7 +284,7 @@ app.boot "/view/thread.html", ->
       return
 
     #リプライポップアップ
-    .delegate ".rep", (app.config.get("popup_trigger") or "click"), (e) ->
+    .delegate ".rep", app.config.get("popup_trigger"), (e) ->
       popup_helper this, e, =>
         tmp = $view.find(".content")[0].children
 
