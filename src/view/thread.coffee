@@ -61,25 +61,27 @@ app.boot "/view/thread.html", ->
 
   #リロード処理
   $view.bind "request_reload", (e, ex) ->
-    return if $view.hasClass("loading")
+    #先にread_state更新処理を走らせるために、処理を飛ばす
+    app.defer ->
+      return if $view.hasClass("loading")
 
-    tmp_scrollTop = $view.find(".content").scrollTop()
+      tmp_scrollTop = $view.find(".content").scrollTop()
 
-    $view
-      .addClass("loading")
-      .find(".content")
-        .removeClass("searching")
-        .removeAttr("data-res_search_hit_count")
-      .end()
-      .find(".searchbox")
-        .val("")
+      $view
+        .addClass("loading")
+        .find(".content")
+          .removeClass("searching")
+          .removeAttr("data-res_search_hit_count")
+        .end()
+        .find(".searchbox")
+          .val("")
 
-    app.view_thread._draw($view, ex?.force_update)
-      .done ->
-        suspend_reload_button()
-      .always ->
-        $view.removeClass("loading")
-        $view.find(".content").scrollTop(tmp_scrollTop)
+      app.view_thread._draw($view, ex?.force_update)
+        .done ->
+          suspend_reload_button()
+        .always ->
+          $view.removeClass("loading")
+          $view.find(".content").scrollTop(tmp_scrollTop)
 
     return
 
@@ -765,6 +767,12 @@ app.view_thread._read_state_manager = ($view) ->
 
       .bind "request_reload", ->
         scroll_watcher_suspend = true
+
+        scan()
+        if read_state_updated
+          app.read_state.set(read_state)
+          app.bookmark.update_read_state(read_state)
+          read_state_updated = false
         return
 
       .bind "view_loaded", ->
@@ -775,7 +783,6 @@ app.view_thread._read_state_manager = ($view) ->
         clearInterval(scroll_watcher)
         window.removeEventListener("beforeunload", on_beforeunload)
         #ロード中に閉じられた場合、スキャンは行わない
-        #TODO リロード時の対応
         return if $view.hasClass("loading")
         scan()
         if read_state_updated
