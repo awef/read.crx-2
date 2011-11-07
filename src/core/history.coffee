@@ -88,7 +88,7 @@ app.history.get_count = ->
               deferred.resolve(result.rows.item(0)["count()"])
           )
         , ->
-          app.log("error", "app.history.get: トランザクション中断")
+          app.log("error", "app.history.get_count: トランザクション中断")
           deferred.reject()
 
     .promise()
