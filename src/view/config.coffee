@@ -154,21 +154,24 @@ app.boot "/view/config.html", ->
   )()
 
   #キャッシュ削除ボタン
-  $view.find(".cache_clear").bind "click", ->
-    $button = $(this)
-    $status = $view.find(".cache_clear_status")
+  (->
+    $clear_button = $view.find(".cache_clear")
+    $status = $view.find(".cache_status")
 
-    $button.attr("disabled", true)
-    $status.text("削除中")
+    app.cache.get_count().done (count) ->
+      $status.text("#{count}件")
 
-    app.cache.clear()
-      .always ->
-        $button.removeAttr("disabled")
-      .done ->
-        $status.text("削除完了")
-      .fail ->
-        $status.text("削除失敗")
-    return
+    $clear_button.on "click", ->
+      $clear_button.remove()
+      $status.text("削除中")
+
+      app.cache.clear()
+        .done ->
+          $status.text("削除完了")
+        .fail ->
+          $status.text("削除失敗")
+      return
+  )()
 
   #ブックマークフォルダ変更ボタン
   $view.find(".bookmark_source_change").bind "click", ->
