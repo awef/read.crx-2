@@ -129,40 +129,49 @@ app.boot "/view/config.html", ->
 
     return
 
-  #履歴削除ボタン
-  $view.find(".history_clear").bind "click", ->
-    $button = $(this)
-    $status = $view.find(".history_clear_status")
+  #履歴
+  (->
+    $clear_button = $view.find(".history_clear")
+    $status = $view.find(".history_status")
 
-    $button.attr("disabled", true)
-    $status.text("削除中")
+    #履歴件数表示
+    app.history.get_count().done (count) ->
+      $status.text("#{count}件")
 
-    $.when(app.history.clear(), app.read_state.clear())
-      .always ->
-        $button.removeAttr("disabled")
-      .done ->
-        $status.text("削除完了")
-        $(".view_history").trigger("request_reload")
-      .fail ->
-        $status.text("削除失敗")
-    return
+    #履歴削除ボタン
+    $clear_button.on "click", ->
+      $clear_button.remove()
+      $status.text("削除中")
+
+      $.when(app.history.clear(), app.read_state.clear())
+        .done ->
+          $status.text("削除完了")
+          parent.$("iframe[src=\"/view/history.html\"]").each ->
+            @contentWindow.$(".view").trigger("request_reload")
+        .fail ->
+          $status.text("削除失敗")
+      return
+  )()
 
   #キャッシュ削除ボタン
-  $view.find(".cache_clear").bind "click", ->
-    $button = $(this)
-    $status = $view.find(".cache_clear_status")
+  (->
+    $clear_button = $view.find(".cache_clear")
+    $status = $view.find(".cache_status")
 
-    $button.attr("disabled", true)
-    $status.text("削除中")
+    app.cache.get_count().done (count) ->
+      $status.text("#{count}件")
 
-    app.cache.clear()
-      .always ->
-        $button.removeAttr("disabled")
-      .done ->
-        $status.text("削除完了")
-      .fail ->
-        $status.text("削除失敗")
-    return
+    $clear_button.on "click", ->
+      $clear_button.remove()
+      $status.text("削除中")
+
+      app.cache.clear()
+        .done ->
+          $status.text("削除完了")
+        .fail ->
+          $status.text("削除失敗")
+      return
+  )()
 
   #ブックマークフォルダ変更ボタン
   $view.find(".bookmark_source_change").bind "click", ->
