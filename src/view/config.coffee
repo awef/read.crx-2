@@ -146,7 +146,8 @@ app.boot "/view/config.html", ->
       $.when(app.history.clear(), app.read_state.clear())
         .done ->
           $status.text("削除完了")
-          $(".view_history").trigger("request_reload")
+          parent.$("iframe[src=\"/view/history.html\"]").each ->
+            @contentWindow.$(".view").trigger("request_reload")
         .fail ->
           $status.text("削除失敗")
       return
