@@ -109,6 +109,25 @@ app.cache.remove = (url) ->
 
     .promise()
 
+app.cache.get_count = ->
+  app.cache._db_open
+
+    .pipe (db) ->
+      $.Deferred (deferred) ->
+        db.transaction (transaction) ->
+          transaction.executeSql("""
+              SELECT count() FROM Cache
+            """
+            []
+            (transaction, result) ->
+              deferred.resolve(result.rows.item(0)["count()"])
+          )
+        , ->
+          app.log("error", "app.cache.get_count: トランザクション中断")
+          deferred.reject(status: "error")
+
+    .promise()
+
 app.cache.clear = ->
   app.cache._db_open
 
