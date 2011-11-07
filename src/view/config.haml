@@ -122,8 +122,10 @@
     %section
       %h2 プライバシー
       %div
-        %button.history_clear(type="button") 閲覧履歴を削除する
-        %span.history_clear_status
+        .history
+          閲覧履歴:
+          %span.history_status
+          %button.history_clear(type="button") 削除
 
     %section
       %h2 その他
