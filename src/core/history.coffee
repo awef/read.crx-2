@@ -74,6 +74,25 @@ app.history.get = (offset, limit) ->
 
     .promise()
 
+app.history.get_count = ->
+  app.history._db_open
+
+    .pipe (db) ->
+      $.Deferred (deferred) ->
+        db.readTransaction (transaction) ->
+          transaction.executeSql("""
+              SELECT count() FROM History
+            """
+            []
+            (transaction, result) ->
+              deferred.resolve(result.rows.item(0)["count()"])
+          )
+        , ->
+          app.log("error", "app.history.get: トランザクション中断")
+          deferred.reject()
+
+    .promise()
+
 app.history.clear = ->
   app.history._db_open
 

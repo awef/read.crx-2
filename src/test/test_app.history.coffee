@@ -46,6 +46,21 @@ asyncTest "履歴の取得数を指定出来る", 1, ->
         deepEqual(res, @data_1.slice(0, @data_1.length - 3))
         start()
 
+asyncTest "履歴の件数を取得出来る", 1, ->
+  row = @data_1[0]
+  before = null
+  @data_1_add()
+    .pipe ->
+      app.history.get_count()
+    .pipe (count) ->
+      before = count
+      app.history.add(row.url, row.title, row.date)
+    .pipe ->
+      app.history.get_count()
+    .pipe (count) ->
+      strictEqual(count - before, 1)
+      start()
+
 test "期待されない引数が渡された場合、rejectする", 11, ->
   app.history.add("test").fail -> ok(true)
   app.history.add("test", "test").fail -> ok(true)
