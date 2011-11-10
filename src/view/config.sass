@@ -18,23 +18,32 @@ header
   :padding-left 5px
 
   button
-    :background-color transparent !important
+    :background-color transparent
     :color #fff
+    :border 1px solid #bbb
+      :radius 2px
+    :padding 5px
+    :cursor pointer
+    &:hover
+      :border-color #aaa
 
 section
   :display -webkit-box
   :padding 15px 5px
   :border-top 1px solid #ddd
+  :border-top 1px solid #ccc
   div
     :-webkit-box-flex 1
 
 h2
   :font-size 14px
+  :color #252525
   :margin 0
   :width 130px
 
 h3
   :font-size 14px
+  :color #252525
   :margin 10px 0
 
 h2 + h3
@@ -52,21 +61,19 @@ input[type="text"]
   :padding 3px
   :box-shadow 0 1px 1px #ccc inset
 
-button
-  :background-color #f0f0f0
-  :border 1px solid #bbb
-    :radius 2px
-  :padding 5px
-  :color #222
-  &:not([disabled="disabled"])
+section
+  button
+    :border 1px solid #aaa
+    :border-radius 3px
+    :background-image -webkit-linear-gradient(#eee, #d5d5d5)
+    :color #222
+    :padding 5px
     :cursor pointer
     &:hover
-      :background-color #eaeaea
-      :border-color #aaa
+      :border-color #777
     &:active
-      :background-color #e5e5e5
-  &[disabled="disabled"]
-    :color #999
+      :background-image -webkit-linear-gradient(#ddd, #c5c5c5)
+      :box-shadow 0 1px 1px #999 inset
 
 .notation
   :font-size 14px
