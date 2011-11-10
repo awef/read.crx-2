@@ -107,20 +107,6 @@ lambda {
       -resize 96x96\
       -extent 128x128-16-16\
       #{SRC}/image/svg/read.crx.svg #{t.name}"
-
-    sh "convert\
-      -background transparent\
-      -resize 90x90\
-      -extent 128x128-50-92.5\
-      #{SRC}/image/svg/alpha_badge.svg #{DBG}/img/tmp_alpha_badge.png"
-
-    sh "convert\
-      -background transparent\
-      -composite #{DBG}/img/read.crx_128x128.png\
-      #{DBG}/img/tmp_alpha_badge.png\
-      #{DBG}/img/read.crx_128x128.png"
-
-    sh "rm #{DBG}/img/tmp_alpha_badge.png"
   end
 
   file "#{DBG}/img/loading.svg" => "#{SRC}/image/svg/loading.svg", &p_cp

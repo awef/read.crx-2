@@ -2,8 +2,6 @@
 read.crx 2は[Google Chrome][chrome]のアプリとして作られた2chブラウザです。
 [2ch][2ch]及びその互換BBS、[まちBBS][machi]、[したらば][jbbs]の閲覧に対応しています。
 
-**read.crx 2は現段階でアルファリリースです**
-
 #ビルド関連
 read.crx 2はHaml, Sass, CoffeeScriptで記述されています。また、SVGも使用されているため、ビルドには[Rake][rake], [Haml][haml], [Sass][sass], [CoffeeScript][coffee], [ImageMagick][imagemagick]が必要です。
 
