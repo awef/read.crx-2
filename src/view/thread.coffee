@@ -648,8 +648,11 @@ app.view_thread._const_res = (res_key, res, $view, id_index, rep_index) ->
     .replace(/(h)?(ttps?:\/\/(?:[a-hj-zA-HJ-Z\d_\-.!~*'();\/?:@=+$,%#]|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));)|[iI](?![dD]:)+)+)/g,
       '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
     #Beアイコン埋め込み表示
-    .replace(///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///,
-      '<img class="beicon" src="http://$1" /><br />')
+    .replace ///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///, ($0, $1) ->
+      if app.url.tsld($view[0].getAttribute("data-url")) is "2ch.net"
+        """<img class="beicon" src="http://#{$1}" /><br />"""
+      else
+        $0
     #アンカーリンク
     .replace /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?)*/g, ($0) ->
       str = $0.replace /[\uff10-\uff19]/g, ($0) ->
