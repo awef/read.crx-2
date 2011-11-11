@@ -426,9 +426,9 @@ app.boot "/view/thread.html", ->
 
     #フッター自体の表示/非表示を更新
     if scroll_left is 0
-      $view.find("footer").show()
+      $view[0].querySelector("footer").style["display"] = "block"
     else
-      $view.find("footer").hide()
+      $view[0].querySelector("footer").style["display"] = "none"
 
   $view
     .bind "tab_selected", ->
