@@ -479,13 +479,11 @@ app.view_thread._draw = ($view, force_update) ->
     #idカウント, .freq/.link更新
     (->
       for id, index of $view.data("id_index")
+        id_count = index.length
+        text = "#{id}(#{id_count})"
         for res_key in index
-          id_count = index.length
           elm = content.childNodes[res_key].getElementsByClassName("id")[0]
-
-          elm.textContent =
-            elm.textContent.replace(/(?:\(\d+\))?$/, "(#{id_count})")
-
+          elm.firstChild.nodeValue = text
           if id_count >= 5
             elm.classList.remove("link")
             elm.classList.add("freq")
