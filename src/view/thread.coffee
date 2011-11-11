@@ -470,10 +470,12 @@ app.view_thread._draw = ($view, force_update) ->
     #DOM構築
     (->
       completed = content.childNodes.length
+      id_index = $view.data("id_index")
+      rep_index = $view.data("rep_index")
       frag = document.createDocumentFragment()
       for res, res_key in thread.res
         continue if res_key < completed
-        frag.appendChild(app.view_thread._const_res(res_key, res, $view))
+        frag.appendChild(app.view_thread._const_res(res_key, res, $view, id_index, rep_index))
       content.appendChild(frag)
     )()
     #idカウント, .freq/.link更新
@@ -591,7 +593,7 @@ app.view_thread._draw = ($view, force_update) ->
 
   deferred.promise()
 
-app.view_thread._const_res = (res_key, res, $view) ->
+app.view_thread._const_res = (res_key, res, $view, id_index, rep_index) ->
   article = document.createElement("article")
   article.className = "aa" if /(?:\　{5}|\　\ )(?!<br>|$)/i.test(res.message)
 
@@ -628,7 +630,6 @@ app.view_thread._const_res = (res_key, res, $view) ->
     .replace /(^| )(ID:(?!\?\?\?)[^ <>"']+)/, ($0, $1, $2) ->
       article.setAttribute("data-id", $2)
 
-      id_index = $view.data("id_index")
       id_index[$2] = [] unless id_index[$2]?
       id_index[$2].push(res_key)
 
@@ -659,7 +660,6 @@ app.view_thread._const_res = (res_key, res, $view) ->
 
       #rep_index更新
       if not disabled
-        rep_index = $view.data("rep_index")
         #アンカー一つづつしか来ない処理なので、決め打ちで
         for segment in anchor.data[0].segments
           target = Math.max(1, segment[0])
