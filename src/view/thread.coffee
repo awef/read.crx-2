@@ -307,18 +307,25 @@ app.boot "/view/thread.html", ->
       jump_new: "article.received + article"
       jump_last: "article.last"
 
-    $view.bind "read_state_attached", ->
+    $jump_panel = $view.find(".jump_panel")
+
+    $view.on "read_state_attached", ->
       already = {}
-      for key, val of jump_hoge
-        $tmp = $view.find(val)
-        if $tmp.length is 1 and not already[$tmp.index()]?
-          $view.find(".#{key}").css("display", "block")
-          already[$tmp.index()] = true
+      for panel_item_selector, target_res_selector of jump_hoge
+        res = $view[0].querySelector(target_res_selector)
+        res_num = +res.querySelector(".num").textContent if res
+        if res and not already[res_num]
+          $jump_panel[0]
+            .querySelector(".#{panel_item_selector}")
+              .style["display"] = "block"
+          already[res_num] = true
         else
-          $view.find(".#{key}").css("display", "none")
+          $jump_panel[0]
+            .querySelector(".#{panel_item_selector}")
+              .style["display"] = "none"
       return
 
-    $view.find(".jump_panel").bind "click", (e) ->
+    $jump_panel.on "click", (e) ->
       $target = $(e.target)
 
       for key, val of jump_hoge
