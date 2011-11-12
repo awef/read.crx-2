@@ -263,3 +263,33 @@ $ ->
     deepEqual(@$view.data("id_index"), {"ID:iTGL5FKU": [0]})
     deepEqual(@$view.data("rep_index"), {})
 
+  test "2chのスレッドではレス冒頭のsssp://なリンクを埋め込みする", 3, ->
+    @$view.attr("data-url", "http://_dummy.2ch.net/test/read.cgi/dummy/123/")
+    @example1_data.message = """
+      sssp://img.2ch.net/ico/u_utyuu.gif<br>
+      test
+    """
+    @example1_dom.querySelector(".message").innerHTML = """
+      <img class="beicon" src="http://img.2ch.net/ico/u_utyuu.gif" /><br />
+      test
+    """
+    tmp_dom = app.view_thread._const_res(0, @example1_data, @$view, @$view.data("id_index"), @$view.data("rep_index"))
+    strictEqual(tmp_dom.outerHTML, @example1_dom.outerHTML)
+    deepEqual(@$view.data("id_index"), {"ID:iTGL5FKU": [0]})
+    deepEqual(@$view.data("rep_index"), {})
+
+  test "2ch以外のスレッドではsssp://なリンクを無視する", 3, ->
+    @$view.attr("data-url", "http://jbbs.livedoor.jp/bbs/read.cgi/dummy/0/0/")
+    @example1_data.message = """
+      sssp://img.2ch.net/ico/u_utyuu.gif<br>
+      test
+    """
+    @example1_dom.querySelector(".message").innerHTML = """
+      sssp://img.2ch.net/ico/u_utyuu.gif<br>
+      test
+    """
+    tmp_dom = app.view_thread._const_res(0, @example1_data, @$view, @$view.data("id_index"), @$view.data("rep_index"))
+    strictEqual(tmp_dom.outerHTML, @example1_dom.outerHTML)
+    deepEqual(@$view.data("id_index"), {"ID:iTGL5FKU": [0]})
+    deepEqual(@$view.data("rep_index"), {})
+
