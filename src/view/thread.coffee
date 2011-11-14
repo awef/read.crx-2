@@ -526,16 +526,19 @@ app.view_thread._draw = ($view, force_update) ->
       fn_add_thumbnail = (source_a, thumb_path) ->
         source_a.classList.add("has_thumbnail")
 
-        thumb = document.createElement("a")
+        thumb = document.createElement("div")
         thumb.className = "thumbnail"
-        thumb.href = app.safe_href(source_a.href)
-        thumb.target = "_blank"
-        thumb.rel = "noreferrer"
+
+        thumb_link = document.createElement("a")
+        thumb_link.href = app.safe_href(source_a.href)
+        thumb_link.target = "_blank"
+        thumb_link.rel = "noreferrer"
+        thumb.appendChild(thumb_link)
 
         thumb_img = document.createElement("img")
         thumb_img.src = "/img/loading.svg"
         thumb_img.setAttribute("data-href", thumb_path)
-        thumb.appendChild(thumb_img)
+        thumb_link.appendChild(thumb_img)
 
         imgs.push(thumb_img)
 
@@ -582,6 +585,12 @@ app.view_thread._draw = ($view, force_update) ->
         timeout: 20
         effect: "fadeIn"
         selector: ".content"
+        callbackAfterEachImage: (e) ->
+          img = e[0]
+          $(img).one "load", ->
+            a = img.parentNode
+            container = a.parentNode
+            a.style["top"] = "#{(container.offsetHeight - a.offsetHeight) / 2}px"
       )
     )()
 

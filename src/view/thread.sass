@@ -99,19 +99,25 @@ header
   @include ascii_art
 
 .thumbnail
+  $container_height: 100px
+  :position relative
   :display inline-block
-  :margin 5px
-  :background-color #fff
-  :padding 3px
-  :box-shadow 0 1px 3px 0px rgba(0, 0, 0, 0.4)
-  :border 1px solid #aaa
-  img
+  :margin 10px
+  :height $container_height
+  > a
+    $a_padding: 3px
+    :position relative
     :display block
-    :max-width 150px
-    :max-height 100px
-    &[src="/img/loading.svg"]
-      :width 50px
-      :height 50px
+    :background-color #fff
+    :padding $a_padding
+    :box-shadow 0 1px 3px 0px rgba(#000, 0.4)
+    > img
+      :display block
+      :max-width 150px
+      :max-height $container_height - $a_padding * 2
+      &[src="/img/loading.svg"]
+        :width 50px
+        :height 50px
 
 .popup
   :position fixed
