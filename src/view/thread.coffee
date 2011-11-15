@@ -453,11 +453,11 @@ app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
 app.view_thread._draw = ($view, force_update) ->
   deferred = $.Deferred()
 
-  app.thread.get $view.attr("data-url"), (result) ->
+  fn = (result) ->
     $content = $view.find(".content")
     content = $content[0]
 
-    if result.status is "error"
+    if result.type is "error"
       $view.find(".message_bar").addClass("error").html(result.message)
     else
       $view.find(".message_bar").removeClass("error").empty()
@@ -598,7 +598,11 @@ app.view_thread._draw = ($view, force_update) ->
 
     deferred.resolve()
 
-  , force_update
+  app.thread.get($view.attr("data-url"), force_update)
+    .progress (res) ->
+      fn(res)
+    .always (res) ->
+      fn(res)
 
   deferred.promise()
 

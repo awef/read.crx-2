@@ -18,25 +18,41 @@ app.thread._get_xhr_info = (thread_url) ->
       path: "http://#{tmp[1]}/#{tmp[3]}/dat/#{tmp[4]}.dat",
       charset: "Shift_JIS"
 
-app.thread.get = (url, callback, force_update) ->
-  tmp = app.thread._get_xhr_info(url)
-  if not tmp
-    callback(status: "error")
-    return
-  xhr_path = tmp.path
-  xhr_charset = tmp.charset
+###
+promiseを返す
+キャッシュ取得成功時
+notify
+  type: "cache_found", data: thread, [message]
+通信完了
+resolve
+  type: "success", data: thread, [message]
+通信失敗 reject
+resolve
+  type: "error", [data: thread], [message]
+###
+app.thread.get = (url, force_update) ->
+  res_deferred = $.Deferred()
+
+  xhr_info = app.thread._get_xhr_info(url)
+  return res_deferred.reject().promise() unless xhr_info
+  xhr_path = xhr_info.path
+  xhr_charset = xhr_info.charset
+
   delta_flg = false
 
+  #キャッシュ取得
   app.cache.get(xhr_path)
-    #キャッシュ取得部
     .pipe (cache) ->
       $.Deferred (deferred) ->
         if force_update or Date.now() - cache.data.last_updated > 1000 * 3
+          #通信が生じる場合のみ、notifyでキャッシュを送出する
+          app.defer ->
+            res_deferred.notify(type: "cache_found", data: app.thread.parse(url, cache.data.data))
           deferred.reject(cache)
         else
           deferred.resolve(cache)
 
-    #通信部
+    #通信
     .pipe null, (cache) ->
       $.Deferred (deferred) ->
         tmp_xhr_path = xhr_path
@@ -45,77 +61,77 @@ app.thread.get = (url, callback, force_update) ->
             delta_flg = true
             tmp_xhr_path += (+cache.data.res_length + 1) + "-"
 
-        xhr = new XMLHttpRequest()
-        xhr_timer = setTimeout((-> xhr.abort()), 1000 * 30)
-        xhr.onreadystatechange = ->
-          if xhr.readyState is 4
-            clearTimeout(xhr_timer)
-            if xhr.status is 200
-              deferred.resolve(cache, xhr)
-            else if cache.status is "success" and xhr.status is 304
-              deferred.resolve(cache, xhr)
+        ajax_data =
+          url: tmp_xhr_path
+          bforeSend: undefined
+          cache: false
+          dataType: "text"
+          headers: {}
+          mimeType: "text/plain; charset=#{xhr_charset}"
+          timeout: 1000 * 30
+          complete: ($xhr) ->
+            if $xhr.status is 200
+              deferred.resolve(cache, $xhr)
+            else if cache.status is "success" and $xhr.status is 304
+              deferred.resolve(cache, $xhr)
             else
-              deferred.reject(cache, xhr)
-        xhr.overrideMimeType("text/plain; charset=" + xhr_charset)
-        xhr.open("GET", tmp_xhr_path + "?_=" + Date.now().toString(10))
+              deferred.reject(cache, $xhr)
+
         if cache.status is "success"
           if cache.data.last_modified?
-            xhr.setRequestHeader(
-              "If-Modified-Since",
-              new Date(cache.data.last_modified).toUTCString()
-            )
-
+            ajax_data.headers["If-Modified-Since"] = new Date(cache.data.last_modified).toUTCString()
           if cache.data.etag?
-            xhr.setRequestHeader("If-None-Match", cache.data.etag)
-        xhr.send(null)
+            ajax_data.headers["If-None-Match"] = cache.data.etag
 
-    #パース部
-    .pipe((fn = (cache, xhr) ->
+        $.ajax(ajax_data)
+
+    #パース
+    .pipe((fn = (cache, $xhr) ->
       $.Deferred (deferred) ->
         guess_res = app.url.guess_type(url)
 
-        #差分取得
-        if delta_flg and xhr?.status is 200
-          thread = app.thread.parse(url, cache.data.data + xhr.responseText)
-        else if xhr?.status is 200
-          thread = app.thread.parse(url, xhr.responseText)
+        if $xhr?.status is 200
+          if delta_flg
+            thread = app.thread.parse(url, cache.data.data + $xhr.responseText)
+          else
+            thread = app.thread.parse(url, $xhr.responseText)
         #2ch系BBSのdat落ち
-        else if guess_res.bbs_type is "2ch" and xhr?.status is 203
+        else if guess_res.bbs_type is "2ch" and $xhr?.status is 203
           if cache?.status is "success"
             thread = app.thread.parse(url, cache.data.data)
           else
-            thread = app.thread.parse(url, xhr.responseText)
+            thread = app.thread.parse(url, $xhr.responseText)
         else if cache?.status is "success"
           thread = app.thread.parse(url, cache.data.data)
 
         #パース成功
         if thread
           #通信成功
-          if xhr?.status is 200 or
+          if $xhr?.status is 200 or
               #通信成功（更新なし）
-              xhr?.status is 304 or
+              $xhr?.status is 304 or
               #キャッシュが期限内だった場合
-              (not xhr and cache?.status is "success")
-            deferred.resolve(cache, xhr, thread)
+              (not $xhr and cache?.status is "success")
+            deferred.resolve(cache, $xhr, thread)
           #2ch系BBSのdat落ち
-          else if guess_res.bbs_type is "2ch" and xhr?.status is 203
-            deferred.reject(cache, xhr, thread)
+          else if guess_res.bbs_type is "2ch" and $xhr?.status is 203
+            deferred.reject(cache, $xhr, thread)
           else
-            deferred.reject(cache, xhr, thread)
+            deferred.reject(cache, $xhr, thread)
         #パース失敗
         else
-          deferred.reject(cache, xhr)
+          deferred.reject(cache, $xhr)
     ), fn)
 
     #コールバック
-    .done (cache, xhr, thread) ->
-      callback(status: "success", data: thread)
+    .done (cache, $xhr, thread) ->
+      res_deferred.resolve(type: "success", data: thread)
 
-    .fail (cache, xhr, thread) ->
+    .fail (cache, $xhr, thread) ->
       message = ""
 
       #2chでrejectされてる場合は移転を疑う
-      if app.url.tsld(url) is "2ch.net" and xhr
+      if app.url.tsld(url) is "2ch.net" and $xhr
         app.util.ch_server_move_detect(app.url.thread_to_board(url))
           #移転検出時
           .done (new_board_url) ->
@@ -134,7 +150,7 @@ app.thread.get = (url, callback, force_update) ->
             """
           #移転検出出来なかった場合
           .fail ->
-            if xhr?.status is 203
+            if $xhr?.status is 203
               message += "dat落ちしたスレッドです。"
             else
               message += "スレッドの読み込みに失敗しました。"
@@ -143,9 +159,9 @@ app.thread.get = (url, callback, force_update) ->
               message += "キャッシュに残っていたデータを表示します。"
 
             if thread
-              callback({status: "error", data: thread, message})
+              res_deferred.reject({type: "error", data: thread, message})
             else
-              callback({status: "error", message})
+              res_deferred.reject({type: "error", message})
       else
         message += "スレッドの読み込みに失敗しました。"
 
@@ -153,14 +169,14 @@ app.thread.get = (url, callback, force_update) ->
           message += "キャッシュに残っていたデータを表示します。"
 
         if thread
-          callback({status: "error", data: thread, message})
+          res_deferred.reject({type: "error", data: thread, message})
         else
-          callback({status: "error", message})
+          res_deferred.reject({type: "error", message})
 
     #キャッシュ更新部
-    .done (cache, xhr, thread) ->
+    .done (cache, $xhr, thread) ->
       #通信に成功した場合
-      if xhr?.status is 200
+      if $xhr?.status is 200
         old_cache = cache
         cache =
           url: xhr_path
@@ -168,40 +184,42 @@ app.thread.get = (url, callback, force_update) ->
           res_length: thread.res.length
 
         if delta_flg
-          cache.data = old_cache.data.data + xhr.responseText
+          cache.data = old_cache.data.data + $xhr.responseText
         else
-          cache.data = xhr.responseText
+          cache.data = $xhr.responseText
 
         last_modified = new Date(
-          xhr.getResponseHeader("Last-Modified") or "dummy"
+          $xhr.getResponseHeader("Last-Modified") or "dummy"
         ).getTime()
 
         if not isNaN(last_modified)
           cache.last_modified = last_modified
 
-        etag = xhr.getResponseHeader("ETag")
+        etag = $xhr.getResponseHeader("ETag")
         if etag
           cache.etag = etag
 
         app.cache.set(cache)
 
       #304だった場合はアップデート時刻のみ更新
-      else if cache?.status is "success" and xhr?.status is 304
+      else if cache?.status is "success" and $xhr?.status is 304
         cache.data.last_updated = Date.now()
         app.cache.set(cache.data)
 
     #ブックマーク更新部
-    .always (cache, xhr, thread) ->
+    .always (cache, $xhr, thread) ->
       #キャッシュが残っていればthreadはキャッシュになるので、
       #そのままレス数更新処理を行って大丈夫
       if thread?
-        if xhr?.status is 200 or xhr?.status is 203
+        if $xhr?.status is 200 or $xhr?.status is 203
           app.bookmark.update_res_count(url, thread.res.length)
 
     #dat落ち検出
-    .fail (cache, xhr, thread) ->
-      if xhr?.status is 203
+    .fail (cache, $xhr, thread) ->
+      if $xhr?.status is 203
         app.bookmark.update_expired(url, true)
+
+  res_deferred.promise()
 
 app.thread.parse = (url, text) ->
   tmp = /^http:\/\/\w+\.(\w+\.\w+)\//.exec(url)
