@@ -388,57 +388,54 @@ app.boot "/view/thread.html", ->
             $(this).triggerHandler("input")
         return
 
-  #フッター表示処理
-  update_footer = ->
-    content = $view[0].querySelector(".content")
-    scroll_left = content.scrollHeight -
-        (content.offsetHeight + content.scrollTop)
+  #未読ブックマーク表示処理
+  (->
+    content = $view.find(".content")[0]
+    next_unread = $view.find(".next_unread")[0]
 
-    #未読ブックマーク表示更新
-    if scroll_left is 0
-      #表示するべき未読ブックマークが有るかをスキャン
-      next = null
-      for bookmark in app.bookmark.get_all()
-        if bookmark.type isnt "thread" or bookmark.url is view_url
-          continue
+    update_next_unread = ->
+      scroll_left = content.scrollHeight - (content.offsetHeight + content.scrollTop)
 
-        if bookmark.res_count?
-          if bookmark.res_count - (bookmark.read_state?.read or 0) is 0
+      if scroll_left is 0
+        #表示するべき未読ブックマークが有るかをスキャン
+        next = null
+        for bookmark in app.bookmark.get_all()
+          if bookmark.type isnt "thread" or bookmark.url is view_url
             continue
 
-        if parent.document.querySelector("[data-url=\"#{bookmark.url}\"]")
-          continue
+          if bookmark.res_count?
+            if bookmark.res_count - (bookmark.read_state?.read or 0) is 0
+              continue
+
+          #既にタブで開かれている場合は無視
+          if parent.document.querySelector("[data-url=\"#{bookmark.url}\"]")
+            continue
+          else
+            next = bookmark
+            break
+
+        if next
+          text = "未読ブックマーク: #{next.title}"
+          if next.res_count?
+            text += " (未読#{next.res_count - (next.read_state?.read or 0)}件)"
+          next_unread.href = app.safe_href(next.url)
+          next_unread.textContent = text
+          next_unread.style["display"] = "block"
         else
-          next = bookmark
-          break
-
-      if next
-        text = "未読ブックマーク: #{next.title}"
-        if next.res_count?
-          text += " (未読#{next.res_count - (next.read_state?.read or 0)}件)"
-        $view
-          .find(".next_unread")
-            .attr("href", app.safe_href(next.url))
-            .text(text)
-            .show()
+          next_unread.style["display"] = "none"
       else
-        $view.find(".next_unread").hide()
+        next_unread.style["display"] = "none"
 
-    #フッター自体の表示/非表示を更新
-    if scroll_left is 0
-      $view[0].querySelector("footer").style["display"] = "block"
-    else
-      $view[0].querySelector("footer").style["display"] = "none"
-
-  $view
-    .on "tab_selected view_loaded", ->
-      update_footer()
-      return
-
-    .find(".content")
-      .bind "scroll", ->
-        update_footer()
+    $view
+      .on "tab_selected view_loaded", ->
+        update_next_unread()
         return
+
+      .find(".content")
+        .on "scroll", ->
+          update_next_unread()
+          return
+  )()
 
 app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
   $content = $(view).find(".content")
