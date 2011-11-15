@@ -431,7 +431,7 @@ app.boot "/view/thread.html", ->
       $view[0].querySelector("footer").style["display"] = "none"
 
   $view
-    .bind "tab_selected", ->
+    .on "tab_selected view_loaded", ->
       update_footer()
       return
 
