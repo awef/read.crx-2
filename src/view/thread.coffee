@@ -50,14 +50,6 @@ app.boot "/view/thread.html", ->
   else
     $view.find(".button_write").remove()
 
-  #リロードボタンを一時的に無効化する
-  suspend_reload_button = ->
-    $button = $view.find(".button_reload")
-    $button.addClass("disabled")
-    setTimeout ->
-      $button.removeClass("disabled")
-    , 1000 * 5
-
   #リロード処理
   $view.bind "request_reload", (e, ex) ->
     #先にread_state更新処理を走らせるために、処理を飛ばす
@@ -73,8 +65,6 @@ app.boot "/view/thread.html", ->
           .val("")
 
       app.view_thread._draw($view, ex?.force_update)
-        .done ->
-          suspend_reload_button()
 
     return
 
@@ -99,7 +89,6 @@ app.boot "/view/thread.html", ->
     app.view_thread._draw($view)
       .always ->
         app.history.add(view_url, document.title, opened_at)
-        suspend_reload_button()
   )()
 
   $view
@@ -440,6 +429,8 @@ app.view_thread._draw = ($view, force_update) ->
   deferred = $.Deferred()
 
   $view.addClass("loading")
+  $reload_button = $view.find(".button_reload")
+  $reload_button.addClass("disabled")
 
   fn = (result) ->
     $content = $view.find(".content")
@@ -592,6 +583,7 @@ app.view_thread._draw = ($view, force_update) ->
     .always (res) ->
       fn(res)
       $view.removeClass("loading")
+      setTimeout((-> $reload_button.removeClass("disabled")), 1000 * 5)
 
   deferred.promise()
 
