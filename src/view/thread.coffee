@@ -64,8 +64,6 @@ app.boot "/view/thread.html", ->
     app.defer ->
       return if $view.hasClass("loading")
 
-      tmp_scrollTop = $view.find(".content").scrollTop()
-
       $view
         .find(".content")
           .removeClass("searching")
@@ -77,8 +75,6 @@ app.boot "/view/thread.html", ->
       app.view_thread._draw($view, ex?.force_update)
         .done ->
           suspend_reload_button()
-        .always ->
-          $view.find(".content").scrollTop(tmp_scrollTop)
 
     return
 
