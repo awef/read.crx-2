@@ -9,7 +9,6 @@ app.boot "/view/thread.html", ->
 
   $view = $(document.documentElement)
   $view.attr("data-url", view_url)
-  $view.addClass("loading")
 
   $view.data("id_index", {})
   $view.data("rep_index", {})
@@ -68,7 +67,6 @@ app.boot "/view/thread.html", ->
       tmp_scrollTop = $view.find(".content").scrollTop()
 
       $view
-        .addClass("loading")
         .find(".content")
           .removeClass("searching")
           .removeAttr("data-res_search_hit_count")
@@ -80,7 +78,6 @@ app.boot "/view/thread.html", ->
         .done ->
           suspend_reload_button()
         .always ->
-          $view.removeClass("loading")
           $view.find(".content").scrollTop(tmp_scrollTop)
 
     return
@@ -95,8 +92,6 @@ app.boot "/view/thread.html", ->
       $view.find(".content").one "scroll", ->
         on_scroll = true
 
-      $view.removeClass("loading")
-
       $last = $view.find(".content > .last")
       if $last.length is 1
         app.view_thread._jump_to_res($view, +$last.find(".num").text(), false)
@@ -106,8 +101,6 @@ app.boot "/view/thread.html", ->
         $view.find(".content").triggerHandler("scroll")
 
     app.view_thread._draw($view)
-      .fail ->
-         $view.removeClass("loading")
       .always ->
         app.history.add(view_url, document.title, opened_at)
         suspend_reload_button()
@@ -450,6 +443,8 @@ app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
 app.view_thread._draw = ($view, force_update) ->
   deferred = $.Deferred()
 
+  $view.addClass("loading")
+
   fn = (result) ->
     $content = $view.find(".content")
     content = $content[0]
@@ -600,6 +595,7 @@ app.view_thread._draw = ($view, force_update) ->
       fn(res)
     .always (res) ->
       fn(res)
+      $view.removeClass("loading")
 
   deferred.promise()
 
