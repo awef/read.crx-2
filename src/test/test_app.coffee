@@ -9,6 +9,12 @@ module "app.deep_copy", {
         test6: "テスト"
         test7: [
           {test8: Math.PI}
+          null
+          undefined
+          ""
+          NaN
+          0
+          -1.23
         ]
 }
 
