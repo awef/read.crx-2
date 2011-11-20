@@ -9,7 +9,6 @@ app.boot "/view/thread.html", ->
 
   $view = $(document.documentElement)
   $view.attr("data-url", view_url)
-  $view.addClass("loading")
 
   $view.data("id_index", {})
   $view.data("rep_index", {})
@@ -51,24 +50,13 @@ app.boot "/view/thread.html", ->
   else
     $view.find(".button_write").remove()
 
-  #リロードボタンを一時的に無効化する
-  suspend_reload_button = ->
-    $button = $view.find(".button_reload")
-    $button.addClass("disabled")
-    setTimeout ->
-      $button.removeClass("disabled")
-    , 1000 * 5
-
   #リロード処理
   $view.bind "request_reload", (e, ex) ->
     #先にread_state更新処理を走らせるために、処理を飛ばす
     app.defer ->
       return if $view.hasClass("loading")
 
-      tmp_scrollTop = $view.find(".content").scrollTop()
-
       $view
-        .addClass("loading")
         .find(".content")
           .removeClass("searching")
           .removeAttr("data-res_search_hit_count")
@@ -77,11 +65,6 @@ app.boot "/view/thread.html", ->
           .val("")
 
       app.view_thread._draw($view, ex?.force_update)
-        .done ->
-          suspend_reload_button()
-        .always ->
-          $view.removeClass("loading")
-          $view.find(".content").scrollTop(tmp_scrollTop)
 
     return
 
@@ -95,8 +78,6 @@ app.boot "/view/thread.html", ->
       $view.find(".content").one "scroll", ->
         on_scroll = true
 
-      $view.removeClass("loading")
-
       $last = $view.find(".content > .last")
       if $last.length is 1
         app.view_thread._jump_to_res($view, +$last.find(".num").text(), false)
@@ -105,12 +86,15 @@ app.boot "/view/thread.html", ->
       unless on_scroll
         $view.find(".content").triggerHandler("scroll")
 
+      #二度目以降のread_state_attached時に、最後に見ていたスレが当時最新のレスだった場合、新着を強調表示するためにスクロールを行う
+      $view.on "read_state_attached", ->
+        $tmp = $view.find(".content > .last.received")
+        return if $tmp.length isnt 1
+        app.view_thread._jump_to_res($view, +$tmp.find(".num").text(), true)
+
     app.view_thread._draw($view)
-      .fail ->
-         $view.removeClass("loading")
       .always ->
         app.history.add(view_url, document.title, opened_at)
-        suspend_reload_button()
   )()
 
   $view
@@ -388,57 +372,54 @@ app.boot "/view/thread.html", ->
             $(this).triggerHandler("input")
         return
 
-  #フッター表示処理
-  update_footer = ->
-    content = $view[0].querySelector(".content")
-    scroll_left = content.scrollHeight -
-        (content.offsetHeight + content.scrollTop)
+  #未読ブックマーク表示処理
+  (->
+    content = $view.find(".content")[0]
+    next_unread = $view.find(".next_unread")[0]
 
-    #未読ブックマーク表示更新
-    if scroll_left is 0
-      #表示するべき未読ブックマークが有るかをスキャン
-      next = null
-      for bookmark in app.bookmark.get_all()
-        if bookmark.type isnt "thread" or bookmark.url is view_url
-          continue
+    update_next_unread = ->
+      scroll_left = content.scrollHeight - (content.offsetHeight + content.scrollTop)
 
-        if bookmark.res_count?
-          if bookmark.res_count - (bookmark.read_state?.read or 0) is 0
+      if scroll_left is 0
+        #表示するべき未読ブックマークが有るかをスキャン
+        next = null
+        for bookmark in app.bookmark.get_all()
+          if bookmark.type isnt "thread" or bookmark.url is view_url
             continue
 
-        if parent.document.querySelector("[data-url=\"#{bookmark.url}\"]")
-          continue
+          if bookmark.res_count?
+            if bookmark.res_count - (bookmark.read_state?.read or 0) is 0
+              continue
+
+          #既にタブで開かれている場合は無視
+          if parent.document.querySelector("[data-url=\"#{bookmark.url}\"]")
+            continue
+          else
+            next = bookmark
+            break
+
+        if next
+          text = "未読ブックマーク: #{next.title}"
+          if next.res_count?
+            text += " (未読#{next.res_count - (next.read_state?.read or 0)}件)"
+          next_unread.href = app.safe_href(next.url)
+          next_unread.textContent = text
+          next_unread.style["display"] = "block"
         else
-          next = bookmark
-          break
-
-      if next
-        text = "未読ブックマーク: #{next.title}"
-        if next.res_count?
-          text += " (未読#{next.res_count - (next.read_state?.read or 0)}件)"
-        $view
-          .find(".next_unread")
-            .attr("href", app.safe_href(next.url))
-            .text(text)
-            .show()
+          next_unread.style["display"] = "none"
       else
-        $view.find(".next_unread").hide()
+        next_unread.style["display"] = "none"
 
-    #フッター自体の表示/非表示を更新
-    if scroll_left is 0
-      $view[0].querySelector("footer").style["display"] = "block"
-    else
-      $view[0].querySelector("footer").style["display"] = "none"
-
-  $view
-    .bind "tab_selected", ->
-      update_footer()
-      return
-
-    .find(".content")
-      .bind "scroll", ->
-        update_footer()
+    $view
+      .on "tab_selected view_loaded", ->
+        update_next_unread()
         return
+
+      .find(".content")
+        .on "scroll", ->
+          update_next_unread()
+          return
+  )()
 
 app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
   $content = $(view).find(".content")
@@ -453,11 +434,15 @@ app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
 app.view_thread._draw = ($view, force_update) ->
   deferred = $.Deferred()
 
-  app.thread.get $view.attr("data-url"), (result) ->
+  $view.addClass("loading")
+  $reload_button = $view.find(".button_reload")
+  $reload_button.addClass("disabled")
+
+  fn = (result) ->
     $content = $view.find(".content")
     content = $content[0]
 
-    if result.status is "error"
+    if result.type is "error"
       $view.find(".message_bar").addClass("error").html(result.message)
     else
       $view.find(".message_bar").removeClass("error").empty()
@@ -598,7 +583,13 @@ app.view_thread._draw = ($view, force_update) ->
 
     deferred.resolve()
 
-  , force_update
+  app.thread.get($view.attr("data-url"), force_update)
+    .progress (res) ->
+      fn(res)
+    .always (res) ->
+      fn(res)
+      $view.removeClass("loading")
+      setTimeout((-> $reload_button.removeClass("disabled")), 1000 * 5)
 
   deferred.promise()
 

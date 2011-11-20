@@ -185,16 +185,41 @@ footer
   :position absolute
   :bottom 0
   :left 0
-  :padding 10px
-  :display none
 
-.next_unread
-  :display block
-  :font-size 12px
-  :border 1px solid #bbb
-  :background-color #eee
-  :color #222
-  :padding 10px
-  :border-radius 5px
-  :text-decoration none
+  > *
+    :margin 10px
+    :float left
+    :display none
+
+  > .loading_indicator
+    :font-size 12px
+    :border 1px solid #bbb
+    :background-color #eee
+    :color #222
+    :padding 10px
+    :border-radius 5px
+    :background-color #333
+    :color #fff
+
+  > .next_unread
+    :font-size 12px
+    :border 1px solid #bbb
+    :background-color #eee
+    :color #222
+    :padding 10px
+    :border-radius 5px
+    :text-decoration none
+
+.view.loading
+  .content
+    :display block !important
+    ~ .loading_overlay
+      :display none !important
+    ~ footer .loading_indicator
+      :display block !important
+    &:empty
+      ~ .loading_overlay
+        :display block !important
+      ~ footer .loading_indicator
+        :display none !important
 
