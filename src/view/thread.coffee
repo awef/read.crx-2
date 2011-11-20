@@ -86,6 +86,12 @@ app.boot "/view/thread.html", ->
       unless on_scroll
         $view.find(".content").triggerHandler("scroll")
 
+      #二度目以降のread_state_attached時に、最後に見ていたスレが当時最新のレスだった場合、新着を強調表示するためにスクロールを行う
+      $view.on "read_state_attached", ->
+        $tmp = $view.find(".content > .last.received")
+        return if $tmp.length isnt 1
+        app.view_thread._jump_to_res($view, +$tmp.find(".num").text(), true)
+
     app.view_thread._draw($view)
       .always ->
         app.history.add(view_url, document.title, opened_at)
