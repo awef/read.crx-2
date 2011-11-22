@@ -230,9 +230,9 @@ lambda {
   ] do
     cd "lib/jquery" do
       sh "git checkout -f"
-      sh "patch -p0 -i ../jquery_license.patch"
-      sh "patch -p0 -i ../jquery_csp.patch"
-      sh "patch -p0 -i ../jquery_delegate_middle_click.patch"
+      sh "patch -p0 --no-backup-if-mismatch -i ../jquery_license.patch"
+      sh "patch -p0 --no-backup-if-mismatch -i ../jquery_csp.patch"
+      sh "patch -p0 --no-backup-if-mismatch -i ../jquery_delegate_middle_click.patch"
       sh "make min"
     end
   end
