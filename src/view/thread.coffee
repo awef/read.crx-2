@@ -439,11 +439,10 @@ app.view_thread._draw = ($view, force_update) ->
   $view.addClass("loading")
   $reload_button = $view.find(".button_reload")
   $reload_button.addClass("disabled")
+  $content = $view.find(".content")
+  content = $content[0]
 
   fn = (result) ->
-    $content = $view.find(".content")
-    content = $content[0]
-
     if result.type is "error"
       $view.find(".message_bar").addClass("error").html(result.message)
     else
