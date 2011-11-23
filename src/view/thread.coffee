@@ -328,49 +328,51 @@ app.boot "/view/thread.html", ->
   )()
 
   #検索ボックス
-  search_stored_scrollTop = null
-  $view
-    .find(".searchbox")
-      .bind "input", ->
-        if this.value isnt ""
-          if typeof search_stored_scrollTop isnt "number"
-            search_stored_scrollTop = $view.find(".content").scrollTop()
+  (->
+    search_stored_scrollTop = null
+    $view
+      .find(".searchbox")
+        .on "input", ->
+          if @value isnt ""
+            if typeof search_stored_scrollTop isnt "number"
+              search_stored_scrollTop = $view.find(".content").scrollTop()
 
-          hit_count = 0
-          query = this.value.toLowerCase()
+            hit_count = 0
+            query = @value.toLowerCase()
 
-          $view
-            .find(".content")
-              .addClass("searching")
-              .children()
-              .each ->
-                if this.textContent.toLowerCase().indexOf(query) isnt -1
-                  this.classList.add("search_hit")
-                  hit_count++
-                else
-                  this.classList.remove("search_hit")
-                null
-            .end()
-            .attr("data-res_search_hit_count", hit_count)
-        else
-          $view
-            .find(".content")
-              .removeClass("searching")
-              .removeAttr("data-res_search_hit_count")
-              .find(".search_hit")
-                .removeClass("search_hit")
+            $view
+              .find(".content")
+                .addClass("searching")
+                .children()
+                .each ->
+                  if @textContent.toLowerCase().indexOf(query) isnt -1
+                    @classList.add("search_hit")
+                    hit_count++
+                  else
+                    @classList.remove("search_hit")
+                  return
+              .end()
+              .attr("data-res_search_hit_count", hit_count)
+          else
+            $view
+              .find(".content")
+                .removeClass("searching")
+                .removeAttr("data-res_search_hit_count")
+                .find(".search_hit")
+                  .removeClass("search_hit")
 
-          if typeof search_stored_scrollTop is "number"
-            $view.find(".content").scrollTop(search_stored_scrollTop)
-            search_stored_scrollTop = null
-        return
+            if typeof search_stored_scrollTop is "number"
+              $view.find(".content").scrollTop(search_stored_scrollTop)
+              search_stored_scrollTop = null
+          return
 
-      .bind "keyup", (e) ->
-        if e.which is 27 #Esc
-          if this.value isnt ""
-            this.value = ""
-            $(this).triggerHandler("input")
-        return
+        .on "keyup", (e) ->
+          if e.which is 27 #Esc
+            if @value isnt ""
+              @value = ""
+              $(@).triggerHandler("input")
+          return
+  )()
 
   #未読ブックマーク表示処理
   (->
