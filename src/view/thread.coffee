@@ -708,7 +708,7 @@ app.view_thread._read_state_manager = ($view) ->
       content = $content[0]
 
       $content
-        .find("> .last, > .read, .received")
+        .find("> .last, > .read, > .received")
           .removeClass("last read received")
 
       content.children[read_state.last - 1]?.classList.add("last")
