@@ -423,15 +423,15 @@ app.boot "/view/thread.html", ->
           return
   )()
 
-app.view_thread._jump_to_res = (view, res_num, animate_flg) ->
-  $content = $(view).find(".content")
-  $target = $content.children(":nth-child(#{res_num})")
-  if $target.length > 0
-    return if $content.hasClass("searching") and not $target.hasClass("search_hit")
+app.view_thread._jump_to_res = ($view, res_num, animate_flg) ->
+  content = $view[0].querySelector(".content")
+  target = content.childNodes[res_num - 1]
+  if target
+    return if content.classList.contains("searching") and not target.classList.contains("search_hit")
     if animate_flg
-      $content.animate(scrollTop: $target[0].offsetTop)
+      $(content).animate(scrollTop: target.offsetTop)
     else
-      $content.scrollTop($target[0].offsetTop)
+      content.scrollTop = target.offsetTop
 
 app.view_thread._draw = ($view, force_update) ->
   deferred = $.Deferred()
