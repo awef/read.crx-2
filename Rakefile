@@ -14,7 +14,7 @@ def coffee(src, output)
 end
 
 p_cp = proc do |t|
-  sh "cp #{t.prerequisites} #{t.name}"
+  sh "cp #{t.prerequisites[0]} #{t.name}"
 end
 
 p_coffee = proc do |t|
@@ -22,15 +22,15 @@ p_coffee = proc do |t|
 end
 
 rule ".html" => "%{^#{DBG}/,#{SRC}/}X.haml" do |t|
-  haml(t.prerequisites, t.name)
+  haml(t.prerequisites[0], t.name)
 end
 
 rule ".css" => "%{^#{DBG}/,#{SRC}/}X.sass" do |t|
-  sass(t.prerequisites, t.name)
+  sass(t.prerequisites[0], t.name)
 end
 
 rule ".js" => "%{^#{DBG}/,#{SRC}/}X.coffee" do |t|
-  coffee(t.prerequisites, t.name)
+  coffee(t.prerequisites[0], t.name)
 end
 
 rule ".png" => "#{SRC}/image/svg/%{_\\d+x\\d+$,}n.svg" do |t|
@@ -38,7 +38,7 @@ rule ".png" => "#{SRC}/image/svg/%{_\\d+x\\d+$,}n.svg" do |t|
   sh "convert\
     -background transparent\
     -resize #{$1}x#{$2}\
-    #{t.prerequisites} #{t.name}"
+    #{t.prerequisites[0]} #{t.name}"
 end
 
 task :clean do
