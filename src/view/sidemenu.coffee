@@ -62,7 +62,6 @@ app.boot "/view/sidemenu.html", ->
 
     app.message.add_listener("bookmark_updated", listener)
     window.addEventListener "unload", ->
-      console.log "remove_listener"
       app.message.remove_listener("bookmark_updated", listener)
   )()
 
