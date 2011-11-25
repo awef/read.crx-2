@@ -440,6 +440,8 @@ app.view_thread._draw = ($view, force_update) ->
   $reload_button = $view.find(".button_reload")
   $reload_button.addClass("disabled")
   content = $view.find(".content")[0]
+  id_index = $view.data("id_index")
+  rep_index = $view.data("rep_index")
 
   fn = (result) ->
     if result.type is "error"
@@ -455,8 +457,6 @@ app.view_thread._draw = ($view, force_update) ->
     #DOM構築
     (->
       completed = content.childNodes.length
-      id_index = $view.data("id_index")
-      rep_index = $view.data("rep_index")
       frag = document.createDocumentFragment()
       for res, res_key in thread.res
         continue if res_key < completed
@@ -465,7 +465,7 @@ app.view_thread._draw = ($view, force_update) ->
     )()
     #idカウント, .freq/.link更新
     (->
-      for id, index of $view.data("id_index")
+      for id, index of id_index
         id_count = index.length
         text = "#{id}(#{id_count})"
         for res_key in index
@@ -483,12 +483,12 @@ app.view_thread._draw = ($view, force_update) ->
     (->
       one_id = content.firstChild?.getAttribute("data-id")
       if one_id?
-        for id in $view.data("id_index")[one_id]
+        for id in id_index[one_id]
           content.children[id].classList.add("one")
     )()
     #参照関係再構築
     (->
-      for res_key, index of $view.data("rep_index")
+      for res_key, index of rep_index
         res = content.childNodes[res_key - 1]
         if res
           res_count = index.length
