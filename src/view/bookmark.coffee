@@ -94,46 +94,30 @@ app.boot "/view/bookmark.html", ->
     return
 
   #ブックマーク更新時処理
-  (->
-    on_updated = (message) ->
-      if message.type is "added" and message.bookmark.type is "thread"
-        $view
-          .find("tbody")
-            .append(app.view_bookmark._bookmark_to_tr(message.bookmark))
-          .end()
-          .find("table")
-            .trigger("table_sort_update")
+  app.message.add_listener "bookmark_updated", (message) ->
+    if message.type is "added" and message.bookmark.type is "thread"
+      $view
+        .find("tbody")
+          .append(app.view_bookmark._bookmark_to_tr(message.bookmark))
+        .end()
+        .find("table")
+          .trigger("table_sort_update")
 
-      else if message.type is "removed"
-        $view.find("tr[data-href=\"#{message.bookmark.url}\"]").remove()
+    else if message.type is "removed"
+      $view.find("tr[data-href=\"#{message.bookmark.url}\"]").remove()
 
-      else if (message.type is "res_count") or (message.type is "expired")
-        $view
-          .find("tr[data-href=\"#{message.bookmark.url}\"]")
-            .replaceWith(app.view_bookmark._bookmark_to_tr(message.bookmark))
-
-    app.message.add_listener("bookmark_updated", on_updated)
-
-    $view.bind "view_unload", ->
-      app.message.remove_listener("bookmark_updated", on_updated)
-      return
-  )()
+    else if (message.type is "res_count") or (message.type is "expired")
+      $view
+        .find("tr[data-href=\"#{message.bookmark.url}\"]")
+          .replaceWith(app.view_bookmark._bookmark_to_tr(message.bookmark))
 
   #read_state更新時処理
-  (->
-    on_read_state_updated = (message) ->
-      if bookmark = app.bookmark.get(message.read_state.url)
-        $tr = $view.find("tr[data-href=\"#{message.read_state.url}\"]")
-        if $tr.length is 1
-          bookmark.read_state = message.read_state
-          $tr.replaceWith(app.view_bookmark._bookmark_to_tr(bookmark))
-
-    app.message.add_listener("read_state_updated", on_read_state_updated)
-
-    $view.bind "view_unload", ->
-      app.message.remove_listener("read_state_updated", on_read_state_updated)
-      return
-  )()
+  app.message.add_listener "read_state_updated", (message) ->
+    if bookmark = app.bookmark.get(message.read_state.url)
+      $tr = $view.find("tr[data-href=\"#{message.read_state.url}\"]")
+      if $tr.length is 1
+        bookmark.read_state = message.read_state
+        $tr.replaceWith(app.view_bookmark._bookmark_to_tr(bookmark))
 
   #描画処理
   (->

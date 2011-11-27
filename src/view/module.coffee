@@ -103,18 +103,12 @@ app.view_module.bookmark_button = ($view) ->
     else
       $button.removeClass("bookmarked")
 
-    on_update = (message) ->
+    app.message.add_listener "bookmark_updated", (message) ->
       if message.bookmark.url is url
         if message.type is "added"
           $button.addClass("bookmarked")
         else if message.type is "removed"
           $button.removeClass("bookmarked")
-
-    app.message.add_listener("bookmark_updated", on_update)
-
-    $view.bind "view_unload", ->
-      app.message.remove_listener("bookmark_updated", on_update)
-      return
 
     $button.bind "click", ->
       if app.bookmark.get(url)
