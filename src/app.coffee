@@ -38,25 +38,65 @@ app.assert_arg = (name, rule, arg) ->
       return true
   false
 
-app.message = {}
-(->
+app.message = (->
   listener_store = {}
 
-  app.message.send = (type, data) ->
-    app.defer ->
-      if listener_store[type]?
-        listener_store[type].forEach (listener) ->
-          listener(app.deep_copy(data))
+  fire = (type, message) ->
+    if type of listener_store
+      for listener in listener_store[type]
+        listener?(app.deep_copy(message))
+    return
 
-  app.message.add_listener = (type, fn) ->
-    listener_store[type] or= []
-    listener_store[type].push(fn)
+  window.addEventListener "message", (e) ->
+    return if e.origin isnt location.origin
 
-  app.message.remove_listener = (type, fn) ->
-    for val, key in listener_store[type]
-      if val is fn
-        listener_store[type].splice(key, 1)
-        return
+    data = JSON.parse(e.data)
+
+    return if data.type isnt "app.message"
+
+    #parentから伝わってきた場合はiframeにも伝える
+    if e.source is parent
+      for iframe in document.getElementsByTagName("iframe")
+        iframe.contentWindow.postMessage(e.data, location.origin)
+    #iframeから伝わってきた場合は、parentと他のiframeにも伝える
+    else
+      if parent isnt window
+        parent.postMessage(e.data, location.origin)
+      for iframe in document.getElementsByTagName("iframe")
+        continue if iframe.contentWindow is e.source
+        iframe.contentWindow.postMessage(e.data, location.origin)
+
+    fire(data.message_type, data.message)
+
+    return
+
+  {
+    send: (type, message) ->
+      app.defer ->
+        fire(type, message)
+
+        json = JSON.stringify
+          type: "app.message"
+          message_type: type
+          message: message
+        if parent isnt window
+          parent.postMessage(json, location.origin)
+        for iframe in document.getElementsByTagName("iframe")
+          iframe.contentWindow.postMessage(json, location.origin)
+      return
+
+    add_listener: (type, listener) ->
+      listener_store[type] or= []
+      listener_store[type].push(listener)
+      return
+
+    remove_listener: (type, listener) ->
+      for val, key in listener_store[type]
+        if val is listener
+          listener_store[type].splice(key, 1)
+          break
+      return
+  }
 )()
 
 app.config =

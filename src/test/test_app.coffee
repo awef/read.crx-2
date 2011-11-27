@@ -78,6 +78,33 @@ asyncTest "リスナ中でもリスナを削除出来る", 1, ->
   app.message.add_listener "__test3", listener2 = -> ok(true)
   app.message.send("__test3", {})
 
+asyncTest "メッセージはparentやiframeにも伝播する", 1, ->
+  frame_list = [
+    "frame"
+    "frame_1"
+    "frame_1_1"
+    "frame_2"
+    "frame_2_1"
+    "frame_2_2"
+    "frame_2_2_1"
+    "frame_2_3"
+  ]
+  frame_list.sort()
+
+  tmp = []
+  app.message.add_listener "message_test_pong", (message) ->
+    tmp.push(message.source_id)
+
+  iframe = document.createElement("iframe")
+  iframe.src = "message_test.html"
+  document.querySelector("#qunit-fixture").appendChild(iframe)
+
+  setTimeout ->
+    tmp.sort()
+    deepEqual(tmp, frame_list)
+    start()
+  , 600
+
 module("app.config")
 
 test "文字列を保存/取得できる", ->
