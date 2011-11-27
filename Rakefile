@@ -198,7 +198,9 @@ lambda {
     "#{DBG}/test",
     "#{DBG}/test/qunit",
     "#{DBG}/test/test.html",
-    "#{DBG}/test/test.js"
+    "#{DBG}/test/test.js",
+    "#{DBG}/test/message_test.html",
+    "#{DBG}/test/message_test.js"
   ]
 
   directory "#{DBG}/test"

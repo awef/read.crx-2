@@ -29,37 +29,21 @@ app.boot "/view/board.html", ->
     return
 
   #ブックマーク更新処理
-  (->
-    on_bookmark_updated = (message) ->
-      if app.url.thread_to_board(message.bookmark.url) is url
-        if message.type is "added" or message.type is "removed"
-          $view
-            .find("tr[data-href=\"#{message.bookmark.url}\"]")
-              .find("td:nth-child(1)")
-                .text(if message.type is "added" then "★" else "")
-
-    app.message.add_listener("bookmark_updated", on_bookmark_updated)
-
-    $view.bind "view_unload", ->
-      app.message.remove_listener("bookmark_updated", on_bookmark_updated)
-      return
-  )()
+  app.message.add_listener "bookmark_updated", (message) ->
+    if app.url.thread_to_board(message.bookmark.url) is url
+      if message.type is "added" or message.type is "removed"
+        $view
+          .find("tr[data-href=\"#{message.bookmark.url}\"]")
+            .find("td:nth-child(1)")
+              .text(if message.type is "added" then "★" else "")
 
   #read_state更新時処理
-  (->
-    on_read_state_updated = (message) ->
-      if message.board_url is url
-        tr = $view.find("tr[data-href=\"#{message.read_state.url}\"]")[0]
-        if tr
-          unread = message.read_state.received - message.read_state.read
-          tr.children[3].textContent = Math.max(unread, 0) or ""
-
-    app.message.add_listener("read_state_updated", on_read_state_updated)
-
-    $view.bind "view_unload", ->
-      app.message.remove_listener("read_state_updated", on_read_state_updated)
-      return
-  )()
+  app.message.add_listener "read_state_updated", (message) ->
+    if message.board_url is url
+      tr = $view.find("tr[data-href=\"#{message.read_state.url}\"]")[0]
+      if tr
+        unread = message.read_state.received - message.read_state.read
+        tr.children[3].textContent = Math.max(unread, 0) or ""
 
   app.view_board._draw($view)
     .done ->

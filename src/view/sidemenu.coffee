@@ -48,7 +48,7 @@ app.boot "/view/sidemenu.html", ->
           .accordion()
 
     #ブックマーク更新時処理
-    listener = (message) ->
+    app.message.add_listener "bookmark_updated", (message) ->
       if message.type is "added" and message.bookmark.type is "board"
         $tmp = $view.find("ul:first-of-type")
         if $tmp.find("a[href=\"#{message.bookmark.url}\"]").length is 0
@@ -59,10 +59,6 @@ app.boot "/view/sidemenu.html", ->
             .find("a[href=\"#{message.bookmark.url}\"]")
               .parent()
                 .remove()
-
-    app.message.add_listener("bookmark_updated", listener)
-    window.addEventListener "unload", ->
-      app.message.remove_listener("bookmark_updated", listener)
   )()
 
   #板覧関連
