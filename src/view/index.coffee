@@ -263,18 +263,12 @@ app.main = ->
 
   #viewからのメッセージを監視
   window.addEventListener "message", (e) ->
-    if e.origin isnt location.origin
-      return
+    return if e.origin isnt location.origin
+
+    $iframe = $(e.source.frameElement)
+    return if $iframe.length isnt 1
 
     message = JSON.parse(e.data)
-
-    for iframe in document.getElementsByTagName("iframe")
-      if iframe.contentWindow is e.source
-        $iframe = $(iframe)
-        break
-
-    if not $iframe?
-      return
 
     switch message.type
       #タブ内コンテンツがtitle_updatedを送出した場合、タブのタイトルを更新
