@@ -42,9 +42,10 @@ app.message = (->
   listener_store = {}
 
   fire = (type, message) ->
-    if type of listener_store
-      for listener in listener_store[type]
-        listener?(app.deep_copy(message))
+    app.defer ->
+      if type of listener_store
+        for listener in listener_store[type]
+          listener?(app.deep_copy(message))
     return
 
   window.addEventListener "message", (e) ->
@@ -67,22 +68,20 @@ app.message = (->
         iframe.contentWindow.postMessage(e.data, location.origin)
 
     fire(data.message_type, data.message)
-
     return
 
   {
     send: (type, message) ->
-      app.defer ->
-        fire(type, message)
+      json = JSON.stringify
+        type: "app.message"
+        message_type: type
+        message: message
+      if parent isnt window
+        parent.postMessage(json, location.origin)
+      for iframe in document.getElementsByTagName("iframe")
+        iframe.contentWindow.postMessage(json, location.origin)
 
-        json = JSON.stringify
-          type: "app.message"
-          message_type: type
-          message: message
-        if parent isnt window
-          parent.postMessage(json, location.origin)
-        for iframe in document.getElementsByTagName("iframe")
-          iframe.contentWindow.postMessage(json, location.origin)
+      fire(type, message)
       return
 
     add_listener: (type, listener) ->
