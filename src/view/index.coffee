@@ -327,27 +327,25 @@ app.main = ->
     #tab_selected(event) -> tab_selected(postMessage) 翻訳処理
     .delegate "iframe.tab_content", "tab_selected", ->
       tmp = JSON.stringify(type: "tab_selected")
-      this.contentWindow.postMessage(tmp, location.origin)
+      @contentWindow.postMessage(tmp, location.origin)
+      return
 
     #タブの内容がクリックされた時にフォーカスを移動
-    .delegate ".tab_content", "view_mousedown", ->
-      if not this.classList.contains("tab_focused")
-        $(".tab_focused")
-          .removeClass("tab_focused")
-
-        $(this)
-          .closest(".tab")
-            .find(".tab_selected")
-              .addClass("tab_focused")
-              .filter("iframe")
-                .contents()
-                  .find(".content")
-                    .focus()
+    .delegate ".tab_content:not(.tab_focused)", "view_mousedown", ->
+      $(".tab_focused").removeClass("tab_focused")
+      $(@)
+        .closest(".tab")
+          .find(".tab_selected")
+            .addClass("tab_focused")
+            .filter(".tab_content")
+              .contents()
+                .find(".content")
+                  .focus()
       return
 
     #タブが選択された時にフォーカスを移動
     .delegate ".tab_content", "tab_selected", ->
-      $iframe = $(this)
+      $iframe = $(@)
       $(".tab_focused").removeClass("tab_focused")
       $iframe.closest(".tab").find(".tab_selected").addClass("tab_focused")
       #クリックでタブを選択した時にフォーカスが移らなくなるため、deferで飛ばす
@@ -357,21 +355,17 @@ app.main = ->
 
     #フォーカスしているタブが削除された時にフォーカスを移動
     .delegate ".tab_content", "tab_removed", ->
-      $tmp = $(this).closest(".tab").find(".tab_selected")
-      if $tmp.filter(".tab_content").is(this)
-        app.defer ->
-          $(".tab:has(.tab_selected):first")
-            .find(".tab_selected")
-              .addClass("tab_focused")
-              .filter("iframe")
-                .contents()
-                  .find(".content")
-                    .focus()
+      app.defer ->
+        $(".tab:has(.tab_selected):first")
+          .find(".tab_selected")
+            .addClass("tab_focused")
+            .filter(".tab_content")
+              .contents()
+                .find(".content")
+                  .focus()
       return
 
     #フォーカスしているタブ内のコンテンツが再描画された場合、フォーカスを合わせ直す
-    .delegate ".tab_content", "view_loaded", ->
-      $iframe = $(this)
-      if $iframe.hasClass("tab_focused")
-        $iframe.contents().find(".content").focus()
+    .delegate ".tab_content.tab_focused", "view_loaded", ->
+      $(@).contents().find(".content").focus()
       return
