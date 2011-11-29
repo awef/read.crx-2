@@ -134,12 +134,17 @@ lambda {
   ]
 
   FileList["#{SRC}/view/*.haml"].each {|x|
-    tmp = x.sub(/^#{SRC}\//, "#{DBG}/").sub(/\.haml$/, "")
-    view.push(tmp + ".html")
-    view.push(tmp + ".js")
-    view.push(tmp + ".css")
-    sass_path = x.sub(/\.haml$/, ".sass")
-    file tmp + ".css" => ["#{SRC}/common.sass", sass_path] do |t|
+    view.push(x.sub(/^#{SRC}\//, "#{DBG}/").sub(/\.haml$/, ".html"))
+  }
+
+  FileList["#{SRC}/view/*.coffee"].each {|x|
+    view.push(x.sub(/^#{SRC}\//, "#{DBG}/").sub(/\.coffee$/, ".js"))
+  }
+
+  FileList["#{SRC}/view/*.sass"].each {|sass_path|
+    css_path = sass_path.sub(/^#{SRC}\//, "#{DBG}/").sub(/\.sass$/, ".css")
+    view.push(css_path)
+    file css_path => ["#{SRC}/common.sass", sass_path] do |t|
       sass(sass_path, t.name)
     end
   }
