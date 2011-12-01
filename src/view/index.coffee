@@ -2,8 +2,16 @@ app.boot "/view/index.html", ->
   arg = app.url.parse_query(location.href)
   query = arg.q
 
-  chrome.tabs.getCurrent (current_tab) ->
+  get_current = $.Deferred (deferred) ->
+    chrome.tabs.getCurrent (current_tab) ->
+      deferred.resolve(current_tab)
+
+  get_all = $.Deferred (deferred) ->
     chrome.windows.getAll {populate: true}, (windows) ->
+      deferred.resolve(windows)
+
+  $.when(get_current, get_all)
+    .done (current_tab, windows) ->
       app_path = chrome.extension.getURL("/view/index.html")
       for win in windows
         for tab in win.tabs
