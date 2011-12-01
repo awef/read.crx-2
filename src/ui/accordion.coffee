@@ -21,11 +21,13 @@
           $(this)
             .toggleClass("accordion_open")
             .next()
+              .stop(true, true)
               .slideToggle(250)
             .end()
             .siblings(".accordion_open")
               .removeClass("accordion_open")
               .next()
+                .stop(true, true)
                 .slideUp(250)
           return
     this
