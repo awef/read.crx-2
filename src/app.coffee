@@ -12,11 +12,14 @@ app.critical_error = (message) ->
   chrome.tabs.getCurrent (tab) ->
     chrome.tabs.remove(tab.id)
 
-app.log = (level) ->
+  return
+
+app.log = (level, data...) ->
   if level in ["log", "debug", "info", "warn", "error"]
-    console[level].apply(console, Array::slice.call(arguments, 1))
+    console[level].apply(console, data)
   else
     app.log("error", "app.log: 引数levelが不正な値です", arguments)
+  return
 
 app.deep_copy = (->
   fn = (original) ->
@@ -30,6 +33,7 @@ app.deep_copy = (->
 
 app.defer = (fn) ->
   setTimeout(fn, 0)
+  return
 
 app.assert_arg = (name, rule, arg) ->
   for val, key in rule
@@ -101,6 +105,7 @@ app.message = (->
 app.config =
   set: (key, val) ->
     localStorage["config_#{key}"] = val
+    return
   get: (key) ->
     def =
       thumbnail_supported: "on"
@@ -117,18 +122,18 @@ app.config =
       undefined
   del: (key) ->
     delete localStorage["config_#{key}"]
+    return
 
 app.safe_href = (url) ->
   if /// ^https?:// ///.test(url) then url else "/view/empty.html"
 
 # app.manifest
-(->
-  if location.origin is chrome.extension.getURL("").slice(0, -1)
+do ->
+  if location.origin is chrome.extension.getURL("")[...-1]
     xhr = new XMLHttpRequest()
     xhr.open("GET", "/manifest.json", false)
     xhr.send(null)
     app.manifest = JSON.parse(xhr.responseText)
-)()
 
 app.boot = (path, fn) ->
   #Chromeがiframeのsrcと無関係な内容を読み込むバグへの対応
@@ -142,4 +147,4 @@ app.boot = (path, fn) ->
       location.reload(true)
     else
       $(fn)
-
+  return
