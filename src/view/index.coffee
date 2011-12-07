@@ -152,6 +152,19 @@ app.main = ->
       .appendTo("#app_notice_container")
       .fadeIn()
 
+  #前回起動時のバージョンと違うバージョンだった場合、アップデート通知を送出
+  do ->
+    last_version = app.config.get("last_version")
+    if last_version?
+      if app.manifest.version isnt last_version
+        app.message.send "notify", {
+          message: "#{app.manifest.name} が #{last_version} から #{app.manifest.version} にアップデートされました。"
+          background_color: "green"
+        }
+      else
+        return
+    app.config.set("last_version", app.manifest.version)
+
   #タブ・ペインセットアップ
   layout = app.config.get("layout")
 
