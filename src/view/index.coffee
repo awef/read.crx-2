@@ -135,18 +135,19 @@ app.main = ->
 
   app.message.add_listener "notify", (message) ->
     text = message.message
+    background_color = message.background_color or "#777"
     $("<div>")
+      .css("background-color", background_color)
       .append(
         $("<div>", {text}),
-        $("<button>")
-          .on "click", ->
-            $(@)
-              .parent()
-                .animate({opacity: 0}, "fast")
-                .delay("fast")
-                .slideUp("fast", -> $(@).remove())
-            return
-        )
+        $("<button>").one "click", ->
+          $(@)
+            .parent()
+              .animate({opacity: 0}, "fast")
+              .delay("fast")
+              .slideUp("fast", -> $(@).remove())
+          return
+      )
       .hide()
       .appendTo("#app_notice_container")
       .fadeIn()

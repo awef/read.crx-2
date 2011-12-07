@@ -89,20 +89,19 @@ iframe
 
   > div
     @include drop_shadow
-    :background-color #222
+    :background-image -webkit-linear-gradient(transparent, rgba(#000, 0.25))
+    :border-radius 5px
     :color #eee
-    :border 1px solid #fff
     :font-size 14px
+    :font-weight bold
     :margin-bottom 5px
     :padding 10px
 
     :display -webkit-box
-
-    div
+    > div
       :-webkit-box-flex 1
       :margin-right 5px
-
-    button
+    > button
       :cursor pointer
       :width 16px
       :height 16px
