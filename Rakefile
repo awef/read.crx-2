@@ -215,8 +215,6 @@ lambda {
     sh "cp -r lib/qunit/qunit #{DBG}/test"
   end
 
-  file "#{DBG}/test/test.html" => "#{SRC}/test/test.html", &p_cp
-
   file "#{DBG}/test/test.js" => FileList["#{SRC}/test/test_*.coffee"], &p_coffee
 }.call()
 
