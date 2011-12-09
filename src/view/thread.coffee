@@ -674,31 +674,26 @@ app.view_thread._const_res = (res_key, res, $view, id_index, rep_index) ->
 
 app.view_thread._read_state_manager = ($view) ->
   view_url = $view.attr("data-url")
-
-  read_state = null
-  read_state_updated = false
+  content = $view[0].querySelector(".content")
 
   #read_stateの取得
-  promise_get_read_state = $.Deferred (deferred) ->
-    if (bookmark = app.bookmark.get(view_url)) and bookmark.read_state?
+  get_read_state = $.Deferred (deferred) ->
+    read_state_updated = false
+    if (bookmark = app.bookmark.get(view_url))?.read_state?
       read_state = bookmark.read_state
-      deferred.resolve()
+      deferred.resolve({read_state, read_state_updated})
     else
-      app.read_state.get(view_url)
-        .always (_read_state) ->
-          read_state = _read_state or {received: 0, read: 0, last: 0, url: view_url}
-          deferred.resolve()
+      app.read_state.get(view_url).always (_read_state) ->
+        read_state = _read_state or {received: 0, read: 0, last: 0, url: view_url}
+        deferred.resolve({read_state, read_state_updated})
   .promise()
 
   #スレの描画時に、read_state関連のクラスを付与する
-  $view.bind "view_loaded", ->
-    promise_get_read_state.done ->
-      $content = $view.find(".content")
-      content = $content[0]
-
-      $content
-        .find("> .last, > .read, > .received")
-          .removeClass("last read received")
+  $view.on "view_loaded", ->
+    get_read_state.done ({read_state, read_state_updated}) ->
+      content.querySelector(".last")?.classList.remove("last")
+      content.querySelector(".read")?.classList.remove("read")
+      content.querySelector(".received")?.classList.remove("received")
 
       content.children[read_state.last - 1]?.classList.add("last")
       content.children[read_state.read - 1]?.classList.add("read")
@@ -707,9 +702,8 @@ app.view_thread._read_state_manager = ($view) ->
       $view.triggerHandler("read_state_attached")
     return
 
-  promise_get_read_state.done ->
+  get_read_state.done ({read_state, read_state_updated}) ->
     scan = ->
-      content = $view[0].querySelector(".content")
       bottom = content.scrollTop + content.clientHeight
 
       received = content.childNodes.length
@@ -746,7 +740,7 @@ app.view_thread._read_state_manager = ($view) ->
 
     window.addEventListener("beforeunload", on_beforeunload)
 
-    #read_state.readの値を更新するため、スクロールされたら定期的にスキャンを実行する
+    #スクロールされたら定期的にスキャンを実行する
     scroll_flg = false
     scroll_watcher = setInterval ->
       if scroll_flg
@@ -758,12 +752,12 @@ app.view_thread._read_state_manager = ($view) ->
 
     $view
       .find(".content")
-        .bind "scroll", ->
+        .on "scroll", ->
           scroll_flg = true
           return
       .end()
 
-      .bind "request_reload", ->
+      .on "request_reload", ->
         scan()
         if read_state_updated
           app.read_state.set(read_state)
@@ -771,7 +765,7 @@ app.view_thread._read_state_manager = ($view) ->
           read_state_updated = false
         return
 
-      .bind "view_unload", ->
+      .on "view_unload", ->
         clearInterval(scroll_watcher)
         window.removeEventListener("beforeunload", on_beforeunload)
         #ロード中に閉じられた場合、スキャンは行わない
