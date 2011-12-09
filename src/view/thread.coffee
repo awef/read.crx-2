@@ -747,10 +747,9 @@ app.view_thread._read_state_manager = ($view) ->
     window.addEventListener("beforeunload", on_beforeunload)
 
     #read_state.readの値を更新するため、スクロールされたら定期的にスキャンを実行する
-    scroll_watcher_suspend = false
     scroll_flg = false
     scroll_watcher = setInterval ->
-      if scroll_flg and not scroll_watcher_suspend
+      if scroll_flg
         scroll_flg = false
         scan()
         if read_state_updated
@@ -765,17 +764,11 @@ app.view_thread._read_state_manager = ($view) ->
       .end()
 
       .bind "request_reload", ->
-        scroll_watcher_suspend = true
-
         scan()
         if read_state_updated
           app.read_state.set(read_state)
           app.bookmark.update_read_state(read_state)
           read_state_updated = false
-        return
-
-      .bind "view_loaded", ->
-        scroll_watcher_suspend = false
         return
 
       .bind "view_unload", ->
