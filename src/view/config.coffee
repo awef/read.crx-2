@@ -45,7 +45,7 @@ app.boot "/view/config.html", ->
     .text("#{app.manifest.name} v#{app.manifest.version} + #{navigator.userAgent}")
 
   #忍法帖関連機能
-  (->
+  do ->
     fn = (res, $ul) ->
       if res.length is 0
         $ul.remove()
@@ -94,7 +94,6 @@ app.boot "/view/config.html", ->
                   $this.remove()
                   if $parent.children().length is 0
                     $parent.remove()
-  )()
 
   #板覧更新ボタン
   $view.find(".bbsmenu_reload").bind "click", ->
@@ -130,7 +129,7 @@ app.boot "/view/config.html", ->
     return
 
   #履歴
-  (->
+  do ->
     $clear_button = $view.find(".history_clear")
     $status = $view.find(".history_status")
 
@@ -151,10 +150,9 @@ app.boot "/view/config.html", ->
         .fail ->
           $status.text("削除失敗")
       return
-  )()
 
   #キャッシュ削除ボタン
-  (->
+  do ->
     $clear_button = $view.find(".cache_clear")
     $status = $view.find(".cache_status")
 
@@ -171,7 +169,6 @@ app.boot "/view/config.html", ->
         .fail ->
           $status.text("削除失敗")
       return
-  )()
 
   #ブックマークフォルダ変更ボタン
   $view.find(".bookmark_source_change").bind "click", ->

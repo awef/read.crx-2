@@ -1,4 +1,4 @@
-(->
+do ->
   modules = [
     "bbsmenu"
     "board"
@@ -15,4 +15,3 @@
 
   for module in modules
     app[module] = parent.app[module]
-)()

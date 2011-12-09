@@ -10,7 +10,7 @@ app.read_state._url_filter = (original_url) ->
     .replace(/// ^(http://\w+\.2ch\.net)/.* ///, "$1")
   replaced_origin: "http://*.2ch.net"
 
-(->
+do ->
   app.read_state._db_open = $.Deferred (deferred) ->
     db = openDatabase("ReadState", "", "Read State", 0)
     db.transaction(
@@ -30,7 +30,6 @@ app.read_state._url_filter = (original_url) ->
   .promise()
   .fail ->
     app.critical_error("既読情報管理システムの起動に失敗しました")
-)()
 
 app.read_state.set = (read_state) ->
   if not read_state? or

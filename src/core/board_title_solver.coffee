@@ -1,6 +1,6 @@
 app.board_title_solver = {}
 
-(->
+do ->
   deferred_first_bbsmenu_update = $.Deferred()
 
   dic_bbsmenu = {}
@@ -72,4 +72,3 @@ app.board_title_solver = {}
         #$.ajaxの吐く余分なデータの削除
         , -> $.Deferred().reject()
       .promise()
-)()

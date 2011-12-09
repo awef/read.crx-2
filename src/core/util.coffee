@@ -99,7 +99,7 @@ app.util.ch_server_move_detect = (old_board_url, html) ->
   .promise()
 
 #文字参照をデコード
-(->
+do ->
   span = document.createElement("span")
 
   app.util.decode_char_reference = (str) ->
@@ -116,7 +116,6 @@ app.util.ch_server_move_detect = (old_board_url, html) ->
         span.textContent
       else
         $0
-)()
 
 #マウスクリックのイベントオブジェクトから、リンク先をどう開くべきかの情報を導く
 app.util.get_how_to_open = (original_e) ->

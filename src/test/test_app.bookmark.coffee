@@ -338,7 +338,7 @@ test "ブックマークオブジェクトをURLに変換する", 10, ->
     }, "スレブックマーク(read_state)")
   strictEqual(app.url.fix(result), fixed_url, "スレブックマーク(res_count + read_state + res_count)")
 
-(->
+do ->
   last_bookmark_updated = 0
 
   module "app.bookmark",
@@ -364,7 +364,6 @@ test "ブックマークオブジェクトをURLに変換する", 10, ->
 
   app.message.add_listener "bookmark_updated", ->
     last_bookmark_updated = Date.now()
-)()
 
 test "ブックマークされていないURLを取得しようとした時は、nullを返す", 1, ->
   strictEqual(app.bookmark.get("http://__dummy.2ch.net/dummy/"), null)
@@ -949,14 +948,13 @@ asyncTest "ノードのフォルダ内での移動は無視する", 2, ->
 asyncTest "ブックマークフォルダ中のフォルダに関する変更は無視する", 6, ->
   node_id = null
 
-  fn = (=>
+  fn = do =>
     tmp = @last_updated()
     (deferred) =>
       setTimeout =>
         ok(tmp is @last_updated())
         deferred.resolve()
       , 1000
-  )()
 
   @start
     #フォルダ作成

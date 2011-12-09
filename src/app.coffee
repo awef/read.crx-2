@@ -21,7 +21,7 @@ app.log = (level, data...) ->
     app.log("error", "app.log: 引数levelが不正な値です", arguments)
   return
 
-app.deep_copy = (->
+app.deep_copy = do ->
   fn = (original) ->
     if typeof(original) isnt "object" or original is null
       return original
@@ -29,7 +29,6 @@ app.deep_copy = (->
     for key of original
       res[key] = fn(original[key])
     res
-)()
 
 app.defer = (fn) ->
   setTimeout(fn, 0)
@@ -42,7 +41,7 @@ app.assert_arg = (name, rule, arg) ->
       return true
   false
 
-app.message = (->
+app.message = do ->
   listener_store = {}
 
   fire = (type, message) ->
@@ -100,7 +99,6 @@ app.message = (->
           break
       return
   }
-)()
 
 app.config =
   set: (key, val) ->

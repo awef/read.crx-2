@@ -1,8 +1,7 @@
 (($) ->
-  uid = (->
+  uid = do ->
     count = 0
     -> "tab_id" + (++count)
-  )()
 
   tab_init = ->
     that = this

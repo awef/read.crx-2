@@ -55,7 +55,7 @@ app.bookmark.bookmark_to_url = (bookmark) ->
   param = app.url.build_param(data)
   bookmark.url + if param then "##{param}" else ""
 
-(->
+do ->
   source_id = app.config.get("bookmark_id")
 
   cache = {
@@ -144,7 +144,7 @@ app.bookmark.bookmark_to_url = (bookmark) ->
     new_bookmark.title = new_title
 
     #read_state更新
-    (->
+    do ->
       update_flg = false
       if (not cached.read_state?) and new_bookmark.read_state?
         update_flg = true
@@ -159,7 +159,6 @@ app.bookmark.bookmark_to_url = (bookmark) ->
         board_url = app.url.thread_to_board(cached.read_state.url)
         app.message.send("read_state_updated",
           {board_url, read_state: cached.read_state})
-    )()
 
     #res_count更新
     if cached.res_count isnt new_bookmark.res_count
@@ -376,7 +375,7 @@ app.bookmark.bookmark_to_url = (bookmark) ->
     return
 
   #Chromeのブックマークの変更を検出してキャッシュを更新する処理群
-  (->
+  do ->
     watcher_wakeflg = true
 
     chrome.bookmarks.onImportBegan.addListener ->
@@ -418,5 +417,3 @@ app.bookmark.bookmark_to_url = (bookmark) ->
       else if e.oldParentId is source_id
         cache.remove_bookmark({id})
       return
-  )()
-)()

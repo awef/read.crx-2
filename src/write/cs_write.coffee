@@ -1,4 +1,4 @@
-(->
+do ->
   origin = chrome.extension.getURL("").slice(0, -1)
 
   exec = (javascript) ->
@@ -150,4 +150,3 @@
     send_message_ping()
 
   setTimeout(boot, 0)
-)()

@@ -69,7 +69,7 @@ app.boot "/view/thread.html", ->
     return
 
   #初回ロード処理
-  (->
+  do ->
     opened_at = Date.now()
 
     app.view_thread._read_state_manager($view)
@@ -95,7 +95,6 @@ app.boot "/view/thread.html", ->
     app.view_thread._draw($view)
       .always ->
         app.history.add(view_url, document.title, opened_at)
-  )()
 
   $view
     #名前欄が数字だった場合のポップアップ
@@ -283,7 +282,7 @@ app.boot "/view/thread.html", ->
       return
 
   #クイックジャンプパネル
-  (->
+  do ->
     jump_hoge =
       jump_one: "article:nth-child(1)"
       jump_newest: "article:last-child"
@@ -325,10 +324,9 @@ app.boot "/view/thread.html", ->
         else
           app.log("warn", "[view_thread] .jump_panel: ターゲットが存在しません")
       return
-  )()
 
   #検索ボックス
-  (->
+  do ->
     search_stored_scrollTop = null
     $view
       .find(".searchbox")
@@ -372,10 +370,9 @@ app.boot "/view/thread.html", ->
               @value = ""
               $(@).triggerHandler("input")
           return
-  )()
 
   #未読ブックマーク表示処理
-  (->
+  do ->
     content = $view.find(".content")[0]
     next_unread = $view.find(".next_unread")[0]
 
@@ -421,7 +418,6 @@ app.boot "/view/thread.html", ->
         .on "scroll", ->
           update_next_unread()
           return
-  )()
 
 app.view_thread._jump_to_res = ($view, res_num, animate_flg) ->
   content = $view[0].querySelector(".content")
@@ -455,16 +451,15 @@ app.view_thread._draw = ($view, force_update) ->
     document.title = thread.title
 
     #DOM構築
-    (->
+    do ->
       completed = content.childNodes.length
       frag = document.createDocumentFragment()
       for res, res_key in thread.res
         continue if res_key < completed
         frag.appendChild(app.view_thread._const_res(res_key, res, $view, id_index, rep_index))
       content.appendChild(frag)
-    )()
     #idカウント, .freq/.link更新
-    (->
+    do ->
       for id, index of id_index
         id_count = index.length
         text = "#{id}(#{id_count})"
@@ -478,16 +473,14 @@ app.view_thread._draw = ($view, force_update) ->
             elm.classList.add("link")
           null
         null
-    )()
     #.one付与
-    (->
+    do ->
       one_id = content.firstChild?.getAttribute("data-id")
       if one_id?
         for id in id_index[one_id]
           content.children[id].classList.add("one")
-    )()
     #参照関係再構築
-    (->
+    do ->
       for res_key, index of rep_index
         res = content.childNodes[res_key - 1]
         if res
@@ -504,9 +497,8 @@ app.view_thread._draw = ($view, force_update) ->
             elm.classList.add("freq")
           else
             elm.classList.add("link")
-    )()
     #サムネイル追加処理
-    (->
+    do ->
       imgs = []
       fn_add_thumbnail = (source_a, thumb_path) ->
         source_a.classList.add("has_thumbnail")
@@ -577,7 +569,6 @@ app.view_thread._draw = ($view, force_update) ->
             container = a.parentNode
             a.style["top"] = "#{(container.offsetHeight - a.offsetHeight) / 2}px"
       )
-    )()
 
     $view.trigger("view_loaded")
 

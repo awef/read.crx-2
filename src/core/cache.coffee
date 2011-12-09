@@ -1,6 +1,6 @@
 app.cache = {}
 
-(->
+do ->
   app.cache._db_open = $.Deferred (deferred) ->
     db = openDatabase("Cache", "", "Cache", 0)
     db.transaction(
@@ -22,7 +22,6 @@ app.cache = {}
   .promise()
   .fail ->
     app.critical_error("キャッシュ管理システムの起動に失敗しました")
-)()
 
 app.cache.set = (data) ->
   unless typeof data is "object" and

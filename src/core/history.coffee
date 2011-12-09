@@ -1,6 +1,6 @@
 app.history = {}
 
-(->
+do ->
   app.history._db_open = $.Deferred (deferred) ->
     db = openDatabase("History", "", "History", 0)
     db.transaction(
@@ -18,7 +18,6 @@ app.history = {}
   .promise()
   .fail ->
     app.critical_error("履歴管理システムの起動に失敗しました")
-)()
 
 app.history.add = (url, title, date) ->
   if app.assert_arg("app.history.add", ["string", "string", "number"], arguments)

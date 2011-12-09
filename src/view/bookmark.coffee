@@ -120,7 +120,7 @@ app.boot "/view/bookmark.html", ->
         $tr.replaceWith(app.view_bookmark._bookmark_to_tr(bookmark))
 
   #描画処理
-  (->
+  do ->
     frag = document.createDocumentFragment()
 
     for bookmark in app.bookmark.get_all()
@@ -130,5 +130,4 @@ app.boot "/view/bookmark.html", ->
     $view.find("tbody").append(frag)
     $view.find("table").trigger("table_sort_update")
     $view.trigger("view_loaded")
-  )()
 

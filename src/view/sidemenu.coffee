@@ -31,7 +31,7 @@ app.boot "/view/sidemenu.html", ->
         return
 
   #ブックマーク関連
-  (->
+  do ->
     #初回ブックマーク表示構築
     app.bookmark.promise_first_scan.done ->
       frag = document.createDocumentFragment()
@@ -59,10 +59,9 @@ app.boot "/view/sidemenu.html", ->
             .find("a[href=\"#{message.bookmark.url}\"]")
               .parent()
                 .remove()
-  )()
 
   #板覧関連
-  (->
+  do ->
     load = ->
       $view.addClass("loading")
       app.bbsmenu.get (res) ->
@@ -93,4 +92,3 @@ app.boot "/view/sidemenu.html", ->
       return
 
     load()
-  )()
