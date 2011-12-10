@@ -234,6 +234,9 @@ app.main = ->
         $iframe
           .closest(".tab")
             .tab("select", tab_id: $iframe.attr("data-tab_id"))
+        if message.url isnt "bookmark" #ブックマーク更新は時間がかかるので例外扱い
+          tmp = JSON.stringify(type: "request_reload")
+          $iframe[0].contentWindow.postMessage(tmp, location.origin)
     else if iframe_info = get_iframe_info(message.url)
       lazy = message.lazy and (not message.modal)
 
