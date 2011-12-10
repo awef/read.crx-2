@@ -66,7 +66,10 @@ app.boot "/view/sidemenu.html", ->
       $view.addClass("loading")
       app.bbsmenu.get (res) ->
         if res.message?
-          app.message.send("notify", message: res.message)
+          app.message.send("notify", {
+            message: res.message
+            background_color: "red"
+          })
 
         if res.data?
           frag = document.createDocumentFragment()
