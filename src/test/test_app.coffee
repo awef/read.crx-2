@@ -114,6 +114,17 @@ test "文字列を保存/取得できる", ->
   app.config.del("__test")
   strictEqual(app.config.get("__test"), undefined)
 
+module("app.safe_href")
+
+test "与えられた文字列がhttp, https以外のURLだった場合、ダミー文字列を返す", 7, ->
+  strictEqual(app.safe_href("http://example.com/"), "http://example.com/")
+  strictEqual(app.safe_href("https://example.com/"), "https://example.com/")
+  strictEqual(app.safe_href(" http://example.com/"), "/view/empty.html")
+  strictEqual(app.safe_href(" https://example.com/"), "/view/empty.html")
+  strictEqual(app.safe_href(""), "/view/empty.html")
+  strictEqual(app.safe_href("javascript:undefined;"), "/view/empty.html")
+  strictEqual(app.safe_href("data:text/plain,test"), "/view/empty.html")
+
 module("app.escape_html")
 
 test "与えられた文字列中の<>\"'&をエスケープする", 1, ->
