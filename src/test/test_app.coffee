@@ -113,3 +113,12 @@ test "文字列を保存/取得できる", ->
   strictEqual(app.config.get("__test"), "12345")
   app.config.del("__test")
   strictEqual(app.config.get("__test"), undefined)
+
+module("app.escape_html")
+
+test "与えられた文字列中の<>\"'&をエスケープする", 1, ->
+  strictEqual(
+    app.escape_html(""" <a href="'#'">test&test&test</a> """),
+    """ &lt;a href=&quot;&apos;#&apos;&quot;&gt;test&amp;test&amp;test&lt;/a&gt; """
+  )
+

@@ -122,6 +122,14 @@ app.config =
     delete localStorage["config_#{key}"]
     return
 
+app.escape_html = (str) ->
+  str
+    .replace(/\&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;")
+
 app.safe_href = (url) ->
   if /// ^https?:// ///.test(url) then url else "/view/empty.html"
 
