@@ -89,8 +89,8 @@ app.board.get = (url, callback) ->
           .done (new_board_url) ->
             message += """
             サーバーが移転している可能性が有ります
-            (<a href="#{app.safe_href(new_board_url)}"
-            class="open_in_rcrx">#{new_board_url.replace(/[<>]/g, "")}
+            (<a href="#{app.escape_html(app.safe_href(new_board_url))}"
+            class="open_in_rcrx">#{app.escape_html(new_board_url)}
             </a>)
             """
           .always ->

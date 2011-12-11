@@ -141,12 +141,11 @@ app.thread.get = (url, force_update) ->
               ($0, $1, $2) -> $1 + tmp + $2
             )
 
-            #TODO エスケープ用関数を用意
             message += """
             スレッドの読み込みに失敗しました。
             サーバーが移転している可能性が有ります
-            (<a href="#{app.safe_href(new_url)}"
-              class="open_in_rcrx">#{new_url.replace(/[<>]/g, "")}</a>)
+            (<a href="#{app.escape_html(app.safe_href(new_url))}"
+              class="open_in_rcrx">#{app.escape_html(new_url)}</a>)
             """
           #移転検出出来なかった場合
           .fail ->
