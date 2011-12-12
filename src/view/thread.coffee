@@ -387,7 +387,7 @@ app.boot "/view/thread.html", ->
             continue
 
           if bookmark.res_count?
-            if bookmark.res_count - (bookmark.read_state?.read or 0) is 0
+            if bookmark.res_count - (bookmark.read_state?.read or 0) <= 0
               continue
 
           #既にタブで開かれている場合は無視
