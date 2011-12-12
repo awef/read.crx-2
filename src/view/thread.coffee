@@ -387,7 +387,7 @@ app.boot "/view/thread.html", ->
             continue
 
           if bookmark.res_count?
-            if bookmark.res_count - (bookmark.read_state?.read or 0) is 0
+            if bookmark.res_count - (bookmark.read_state?.read or 0) <= 0
               continue
 
           #既にタブで開かれている場合は無視
@@ -578,6 +578,8 @@ app.view_thread._draw = ($view, force_update) ->
     .progress (res) ->
       fn(res)
     .always (res) ->
+      if res.type is "success"
+        $view.data("last_updated", Date.now())
       fn(res)
       $view.removeClass("loading")
       setTimeout((-> $reload_button.removeClass("disabled")), 1000 * 5)
@@ -676,6 +678,12 @@ app.view_thread._read_state_manager = ($view) ->
   view_url = $view.attr("data-url")
   content = $view[0].querySelector(".content")
 
+  #したらば、まちBBSの最新レス削除時対策
+  cached_info = null
+  if app.url.tsld(view_url) in ["livedoor.jp", "machi.to"]
+    app.board.get_cached_res_count view_url, ({res_count, modified}) ->
+      cached_info = {res_count, modified}
+
   #read_stateの取得
   get_read_state = $.Deferred (deferred) ->
     read_state_updated = false
@@ -704,9 +712,17 @@ app.view_thread._read_state_manager = ($view) ->
 
   get_read_state.done ({read_state, read_state_updated}) ->
     scan = ->
+      received = content.childNodes.length
+      #したらば、まちBBSの最新レス削除時対策
+      #スレ覧のキャッシュよりも新しいスレのデータを用いているにも関わらず、
+      #キャッシュされているデータ内でのレス数の方が多い場合、
+      #最新レスが削除されたためと判断し、receivedを変更する
+      if cached_info?.modified < $view.data("last_updated") and
+          received < cached_info.res_count
+        received = cached_info.res_count
+
       bottom = content.scrollTop + content.clientHeight
 
-      received = content.childNodes.length
       if read_state.received isnt received
         read_state.received = received
         read_state_updated = true
