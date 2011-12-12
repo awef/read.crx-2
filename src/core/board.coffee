@@ -184,3 +184,27 @@ app.board.parse = (url, text) ->
     board.splice(-1, 1)
 
   if board.length > 0 then board else null
+
+app.board.get_cached_res_count = (thread_url, callback) ->
+  board_url = app.url.thread_to_board(thread_url)
+  xhr_path = app.board._get_xhr_info(board_url)?.path
+  if not xhr_path
+    app.log("error", "app.board.get_cached_res_count: 未対応のURLです#{thread_url}")
+    callback(null)
+    return
+
+  app.cache.get(xhr_path)
+    .pipe (cache) ->
+      $.Deferred (deferred) ->
+        last_modified = cache.data.last_modified
+        board = app.board.parse(board_url, cache.data.data)
+        for thread in board
+          if thread.url is thread_url
+            deferred.resolve(thread, last_modified)
+            return
+        deferred.reject()
+    .done (thread, last_modified) ->
+      callback({res_count: thread.res_count, modified: last_modified})
+    .fail ->
+      callback(null)
+  return
