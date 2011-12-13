@@ -88,9 +88,9 @@ app.boot "/view/thread.html", ->
 
       #二度目以降のread_state_attached時に、最後に見ていたスレが当時最新のレスだった場合、新着を強調表示するためにスクロールを行う
       $view.on "read_state_attached", ->
-        $tmp = $view.find(".content > .last.received")
+        $tmp = $view.find(".content > .last.received + article")
         return if $tmp.length isnt 1
-        app.view_thread._jump_to_res($view, +$tmp.find(".num").text(), true)
+        app.view_thread._jump_to_res($view, +$tmp.find(".num").text(), true, -100)
 
     app.view_thread._draw($view)
       .always ->
@@ -419,15 +419,15 @@ app.boot "/view/thread.html", ->
           update_next_unread()
           return
 
-app.view_thread._jump_to_res = ($view, res_num, animate_flg) ->
+app.view_thread._jump_to_res = ($view, res_num, animate_flg, offset = 0) ->
   content = $view[0].querySelector(".content")
   target = content.childNodes[res_num - 1]
   if target
     return if content.classList.contains("searching") and not target.classList.contains("search_hit")
     if animate_flg
-      $(content).animate(scrollTop: target.offsetTop)
+      $(content).animate(scrollTop: target.offsetTop + offset)
     else
-      content.scrollTop = target.offsetTop
+      content.scrollTop = target.offsetTop + offset
 
 app.view_thread._draw = ($view, force_update) ->
   deferred = $.Deferred()
