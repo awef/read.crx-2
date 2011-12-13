@@ -131,3 +131,4 @@ app.boot "/view/bookmark.html", ->
     $view.find("table").trigger("table_sort_update")
     $view.trigger("view_loaded")
 
+  app.message.send("request_update_read_state", {})

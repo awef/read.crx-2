@@ -766,6 +766,15 @@ app.view_thread._read_state_manager = ($view) ->
           app.read_state.set(read_state)
     , 250
 
+    scan_and_save = ->
+      scan()
+      if read_state_updated
+        app.read_state.set(read_state)
+        app.bookmark.update_read_state(read_state)
+        read_state_updated = false
+
+    app.message.add_listener("request_update_read_state", scan_and_save)
+
     $view
       .find(".content")
         .on "scroll", ->
@@ -774,11 +783,7 @@ app.view_thread._read_state_manager = ($view) ->
       .end()
 
       .on "request_reload", ->
-        scan()
-        if read_state_updated
-          app.read_state.set(read_state)
-          app.bookmark.update_read_state(read_state)
-          read_state_updated = false
+        scan_and_save()
         return
 
       .on "view_unload", ->
@@ -786,9 +791,5 @@ app.view_thread._read_state_manager = ($view) ->
         window.removeEventListener("beforeunload", on_beforeunload)
         #ロード中に閉じられた場合、スキャンは行わない
         return if $view.hasClass("loading")
-        scan()
-        if read_state_updated
-          app.read_state.set(read_state)
-          app.bookmark.update_read_state(read_state)
-          read_state_updated = false
+        scan_and_save()
         return
