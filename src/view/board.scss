@@ -1,9 +1,7 @@
 @import "../common.scss";
 
-html {
-  @include common_view_style_1;
-  @include content_table;
-}
+@include common_view_style_1;
+@include content_table;
 
 .content {
   overflow: auto;

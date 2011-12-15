@@ -1,5 +1,7 @@
 @import "../common.scss";
 
+@include common_view_style_1;
+
 @mixin view_thread_res_info {
   border-top: 1px solid silver;
   display: block;
@@ -10,7 +12,6 @@
 }
 
 html {
-  @include common_view_style_1;
   font-size: 15px;
   background-color: #fafafa;
 }

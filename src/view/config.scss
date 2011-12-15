@@ -1,7 +1,8 @@
 @import "../common.scss";
 
+@include common_view_style_1;
+
 html {
-  @include common_view_style_1;
   font-size: 13px;
   box-sizing: border-box;
   overflow: auto;
