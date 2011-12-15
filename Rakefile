@@ -5,8 +5,8 @@ def haml(src, output)
   sh "haml -q #{src} #{output}"
 end
 
-def sass(src, output)
-  sh "sass --style compressed --no-cache #{src} #{output}"
+def scss(src, output)
+  sh "scss --style compressed --no-cache #{src} #{output}"
 end
 
 def coffee(src, output)
@@ -25,8 +25,8 @@ rule ".html" => "%{^#{DBG}/,#{SRC}/}X.haml" do |t|
   haml(t.prerequisites[0], t.name)
 end
 
-rule ".css" => "%{^#{DBG}/,#{SRC}/}X.sass" do |t|
-  sass(t.prerequisites[0], t.name)
+rule ".css" => "%{^#{DBG}/,#{SRC}/}X.scss" do |t|
+  scss(t.prerequisites[0], t.name)
 end
 
 rule ".js" => "%{^#{DBG}/,#{SRC}/}X.coffee" do |t|
@@ -116,8 +116,8 @@ lambda {
 lambda {
   task :ui => ["#{DBG}/ui.css", "#{DBG}/ui.js"]
 
-  file "#{DBG}/ui.css" => FileList["#{SRC}/common.sass"].include("#{SRC}/ui/*.sass") do |t|
-    sass("#{SRC}/ui/ui.sass", t.name)
+  file "#{DBG}/ui.css" => FileList["#{SRC}/common.scss"].include("#{SRC}/ui/*.scss") do |t|
+    scss("#{SRC}/ui/ui.scss", t.name)
   end
 
   file "#{DBG}/ui.js" => FileList["#{SRC}/ui/*.coffee"], &p_coffee
@@ -141,11 +141,11 @@ lambda {
     view.push(x.sub(/^#{SRC}\//, "#{DBG}/").sub(/\.coffee$/, ".js"))
   }
 
-  FileList["#{SRC}/view/*.sass"].each {|sass_path|
-    css_path = sass_path.sub(/^#{SRC}\//, "#{DBG}/").sub(/\.sass$/, ".css")
+  FileList["#{SRC}/view/*.scss"].each {|scss_path|
+    css_path = scss_path.sub(/^#{SRC}\//, "#{DBG}/").sub(/\.scss$/, ".css")
     view.push(css_path)
-    file css_path => ["#{SRC}/common.sass", sass_path] do |t|
-      sass(sass_path, t.name)
+    file css_path => ["#{SRC}/common.scss", scss_path] do |t|
+      scss(scss_path, t.name)
     end
   }
 
@@ -179,10 +179,10 @@ lambda {
   directory "#{DBG}/write"
 
   file "#{DBG}/write/write.css" => [
-      "#{SRC}/common.sass",
-      "#{SRC}/write/write.sass"
+      "#{SRC}/common.scss",
+      "#{SRC}/write/write.scss"
     ] do |t|
-    sass("#{SRC}/write/write.sass", t.name)
+    scss("#{SRC}/write/write.scss", t.name)
   end
 
   file "#{DBG}/write/write.js" => [

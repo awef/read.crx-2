@@ -1,0 +1,16 @@
+@import "../common.scss";
+
+html {
+  @include common_view_style_1;
+  @include content_table;
+}
+
+.content {
+  overflow: auto;
+  tbody:empty {
+    display: block;
+    &:after {
+      content: "閲覧履歴は空です";
+    }
+  }
+}

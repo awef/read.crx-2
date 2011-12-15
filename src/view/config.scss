@@ -1,0 +1,140 @@
+@import "../common.scss";
+
+html {
+  @include common_view_style_1;
+  font-size: 13px;
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 30px 10px 0 10px;
+  background-color: #f5f5f5;
+}
+
+header {
+  box-shadow: 0 2px 8px #333333;
+  background-image: -webkit-linear-gradient(#666666, #222222);
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  padding-left: 5px;
+  button {
+    background-color: transparent;
+    color: white;
+    border: 1px solid #bbbbbb {
+      radius: 2px;
+    };
+    padding: 5px;
+    cursor: pointer;
+    &:hover {
+      border-color: #aaaaaa;
+    }
+  }
+}
+
+section {
+  display: -webkit-box;
+  padding: 15px 5px;
+  border-top: 1px solid #dddddd;
+  border-top: 1px solid #cccccc;
+  div {
+    -webkit-box-flex: 1;
+  }
+}
+
+h2 {
+  font-size: 14px;
+  color: #252525;
+  margin: 0;
+  width: 130px;
+}
+
+h3 {
+  font-size: 14px;
+  color: #252525;
+  margin: 10px 0;
+}
+
+h2 + h3 {
+  margin-top: 5px;
+}
+
+label {
+  cursor: pointer;
+}
+
+input:focus {
+  outline-color: rgba(#0077ff, 0.5);
+}
+
+input[type="text"] {
+  border: 1px solid #cccccc;
+  border-radius: 2px;
+  padding: 3px;
+  box-shadow: 0 1px 1px #cccccc inset;
+}
+
+section {
+  button {
+    border: 1px solid #aaaaaa;
+    border-radius: 3px;
+    background-image: -webkit-linear-gradient(#eeeeee, #d5d5d5);
+    color: #222222;
+    padding: 5px;
+    cursor: pointer;
+    &:hover {
+      border-color: #777777;
+    }
+    &:active {
+      background-image: -webkit-linear-gradient(#dddddd, #c5c5c5);
+      box-shadow: 0 1px 1px #999999 inset;
+    }
+  }
+}
+
+.notation {
+  font-size: 14px;
+  text-align: right;
+}
+
+.version_info {
+  font-size: 12px;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #aaaaaa;
+}
+
+.ninja_cookie_info {
+  list-style-type: none;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #aaaaaa;
+  font-size: 12px;
+  li {
+    display: -webkit-box;
+    > div {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      -webkit-box-flex: 1;
+    }
+  }
+}
+
+.ninja_cookie_info + .ninja_cookie_empty_message {
+  display: none;
+}
+
+.bbsmenu_reload_status {
+  &.done {
+    color: green;
+  }
+  &.fail {
+    color: red;
+  }
+}
+
+input[type="text"]:invalid {
+  background-color: #ffcccc;
+}

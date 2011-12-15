@@ -1,0 +1,133 @@
+@import "../common.scss";
+
+html, body, #body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+a {
+  cursor: pointer;
+}
+
+iframe {
+  border: none;
+}
+
+#body {
+  position: relative;
+  background-color: #555555;
+  color: #111111;
+}
+
+#left_pane {
+  position: absolute;
+  width: 135px;
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background-color: #dddddd;
+}
+
+#right_pane {
+  box-sizing: border-box;
+  position: absolute;
+  left: 135px;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  .tab {
+    margin: 3px;
+  }
+}
+
+#body.pane-3 {
+  #tab_resizer {
+    cursor: row-resize;
+    height: 5px;
+  }
+  #right_pane {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    #tab_a {
+      height: 50%;
+      margin-bottom: 0;
+    }
+    #tab_b {
+      -webkit-box-flex: 1;
+      margin-top: 0;
+    }
+  }
+}
+
+#body.pane-3h {
+  #tab_resizer {
+    cursor: col-resize;
+    width: 5px;
+  }
+  #right_pane {
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    #tab_a {
+      width: 50%;
+      margin-right: 0;
+    }
+    #tab_b {
+      -webkit-box-flex: 1;
+      margin-left: 0;
+    }
+  }
+}
+
+#body.pane-2 {
+  #right_pane {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    #tab_a {
+      -webkit-box-flex: 1;
+    }
+  }
+}
+
+#modal {
+  > iframe {
+    z-index: $z-index_modal;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+#app_notice_container {
+  position: fixed;
+  left: 50px;
+  top: 10px;
+  right: 50px;
+  z-index: $z-index_notification;
+  > div {
+    @include drop_shadow;
+    background-image: -webkit-linear-gradient(transparent, rgba(black, 0.25));
+    border-radius: 5px;
+    color: #eeeeee;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    padding: 10px;
+    display: -webkit-box;
+    > div {
+      -webkit-box-flex: 1;
+      margin-right: 5px;
+    }
+    > button {
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+      background-image: url(/img/close_16x16.png);
+      background-color: transparent;
+      border: none;
+    }
+  }
+}

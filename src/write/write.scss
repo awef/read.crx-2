@@ -1,0 +1,108 @@
+@import "../common.scss";
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+html {
+  font-size: 14px;
+  background-color: #f5f5f5;
+  color: #444444;
+}
+
+body {
+  padding: 8px;
+}
+
+h1 {
+  font-size: 18px;
+  margin: 0 0 5px 0;
+}
+
+form {
+  margin: 0;
+  height: 100%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+input[type="submit"] {
+  border: 1px solid #cccccc;
+  border-radius: 2px;
+  background: -webkit-linear-gradient(#eeeeee, #d5d5d5);
+  color: #444444;
+  font-weight: bold;
+  padding: 5px;
+  cursor: pointer;
+  &:disabled {
+    cursor: default;
+    background: #eeeeee;
+    color: #999999;
+  }
+  &:not([disabled]):active {
+    background: -webkit-linear-gradient(#d5d5d5, #eeeeee);
+  }
+}
+
+textarea, input:not([type="submit"]) {
+  border: 1px solid #eeeeee;
+  border-radius: 2px;
+  box-shadow: 0 1px 1px #cccccc inset, 0 1px 0 white;
+  outline: none;
+  padding: 5px;
+}
+
+textarea {
+  display: block;
+  -webkit-box-flex: 1;
+  resize: none;
+  width: 100%;
+}
+
+.iframe_container {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 5%;
+  border: 3px solid #cccccc;
+  background-color: rgba(black, 0.7);
+  box-shadow: 0 0 20px black inset;
+}
+
+.hide_iframe {
+  cursor: pointer;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  background-color: #333333;
+  border: 2px solid white;
+  box-shadow: 0 0 20px black;
+  box-sizing: content-box;
+  width: 16px;
+  height: 16px;
+  background-image: url(/img/close_16x16.png);
+}
+
+iframe {
+  background-color: white;
+  border: none;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 0 20px black;
+}
+
+.notice2 {
+  margin-top: 5px;
+  color: #ee3333;
+  border: 1px solid #ee3333;
+  border-radius: 3px;
+  padding: 5px;
+}

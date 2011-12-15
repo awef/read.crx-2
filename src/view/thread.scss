@@ -1,0 +1,277 @@
+@import "../common.scss";
+
+@mixin view_thread_res_info {
+  border-top: 1px solid silver;
+  display: block;
+  margin: 1em 0 0 5px;
+  font-size: 12px;
+  color: #666666;
+  text-align: center;
+}
+
+html {
+  @include common_view_style_1;
+  font-size: 15px;
+  background-color: #fafafa;
+}
+
+.content {
+  padding-bottom: 50px;
+  &[data-res_search_hit_count="0"] {
+    &:after {
+      display: block;
+      position: absolute;
+      width: 100%;
+      padding: 10px;
+      text-align: center;
+      font-size: 18px;
+      color: #444444;
+      content: "検索にヒットするレスが有りませんでした";
+    }
+  }
+}
+
+article {
+  margin: 20px 5px;
+}
+
+.last:not(:last-child):after {
+  @include view_thread_res_info;
+  content: "しおり";
+}
+
+.read:not(:last-child):after {
+  @include view_thread_res_info;
+  content: "ここから未読";
+}
+
+.received:not(:last-child):after {
+  @include view_thread_res_info;
+  content: "ここから新着";
+}
+
+header {
+  font-size: 14px;
+  color: #222222;
+}
+
+.num {
+  cursor: pointer;
+  &:after {
+    content: " ";
+  }
+}
+
+.name {
+  color: green;
+}
+
+.name_num {
+  cursor: pointer;
+}
+
+.one:not(:first-child) .name:before {
+  content: ">>1";
+  border: 1px solid #aa5555;
+  border-radius: 3px;
+  color: #a40000;
+  padding: 2px;
+  font-size: 10px;
+  font-weight: bold;
+  margin-right: 1ex;
+}
+
+.ob {
+  color: #003366;
+}
+
+.mail {
+  &:before {
+    content: " [";
+  }
+  &:after {
+    content: "] ";
+  }
+}
+
+.message {
+  margin: 5px 10px;
+  word-break: break-all;
+}
+
+.anchor.disabled {
+  color: #666666;
+}
+
+.link {
+  color: #0000aa;
+}
+
+.freq {
+  color: #aa0000;
+}
+
+.id {
+  white-space: nowrap;
+  &.link, &.freq {
+    cursor: pointer;
+  }
+}
+
+.rep {
+  white-space: nowrap;
+  cursor: pointer;
+  margin-left: 0.5ex;
+}
+
+.aa .message {
+  @include ascii_art;
+}
+
+.thumbnail {
+  $container_height: 100px;
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+  height: $container_height;
+  > a {
+    $a_padding: 3px;
+    position: relative;
+    display: block;
+    background-color: white;
+    padding: $a_padding;
+    box-shadow: 0 1px 3px 0px rgba(black, 0.4);
+    > img {
+      display: block;
+      max-width: 150px;
+      max-height: $container_height - $a_padding * 2;
+      &[src="/img/loading.svg"] {
+        width: 50px;
+        height: 50px;
+      }
+    }
+  }
+}
+
+.popup {
+  position: fixed;
+  z-index: $z-index_popup;
+  max-width: 500px;
+  max-height: 300px;
+  overflow: auto;
+  box-shadow: 0 3px 10px rgba(black, 0.75);
+  border-radius: 3px;
+  &:not(.popup_linkinfo) {
+    > article {
+      margin: 10px;
+    }
+    border: 3px solid #666666;
+    background-color: white;
+  }
+  &.popup_linkinfo {
+    overflow: hidden;
+    padding: 5px;
+    background-color: rgba(black, 0.8);
+    color: #eeeeee;
+    -webkit-animation-name: fade_in;
+    -webkit-animation-duration: 150ms;
+    -webkit-timing-function: ease-out;
+  }
+  .anchor_popup_disabled_message {
+    background-color: #666666;
+    color: #eeeeee;
+    padding: 5px;
+  }
+}
+
+.jump_panel {
+  @include drop_shadow;
+  $radius: 2px;
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid white;
+  border-radius: $radius;
+  -webkit-user-select: none;
+  list-style-type: none;
+  font-size: 14px;
+  color: white;
+  opacity: 0.25;
+  -webkit-transition: opacity 200ms;
+  &:hover {
+    opacity: 1;
+  }
+  > li {
+    display: none;
+    cursor: pointer;
+    padding: 3px 10px;
+    background-color: rgba(black, 0.8);
+    &:first-child {
+      border-top-left-radius: $radius;
+      border-top-right-radius: $radius;
+    }
+    &:last-child {
+      border-bottom-left-radius: $radius;
+      border-bottom-right-radius: $radius;
+    }
+    &:hover {
+      text-shadow: 0 0 10px white;
+    }
+  }
+}
+
+.searching > :not(.search_hit) {
+  display: none;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  > * {
+    margin: 10px;
+    float: left;
+    display: none;
+  }
+  > .loading_indicator {
+    font-size: 12px;
+    border: 1px solid #bbbbbb;
+    background-color: #eeeeee;
+    color: #222222;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #333333;
+    color: white;
+  }
+  > .next_unread {
+    font-size: 12px;
+    border: 1px solid #bbbbbb;
+    background-color: #eeeeee;
+    color: #222222;
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+  }
+}
+
+.view.loading {
+  .content {
+    display: block !important;
+    ~ .loading_overlay {
+      display: none !important;
+    }
+    ~ footer .loading_indicator {
+      display: block !important;
+    }
+    &:empty {
+      ~ .loading_overlay {
+        display: block !important;
+      }
+      ~ footer .loading_indicator {
+        display: none !important;
+      }
+    }
+  }
+}
