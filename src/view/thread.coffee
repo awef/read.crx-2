@@ -419,7 +419,7 @@ app.boot "/view/thread.html", ->
           update_next_unread()
           return
 
-app.view_thread._jump_to_res = ($view, res_num, animate_flg, offset = 0) ->
+app.view_thread._jump_to_res = ($view, res_num, animate_flg, offset = -10) ->
   content = $view[0].querySelector(".content")
   target = content.childNodes[res_num - 1]
   if target
