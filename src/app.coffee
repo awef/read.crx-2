@@ -103,6 +103,7 @@ app.message = do ->
 app.config =
   set: (key, val) ->
     localStorage["config_#{key}"] = val
+    app.message.send("config_updated", {key, val})
     return
   get: (key) ->
     def =
