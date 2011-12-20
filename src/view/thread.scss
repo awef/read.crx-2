@@ -247,6 +247,7 @@ footer {
   $link_color,
   $freq_color,
   $anchor_color,
+  $anchor_visited_color,
   $anchor_disabled_color,
   $one_color,
   $no_hit_message_color,
@@ -267,6 +268,9 @@ footer {
 
   a {
     color: $anchor_color;
+    &:visited {
+      color: $anchor_visited_color;
+    }
   }
 
   .name {
@@ -331,6 +335,7 @@ footer {
     $link_color: #00a,
     $freq_color: #a00,
     $anchor_color: #00e,
+    $anchor_visited_color: #551A8B,
     $anchor_disabled_color: #666,
     $one_color: #a40000,
     $no_hit_message_color: #444,
@@ -352,6 +357,7 @@ footer {
     $link_color: #69d,
     $freq_color: #d99,
     $anchor_color: #6af,
+    $anchor_visited_color: #99f,
     $anchor_disabled_color: #999,
     $one_color: #fe6,
     $no_hit_message_color: #ddd,
