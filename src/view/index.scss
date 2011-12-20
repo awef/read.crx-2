@@ -17,8 +17,14 @@ iframe {
 
 #body {
   position: relative;
-  background-color: #555555;
-  color: #111111;
+}
+
+.view.theme_default #body {
+  background-color: #555;
+}
+
+.view.theme_dark #body {
+  background-color: #222;
 }
 
 #left_pane {
@@ -27,7 +33,6 @@ iframe {
   height: 100%;
   overflow-y: auto;
   box-sizing: border-box;
-  background-color: #dddddd;
 }
 
 #right_pane {

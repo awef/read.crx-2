@@ -7,28 +7,23 @@
   display: block;
   margin: 1em 0 0 5px;
   font-size: 12px;
-  color: #666666;
   text-align: center;
 }
 
 html {
   font-size: 15px;
-  background-color: #fafafa;
 }
 
 .content {
   padding-bottom: 50px;
-  &[data-res_search_hit_count="0"] {
-    &:after {
-      display: block;
-      position: absolute;
-      width: 100%;
-      padding: 10px;
-      text-align: center;
-      font-size: 18px;
-      color: #444444;
-      content: "検索にヒットするレスが有りませんでした";
-    }
+  &[data-res_search_hit_count="0"]:after {
+    display: block;
+    position: absolute;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    font-size: 18px;
+    content: "検索にヒットするレスが有りませんでした";
   }
 }
 
@@ -53,7 +48,6 @@ article {
 
 header {
   font-size: 14px;
-  color: #222222;
 }
 
 .num {
@@ -63,27 +57,13 @@ header {
   }
 }
 
-.name {
-  color: green;
-}
-
 .name_num {
   cursor: pointer;
 }
 
 .one:not(:first-child) .name:before {
-  content: ">>1";
-  border: 1px solid #aa5555;
-  border-radius: 3px;
-  color: #a40000;
-  padding: 2px;
-  font-size: 10px;
-  font-weight: bold;
+  content: "(>>1)";
   margin-right: 1ex;
-}
-
-.ob {
-  color: #003366;
 }
 
 .mail {
@@ -98,18 +78,6 @@ header {
 .message {
   margin: 5px 10px;
   word-break: break-all;
-}
-
-.anchor.disabled {
-  color: #666666;
-}
-
-.link {
-  color: #0000aa;
-}
-
-.freq {
-  color: #aa0000;
 }
 
 .id {
@@ -167,7 +135,6 @@ header {
       margin: 10px;
     }
     border: 3px solid #666666;
-    background-color: white;
   }
   &.popup_linkinfo {
     overflow: hidden;
@@ -193,12 +160,11 @@ header {
   bottom: 20px;
   margin: 0;
   padding: 0;
-  border: 1px solid white;
+  border: 1px solid;
   border-radius: $radius;
   -webkit-user-select: none;
   list-style-type: none;
   font-size: 14px;
-  color: white;
   opacity: 0.25;
   -webkit-transition: opacity 200ms;
   &:hover {
@@ -208,7 +174,6 @@ header {
     display: none;
     cursor: pointer;
     padding: 3px 10px;
-    background-color: rgba(black, 0.8);
     &:first-child {
       border-top-left-radius: $radius;
       border-top-right-radius: $radius;
@@ -239,8 +204,6 @@ footer {
   > .loading_indicator {
     font-size: 12px;
     border: 1px solid #bbbbbb;
-    background-color: #eeeeee;
-    color: #222222;
     padding: 10px;
     border-radius: 5px;
     background-color: #333333;
@@ -249,8 +212,6 @@ footer {
   > .next_unread {
     font-size: 12px;
     border: 1px solid #bbbbbb;
-    background-color: #eeeeee;
-    color: #222222;
     padding: 10px;
     border-radius: 5px;
     text-decoration: none;
@@ -275,4 +236,129 @@ footer {
       }
     }
   }
+}
+
+@mixin view_thread_theme (
+  $background_color,
+  $color,
+  $res_header_color,
+  $res_name_color,
+  $res_name_ob_color,
+  $link_color,
+  $freq_color,
+  $anchor_color,
+  $anchor_disabled_color,
+  $one_color,
+  $no_hit_message_color,
+  $jump_panel_color,
+  $jump_panel_background_color,
+  $next_unread_background_color,
+  $next_unread_color,
+  $thread_res_info_color
+) {
+  & {
+    background-color: $background_color;
+    color: $color;
+  }
+
+  header {
+    color: $res_header_color;
+  }
+
+  a {
+    color: $anchor_color;
+  }
+
+  .name {
+    color: $res_name_color;
+  }
+
+  .ob {
+    color: $res_name_ob_color;
+  }
+
+  .link {
+    color: $link_color;
+  }
+
+  .freq {
+    color: $freq_color;
+  }
+
+  .anchor.disabled {
+    color: $anchor_disabled_color;
+  }
+
+  .popup:not(.popup_linkinfo) {
+    background-color: $background_color;
+  }
+
+  .one:not(:first-child) .name:before {
+    color: $one_color;
+  }
+
+  .last, .read, .received {
+    &:not(:last-child):after {
+      color: $thread_res_info_color;
+    }
+  }
+
+  .content[data-res_search_hit_count="0"]:after {
+    color: $no_hit_message_color;
+  }
+
+  .jump_panel {
+    border-color: $jump_panel_color;
+    color: $jump_panel_color;
+    > li {
+      background-color: $jump_panel_background_color;
+    }
+  }
+
+  .next_unread {
+    background-color: $next_unread_background_color;
+    color: $next_unread_color;
+  }
+}
+
+.view.theme_default {
+  @include view_thread_theme (
+    $background_color: #fafafa,
+    $color: #000,
+    $res_header_color: #222,
+    $res_name_color: #008000,
+    $res_name_ob_color: #036,
+    $link_color: #00a,
+    $freq_color: #a00,
+    $anchor_color: #00e,
+    $anchor_disabled_color: #666,
+    $one_color: #a40000,
+    $no_hit_message_color: #444,
+    $jump_panel_background_color: rgba(#000, 0.8),
+    $jump_panel_color: #fff,
+    $next_unread_background_color: #eee,
+    $next_unread_color: #222,
+    $thread_res_info_color: #666
+  );
+}
+
+.view.theme_dark {
+  @include view_thread_theme(
+    $background_color: #333,
+    $color: #eee,
+    $res_header_color: #ddd,
+    $res_name_color: #9d9,
+    $res_name_ob_color: #69d,
+    $link_color: #69d,
+    $freq_color: #d99,
+    $anchor_color: #6af,
+    $anchor_disabled_color: #999,
+    $one_color: #fe6,
+    $no_hit_message_color: #ddd,
+    $jump_panel_background_color: rgba(#333, 0.8),
+    $jump_panel_color: #ccc,
+    $next_unread_background_color: #333,
+    $next_unread_color: #ddd,
+    $thread_res_info_color: silver
+  );
 }

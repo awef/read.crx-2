@@ -113,6 +113,7 @@ app.config =
       default_name: ""
       default_mail: ""
       popup_trigger: "click"
+      theme_id: "default"
     if localStorage["config_#{key}"]?
       localStorage["config_#{key}"]
     else if def[key]?
