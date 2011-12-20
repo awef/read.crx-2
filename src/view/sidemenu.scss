@@ -1,12 +1,42 @@
 @import "../common.scss";
 
+.accordion {
+  -webkit-user-select: none;
+  font-size: 14px;
+  > h3 {
+    cursor: pointer;
+    font: {
+      size: inherit;
+      weight: inherit;
+    };
+    margin: 0;
+    padding: 0 0 0 10px;
+    line-height: 1.3em;
+  }
+  > ul {
+    margin: 0;
+    padding: 5px 0;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+    list-style-type: none;
+  }
+  a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    margin: 0 5px;
+    padding: 1px 5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
+
 body {
   margin: 0;
   padding-bottom: 100px;
-}
-
-body:not(.accordion) {
-  visibility: hidden;
+  &:not(.accordion) {
+    visibility: hidden;
+  }
 }
 
 a {
@@ -20,7 +50,7 @@ a {
   > input:not([type="hidden"]) {
     display: block;
     box-sizing: content-box;
-    border: 1px solid #999999;
+    border: 1px solid;
     border-radius: 2px;
     height: 19px;
     margin: 0;
@@ -31,8 +61,6 @@ a {
     margin-right: 2px;
   }
   > input[type="submit"] {
-    background-color: #eeeeee;
-    background-image: url(/img/search2_19x19.png);
     width: 19px;
   }
 }
@@ -43,8 +71,7 @@ li:not(.bookmark) + li.bookmark:before {
   margin: 5px;
   padding: 5px;
   font-size: 12px;
-  color: #072a8a;
-  border-bottom: 1px solid #072a8a;
+  border-bottom: 1px solid;
 }
 
 .loading_message {
@@ -60,4 +87,111 @@ li:not(.bookmark) + li.bookmark:before {
   .loading & {
     display: block;
   }
+}
+
+@mixin view_sidemenu_theme (
+  $background_color,
+  $color,
+  $header_hover_background_color,
+  $header_active_background_color,
+  $header_open_background_color,
+  $header_open_color,
+  $ul_background_color,
+  $a_hover_background_color,
+  $a_hover_shadow_color,
+  $bookmark_separator_color,
+  $bookmark_separator_border_color,
+  $searchbox_background_color,
+  $searchbox_color,
+  $searchbox_item_border_color,
+  $searchbox_submit_background_color,
+  $searchbox_submit_background_image
+) {
+  & {
+    background-color: $background_color;
+    color: $color;
+  }
+
+  h3 {
+    &:hover {
+      background-color: $header_hover_background_color;
+    }
+    &:active {
+      background-color: $header_active_background_color;
+    }
+    &.accordion_open {
+      color: $header_open_color;
+      background-color: $header_open_background_color;
+    }
+  }
+
+  ul {
+    background-color: $ul_background_color;
+  }
+
+  a:hover {
+    background-color: $a_hover_background_color;
+    box-shadow: 0 0 5px $a_hover_shadow_color;
+  }
+
+  li:not(.bookmark) + li.bookmark:before {
+    border-color: $bookmark_separator_border_color;
+    color: $bookmark_separator_color;
+  }
+
+  .search > input {
+    &:not([type="hidden"]) {
+      border-color: $searchbox_item_border_color;
+    }
+    &[type="text"] {
+      background-color: $searchbox_background_color;
+      color: $searchbox_color;
+    }
+    &[type="submit"] {
+      background-color: $searchbox_submit_background_color;
+      background-image: $searchbox_submit_background_image;
+    }
+  }
+}
+
+.view.theme_default {
+  @include view_sidemenu_theme(
+    $background_color: #ddd,
+    $color: #000,
+    $header_hover_background_color: #bbb,
+    $header_active_background_color: #aaa,
+    $header_open_background_color: #666,
+    $header_open_color: #fff,
+    $ul_background_color: #fafafa,
+    $a_hover_background_color: #ddd,
+    $a_hover_shadow_color: #ddd,
+    $bookmark_separator_color: #072a8a,
+    $bookmark_separator_border_color: #072a8a,
+    $searchbox_background_color: #fff,
+    $searchbox_color: #111,
+    $searchbox_item_border_color: #999,
+    $searchbox_submit_background_color: #eee,
+    $searchbox_submit_background_image: url(/img/search2_19x19_777.png)
+  );
+}
+
+.view.theme_dark {
+  @include view_sidemenu_theme(
+    $background_color: #333,
+    $color: #eee,
+    $header_hover_background_color: #222,
+    $header_active_background_color: #111,
+    $header_open_background_color: #222,
+    $header_open_color: #9d9,
+    $ul_background_color: #444,
+    $a_hover_background_color: #333,
+    $a_hover_shadow_color: transparent,
+    $bookmark_separator_color: #9d9,
+    $bookmark_separator_border_color: #9d9,
+    $searchbox_background_color: transparent,
+    $searchbox_color: #eee,
+    $searchbox_item_border_color: #999,
+    $searchbox_submit_background_color: transparent,
+    $searchbox_submit_background_image: url(/img/search2_19x19_aaa.png)
+  );
 }

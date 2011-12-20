@@ -33,12 +33,22 @@ rule ".js" => "%{^#{DBG}/,#{SRC}/}X.coffee" do |t|
   coffee(t.prerequisites[0], t.name)
 end
 
-rule ".png" => "#{SRC}/image/svg/%{_\\d+x\\d+$,}n.svg" do |t|
-  /_(\d+)x(\d+)\.png$/ =~ t.name
-  sh "convert\
-    -background transparent\
-    -resize #{$1}x#{$2}\
-    #{t.prerequisites[0]} #{t.name}"
+rule ".png" => "#{SRC}/image/svg/%{_\\d+x\\d+(?:_\\w+)?$,}n.svg" do |t|
+  /_(\d+)x(\d+)(?:_(\w*))?\.png$/ =~ t.name
+  unless $3
+    sh "convert\
+      -background transparent\
+      -resize #{$1}x#{$2}\
+      #{t.prerequisites[0]} #{t.name}"
+  else
+    sh "convert\
+      -background transparent\
+      -resize #{$1}x#{$2}\
+      -fuzz '50%'\
+      -fill '##{$3}'\
+      -opaque '#333'\
+      #{t.prerequisites[0]} #{t.name}"
+  end
 end
 
 task :clean do
@@ -88,15 +98,23 @@ lambda {
     "#{DBG}/img/read.crx_48x48.png",
     "#{DBG}/img/read.crx_16x16.png",
     "#{DBG}/img/close_16x16.png",
-    "#{DBG}/img/star_19x19.png",
-    "#{DBG}/img/star2_19x19.png",
-    "#{DBG}/img/link_19x19.png",
-    "#{DBG}/img/search2_19x19.png",
-    "#{DBG}/img/reload_19x19.png",
-    "#{DBG}/img/pencil_19x19.png",
-    "#{DBG}/img/arrow_19x19.png",
     "#{DBG}/img/dummy_1x1.png",
-    "#{DBG}/img/loading.svg"
+    "#{DBG}/img/loading.svg",
+    "#{DBG}/img/star2_19x19.png",
+
+    "#{DBG}/img/search2_19x19_777.png",
+    "#{DBG}/img/star_19x19_333.png",
+    "#{DBG}/img/link_19x19_333.png",
+    "#{DBG}/img/reload_19x19_333.png",
+    "#{DBG}/img/pencil_19x19_333.png",
+    "#{DBG}/img/arrow_19x19_333.png",
+
+    "#{DBG}/img/search2_19x19_aaa.png",
+    "#{DBG}/img/star_19x19_ddd.png",
+    "#{DBG}/img/link_19x19_ddd.png",
+    "#{DBG}/img/reload_19x19_ddd.png",
+    "#{DBG}/img/pencil_19x19_ddd.png",
+    "#{DBG}/img/arrow_19x19_ddd.png"
   ]
 
   directory "#{DBG}/img"

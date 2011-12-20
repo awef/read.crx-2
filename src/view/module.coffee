@@ -1,6 +1,14 @@
 app.view_module = {}
 
 app.view_module.view = ($view) ->
+  #テーマ適用
+  $view.addClass("theme_#{app.config.get("theme_id")}")
+  app.message.add_listener "config_updated", (message) ->
+    if message.key is "theme_id"
+      $view.removeClass("theme_default theme_dark")
+      $view.addClass("theme_#{message.val}")
+    return
+
   #title_updatedメッセージ送出処理
   do ->
     send_title_updated = ->
