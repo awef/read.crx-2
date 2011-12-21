@@ -12,7 +12,6 @@ html {
   max-width: 500px;
   margin: 50px;
   padding: 10px;
-  background-color: #444444;
   border-radius: 5px;
 }
 
@@ -34,4 +33,16 @@ input:first-child {
   margin-top: 5px;
   font-size: 14px;
   color: white;
+}
+
+.view.theme_default {
+  .container {
+    background-color: #444;
+  }
+}
+.view.theme_dark {
+  background-color: #444;
+  .container {
+    background-color: #252525;
+  }
 }
