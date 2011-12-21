@@ -713,6 +713,8 @@ app.view_thread._read_state_manager = ($view) ->
   get_read_state.done ({read_state, read_state_updated}) ->
     scan = ->
       received = content.childNodes.length
+      #onbeforeunload内で呼び出された時に、この値が0になる場合が有る
+      return if received is 0
       #したらば、まちBBSの最新レス削除時対策
       #スレ覧のキャッシュよりも新しいスレのデータを用いているにも関わらず、
       #キャッシュされているデータ内でのレス数の方が多い場合、
