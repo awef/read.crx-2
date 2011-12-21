@@ -76,18 +76,24 @@ input[type="text"] {
 
 section {
   button {
-    border: 1px solid #aaaaaa;
+    border: 1px solid #aaa;
     border-radius: 3px;
-    background-image: -webkit-linear-gradient(#eeeeee, #d5d5d5);
-    color: #222222;
+    background: -webkit-linear-gradient(#eee, #d5d5d5);
+    color: #222;
     padding: 5px;
-    cursor: pointer;
-    &:hover {
-      border-color: #777777;
+    &:not([disabled]) {
+      cursor: pointer;
+      &:hover {
+        border-color: #777;
+      }
+      &:active {
+        background: -webkit-linear-gradient(#ddd, #c5c5c5);
+        box-shadow: 0 1px 1px #999 inset;
+      }
     }
-    &:active {
-      background-image: -webkit-linear-gradient(#dddddd, #c5c5c5);
-      box-shadow: 0 1px 1px #999999 inset;
+    &[disabled] {
+      background: #ddd;
+      color: #888;
     }
   }
 }
