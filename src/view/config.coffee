@@ -175,3 +175,40 @@ app.boot "/view/config.html", ->
     app.message.send("open", url: "bookmark_source_selector")
     return
 
+  #ブックマークインポートボタン
+  $view.find(".import_bookmark").on "click", ->
+    rcrx_webstore = "hhjpdicibjffnpggdiecaimdgdghainl"
+    rcrx_debug = "bhffdiookpgmjkaeiagoecflopbnphhi"
+    req = "export_bookmark"
+
+    $button = $(@)
+    $status = $(".import_bookmark_status")
+
+    $button.attr("disabled", true)
+    $status.text("インポート中")
+
+    $.Deferred (deferred) ->
+      chrome.extension.sendRequest rcrx_webstore, req, (res) ->
+        if res
+          deferred.resolve(res)
+        else
+          deferred.reject()
+    .pipe null, ->
+      $.Deferred (deferred) ->
+        chrome.extension.sendRequest rcrx_debug, req, (res) ->
+          if res
+            deferred.resolve(res)
+          else
+            deferred.reject()
+    .done (res) ->
+      for url, bookmark of res.bookmark
+        if typeof(url) is typeof(bookmark.title) is "string"
+          app.bookmark.add(url, bookmark.title)
+      for url, bookmark of res.bookmark_board
+        if typeof(url) is typeof(bookmark.title) is "string"
+          app.bookmark.add(url, bookmark.title)
+      $status.text("インポート完了")
+    .fail ->
+      $status.text("インポートに失敗しました。read.crx v0.73以降がインストールされている事を確認して下さい。")
+    .always ->
+      $button.attr("disabled", false)
