@@ -30,3 +30,9 @@ td {
     text-align: right;
   }
 }
+
+.theme_dark {
+  td:nth-child(1) {
+    color: #f93;
+  }
+}
