@@ -1,6 +1,3 @@
-SRC = "src"
-DBG = "debug"
-
 def haml(src, output)
   sh "haml -q #{src} #{output}"
 end
@@ -21,19 +18,19 @@ p_coffee = proc do |t|
   coffee(t.prerequisites.join(" "), t.name)
 end
 
-rule ".html" => "%{^#{DBG}/,#{SRC}/}X.haml" do |t|
+rule ".html" => "%{^debug/,src/}X.haml" do |t|
   haml(t.prerequisites[0], t.name)
 end
 
-rule ".css" => "%{^#{DBG}/,#{SRC}/}X.scss" do |t|
+rule ".css" => "%{^debug/,src/}X.scss" do |t|
   scss(t.prerequisites[0], t.name)
 end
 
-rule ".js" => "%{^#{DBG}/,#{SRC}/}X.coffee" do |t|
+rule ".js" => "%{^debug/,src/}X.coffee" do |t|
   coffee(t.prerequisites[0], t.name)
 end
 
-rule ".png" => "#{SRC}/image/svg/%{_\\d+x\\d+(?:_\\w+)?$,}n.svg" do |t|
+rule ".png" => "src/image/svg/%{_\\d+x\\d+(?:_\\w+)?$,}n.svg" do |t|
   /_(\d+)x(\d+)(?:_(\w*))?\.png$/ =~ t.name
   unless $3
     sh "convert\
@@ -52,7 +49,7 @@ rule ".png" => "#{SRC}/image/svg/%{_\\d+x\\d+(?:_\\w+)?$,}n.svg" do |t|
 end
 
 task :clean do
-  sh "rm -rf #{DBG}"
+  sh "rm -rf debug"
   #jQuery
   cd "lib/jquery" do
     sh "git checkout -f"
@@ -61,13 +58,13 @@ task :clean do
 end
 
 task :default => [
-  DBG,
-  "#{DBG}/manifest.json",
-  "#{DBG}/lib",
-  "#{DBG}/app.js",
-  "#{DBG}/app_core.js",
-  "#{DBG}/cs_addlink.js",
-  "#{DBG}/cs_search.js",
+  "debug",
+  "debug/manifest.json",
+  "debug/lib",
+  "debug/app.js",
+  "debug/app_core.js",
+  "debug/cs_addlink.js",
+  "debug/cs_search.js",
   :img,
   :ui,
   :view,
@@ -78,91 +75,91 @@ task :default => [
   :jail
 ]
 
-directory DBG
+directory "debug"
 
-file "#{DBG}/manifest.json" => "#{SRC}/manifest.json", &p_cp
+file "debug/manifest.json" => "src/manifest.json", &p_cp
 
-file "#{DBG}/app_core.js" => FileList["#{SRC}/core/*.coffee"], &p_coffee
+file "debug/app_core.js" => FileList["src/core/*.coffee"], &p_coffee
 
-file "#{DBG}/cs_search.js" => [
-  "#{SRC}/app.coffee",
-  "#{SRC}/core/url.coffee",
-  "#{SRC}/cs_search.coffee"
+file "debug/cs_search.js" => [
+  "src/app.coffee",
+  "src/core/url.coffee",
+  "src/cs_search.coffee"
 ], &p_coffee
 
 #img
 lambda {
   task :img => [
-    "#{DBG}/img",
-    "#{DBG}/img/read.crx_128x128.png",
-    "#{DBG}/img/read.crx_48x48.png",
-    "#{DBG}/img/read.crx_16x16.png",
-    "#{DBG}/img/close_16x16.png",
-    "#{DBG}/img/dummy_1x1.png",
-    "#{DBG}/img/loading.svg",
-    "#{DBG}/img/star2_19x19.png",
+    "debug/img",
+    "debug/img/read.crx_128x128.png",
+    "debug/img/read.crx_48x48.png",
+    "debug/img/read.crx_16x16.png",
+    "debug/img/close_16x16.png",
+    "debug/img/dummy_1x1.png",
+    "debug/img/loading.svg",
+    "debug/img/star2_19x19.png",
 
-    "#{DBG}/img/search2_19x19_777.png",
-    "#{DBG}/img/star_19x19_333.png",
-    "#{DBG}/img/link_19x19_333.png",
-    "#{DBG}/img/reload_19x19_333.png",
-    "#{DBG}/img/pencil_19x19_333.png",
-    "#{DBG}/img/arrow_19x19_333.png",
+    "debug/img/search2_19x19_777.png",
+    "debug/img/star_19x19_333.png",
+    "debug/img/link_19x19_333.png",
+    "debug/img/reload_19x19_333.png",
+    "debug/img/pencil_19x19_333.png",
+    "debug/img/arrow_19x19_333.png",
 
-    "#{DBG}/img/search2_19x19_aaa.png",
-    "#{DBG}/img/star_19x19_ddd.png",
-    "#{DBG}/img/link_19x19_ddd.png",
-    "#{DBG}/img/reload_19x19_ddd.png",
-    "#{DBG}/img/pencil_19x19_ddd.png",
-    "#{DBG}/img/arrow_19x19_ddd.png"
+    "debug/img/search2_19x19_aaa.png",
+    "debug/img/star_19x19_ddd.png",
+    "debug/img/link_19x19_ddd.png",
+    "debug/img/reload_19x19_ddd.png",
+    "debug/img/pencil_19x19_ddd.png",
+    "debug/img/arrow_19x19_ddd.png"
   ]
 
-  directory "#{DBG}/img"
+  directory "debug/img"
 
-  file "#{DBG}/img/read.crx_128x128.png" => "#{SRC}/image/svg/read.crx.svg" do |t|
+  file "debug/img/read.crx_128x128.png" => "src/image/svg/read.crx.svg" do |t|
     sh "convert\
       -background transparent\
       -resize 96x96\
       -extent 128x128-16-16\
-      #{SRC}/image/svg/read.crx.svg #{t.name}"
+      src/image/svg/read.crx.svg #{t.name}"
   end
 
-  file "#{DBG}/img/loading.svg" => "#{SRC}/image/svg/loading.svg", &p_cp
+  file "debug/img/loading.svg" => "src/image/svg/loading.svg", &p_cp
 }.call()
 
 #ui
 lambda {
-  task :ui => ["#{DBG}/ui.css", "#{DBG}/ui.js"]
+  task :ui => ["debug/ui.css", "debug/ui.js"]
 
-  file "#{DBG}/ui.css" => FileList["#{SRC}/common.scss"].include("#{SRC}/ui/*.scss") do |t|
-    scss("#{SRC}/ui/ui.scss", t.name)
+  file "debug/ui.css" => FileList["src/common.scss"].include("src/ui/*.scss") do |t|
+    scss("src/ui/ui.scss", t.name)
   end
 
-  file "#{DBG}/ui.js" => FileList["#{SRC}/ui/*.coffee"], &p_coffee
+  file "debug/ui.js" => FileList["src/ui/*.coffee"], &p_coffee
 }.call()
 
 #View
 lambda {
-  directory "#{DBG}/view"
+  directory "debug/view"
 
   view = [
-    "#{DBG}/view",
-    "#{DBG}/view/app_proxy.js",
-    "#{DBG}/view/module.js"
+    "debug/view",
+    "debug/view/app_proxy.js",
+    "debug/view/module.js"
   ]
 
-  FileList["#{SRC}/view/*.haml"].each {|x|
-    view.push(x.sub(/^#{SRC}\//, "#{DBG}/").sub(/\.haml$/, ".html"))
+  FileList["src/view/*.haml"].each {|x|
+    view.push(x.sub(/^src\//, "debug/").sub(/\.haml$/, ".html"))
   }
 
-  FileList["#{SRC}/view/*.coffee"].each {|x|
-    view.push(x.sub(/^#{SRC}\//, "#{DBG}/").sub(/\.coffee$/, ".js"))
+  FileList["src/view/*.coffee"].each {|x|
+    view.push(x.sub(/^src\//, "debug/").sub(/\.coffee$/, ".js"))
   }
 
-  FileList["#{SRC}/view/*.scss"].each {|scss_path|
-    css_path = scss_path.sub(/^#{SRC}\//, "#{DBG}/").sub(/\.scss$/, ".css")
+  FileList["src/view/*.scss"].each {|scss_path|
+    css_path = scss_path.sub(/^src\//, "debug/").sub(/\.scss$/, ".css")
     view.push(css_path)
-    file css_path => ["#{SRC}/common.scss", scss_path] do |t|
+    file css_path => ["src/common.scss", scss_path] do |t|
       scss(scss_path, t.name)
     end
   }
@@ -172,82 +169,82 @@ lambda {
 
 #Zombie
 lambda {
-  task :zombie => ["#{DBG}/zombie.html", "#{DBG}/zombie.js"]
+  task :zombie => ["debug/zombie.html", "debug/zombie.js"]
 
-  file "#{DBG}/zombie.js" => [
-    "#{SRC}/core/url.coffee",
-    "#{SRC}/core/cache.coffee",
-    "#{SRC}/core/read_state.coffee",
-    "#{SRC}/core/history.coffee",
-    "#{SRC}/core/bookmark.coffee",
-    "#{SRC}/zombie.coffee"
+  file "debug/zombie.js" => [
+    "src/core/url.coffee",
+    "src/core/cache.coffee",
+    "src/core/read_state.coffee",
+    "src/core/history.coffee",
+    "src/core/bookmark.coffee",
+    "src/zombie.coffee"
   ], &p_coffee
 }.call()
 
 #Write
 lambda {
   task :write => [
-    "#{DBG}/write",
-    "#{DBG}/write/write.html",
-    "#{DBG}/write/write.css",
-    "#{DBG}/write/write.js",
-    "#{DBG}/write/cs_write.js"
+    "debug/write",
+    "debug/write/write.html",
+    "debug/write/write.css",
+    "debug/write/write.js",
+    "debug/write/cs_write.js"
   ]
 
-  directory "#{DBG}/write"
+  directory "debug/write"
 
-  file "#{DBG}/write/write.css" => [
-      "#{SRC}/common.scss",
-      "#{SRC}/write/write.scss"
+  file "debug/write/write.css" => [
+      "src/common.scss",
+      "src/write/write.scss"
     ] do |t|
-    scss("#{SRC}/write/write.scss", t.name)
+    scss("src/write/write.scss", t.name)
   end
 
-  file "#{DBG}/write/write.js" => [
-    "#{SRC}/core/url.coffee",
-    "#{SRC}/write/write.coffee"
+  file "debug/write/write.js" => [
+    "src/core/url.coffee",
+    "src/write/write.coffee"
   ], &p_coffee
 
-  file "#{DBG}/write/cs_write.js" => [
-    "#{SRC}/app.coffee",
-    "#{SRC}/core/url.coffee",
-    "#{SRC}/write/cs_write.coffee"
+  file "debug/write/cs_write.js" => [
+    "src/app.coffee",
+    "src/core/url.coffee",
+    "src/write/cs_write.coffee"
   ], &p_coffee
 }.call()
 
 #Test
 lambda {
   task :test => [
-    "#{DBG}/test",
-    "#{DBG}/test/qunit",
-    "#{DBG}/test/qunit/qunit.js",
-    "#{DBG}/test/qunit/qunit.css",
-    "#{DBG}/test/qunit/qunit-step.js",
-    "#{DBG}/test/test.html",
-    "#{DBG}/test/test.js",
-    "#{DBG}/test/message_test.html",
-    "#{DBG}/test/message_test.js"
+    "debug/test",
+    "debug/test/qunit",
+    "debug/test/qunit/qunit.js",
+    "debug/test/qunit/qunit.css",
+    "debug/test/qunit/qunit-step.js",
+    "debug/test/test.html",
+    "debug/test/test.js",
+    "debug/test/message_test.html",
+    "debug/test/message_test.js"
   ]
 
-  directory "#{DBG}/test"
+  directory "debug/test"
 
-  directory "#{DBG}/test/qunit"
-  file "#{DBG}/test/qunit/qunit.js" => "lib/qunit/qunit/qunit.js", &p_cp
-  file "#{DBG}/test/qunit/qunit.css" => "lib/qunit/qunit/qunit.css", &p_cp
-  file "#{DBG}/test/qunit/qunit-step.js" => "lib/qunit/addons/step/qunit-step.js", &p_cp
+  directory "debug/test/qunit"
+  file "debug/test/qunit/qunit.js" => "lib/qunit/qunit/qunit.js", &p_cp
+  file "debug/test/qunit/qunit.css" => "lib/qunit/qunit/qunit.css", &p_cp
+  file "debug/test/qunit/qunit-step.js" => "lib/qunit/addons/step/qunit-step.js", &p_cp
 
-  file "#{DBG}/test/test.js" => FileList["#{SRC}/test/test_*.coffee"], &p_coffee
+  file "debug/test/test.js" => FileList["src/test/test_*.coffee"], &p_coffee
 }.call()
 
 #jQuery
 lambda {
   task :jquery => [
-    "#{DBG}/lib/jquery",
-    "#{DBG}/lib/jquery/jquery.min.js"
+    "debug/lib/jquery",
+    "debug/lib/jquery/jquery.min.js"
   ]
 
-  directory "#{DBG}/lib/jquery"
-  file "#{DBG}/lib/jquery/jquery.min.js" => "lib/jquery/dist/jquery.min.js", &p_cp
+  directory "debug/lib/jquery"
+  file "debug/lib/jquery/jquery.min.js" => "lib/jquery/dist/jquery.min.js", &p_cp
   file "lib/jquery/dist/jquery.min.js" => [
     "lib/jquery_license.patch",
     "lib/jquery_csp.patch",
@@ -267,10 +264,10 @@ lambda {
 #jail
 lambda {
   task :jail => [
-    "#{DBG}/lib/jail",
-    "#{DBG}/lib/jail/jail.min.js"
+    "debug/lib/jail",
+    "debug/lib/jail/jail.min.js"
   ]
 
-  directory "#{DBG}/lib/jail"
-  file "#{DBG}/lib/jail/jail.min.js" => "lib/jail/jail.min.js", &p_cp
+  directory "debug/lib/jail"
+  file "debug/lib/jail/jail.min.js" => "lib/jail/jail.min.js", &p_cp
 }.call()
