@@ -220,6 +220,9 @@ lambda {
   task :test => [
     "#{DBG}/test",
     "#{DBG}/test/qunit",
+    "#{DBG}/test/qunit/qunit.js",
+    "#{DBG}/test/qunit/qunit.css",
+    "#{DBG}/test/qunit/qunit-step.js",
     "#{DBG}/test/test.html",
     "#{DBG}/test/test.js",
     "#{DBG}/test/message_test.html",
@@ -228,10 +231,10 @@ lambda {
 
   directory "#{DBG}/test"
 
-  file "#{DBG}/test/qunit" => FileList["lib/qunit/qunit/**/*"] do
-    sh "rm -rf #{DBG}/test/qunit"
-    sh "cp -r lib/qunit/qunit #{DBG}/test"
-  end
+  directory "#{DBG}/test/qunit"
+  file "#{DBG}/test/qunit/qunit.js" => "lib/qunit/qunit/qunit.js", &p_cp
+  file "#{DBG}/test/qunit/qunit.css" => "lib/qunit/qunit/qunit.css", &p_cp
+  file "#{DBG}/test/qunit/qunit-step.js" => "lib/qunit/addons/step/qunit-step.js", &p_cp
 
   file "#{DBG}/test/test.js" => FileList["#{SRC}/test/test_*.coffee"], &p_coffee
 }.call()
