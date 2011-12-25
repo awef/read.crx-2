@@ -144,6 +144,42 @@ do ->
     xhr.send(null)
     app.manifest = JSON.parse(xhr.responseText)
 
+# app.module
+do ->
+  pending_modules = []
+  ready_modules = {}
+
+  fire_definition = (module_id, dependencies, definition) ->
+    dep_modules = []
+    for dep_module_id in dependencies
+      dep_modules.push(ready_modules[dep_module_id].module)
+
+    if module_id isnt null
+      callback = add_ready_module.bind({module_id, dependencies})
+      app.defer ->
+        definition(dep_modules..., callback)
+    else
+      definition(dep_modules...)
+
+  add_ready_module = (module) ->
+    ready_modules[@module_id] = {@dependencies, module}
+
+    #このモジュールが初期化された事で依存関係が満たされたモジュールを初期化
+    pending_modules = pending_modules.filter (val) =>
+      if @module_id in val.dependencies
+        unless val.dependencies.some((a) -> not ready_modules[a]?)
+          fire_definition(val.module_id, val.dependencies, val.definition)
+          return false
+      true
+
+  app.module = (module_id = null, dependencies = [], definition) ->
+    #依存関係が満たされていないモジュールは、しまっておく
+    if dependencies.some((a) -> not ready_modules[a]?)
+      pending_modules.push({module_id, dependencies, definition})
+    #依存関係が満たされている場合、即座にモジュール初期化を開始する
+    else
+      fire_definition(module_id, dependencies, definition)
+
 app.boot = (path, fn) ->
   #Chromeがiframeのsrcと無関係な内容を読み込むバグへの対応
   if frameElement and frameElement.src isnt location.href
