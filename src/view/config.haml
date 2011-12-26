@@ -25,7 +25,7 @@
         .version_info
 
     %section
-      %h2 レイアウト設定
+      %h2 レイアウト
       %div
         %label
           %input.direct(name="layout" type="radio" value="pane-3" checked)
@@ -36,9 +36,7 @@
         %label
           %input.direct(name="layout" type="radio" value="pane-2")
           2ペイン
-        %br
-        %br
-        ※変更を反映するにはリロードして下さい
+        ※変更は次回以降の起動時に反映されます
 
     %section
       %h2 背景色
@@ -51,21 +49,21 @@
           黒
 
     %section
-      %h2 タブの挙動
+      %h2 タブ
       %div
         %label
           %input.direct(type="checkbox" name="always_new_tab") 常に新しいタブで開く
 
     %section
-      %h2 スレッド表示設定
+      %h2 サムネイル表示
       %div
         %label
           %input.direct(type="checkbox" name="thumbnail_supported")
-          対応サイトのサムネイルを表示する
+          YouTube/ニコニコ動画のサムネイルを表示する
         %br
         %label
           %input.direct(type="checkbox" name="thumbnail_ext")
-          拡張子が画像ファイルなURLのサムネイルを表示する
+          末尾が画像ファイルの拡張子で終わるURLのサムネイルを表示する
 
     %section
       %h2 ID/参照ポップアップの表示方法
@@ -79,7 +77,7 @@
           マウスを重ねる
 
     %section
-      %h2 書き込み設定
+      %h2 書き込み
       %div
         %table
           %tbody
@@ -104,38 +102,27 @@
           %tbody
             %tr
               %td
-                p2のサーバー
+                公式p2のサーバー
               %td
                 %input.direct(type="text" name="p2_server" placeholder="w1.p2.2ch.net" pattern="w\\d\\.p2\\.2ch\\.net")
-        %br
-        ※現時点では公式p2のみに対応しています
 
     %section
       %h2 忍法帖
       %div
-        %h3 忍法帳Cookie
         %ul.ninja_cookie_info
         .ninja_cookie_empty_message 忍法帳Cookieがありません
-    -#
-      %h2 忍法帖
-      %h3 Cookie
-      %ul.ninja_info_cookie
-      %div 忍法帖のCookieが有りません
-      %h3 バックアップ
-      %ul.ninja_info_stored
-      %div 忍法帖のバックアップは有りません
-      .notation
-        %span 忍法帖については
-        %a(href="http://ninja.2ch.net/" target="_blank") http://ninja.2ch.net/
-        %span をご覧下さい
 
     %section
-      %h2 プライバシー
+      %h2 データ
       %div
         .history
           閲覧履歴:
           %span.history_status
           %button.history_clear(type="button") 削除
+        .cache
+          キャッシュ:
+          %span.cache_status
+          %button.cache_clear(type="button") 削除
 
     %section
       %h2 その他
@@ -151,12 +138,3 @@
 
         %button.bbsmenu_reload(type="button") 板一覧の更新
         %span.bbsmenu_reload_status
-        %span ※このボタンを押さなくても、read.crxは定期的に板一覧の更新を行います
-
-        %br
-
-        .cache
-          キャッシュ:
-          %span.cache_status
-          %button.cache_clear(type="button") 削除
-
