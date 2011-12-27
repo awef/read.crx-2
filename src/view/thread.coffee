@@ -676,6 +676,7 @@ app.view_thread._const_res = (res_key, res, $view, id_index, rep_index) ->
 
 app.view_thread._read_state_manager = ($view) ->
   view_url = $view.attr("data-url")
+  board_url = app.url.thread_to_board(view_url)
   content = $view[0].querySelector(".content")
 
   #したらば、まちBBSの最新レス削除時対策
@@ -765,7 +766,7 @@ app.view_thread._read_state_manager = ($view) ->
         scroll_flg = false
         scan()
         if read_state_updated
-          app.read_state.set(read_state)
+          app.message.send("read_state_updated", {board_url, read_state})
     , 250
 
     scan_and_save = ->
@@ -775,7 +776,10 @@ app.view_thread._read_state_manager = ($view) ->
         app.bookmark.update_read_state(read_state)
         read_state_updated = false
 
-    app.message.add_listener("request_update_read_state", scan_and_save)
+    app.message.add_listener "request_update_read_state", (message) ->
+      if not message.board_url? or message.board_url is board_url
+        scan_and_save()
+      return
 
     $view
       .find(".content")

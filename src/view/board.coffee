@@ -52,6 +52,7 @@ app.boot "/view/board.html", ->
       setTimeout ->
         $button.removeClass("disabled")
       , 1000 * 5
+      app.message.send("request_update_read_state", {board_url: url})
 
 app.view_board = {}
 
