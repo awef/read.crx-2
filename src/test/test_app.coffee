@@ -40,16 +40,12 @@ test "app.deep_copy", 2, ->
 
 module("app.defer")
 
-asyncTest "渡された関数を非同期で実行する", 3, ->
-  x = 123
-
+asyncTest "渡された関数を非同期で実行する", 2, ->
   app.defer ->
-    strictEqual(x, 123)
-    x = 321
-    strictEqual(x, 321)
+    QUnit.step(2)
     start()
 
-  strictEqual(x, 123)
+  QUnit.step(1)
 
 module("app.message")
 
