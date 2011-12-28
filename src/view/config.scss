@@ -63,15 +63,14 @@ label {
   cursor: pointer;
 }
 
-input:focus {
-  outline-color: rgba(#0077ff, 0.5);
-}
-
-input[type="text"] {
+input[type="text"], textarea {
   border: 1px solid #cccccc;
   border-radius: 2px;
   padding: 3px;
   box-shadow: 0 1px 1px #cccccc inset;
+  &:focus {
+    outline-color: rgba(#0077ff, 0.5);
+  }
 }
 
 section {
@@ -144,4 +143,8 @@ section {
 
 input[type="text"]:invalid {
   background-color: #ffcccc;
+}
+
+.label_textarea, .label_textarea > a {
+  vertical-align: top;
 }

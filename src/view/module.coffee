@@ -9,6 +9,14 @@ app.view_module.view = ($view) ->
       $view.addClass("theme_#{message.val}")
     return
 
+  #ユーザーCSS挿入
+  do ->
+    if $view.is(".view_index, .view_sidemenu, .view_bookmark, .view_board, .view_history, .view_inputurl, .view_thread")
+      style = document.createElement("style")
+      style.textContent = app.config.get("user_css")
+      document.head.appendChild(style)
+    return
+
   #title_updatedメッセージ送出処理
   do ->
     send_title_updated = ->

@@ -12,7 +12,7 @@ app.boot "/view/config.html", ->
 
   #汎用設定項目
   $view
-    .find("input.direct[type=\"text\"]")
+    .find("input.direct[type=\"text\"], textarea.direct")
       .each ->
         this.value = app.config.get(this.name) or ""
         null
