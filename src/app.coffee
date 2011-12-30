@@ -180,6 +180,10 @@ do ->
     else
       fire_definition(module_id, dependencies, definition)
 
+  if window.jQuery?
+    app.module "jquery", [], (callback) ->
+      callback(window.jQuery)
+
 app.boot = (path, fn) ->
   #Chromeがiframeのsrcと無関係な内容を読み込むバグへの対応
   if frameElement and frameElement.src isnt location.href
