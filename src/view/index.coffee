@@ -140,7 +140,7 @@ app.main = ->
       .css("background-color", background_color)
       .append(
         $("<div>", {text}),
-        $("<button>").one "click", ->
+        $("<div>").one "click", ->
           $(@)
             .parent()
               .animate({opacity: 0}, "fast")

@@ -120,19 +120,27 @@ iframe {
     font-size: 14px;
     font-weight: bold;
     margin-bottom: 5px;
-    padding: 10px;
     display: -webkit-box;
     > div {
+      padding: 10px;
+    }
+    > div:first-child {
       -webkit-box-flex: 1;
       margin-right: 5px;
     }
-    > button {
+    > div + div {
       cursor: pointer;
       width: 16px;
       height: 16px;
-      background-image: url(/img/close_16x16.png);
-      background-color: transparent;
-      border: none;
+      background: transparent url(/img/close_16x16.png) no-repeat center;
+      border: solid #aaa;
+      border-width: 0 0 0 1px;
+      &:hover {
+        background-color: rgba(#000, 0.2);
+      }
+      &:active {
+        background-color: rgba(#000, 0.4);
+      }
     }
   }
 }
