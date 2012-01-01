@@ -141,6 +141,7 @@ $z-index_notification: 8;
       $message_bar_error_background_color: #ecc,
       $message_bar_error_border_color: #ebb,
       $icon_color: "333",
+      $active_icon_color: "39f",
       $search_icon_color: "777",
       $color: #111
     );
@@ -155,6 +156,7 @@ $z-index_notification: 8;
       $message_bar_error_background_color: #933,
       $message_bar_error_border_color: #933,
       $icon_color: "ddd",
+      $active_icon_color: "f93",
       $search_icon_color: "aaa",
       $color: #eee
     );
@@ -175,6 +177,7 @@ $z-index_notification: 8;
   $message_bar_error_background_color,
   $message_bar_error_border_color,
   $icon_color,
+  $active_icon_color,
   $search_icon_color,
   $color
 ) {
@@ -191,7 +194,7 @@ $z-index_notification: 8;
       &.button_bookmark {
         background-image: url(/img/star_19x19_#{$icon_color}.png);
         &.bookmarked {
-          background-image: url(/img/star2_19x19.png);
+          background-image: url(/img/star_19x19_#{$active_icon_color}.png);
         }
       }
       &.button_link {
