@@ -84,9 +84,6 @@ $z-index_notification: 8;
         width: 100%;
         height: 100%;
       }
-      &.button_bookmark.bookmarked {
-        -webkit-box-shadow: 0 0 3px yellow inset;
-      }
       &.button_reload {
         -webkit-transition: background-color 250ms;
         &.disabled {
@@ -142,6 +139,7 @@ $z-index_notification: 8;
       $message_bar_error_border_color: #ebb,
       $icon_color: "333",
       $active_icon_color: "39f",
+      $active_icon_shadow_color: yellow,
       $search_icon_color: "777",
       $color: #111
     );
@@ -157,6 +155,7 @@ $z-index_notification: 8;
       $message_bar_error_border_color: #933,
       $icon_color: "ddd",
       $active_icon_color: "f93",
+      $active_icon_shadow_color: #aa3,
       $search_icon_color: "aaa",
       $color: #eee
     );
@@ -178,6 +177,7 @@ $z-index_notification: 8;
   $message_bar_error_border_color,
   $icon_color,
   $active_icon_color,
+  $active_icon_shadow_color,
   $search_icon_color,
   $color
 ) {
@@ -195,6 +195,7 @@ $z-index_notification: 8;
         background-image: url(/img/star_19x19_#{$icon_color}.png);
         &.bookmarked {
           background-image: url(/img/star_19x19_#{$active_icon_color}.png);
+          -webkit-box-shadow: 0 0 3px $active_icon_shadow_color inset;
         }
       }
       &.button_link {

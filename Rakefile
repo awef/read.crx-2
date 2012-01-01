@@ -108,7 +108,7 @@ lambda {
 
     "debug/img/search2_19x19_aaa.png",
     "debug/img/star_19x19_ddd.png",
-    "debug/img/star_19x19_39f.png",
+    "debug/img/star_19x19_f93.png",
     "debug/img/link_19x19_ddd.png",
     "debug/img/reload_19x19_ddd.png",
     "debug/img/pencil_19x19_ddd.png",
