@@ -186,6 +186,12 @@ app.main = ->
     $("#tab_b, #tab_resizer").remove()
     $(".tab .tab_tabbar").sortable()
 
+  # #13対策
+  $view
+    .find(".tab_tabbar")
+      .on("mouseenter", "li", -> @classList.add("hover"))
+      .on("mouseleave", "li", -> @classList.remove("hover"))
+
   #タブの状態の保存/復元関連
   is_restored = app.view_tab_state.restore()
   window.addEventListener "unload", ->
