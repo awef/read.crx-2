@@ -71,8 +71,7 @@ task :default => [
   :zombie,
   :write,
   :test,
-  :jquery,
-  :jail
+  :jquery
 ]
 
 directory "debug"
@@ -260,15 +259,4 @@ lambda {
       sh "make min"
     end
   end
-}.call()
-
-#jail
-lambda {
-  task :jail => [
-    "debug/lib/jail",
-    "debug/lib/jail/jail.min.js"
-  ]
-
-  directory "debug/lib/jail"
-  file "debug/lib/jail/jail.min.js" => "lib/jail/jail.min.js", &p_cp
 }.call()

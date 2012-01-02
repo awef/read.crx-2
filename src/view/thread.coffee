@@ -419,6 +419,12 @@ app.boot "/view/thread.html", ->
           update_next_unread()
           return
 
+  #サムネイルロード時の縦位置調整
+  $view.on "lazy_load_complete", ".thumbnail > a > img", ->
+    a = @parentNode
+    container = a.parentNode
+    a.style["top"] = "#{(container.offsetHeight - a.offsetHeight) / 2}px"
+
 app.view_thread._jump_to_res = ($view, res_num, animate_flg, offset = -10) ->
   content = $view[0].querySelector(".content")
   target = content.childNodes[res_num - 1]
@@ -558,17 +564,7 @@ app.view_thread._draw = ($view, force_update) ->
           if /\.(?:png|jpe?g|gif|bmp|webp)$/i.test(a.href)
             fn_add_thumbnail(a, a.href)
 
-      $(imgs).jail(
-        timeout: 20
-        effect: "fadeIn"
-        selector: ".content"
-        callbackAfterEachImage: (e) ->
-          img = e[0]
-          $(img).one "load", ->
-            a = img.parentNode
-            container = a.parentNode
-            a.style["top"] = "#{(container.offsetHeight - a.offsetHeight) / 2}px"
-      )
+      $(imgs).lazy_load(container: ".content")
 
     $view.trigger("view_loaded")
 
