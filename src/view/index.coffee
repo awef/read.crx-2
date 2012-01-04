@@ -135,11 +135,12 @@ app.main = ->
 
   app.message.add_listener "notify", (message) ->
     text = message.message
+    html = message.html
     background_color = message.background_color or "#777"
     $("<div>")
       .css("background-color", background_color)
       .append(
-        $("<div>", {text}),
+        (if html? then $("<div>", {html}) else $("<div>", {text})),
         $("<div>").one "click", ->
           $(@)
             .parent()
@@ -158,7 +159,11 @@ app.main = ->
     if last_version?
       if app.manifest.version isnt last_version
         app.message.send "notify", {
-          message: "#{app.manifest.name} が #{last_version} から #{app.manifest.version} にアップデートされました。"
+          html: """
+            #{app.manifest.name} が #{last_version} から
+             #{app.manifest.version} にアップデートされました。
+             <a href="https://sites.google.com/site/idawef/read-crx-2/changelog" target="_blank">更新履歴</a>
+          """
           background_color: "green"
         }
       else

@@ -127,6 +127,9 @@ iframe {
     > div:first-child {
       -webkit-box-flex: 1;
       margin-right: 5px;
+      > a {
+        color: inherit;
+      }
     }
     > div + div {
       cursor: pointer;
