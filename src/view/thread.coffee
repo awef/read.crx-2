@@ -17,11 +17,6 @@ app.boot "/view/thread.html", ->
   app.view_module.bookmark_button($view)
   app.view_module.link_button($view)
 
-  $("<a>", {
-    href: app.safe_href(app.url.thread_to_board(view_url))
-    class: "open_in_rcrx"
-  }).appendTo($view.find(".button_board"))
-
   write = (param) ->
     param or= {}
     param.url = view_url
@@ -424,6 +419,18 @@ app.boot "/view/thread.html", ->
     a = @parentNode
     container = a.parentNode
     a.style["top"] = "#{(container.offsetHeight - a.offsetHeight) / 2}px"
+
+  #パンくずリスト表示
+  do ->
+    board_url = app.url.thread_to_board(view_url)
+    app.board_title_solver.ask(url: board_url, offline: true)
+      .always (title) ->
+        $view
+          .find(".breadcrumb > li > a")
+            .attr("href", board_url)
+            .text(if title? then "#{title.replace(/板$/, "")}板" else "板")
+        return
+    return
 
 app.view_thread._jump_to_res = ($view, res_num, animate_flg, offset = -10) ->
   content = $view[0].querySelector(".content")

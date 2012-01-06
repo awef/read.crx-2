@@ -72,17 +72,18 @@ $z-index_notification: 8;
     position: relative;
     > input, > .button {
       float: left;
+    }
+    > input, > .button, > .breadcrumb {
+      border-width: 1px;
+      border-style: solid;
       margin: 3px;
+      height: 19px;
     }
     > input {
-      border: 1px solid;
-      height: 19px;
       padding: 0 0 0 19px;
     }
     > .button {
       width: 19px;
-      height: 19px;
-      border: 1px solid;
       cursor: pointer;
       a {
         display: block;
@@ -94,6 +95,21 @@ $z-index_notification: 8;
         &.disabled {
           background-color: rgba(black, 0.1);
           cursor: default;
+        }
+      }
+    }
+    > .breadcrumb {
+      list-style-type: none;
+      float: right;
+      padding: 0;
+      font-size: 14px;
+      border-radius: 3px;
+      > li {
+        float: left;
+        padding: 3px;
+        > a {
+          color: inherit;
+          text-decoration: none;
         }
       }
     }
@@ -137,6 +153,7 @@ $z-index_notification: 8;
   .view.theme_default {
     @include common_view_style_1_theme(
       $nav_bar_background_color: #fff,
+      $nav_bar_color: #333,
       $nav_bar_item_border_color: #ccc,
       $message_bar_info_background_color: #eef,
       $message_bar_info_border_color: #ccd,
@@ -153,6 +170,7 @@ $z-index_notification: 8;
   .view.theme_dark {
     @include common_view_style_1_theme(
       $nav_bar_background_color: #444,
+      $nav_bar_color: #eee,
       $nav_bar_item_border_color: #999,
       $message_bar_info_background_color: #345,
       $message_bar_info_border_color: #345,
@@ -175,6 +193,7 @@ $z-index_notification: 8;
 
 @mixin common_view_style_1_theme (
   $nav_bar_background_color,
+  $nav_bar_color,
   $nav_bar_item_border_color,
   $message_bar_info_background_color,
   $message_bar_info_border_color,
@@ -188,7 +207,8 @@ $z-index_notification: 8;
 ) {
   .nav_bar {
     background-color: $nav_bar_background_color;
-    > .button, > input {
+    color: $nav_bar_color;
+    > .button, > input, > .breadcrumb {
       border-color: $nav_bar_item_border_color;
     }
     > input {
@@ -205,9 +225,6 @@ $z-index_notification: 8;
       }
       &.button_link {
         background-image: url(/img/link_19x19_#{$icon_color}.png);
-      }
-      &.button_board {
-        background-image: url(/img/arrow_19x19_#{$icon_color}.png);
       }
       &.button_reload {
         background-image: url(/img/reload_19x19_#{$icon_color}.png);
