@@ -49,16 +49,23 @@ app.boot "/view/sidemenu.html", ->
 
     #ブックマーク更新時処理
     app.message.add_listener "bookmark_updated", (message) ->
-      if message.type is "added" and message.bookmark.type is "board"
-        $tmp = $view.find("ul:first-of-type")
-        if $tmp.find("a[href=\"#{message.bookmark.url}\"]").length is 0
-          $tmp.append(bookmark_to_li(message.bookmark))
-      else if message.type is "removed"
-        $view
-          .find("ul:first-of-type")
-            .find("a[href=\"#{message.bookmark.url}\"]")
+      return if message.bookmark.type isnt "board"
+
+      switch message.type
+        when "added"
+          if $view.find("li.bookmark > a[href=\"#{message.bookmark.url}\"]").length is 0
+            $view
+              .find("ul:first-of-type")
+                .append(bookmark_to_li(message.bookmark))
+        when "removed"
+          $view
+            .find("li.bookmark > a[href=\"#{message.bookmark.url}\"]")
               .parent()
                 .remove()
+        when "title"
+          $view
+            .find("li.bookmark > a[href=\"#{message.bookmark.url}\"]")
+              .text(message.bookmark.title)
 
   #板覧関連
   do ->
