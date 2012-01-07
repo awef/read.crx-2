@@ -117,7 +117,7 @@ $z-index_notification: 8;
   .content {
     -webkit-box-flex: 1;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll;
     position: relative;
     outline: none;
   }
