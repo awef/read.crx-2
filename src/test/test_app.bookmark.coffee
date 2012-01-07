@@ -420,7 +420,7 @@ asyncTest "板のブックマークを保存/取得/削除出来る", 6, ->
     .always ->
       start()
 
-asyncTest "スレのブックマークを保存/取得/削除出来る", 32, ->
+asyncTest "スレのブックマークを保存/取得/削除出来る", 33, ->
   that = @
   url = "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
   title = "ダミースレ"
@@ -647,6 +647,14 @@ asyncTest "スレのブックマークを保存/取得/削除出来る", 32, ->
         url: app.bookmark.bookmark_to_url(expect_bookmark)
 
       deferred_on_message
+    #ブックマーク編集(タイトル変更)テスト
+    .pipe ->
+      deferred_on_message = get_deferred_on_message("title", "ブックマーク編集(タイトル変更)テスト")
+
+      expect_bookmark.title += "_test"
+      chrome.bookmarks.update(node_id, title: expect_bookmark.title)
+
+      deferred_on_message
     #削除
     .pipe ->
       deferred_on_removed = get_deferred_on_message("removed", "削除メッセージ")
@@ -772,6 +780,12 @@ asyncTest "ノードのURL変更にも追随する", 4, ->
       title = "ダミースレ2"
       expect_bookmark.url = expect_bookmark.read_state.url = app.url.fix(url)
       expect_bookmark.title = title
+
+      #chrome.bookmarks.update時にtitleとurlの両方を変更すると、onChanged
+      #がtitleとurlの変更で別々に呼ばれてしまう
+      #そのため、url変更が検出されてブックマークがremoved扱いにされた時、
+      #既にtitleの変更が反映されている
+      old_expect.title = expect_bookmark.title
 
       deferred_on_removed = $.Deferred (deferred) ->
         tmp = (message) ->
