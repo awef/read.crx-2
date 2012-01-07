@@ -95,21 +95,22 @@ app.boot "/view/bookmark.html", ->
 
   #ブックマーク更新時処理
   app.message.add_listener "bookmark_updated", (message) ->
-    if message.type is "added" and message.bookmark.type is "thread"
-      $view
-        .find("tbody")
-          .append(app.view_bookmark._bookmark_to_tr(message.bookmark))
-        .end()
-        .find("table")
-          .trigger("table_sort_update")
+    return if message.bookmark.type isnt "thread"
 
-    else if message.type is "removed"
-      $view.find("tr[data-href=\"#{message.bookmark.url}\"]").remove()
-
-    else if (message.type is "res_count") or (message.type is "expired")
-      $view
-        .find("tr[data-href=\"#{message.bookmark.url}\"]")
-          .replaceWith(app.view_bookmark._bookmark_to_tr(message.bookmark))
+    switch message.type
+      when "added"
+        $view
+          .find("tbody")
+            .append(app.view_bookmark._bookmark_to_tr(message.bookmark))
+          .end()
+          .find("table")
+            .trigger("table_sort_update")
+      when "removed"
+        $view.find("tr[data-href=\"#{message.bookmark.url}\"]").remove()
+      when "res_count", "expired", "title"
+        $view
+          .find("tr[data-href=\"#{message.bookmark.url}\"]")
+            .replaceWith(app.view_bookmark._bookmark_to_tr(message.bookmark))
 
   #read_state更新時処理
   app.message.add_listener "read_state_updated", (message) ->
