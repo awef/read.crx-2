@@ -45,6 +45,7 @@ app.message = do ->
   listener_store = {}
 
   fire = (type, message) ->
+    message = app.deep_copy(message)
     app.defer ->
       if type of listener_store
         for listener in listener_store[type]
