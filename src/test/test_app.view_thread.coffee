@@ -50,7 +50,7 @@ $ ->
     deepEqual(@$view.data("id_index"), {"ID:iTGL5FKU": [0, 1]})
     deepEqual(@$view.data("rep_index"), {1: [1]})
 
-  test "もし元データにscriptタグ等が入っていても、無視する", 3, ->
+  test "もし元データにscriptタグ等が入っていても、無視する", 5, ->
     #基本的にタグは除去
     #ただし名前欄はニダーのAAが入る事が有るのでエスケープに
     @example1_data.name = "<script>名無しさん</script>"
@@ -65,7 +65,28 @@ $ ->
     @example1_dom.querySelector(".message").innerHTML = "testalert();"
     tmp_dom = @const_res(0, @example1_data, @$view, @$view.data("id_index"), @$view.data("rep_index"))
     strictEqual(tmp_dom.outerHTML, @example1_dom.outerHTML)
-    deepEqual(@$view.data("id_index"), {"ID:iTGL5FKU": [0]})
+
+    @example1_dom.querySelector(".num").innerHTML = "2"
+    @example1_data.other = "2010/05/14(木) 15:41:14 ID:i<p>TGL</p>5FKU"
+    @example1_dom.querySelector(".other").innerHTML = """
+      2010/05/14(木) 15:41:14 <span class="id">ID:iTGL5FKU</span>
+    """
+    tmp_dom = @const_res(1, @example1_data, @$view, @$view.data("id_index"), @$view.data("rep_index"))
+    strictEqual(tmp_dom.outerHTML, @example1_dom.outerHTML)
+
+    @example1_dom.querySelector(".num").innerHTML = "3"
+    @example1_data.other = "2010/05/14(木) 15:41:14 ID:iTG\"L5FKU"
+    @example1_dom.setAttribute("data-id", "ID:iTG")
+    @example1_dom.querySelector(".other").innerHTML = """
+      2010/05/14(木) 15:41:14 <span class="id">ID:iTG</span>"L5FKU
+    """
+    tmp_dom = @const_res(2, @example1_data, @$view, @$view.data("id_index"), @$view.data("rep_index"))
+    strictEqual(tmp_dom.outerHTML, @example1_dom.outerHTML)
+
+    deepEqual(@$view.data("id_index"), {
+      "ID:iTGL5FKU": [0, 1]
+      "ID:iTG": [2]
+    })
     deepEqual(@$view.data("rep_index"), {})
 
   test "名前欄の</b><b>はspan.obに置換する", 6, ->
