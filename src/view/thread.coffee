@@ -467,11 +467,12 @@ app.view_thread._draw = ($view, force_update) ->
     #DOM構築
     do ->
       completed = content.childNodes.length
-      frag = document.createDocumentFragment()
+      tmp = ""
       for res, res_key in thread.res
         continue if res_key < completed
-        frag.appendChild(app.view_thread._const_res(res_key, res, $view, id_index, rep_index))
-      content.appendChild(frag)
+        tmp += app.view_thread._const_res_html(res_key, res, $view, id_index, rep_index)
+      content.insertAdjacentHTML("BeforeEnd", tmp)
+      return
     #idカウント, .freq/.link更新
     do ->
       for id, index of id_index
@@ -588,93 +589,96 @@ app.view_thread._draw = ($view, force_update) ->
 
   deferred.promise()
 
-app.view_thread._const_res = (res_key, res, $view, id_index, rep_index) ->
-  article = document.createElement("article")
-  article.className = "aa" if /(?:\　{5}|\　\ )(?!<br>|$)/i.test(res.message)
+app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
+  className = ""
+  attribute_data_id = null
 
-  header = document.createElement("header")
+  html = "<header>"
 
   #.num
-  num = document.createElement("span")
-  num.className = "num"
-  num.textContent = res_key + 1
-  header.appendChild(num)
+  html += """<span class="num">#{res_key + 1}</span>"""
 
   #.name
-  name = document.createElement("span")
-  name.className = "name"
-  name.innerHTML = res.name
-    .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")
-    .replace(/<\/b>(.*?)<b>/g, '<span class="ob">$1</span>')
-  header.appendChild(name)
+  tmp = (
+    res.name
+      .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")
+      .replace(/<\/b>(.*?)<b>/g, """<span class="ob">$1</span>""")
+  )
+  html += """<span class="name">#{tmp}</span>"""
 
   #.mail
-  mail = document.createElement("span")
-  mail.className = "mail"
-  #タグ除去
-  mail.innerHTML = res.mail.replace(/<.*?(?:>|$)/g, "")
-  header.appendChild(mail)
+  tmp = res.mail.replace(/<.*?(?:>|$)/g, "")
+  html += """<span class="mail">#{tmp}</span>"""
 
   #.other
-  other = document.createElement("span")
-  other.className = "other"
-  other.innerHTML = res.other
-    #タグ除去
-    .replace(/<.*?(?:>|$)/g, "")
-    #.id
-    .replace /(^| )(ID:(?!\?\?\?)[^ <>"']+)/, ($0, $1, $2) ->
-      article.setAttribute("data-id", $2)
+  tmp = (
+    res.other
+      #タグ除去
+      .replace(/<.*?(?:>|$)/g, "")
+      #.id
+      .replace /(^| )(ID:(?!\?\?\?)[^ <>"']+)/, ($0, $1, $2) ->
+        attribute_data_id = $2
 
-      id_index[$2] = [] unless id_index[$2]?
-      id_index[$2].push(res_key)
+        id_index[$2] = [] unless id_index[$2]?
+        id_index[$2].push(res_key)
 
-      """#{$1}<span class="id">#{$2}</span>"""
+        """#{$1}<span class="id">#{$2}</span>"""
+  )
+  html += """<span class="other">#{tmp}</span>"""
 
-  header.appendChild(other)
+  html += "</header>"
 
-  article.appendChild(header)
+  tmp = (
+    res.message
+      #タグ除去
+      .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
+      #URLリンク
+      .replace(/(h)?(ttps?:\/\/(?:[a-hj-zA-HJ-Z\d_\-.!~*'();\/?:@=+$,%#]|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));)|[iI](?![dD]:)+)+)/g,
+        '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
+      #Beアイコン埋め込み表示
+      .replace ///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///, ($0, $1) ->
+        if app.url.tsld($view[0].getAttribute("data-url")) is "2ch.net"
+          """<img class="beicon" src="http://#{$1}" /><br />"""
+        else
+          $0
+      #アンカーリンク
+      .replace /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?)*/g, ($0) ->
+        str = $0.replace /[\uff10-\uff19]/g, ($0) ->
+          String.fromCharCode($0.charCodeAt(0) - 65248)
 
-  message = document.createElement("div")
-  message.className = "message"
-  message.innerHTML = res.message
-    #タグ除去
-    .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
-    #URLリンク
-    .replace(/(h)?(ttps?:\/\/(?:[a-hj-zA-HJ-Z\d_\-.!~*'();\/?:@=+$,%#]|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));)|[iI](?![dD]:)+)+)/g,
-      '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
-    #Beアイコン埋め込み表示
-    .replace ///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///, ($0, $1) ->
-      if app.url.tsld($view[0].getAttribute("data-url")) is "2ch.net"
-        """<img class="beicon" src="http://#{$1}" /><br />"""
-      else
-        $0
-    #アンカーリンク
-    .replace /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?)*/g, ($0) ->
-      str = $0.replace /[\uff10-\uff19]/g, ($0) ->
-        String.fromCharCode($0.charCodeAt(0) - 65248)
+        anchor = app.util.parse_anchor($0)
+        disabled = anchor.target >= 25 or anchor.data.length is 0
 
-      anchor = app.util.parse_anchor($0)
-      disabled = anchor.target >= 25 or anchor.data.length is 0
+        #rep_index更新
+        if not disabled
+          #アンカー一つづつしか来ない処理なので、決め打ちで
+          for segment in anchor.data[0].segments
+            target = Math.max(1, segment[0])
+            while target <= segment[1]
+              rep_index[target] = [] unless rep_index[target]?
+              rep_index[target].push(res_key) unless res_key in rep_index[target]
+              target++
 
-      #rep_index更新
-      if not disabled
-        #アンカー一つづつしか来ない処理なので、決め打ちで
-        for segment in anchor.data[0].segments
-          target = Math.max(1, segment[0])
-          while target <= segment[1]
-            rep_index[target] = [] unless rep_index[target]?
-            rep_index[target].push(res_key) unless res_key in rep_index[target]
-            target++
+        "<a href=\"javascript:undefined;\" class=\"anchor" +
+        "#{if disabled then " disabled" else ""}\">#{$0}</a>"
+      #IDリンク
+      .replace /id:(?:[a-hj-z\d_\+\/\.]|i(?!d:))+/ig, ($0) ->
+        "<a href=\"javascript:undefined;\" class=\"anchor_id\">#{$0}</a>"
+  )
+  html += """<div class="message">#{tmp}</div>"""
 
-      "<a href=\"javascript:undefined;\" class=\"anchor" +
-      "#{if disabled then " disabled" else ""}\">#{$0}</a>"
-    #IDリンク
-    .replace /id:(?:[a-hj-z\d_\+\/\.]|i(?!d:))+/ig, ($0) ->
-      "<a href=\"javascript:undefined;\" class=\"anchor_id\">#{$0}</a>"
+  if /(?:\　{5}|\　\ )(?!<br>|$)/i.test(res.message)
+    className += "aa"
 
-  article.appendChild(message)
+  tmp = ""
+  if className isnt ""
+    tmp += " class=\"#{className}\""
+  if attribute_data_id?
+    tmp += " data-id=\"#{attribute_data_id}\""
 
-  article
+  html = """<article#{tmp}>#{html}</article>"""
+
+  html
 
 app.view_thread._read_state_manager = ($view) ->
   view_url = $view.attr("data-url")
