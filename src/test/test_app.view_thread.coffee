@@ -298,3 +298,9 @@ $ ->
     deepEqual(@$view.data("id_index"), {"ID:iTGL5FKU": [0]})
     deepEqual(@$view.data("rep_index"), {})
 
+  test "レス番号が数値以外だった場合はnullを返す", 4, ->
+    strictEqual(@const_res("0", @example1_data, @$view, @$view.data("id_index"), @$view.data("rep_index")), null)
+    strictEqual(@const_res(NaN, @example1_data, @$view, @$view.data("id_index"), @$view.data("rep_index")), null)
+    deepEqual(@$view.data("id_index"), {})
+    deepEqual(@$view.data("rep_index"), {})
+    return
