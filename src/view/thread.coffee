@@ -592,7 +592,6 @@ app.view_thread._draw = ($view, force_update) ->
 app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
   return null if typeof res_key isnt "number" or isNaN(res_key)
 
-  className = ""
   attribute_data_id = null
 
   html = "<header>"
@@ -669,12 +668,9 @@ app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
   )
   html += """<div class="message">#{tmp}</div>"""
 
-  if /(?:\　{5}|\　\ )(?!<br>|$)/i.test(res.message)
-    className += "aa"
-
   tmp = ""
-  if className isnt ""
-    tmp += " class=\"#{className}\""
+  if /(?:\　{5}|\　\ )(?!<br>|$)/i.test(res.message)
+    tmp += " class=\"aa\""
   if attribute_data_id?
     tmp += " data-id=\"#{attribute_data_id}\""
 
