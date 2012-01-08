@@ -279,11 +279,11 @@ app.boot "/view/thread.html", ->
   #クイックジャンプパネル
   do ->
     jump_hoge =
-      jump_one: "article:nth-child(1)"
-      jump_newest: "article:last-child"
-      jump_not_read: "article.read + article"
-      jump_new: "article.received + article"
-      jump_last: "article.last"
+      ".jump_one": "article:nth-child(1)"
+      ".jump_newest": "article:last-child"
+      ".jump_not_read": "article.read + article"
+      ".jump_new": "article.received + article"
+      ".jump_last": "article.last"
 
     $jump_panel = $view.find(".jump_panel")
 
@@ -294,12 +294,12 @@ app.boot "/view/thread.html", ->
         res_num = +res.querySelector(".num").textContent if res
         if res and not already[res_num]
           $jump_panel[0]
-            .querySelector(".#{panel_item_selector}")
+            .querySelector(panel_item_selector)
               .style["display"] = "block"
           already[res_num] = true
         else
           $jump_panel[0]
-            .querySelector(".#{panel_item_selector}")
+            .querySelector(panel_item_selector)
               .style["display"] = "none"
       return
 
@@ -307,7 +307,7 @@ app.boot "/view/thread.html", ->
       $target = $(e.target)
 
       for key, val of jump_hoge
-        if $target.hasClass(key)
+        if $target.is(key)
           selector = val
           break
 
@@ -319,6 +319,7 @@ app.boot "/view/thread.html", ->
         else
           app.log("warn", "[view_thread] .jump_panel: ターゲットが存在しません")
       return
+    return
 
   #検索ボックス
   do ->
