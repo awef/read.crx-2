@@ -498,18 +498,16 @@ app.view_thread._draw = ($view, force_update) ->
         res = content.childNodes[res_key - 1]
         if res
           res_count = index.length
-          elm = res.getElementsByClassName("rep")[0]
-          unless elm
-            elm = document.createElement("span")
-            elm.className = "rep"
-            res.getElementsByClassName("other")[0].appendChild(elm)
-          elm.textContent = "返信 (#{res_count})"
-
-          if res_count >= 5
-            elm.classList.remove("link")
-            elm.classList.add("freq")
+          if elm = res.getElementsByClassName("rep")[0]
+            new_flg = false
           else
-            elm.classList.add("link")
+            new_flg = true
+            elm = document.createElement("span")
+          elm.textContent = "返信 (#{res_count})"
+          elm.className = if res_count >= 5 then "rep freq" else "rep link"
+          if new_flg
+            res.getElementsByClassName("other")[0].appendChild(elm)
+      return
     #サムネイル追加処理
     do ->
       imgs = []
