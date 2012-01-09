@@ -251,15 +251,9 @@ app.boot "/view/thread.html", ->
 
         $popup = $("<div>")
         $view
-          .find(".id")
-            .filter(->
-              @textContent[0...id_text.length] is id_text and
-                /^\(\d+\)$/.test(@textContent[id_text.length...])
-            )
-              .closest("article")
-                .filter(".content > article")
-                  .clone()
-                    .appendTo($popup)
+          .find(".content > article[data-id=\"#{id_text}\"]")
+            .clone()
+              .appendTo($popup)
         $popup
       return
 
