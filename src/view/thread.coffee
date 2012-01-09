@@ -248,6 +248,7 @@ app.boot "/view/thread.html", ->
         id_text = @textContent
           .replace(/^id:/i, "ID:")
           .replace(/\(\d+\)$/, "")
+          .replace(/\u25cf$/, "") #末尾●除去
 
         $popup = $("<div>")
         $view
@@ -471,17 +472,15 @@ app.view_thread._draw = ($view, force_update) ->
     do ->
       for id, index of id_index
         id_count = index.length
-        text = "#{id}(#{id_count})"
         for res_key in index
           elm = content.childNodes[res_key].getElementsByClassName("id")[0]
-          elm.firstChild.nodeValue = text
+          elm.firstChild.nodeValue = elm.firstChild.nodeValue.replace(/(?:\(\d+\))?$/, "(#{id_count})")
           if id_count >= 5
             elm.classList.remove("link")
             elm.classList.add("freq")
           else if id_count >= 2
             elm.classList.add("link")
-          null
-        null
+      return
     #.one付与
     do ->
       one_id = content.firstChild?.getAttribute("data-id")
@@ -612,10 +611,12 @@ app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
       .replace(/<.*?(?:>|$)/g, "")
       #.id
       .replace /(^| )(ID:(?!\?\?\?)[^ <>"']+)/, ($0, $1, $2) ->
-        attribute_data_id = $2
+        fixed_id = $2.replace(/\u25cf$/, "") #末尾●除去
 
-        id_index[$2] = [] unless id_index[$2]?
-        id_index[$2].push(res_key)
+        attribute_data_id = fixed_id
+
+        id_index[fixed_id] = [] unless id_index[fixed_id]?
+        id_index[fixed_id].push(res_key)
 
         """#{$1}<span class="id">#{$2}</span>"""
   )
