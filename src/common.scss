@@ -34,7 +34,7 @@ $z-index_notification: 8;
 @mixin ascii_art {
   font: {
     size: 16px;
-    family: "ＭＳ Ｐゴシック", "Konatu", "IPAMonaPGothic", "Textar";
+    family: "MS PGothic", "IPAMonaPGothic", "Konatu", "Monapo", "Textar";
   };
   line-height: 18px;
 }
