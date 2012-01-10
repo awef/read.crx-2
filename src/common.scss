@@ -12,6 +12,10 @@ $z-index_notification: 8;
   font-family: inherit;
 }
 
+html {
+  line-height: 1;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
