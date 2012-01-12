@@ -264,6 +264,7 @@ $z-index_notification: 8;
     font-weight: normal;
     border-right: 1px solid;
     white-space: nowrap;
+    overflow: hidden;
   }
   tbody > tr {
     cursor: pointer;

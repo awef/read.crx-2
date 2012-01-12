@@ -3,6 +3,14 @@
 @include common_view_style_1;
 @include content_table;
 
+@media (max-width: 650px) {
+  th:not(.table_sort_asc):not(.table_sort_desc) {
+    &:nth-child(n+2) {
+      width: 0;
+    }
+  }
+}
+
 tbody:empty {
   display: block;
   &:after {
