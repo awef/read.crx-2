@@ -89,7 +89,7 @@ app.view_setup_resizer = ->
       offset = $tab_a["outer#{val_c}"]() - $tab_a[val]()
 
       min = MIN_TAB_HEIGHT
-      max = document.body["offset#{val_c}"] - MIN_TAB_HEIGHT
+      max = document.getElementById("right_pane")["offset#{val_c}"] - MIN_TAB_HEIGHT
 
       tmp = app.config.get("tab_a_#{val}")
       if tmp
