@@ -71,29 +71,44 @@ app.view_setup_resizer = ->
 
   $body = $("#body")
 
+  $tab_a = $("#tab_a")
+  tab_a = $tab_a[0]
+
+  right_pane = document.getElementById("right_pane")
+
+  val = null
+  val_c = null
+  val_axis = null
+  min = null
+  max = null
+  offset = null
+
+  update_info = ->
+    if $body.hasClass("pane-3")
+      val = "height"
+      val_c = "Height"
+      val_axis = "Y"
+      offset = right_pane.offsetTop
+    else if $body.hasClass("pane-3h")
+      val = "width"
+      val_c = "Width"
+      val_axis = "X"
+      offset = right_pane.offsetLeft
+    min = MIN_TAB_HEIGHT
+    max = right_pane["offset#{val_c}"] - MIN_TAB_HEIGHT
+    return
+
+  update_info()
+
+  tmp = app.config.get("tab_a_#{val}")
+  if tmp
+    tab_a.style[val] = Math.max(Math.min(tmp - offset, max), min) + "px"
+
   $("#tab_resizer")
     .on "mousedown", (e) ->
       e.preventDefault()
 
-      if $body.hasClass("pane-3")
-        val = "height"
-        val_c = "Height"
-        val_axis = "Y"
-      else if $body.hasClass("pane-3h")
-        val = "width"
-        val_c = "Width"
-        val_axis = "X"
-
-      $tab_a = $("#tab_a")
-      tab_a = $tab_a[0]
-      offset = $tab_a["outer#{val_c}"]() - $tab_a[val]()
-
-      min = MIN_TAB_HEIGHT
-      max = document.getElementById("right_pane")["offset#{val_c}"] - MIN_TAB_HEIGHT
-
-      tmp = app.config.get("tab_a_#{val}")
-      if tmp
-        tab_a.style[val] = Math.max(Math.min(tmp - offset, max), min) + "px"
+      update_info()
 
       $("<div>", {css: {
         position: "absolute"
@@ -105,7 +120,6 @@ app.view_setup_resizer = ->
         cursor: if val_axis is "X" then "col-resize" else "row-resize"
       }})
         .on "mousemove", (e) =>
-          offset = @parentNode[if val_axis is "Y" then "offsetTop" else "offsetLeft"]
           tab_a.style[val] =
             Math.max(Math.min(e["page#{val_axis}"] - offset, max), min) + "px"
           return
