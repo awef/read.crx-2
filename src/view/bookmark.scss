@@ -3,19 +3,25 @@
 @include common_view_style_1;
 @include content_table;
 
-.content {
-  overflow: auto;
-  tbody:empty {
-    display: block;
-    &:after {
-      content: "ブックマークされているスレッドが有りません";
-    }
+tbody:empty {
+  display: block;
+  &:after {
+    content: "ブックマークされているスレッドが有りません";
   }
 }
 
 tr.expired td:first-child:before {
   content: "[dat落ち] ";
   color: red;
+}
+
+th {
+  &:nth-child(2), &:nth-child(3), &:nth-child(4) {
+    width: 4em;
+  }
+  &:nth-child(5) {
+    width: 16em;
+  }
 }
 
 td {

@@ -250,6 +250,7 @@ $z-index_notification: 8;
 @mixin content_table {
   table {
     width: 100%;
+    table-layout: fixed;
     font-size: 13px;
     border-collapse: collapse;
     -webkit-user-select: none;
@@ -270,6 +271,8 @@ $z-index_notification: 8;
   td {
     padding: 3px 5px;
     white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   tbody:after {
     display: block;

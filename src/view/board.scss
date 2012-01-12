@@ -3,10 +3,6 @@
 @include common_view_style_1;
 @include content_table;
 
-.content {
-  overflow: auto;
-}
-
 th {
   &:nth-child(1) {
     width: 1em;
