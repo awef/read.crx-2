@@ -3,13 +3,17 @@
 @include common_view_style_1;
 @include content_table;
 
-.content {
-  overflow: auto;
+@media (max-width: 650px) {
+  th:not(.table_sort_asc):not(.table_sort_desc) {
+    &:nth-child(n+3) {
+      width: 0;
+    }
+  }
 }
 
 th {
   &:nth-child(1) {
-    width: 1em;
+    width: 2em;
   }
   &:nth-child(3) {
     width: 4em;
