@@ -102,7 +102,7 @@ app.view_setup_resizer = ->
 
   tmp = app.config.get("tab_a_#{val}")
   if tmp
-    tab_a.style[val] = Math.max(Math.min(tmp - offset, max), min) + "px"
+    tab_a.style[val] = Math.max(Math.min(tmp, max), min) + "px"
 
   $("#tab_resizer")
     .on "mousedown", (e) ->
