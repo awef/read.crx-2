@@ -188,3 +188,14 @@ app.view_module.board_contextmenu = ($view) ->
 
       $this.parent().remove()
       return
+
+app.view_module.sort_item_selector = ($view) ->
+  $table = $(".table_sort")
+  $view
+    .find(".sort_item_selector")
+      .on "change", ->
+        $table.find("th:nth-child(#{@value})").triggerHandler("click")
+        #ラベル用項目削除
+        if @item(0).value is "0"
+          @remove(0)
+        return

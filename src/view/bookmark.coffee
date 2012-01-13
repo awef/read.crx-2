@@ -55,6 +55,7 @@ app.boot "/view/bookmark.html", ->
   app.view_module.view($view)
   app.view_module.searchbox_thread_title($view, 0)
   app.view_module.board_contextmenu($view)
+  app.view_module.sort_item_selector($view)
 
   #リロード時処理
   $view.bind "request_reload", ->
