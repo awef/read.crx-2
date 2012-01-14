@@ -105,7 +105,7 @@ app.boot "/view/bookmark.html", ->
             .append(app.view_bookmark._bookmark_to_tr(message.bookmark))
           .end()
           .find("table")
-            .trigger("table_sort_update")
+            .table_sort("update")
       when "removed"
         $view.find("tr[data-href=\"#{message.bookmark.url}\"]").remove()
       when "res_count", "expired", "title"
@@ -130,7 +130,7 @@ app.boot "/view/bookmark.html", ->
         frag.appendChild(app.view_bookmark._bookmark_to_tr(bookmark))
 
     $view.find("tbody").append(frag)
-    $view.find("table").trigger("table_sort_update")
+    $view.find("table").table_sort("update")
     $view.trigger("view_loaded")
 
   app.message.send("request_update_read_state", {})

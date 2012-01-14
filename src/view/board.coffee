@@ -127,7 +127,7 @@ app.view_board._draw = ($view) ->
 
         tbody.appendChild(tr)
 
-      $view.find("table").trigger("table_sort_update")
+      $view.find("table").table_sort("update")
 
     .always ->
       $view.removeClass("loading")
