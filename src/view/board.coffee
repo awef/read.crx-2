@@ -9,7 +9,25 @@ app.boot "/view/board.html", ->
     .attr("data-url", url)
     .addClass("loading")
 
-  $view.find("table").table_sort()
+  $view
+    .find("table")
+      .table_sort()
+      .each ->
+        index = app.config.get("last_board_sort_index")
+        order = app.config.get("last_board_sort_order")
+        if index? and order?
+          index = +index + 1
+          $(@).find("th:nth-child(#{index})").addClass("table_sort_#{order}")
+        return
+      .on "table_sort_updated", ->
+        $th = $(@).find(".table_sort_asc, .table_sort_desc")
+        if $th.hasClass("table_sort_asc")
+          order = "asc"
+        else
+          order = "desc"
+        app.config.set("last_board_sort_index", $th.index())
+        app.config.set("last_board_sort_order", order)
+        return
 
   app.view_module.view($view)
   app.view_module.searchbox_thread_title($view, 1)
