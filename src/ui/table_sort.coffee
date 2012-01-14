@@ -17,9 +17,10 @@
               return
 
       when "update"
+        $this = $(@)
         table = @[0]
 
-        $th = $(@).find(".table_sort_asc, .table_sort_desc")
+        $th = $this.find(".table_sort_asc, .table_sort_desc")
         return if $th.length isnt 1
 
         table.style["display"] = "none"
@@ -49,5 +50,7 @@
             tbody.insertBefore(tr)
 
         table.style["display"] = "table"
+
+        $this.trigger("table_sort_updated")
     @
 )(jQuery)
