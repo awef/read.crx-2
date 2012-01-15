@@ -23,13 +23,13 @@
       .button.button_link(title="Chromeで直接開く")
       .button.button_reload
       %select.sort_item_selector
-        %option(label="ソート項目") 0
-        %option(label="ブックマーク") 1
-        %option(label="タイトル") 2
-        %option(label="レス数") 3
-        %option(label="未読数") 4
-        %option(label="勢い") 5
-        %option(label="作成日時") 6
+        %option(label="標準" data-sort_order="asc" data-sort_type="num") data-thread_number
+        %option(label="ブックマーク") 0
+        %option(label="タイトル") 1
+        %option(label="レス数") 2
+        %option(label="未読数") 3
+        %option(label="勢い") 4
+        %option(label="作成日時") 5
     .content(tabindex="0")
       %table
         %thead

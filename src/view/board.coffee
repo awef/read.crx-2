@@ -9,7 +9,17 @@ app.boot "/view/board.html", ->
     .attr("data-url", url)
     .addClass("loading")
 
-  $view.find("table").table_sort()
+  $view
+    .find("table")
+      .table_sort()
+      .each ->
+        tmp = app.config.get("last_board_sort_config")
+        if tmp?
+          $(@).table_sort("update", JSON.parse(tmp))
+        return
+      .on "table_sort_updated", (e, ex) ->
+        app.config.set("last_board_sort_config", JSON.stringify(ex))
+        return
 
   app.view_module.view($view)
   app.view_module.searchbox_thread_title($view, 1)
@@ -84,10 +94,11 @@ app.view_board._draw = ($view) ->
       now = Date.now()
 
       tbody = $view.find("tbody")[0]
-      for thread in board
+      for thread, thread_key in board
         tr = document.createElement("tr")
         tr.className = "open_in_rcrx"
         tr.setAttribute("data-href", thread.url)
+        tr.setAttribute("data-thread_number", thread_key)
         if read_state_index[thread.url]?
           read_state = array_of_read_state[read_state_index[thread.url]]
         else
