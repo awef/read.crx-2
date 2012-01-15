@@ -1,5 +1,5 @@
 (($) ->
-  $.fn.table_sort = (method = "init") ->
+  $.fn.table_sort = (method = "init", config = {}) ->
     switch method
       when "init"
         $(@)
@@ -17,17 +17,29 @@
               return
 
       when "update"
+        {sort_index, sort_type, sort_order} = config
+
         $this = $(@)
         table = @[0]
 
-        $th = $this.find(".table_sort_asc, .table_sort_desc")
-        return if $th.length isnt 1
-
         table.style["display"] = "none"
 
-        sort_index = $th.index()
-        sort_type = $th.data("table_sort_type") or "str"
-        sort_order = if $th.hasClass("table_sort_asc") then "asc" else "desc"
+        if sort_index? and sort_order?
+          $th = (
+            $this
+              .find("th")
+                .removeClass("table_sort_asc table_sort_desc")
+                .filter("th:nth-child(#{sort_index + 1})")
+          )
+          $th.addClass("table_sort_#{sort_order}")
+          unless sort_type?
+            sort_type = $th.attr("data-table_sort_type", sort_type)
+        else
+          $th = $this.find(".table_sort_asc, .table_sort_desc")
+          return if $th.length isnt 1
+          sort_index = $th.index()
+          sort_order = if $th.hasClass("table_sort_asc") then "asc" else "desc"
+        sort_type ?= $th.attr("data-table_sort_type") or "str"
 
         tbody = table.querySelector("tbody")
 

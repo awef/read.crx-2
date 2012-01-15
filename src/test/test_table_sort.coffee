@@ -130,3 +130,28 @@ test "クラス付与作業を自前で行い、ソートを行う事も可能",
   ], "降順&自然順ソート指定")
 
   return
+
+test "直接ソート項目を指定する事が可能", 4, ->
+  @$table.table_sort()
+
+  @$table.table_sort("update", sort_index: 1, sort_order: "desc")
+  strictEqual(@$table.find(".table_sort_desc").index(), 1)
+  deepEqual(@get_table_data(), [
+    ["05", "eee", "0"]
+    ["04", "ddd", "-100"]
+    ["03", "ccc", "1.234"]
+    ["02", "bbb", "21"]
+    ["01", "aaa", "123"]
+  ])
+
+  @$table.table_sort("update", sort_index: 2, sort_order: "asc", sort_type: "num")
+  strictEqual(@$table.find(".table_sort_asc").index(), 2)
+  deepEqual(@get_table_data(), [
+    ["04", "ddd", "-100"]
+    ["05", "eee", "0"]
+    ["03", "ccc", "1.234"]
+    ["02", "bbb", "21"]
+    ["01", "aaa", "123"]
+  ])
+
+  return
