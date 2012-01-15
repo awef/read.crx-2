@@ -29,11 +29,11 @@ module "table_sort",
       data
     return
 
-test "thがクリックされた場合、降順ソートする", 6, ->
+test "thがクリックされた場合、降順ソートする", 7, ->
   @$table.table_sort()
   ok(@$table.is(".table_sort"), "ソート対象テーブルには.table_sortを付与する")
   $th = @$table.find("th:first-child")
-  @$table.one "table_sort_updated", =>
+  @$table.one "table_sort_updated", (e, ex) =>
     QUnit.step(2, "ソート完了後、tableにtable_sort_updatedイベントが発行される")
     strictEqual($th[0].className, "table_sort_desc", "ソート対象のthには、ソート順を表すクラスが付与される")
     deepEqual(@get_table_data(), [
@@ -43,6 +43,12 @@ test "thがクリックされた場合、降順ソートする", 6, ->
       ["02", "bbb", "21"]
       ["01", "aaa", "123"]
     ])
+    console.log arguments
+    deepEqual(ex, {
+      sort_index: 0
+      sort_order: "desc"
+      sort_type: "str"
+    }, "ソート設定をextraParametersで送出する")
     return
   QUnit.step(1)
   $th.trigger("click")
@@ -131,18 +137,25 @@ test "クラス付与作業を自前で行い、ソートを行う事も可能",
 
   return
 
-test "直接ソート項目を指定する事が可能", 4, ->
+test "直接ソート項目を指定する事が可能", 5, ->
   @$table.table_sort()
 
+  @$table.one "table_sort_updated", (e, ex) =>
+    strictEqual(@$table.find(".table_sort_desc").index(), 1)
+    deepEqual(@get_table_data(), [
+      ["05", "eee", "0"]
+      ["04", "ddd", "-100"]
+      ["03", "ccc", "1.234"]
+      ["02", "bbb", "21"]
+      ["01", "aaa", "123"]
+    ])
+    deepEqual(ex, {
+      sort_index: 1
+      sort_order: "desc"
+      sort_type: "str"
+    })
+    return
   @$table.table_sort("update", sort_index: 1, sort_order: "desc")
-  strictEqual(@$table.find(".table_sort_desc").index(), 1)
-  deepEqual(@get_table_data(), [
-    ["05", "eee", "0"]
-    ["04", "ddd", "-100"]
-    ["03", "ccc", "1.234"]
-    ["02", "bbb", "21"]
-    ["01", "aaa", "123"]
-  ])
 
   @$table.table_sort("update", sort_index: 2, sort_order: "asc", sort_type: "num")
   strictEqual(@$table.find(".table_sort_asc").index(), 2)
@@ -156,7 +169,7 @@ test "直接ソート項目を指定する事が可能", 4, ->
 
   return
 
-test "trの属性でもソート可能", 3, ->
+test "trの属性でもソート可能", 4, ->
   @$table.table_sort()
 
   count = 0
@@ -166,14 +179,21 @@ test "trの属性でもソート可能", 3, ->
 
   @$table.find("th:first-child").trigger("click")
 
+  @$table.one "table_sort_updated", (e, ex) =>
+    deepEqual(@get_table_data(), [
+      ["05", "eee", "0"]
+      ["04", "ddd", "-100"]
+      ["03", "ccc", "1.234"]
+      ["02", "bbb", "21"]
+      ["01", "aaa", "123"]
+    ], "降順ソート")
+    deepEqual(ex, {
+      sort_attribute: "data-number"
+      sort_order: "desc"
+      sort_type: "str"
+    })
+    return
   @$table.table_sort("update", sort_attribute: "data-number", sort_order: "desc")
-  deepEqual(@get_table_data(), [
-    ["05", "eee", "0"]
-    ["04", "ddd", "-100"]
-    ["03", "ccc", "1.234"]
-    ["02", "bbb", "21"]
-    ["01", "aaa", "123"]
-  ], "降順ソート")
 
   strictEqual(@$table.find(".table_sort_asc, .table_sort_desc").length, 0)
 

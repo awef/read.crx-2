@@ -72,6 +72,12 @@
 
         table.style["display"] = "table"
 
-        $this.trigger("table_sort_updated")
+        exparam = {sort_order, sort_type}
+        if sort_index?
+          exparam.sort_index = sort_index
+        else
+          exparam.sort_attribute = sort_attribute
+
+        $this.trigger("table_sort_updated", exparam)
     @
 )(jQuery)
