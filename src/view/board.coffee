@@ -27,6 +27,7 @@ app.boot "/view/board.html", ->
   app.view_module.link_button($view)
   app.view_module.board_contextmenu($view)
   app.view_module.sort_item_selector($view)
+  app.view_module.board_title($view)
 
   app.board_title_solver.ask({url})
     .always (title) ->
