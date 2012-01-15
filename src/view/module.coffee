@@ -194,8 +194,18 @@ app.view_module.sort_item_selector = ($view) ->
   $view
     .find(".sort_item_selector")
       .on "change", ->
-        $table.find("th:nth-child(#{@value})").triggerHandler("click")
-        #ラベル用項目削除
-        if @item(0).value is "0"
-          @remove(0)
+        selected = @children[@selectedIndex]
+        config = {}
+
+        config.sort_order = selected.getAttribute("data-sort_order") or "desc"
+
+        if /^\d+$/.test(@value)
+          config.sort_index = +@value
+        else
+          config.sort_attribute = @value
+
+        if (tmp = selected.getAttribute("data-sort_type"))?
+          config.sort_type = tmp
+
+        $table.table_sort("update", config)
         return

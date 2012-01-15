@@ -13,20 +13,12 @@ app.boot "/view/board.html", ->
     .find("table")
       .table_sort()
       .each ->
-        index = app.config.get("last_board_sort_index")
-        order = app.config.get("last_board_sort_order")
-        if index? and order?
-          index = +index + 1
-          $(@).find("th:nth-child(#{index})").addClass("table_sort_#{order}")
+        tmp = app.config.get("last_board_sort_config")
+        if tmp?
+          $(@).table_sort("update", JSON.parse(tmp))
         return
-      .on "table_sort_updated", ->
-        $th = $(@).find(".table_sort_asc, .table_sort_desc")
-        if $th.hasClass("table_sort_asc")
-          order = "asc"
-        else
-          order = "desc"
-        app.config.set("last_board_sort_index", $th.index())
-        app.config.set("last_board_sort_order", order)
+      .on "table_sort_updated", (e, ex) ->
+        app.config.set("last_board_sort_config", JSON.stringify(ex))
         return
 
   app.view_module.view($view)
@@ -102,10 +94,11 @@ app.view_board._draw = ($view) ->
       now = Date.now()
 
       tbody = $view.find("tbody")[0]
-      for thread in board
+      for thread, thread_key in board
         tr = document.createElement("tr")
         tr.className = "open_in_rcrx"
         tr.setAttribute("data-href", thread.url)
+        tr.setAttribute("data-thread_number", thread_key)
         if read_state_index[thread.url]?
           read_state = array_of_read_state[read_state_index[thread.url]]
         else
