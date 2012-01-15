@@ -155,3 +155,35 @@ test "直接ソート項目を指定する事が可能", 4, ->
   ])
 
   return
+
+test "trの属性でもソート可能", 3, ->
+  @$table.table_sort()
+
+  count = 0
+  @$table.find("tr").each ->
+    $(@).attr("data-number", ++count)
+    return
+
+  @$table.find("th:first-child").trigger("click")
+
+  @$table.table_sort("update", sort_attribute: "data-number", sort_order: "desc")
+  deepEqual(@get_table_data(), [
+    ["05", "eee", "0"]
+    ["04", "ddd", "-100"]
+    ["03", "ccc", "1.234"]
+    ["02", "bbb", "21"]
+    ["01", "aaa", "123"]
+  ], "降順ソート")
+
+  strictEqual(@$table.find(".table_sort_asc, .table_sort_desc").length, 0)
+
+  @$table.table_sort("update", sort_attribute: "data-number", sort_order: "asc", sort_type: "num")
+  deepEqual(@get_table_data(), [
+    ["01", "aaa", "123"]
+    ["02", "bbb", "21"]
+    ["03", "ccc", "1.234"]
+    ["04", "ddd", "-100"]
+    ["05", "eee", "0"]
+  ], "昇順&自然順ソート")
+
+  return

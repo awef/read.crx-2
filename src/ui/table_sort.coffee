@@ -17,7 +17,7 @@
               return
 
       when "update"
-        {sort_index, sort_type, sort_order} = config
+        {sort_index, sort_attribute, sort_type, sort_order} = config
 
         $this = $(@)
         table = @[0]
@@ -34,19 +34,28 @@
           $th.addClass("table_sort_#{sort_order}")
           unless sort_type?
             sort_type = $th.attr("data-table_sort_type", sort_type)
-        else
+        else if not sort_attribute?
           $th = $this.find(".table_sort_asc, .table_sort_desc")
           return if $th.length isnt 1
           sort_index = $th.index()
           sort_order = if $th.hasClass("table_sort_asc") then "asc" else "desc"
-        sort_type ?= $th.attr("data-table_sort_type") or "str"
 
         tbody = table.querySelector("tbody")
 
-        data = {}
-        for td in tbody.querySelectorAll("td:nth-child(#{sort_index + 1})")
-          data[td.textContent] or= []
-          data[td.textContent].push(td.parentNode)
+        if sort_index?
+          sort_type ?= $th.attr("data-table_sort_type") or "str"
+          data = {}
+          for td in tbody.querySelectorAll("td:nth-child(#{sort_index + 1})")
+            data[td.textContent] or= []
+            data[td.textContent].push(td.parentNode)
+        else if sort_attribute?
+          $this.find("th").removeClass("table_sort_asc table_sort_desc")
+          sort_type ?= "str"
+          data = {}
+          for tr in tbody.getElementsByTagName("tr")
+            value = tr.getAttribute(sort_attribute)
+            data[value] or= []
+            data[value].push(tr)
 
         data_keys = Object.keys(data)
         if sort_type is "num"
