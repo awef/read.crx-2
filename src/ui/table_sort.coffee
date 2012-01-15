@@ -36,7 +36,9 @@
             sort_type = $th.attr("data-table_sort_type", sort_type)
         else if not sort_attribute?
           $th = $this.find(".table_sort_asc, .table_sort_desc")
-          return if $th.length isnt 1
+          if $th.length isnt 1
+            table.style["display"] = "table"
+            return
           sort_index = $th.index()
           sort_order = if $th.hasClass("table_sort_asc") then "asc" else "desc"
 
