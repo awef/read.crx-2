@@ -34,17 +34,12 @@ app.view_tab_state = {}
 app.view_tab_state._get = ->
   data = []
 
-  tmp = Array::slice.apply(document.getElementsByClassName("tab_content"))
-
-  for tab_content in tmp
-    tab_url = tab_content.getAttribute("data-url")
-    tab_title = tab_content.getAttribute("data-title")
-
+  for tab_li in document.querySelectorAll(".tab_tabbar > li")
+    tab_id = tab_li.getAttribute("data-tab_id")
+    tab_content = document.querySelector(".tab_content[data-tab_id=\"#{tab_id}\"]")
     data.push
-      url: tab_url
-      title: tab_title
-
-    null
+      url: tab_content.getAttribute("data-url")
+      title: tab_content.getAttribute("data-title")
 
   data
 
