@@ -20,6 +20,19 @@ app.boot "/view/board.html", ->
       .on "table_sort_updated", (e, ex) ->
         app.config.set("last_board_sort_config", JSON.stringify(ex))
         return
+      #.sort_item_selectorが非表示の時、各種項目のソート切り替えを
+      #降順ソート→昇順ソート→標準ソートとする
+      .on "click", "th.table_sort_asc", ->
+        return if $view.find(".sort_item_selector").is(":visible")
+        $(@).closest("table").one "table_sort_before_update", (e) ->
+          e.preventDefault()
+          $(@).table_sort("update", {
+            sort_attribute: "data-thread_number"
+            sort_order: "asc"
+            sort_type: "num"
+          })
+          return
+        return
 
   app.view_module.view($view)
   app.view_module.searchbox_thread_title($view, 1)
