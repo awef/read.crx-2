@@ -22,6 +22,11 @@
         $this = $(@)
         table = @[0]
 
+        event = $.Event("table_sort_before_update")
+        $this.trigger(event)
+        if event.isDefaultPrevented()
+          return
+
         table.style["display"] = "none"
 
         if sort_index? and sort_order?

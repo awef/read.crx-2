@@ -207,3 +207,42 @@ test "trの属性でもソート可能", 4, ->
   ], "昇順&自然順ソート")
 
   return
+
+test "ソート前にtable_sort_before_updateイベントを送出する", 7, ->
+  @$table.table_sort()
+
+  @$table.one "table_sort_before_update", ->
+    QUnit.step(2, "table_sort_before_updateイベント送出")
+    return
+  @$table.one "table_sort_updated", ->
+    QUnit.step(3, "table_sort_updatedイベント送出")
+    return
+  QUnit.step(1, "ソート前")
+  @$table.find("th:first-child").trigger("click")
+  QUnit.step(4)
+  deepEqual(@get_table_data(), [
+    ["05", "eee", "0"]
+    ["04", "ddd", "-100"]
+    ["03", "ccc", "1.234"]
+    ["02", "bbb", "21"]
+    ["01", "aaa", "123"]
+  ], "降順ソート")
+
+  @$table.one "table_sort_before_update", (e) ->
+    e.preventDefault()
+    return
+  is_sorted = false
+  @$table.one "table_sort_updated", ->
+    is_sorted = true
+    return
+  @$table.find("th:first-child").trigger("click")
+  ok(not is_sorted, "table_sort_before_updateイベントがpreventDefaultされた場合、ソートを中断する")
+  deepEqual(@get_table_data(), [
+    ["05", "eee", "0"]
+    ["04", "ddd", "-100"]
+    ["03", "ccc", "1.234"]
+    ["02", "bbb", "21"]
+    ["01", "aaa", "123"]
+  ])
+
+  return
