@@ -1,8 +1,8 @@
-diff --git src/event.js src/event.js
-index 5094683..383a0ed 100644
---- src/event.js
-+++ src/event.js
-@@ -417,8 +417,8 @@ jQuery.event = {
+diff --git a/src/event.js b/src/event.js
+index 4b841bb..b6ebe9a 100644
+--- a/src/event.js
++++ b/src/event.js
+@@ -398,8 +398,8 @@ jQuery.event = {
  		event.delegateTarget = this;
  
  		// Determine handlers that should run if there are delegated events
@@ -11,5 +11,5 @@ index 5094683..383a0ed 100644
 +		// Avoid disabled elements in IE (#6911)
 +		if ( delegateCount && !event.target.disabled ) {
  
- 			for ( cur = event.target; cur != this; cur = cur.parentNode || this ) {
- 				selMatch = {};
+ 			// Pregenerate a single jQuery object for reuse with .is()
+ 			jqcur = jQuery(this);

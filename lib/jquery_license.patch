@@ -1,7 +1,7 @@
-diff --git build/post-compile.js build/post-compile.js
+diff --git a/build/post-compile.js b/build/post-compile.js
 index afcebf2..a407e57 100644
---- build/post-compile.js
-+++ build/post-compile.js
+--- a/build/post-compile.js
++++ b/build/post-compile.js
 @@ -6,7 +6,7 @@ var print = require( "sys" ).print,
  	version = fs.readFileSync( "version.txt", "utf8" ),
  	// License Template

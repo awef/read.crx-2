@@ -1,8 +1,8 @@
-diff --git src/effects.js src/effects.js
-index 8009171..741dace 100644
---- src/effects.js
-+++ src/effects.js
-@@ -569,6 +569,7 @@ function defaultDisplay( nodeName ) {
+diff --git a/src/effects.js b/src/effects.js
+index 5c6a20b..99ebe5d 100644
+--- a/src/effects.js
++++ b/src/effects.js
+@@ -648,6 +648,7 @@ function defaultDisplay( nodeName ) {
  			// No iframe to use yet, so create it
  			if ( !iframe ) {
  				iframe = document.createElement( "iframe" );
