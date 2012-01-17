@@ -87,6 +87,9 @@ $z-index_notification: 8;
     > input {
       padding: 0 0 0 19px;
       width: 150px;
+      @media (max-width: 400px) {
+        width: 100px;
+      }
     }
     > .button {
       width: 19px;
