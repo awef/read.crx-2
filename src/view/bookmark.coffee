@@ -4,6 +4,7 @@ app.view_bookmark._bookmark_to_tr = (bookmark) ->
   tr = document.createElement("tr")
   tr.className = "open_in_rcrx"
   tr.setAttribute("data-href", bookmark.url)
+  tr.setAttribute("data-title", bookmark.title)
 
   if bookmark.expired is true
     tr.classList.add("expired")

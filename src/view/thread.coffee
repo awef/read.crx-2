@@ -5,8 +5,6 @@ app.boot "/view/thread.html", ->
   return alert("不正な引数です") unless view_url
   view_url = app.url.fix(view_url)
 
-  document.title = view_url
-
   $view = $(document.documentElement)
   $view.attr("data-url", view_url)
 
@@ -394,6 +392,7 @@ app.boot "/view/thread.html", ->
             text += " (未読#{next.res_count - (next.read_state?.read or 0)}件)"
           next_unread.href = app.safe_href(next.url)
           next_unread.textContent = text
+          next_unread.setAttribute("data-title", next.title)
           next_unread.style["display"] = "block"
         else
           next_unread.style["display"] = "none"

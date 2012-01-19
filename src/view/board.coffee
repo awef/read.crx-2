@@ -112,6 +112,7 @@ app.view_board._draw = ($view) ->
         tr = document.createElement("tr")
         tr.className = "open_in_rcrx"
         tr.setAttribute("data-href", thread.url)
+        tr.setAttribute("data-title", thread.title)
         tr.setAttribute("data-thread_number", thread_key)
         if read_state_index[thread.url]?
           read_state = array_of_read_state[read_state_index[thread.url]]
