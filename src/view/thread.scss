@@ -319,7 +319,7 @@ footer {
     }
   }
 
-  .next_unread {
+  .next_unread, .next_unread:visited {
     background-color: $next_unread_background_color;
     color: $next_unread_color;
   }
