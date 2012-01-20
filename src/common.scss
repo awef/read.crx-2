@@ -43,6 +43,38 @@ $z-index_notification: 8;
   box-shadow: 0 1px 4px rgba(black, 0.6);
 }
 
+@mixin button {
+  border: 1px solid #aaa;
+  border-radius: 3px;
+  background: -webkit-linear-gradient(#eee, #d5d5d5);
+  color: #222;
+  padding: 5px;
+  &:not([disabled]) {
+    cursor: pointer;
+    &:hover {
+      border-color: #777;
+    }
+    &:active {
+      background: -webkit-linear-gradient(#ddd, #c5c5c5);
+      box-shadow: 0 1px 1px #999 inset;
+    }
+  }
+  &[disabled] {
+    background: #ddd;
+    color: #888;
+  }
+}
+
+@mixin input_text {
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  padding: 4px;
+  box-shadow: 0 1px 1px #ccc inset;
+  &:focus {
+    outline-color: rgba(#07f, 0.5);
+  }
+}
+
 @mixin common_view_style_1 {
   @media (max-width: 650px) {
     .sort_item_selector {
