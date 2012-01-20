@@ -9,13 +9,38 @@ app.boot "/view/board.html", ->
     .attr("data-url", url)
     .addClass("loading")
 
-  $view.find("table").table_sort()
+  $view
+    .find("table")
+      .table_sort()
+      .each ->
+        tmp = app.config.get("last_board_sort_config")
+        if tmp?
+          $(@).table_sort("update", JSON.parse(tmp))
+        return
+      .on "table_sort_updated", (e, ex) ->
+        app.config.set("last_board_sort_config", JSON.stringify(ex))
+        return
+      #.sort_item_selectorが非表示の時、各種項目のソート切り替えを
+      #降順ソート→昇順ソート→標準ソートとする
+      .on "click", "th.table_sort_asc", ->
+        return if $view.find(".sort_item_selector").is(":visible")
+        $(@).closest("table").one "table_sort_before_update", (e) ->
+          e.preventDefault()
+          $(@).table_sort("update", {
+            sort_attribute: "data-thread_number"
+            sort_order: "asc"
+            sort_type: "num"
+          })
+          return
+        return
 
   app.view_module.view($view)
   app.view_module.searchbox_thread_title($view, 1)
   app.view_module.bookmark_button($view)
   app.view_module.link_button($view)
   app.view_module.board_contextmenu($view)
+  app.view_module.sort_item_selector($view)
+  app.view_module.board_title($view)
 
   app.board_title_solver.ask({url})
     .always (title) ->
@@ -83,10 +108,12 @@ app.view_board._draw = ($view) ->
       now = Date.now()
 
       tbody = $view.find("tbody")[0]
-      for thread in board
+      for thread, thread_key in board
         tr = document.createElement("tr")
         tr.className = "open_in_rcrx"
         tr.setAttribute("data-href", thread.url)
+        tr.setAttribute("data-title", thread.title)
+        tr.setAttribute("data-thread_number", thread_key)
         if read_state_index[thread.url]?
           read_state = array_of_read_state[read_state_index[thread.url]]
         else
@@ -126,7 +153,7 @@ app.view_board._draw = ($view) ->
 
         tbody.appendChild(tr)
 
-      $view.find("table").trigger("table_sort_update")
+      $view.find("table").table_sort("update")
 
     .always ->
       $view.removeClass("loading")

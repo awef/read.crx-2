@@ -9,7 +9,6 @@
   list-style-type: none;
   font-size: 14px;
   line-height: 1.3;
-  -webkit-user-select: none;
   > li {
     float: left;
     position: relative;
@@ -38,7 +37,7 @@
       cursor: pointer;
       border-radius: 2px;
     }
-    &:hover > img {
+    &.hover > img {
       visibility: visible;
     }
   }

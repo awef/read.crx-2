@@ -1,5 +1,5 @@
 :ruby
-  app_version = "0.39"
+  app_version = "0.45"
 
 !!! 5
 %html.view.view_board(data-app-version="#{app_version}")
@@ -22,6 +22,14 @@
       .button.button_bookmark
       .button.button_link(title="Chromeで直接開く")
       .button.button_reload
+      %select.sort_item_selector
+        %option(label="標準" data-sort_order="asc" data-sort_type="num") data-thread_number
+        %option(label="ブックマーク") 0
+        %option(label="タイトル") 1
+        %option(label="レス数") 2
+        %option(label="未読数") 3
+        %option(label="勢い") 4
+        %option(label="作成日時") 5
     .content(tabindex="0")
       %table
         %thead

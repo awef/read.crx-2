@@ -25,7 +25,8 @@ app.view_module.view = ($view) ->
         title: document.title
       parent.postMessage(JSON.stringify(tmp), location.origin)
 
-    send_title_updated()
+    if document.title
+      send_title_updated()
     $view
       .find("title")
         .bind("DOMSubtreeModified", send_title_updated)
@@ -33,22 +34,20 @@ app.view_module.view = ($view) ->
   #.open_in_rcrx
   $view
     #windowsのオートスクロール対策
-    .delegate ".open_in_rcrx", "mousedown", (e) ->
+    .on "mousedown", ".open_in_rcrx", (e) ->
       if e.which is 2
         e.preventDefault()
       return
-    .delegate ".open_in_rcrx", "click", (e) ->
+    .on "click", ".open_in_rcrx", (e) ->
       e.preventDefault()
+      url = @href or @getAttribute("data-href")
+      title = @getAttribute("data-title") or @textContent
       how_to_open = app.util.get_how_to_open(e)
       new_tab = app.config.get("always_new_tab") is "on"
       new_tab or= how_to_open.new_tab or how_to_open.new_window
-      url = this.href or this.getAttribute("data-href")
+      background = how_to_open.background
       if frameElement
-        app.message.send("open", {
-          url
-          new_tab
-          background: how_to_open.background
-        })
+        app.message.send("open", {url, new_tab, background, title})
       else
         tmp = chrome.extension.getURL("/view/index.html?")
         tmp += app.url.build_param(q: url)
@@ -188,3 +187,50 @@ app.view_module.board_contextmenu = ($view) ->
 
       $this.parent().remove()
       return
+
+app.view_module.sort_item_selector = ($view) ->
+  $table = $(".table_sort")
+  $selector = $view.find(".sort_item_selector")
+  $table
+    .on "table_sort_updated", (e, ex) ->
+      $selector
+        .find("option")
+          .filter(->
+            String(ex.sort_attribute or ex.sort_index) is @textContent
+          )
+            .attr("selected", true)
+      return
+  $selector
+    .on "change", ->
+      selected = @children[@selectedIndex]
+      config = {}
+
+      config.sort_order = selected.getAttribute("data-sort_order") or "desc"
+
+      if /^\d+$/.test(@value)
+        config.sort_index = +@value
+      else
+        config.sort_attribute = @value
+
+      if (tmp = selected.getAttribute("data-sort_type"))?
+        config.sort_type = tmp
+
+      $table.table_sort("update", config)
+      return
+  return
+
+app.view_module.board_title = ($view) ->
+  td = null
+  $view
+    .on "mouseenter", "td", ->
+      td = @
+      app.defer ->
+        td.title = td.textContent
+        return
+      return
+    .on "mouseleave", "td", ->
+      if td?
+        td.removeAttribute("title")
+        td = null
+      return
+  return

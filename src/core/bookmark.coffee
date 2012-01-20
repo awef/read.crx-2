@@ -172,6 +172,12 @@ do ->
       app.message.send("bookmark_updated",
         {type: "expired", bookmark: cached})
 
+    #title更新
+    if cached.title isnt new_bookmark.title
+      cached.title = new_bookmark.title
+      app.message.send("bookmark_updated",
+        {type: "title", bookmark: cached})
+
   cache.remove_bookmark = (prop) ->
     id = @get_id(prop)
     bookmark = @get_bookmark({id})

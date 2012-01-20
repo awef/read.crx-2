@@ -1,5 +1,5 @@
 :ruby
-  app_version = "0.39"
+  app_version = "0.45"
 
 !!! 5
 %html.view.view_thread(data-app-version="#{app_version}")
@@ -10,7 +10,6 @@
     %link(rel="stylesheet" href="/ui.css?v=#{app_version}")
     %link(rel="stylesheet" href="thread.css?v=#{app_version}")
     %script(src="/lib/jquery/jquery.min.js?v=#{app_version}")
-    %script(src="/lib/jail/jail.min.js?v=#{app_version}")
     %script(src="/ui.js?v=#{app_version}")
     %script(src="/app.js?v=#{app_version}")
     %script(src="app_proxy.js?v=#{app_version}")
@@ -22,9 +21,11 @@
       %input.searchbox
       .button.button_bookmark
       .button.button_link(title="Chromeで直接開く")
-      .button.button_board(title="板を開く")
       .button.button_reload
       .button.button_write
+      %ul.breadcrumb
+        %li
+          %a.open_in_rcrx
     .content(tabindex="0")
     %footer
       .loading_indicator 読み込み中

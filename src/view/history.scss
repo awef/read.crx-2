@@ -4,11 +4,18 @@
 @include content_table;
 
 .content {
-  overflow: auto;
   tbody:empty {
     display: block;
     &:after {
       content: "閲覧履歴は空です";
     }
   }
+}
+
+th:hover {
+  background-color: inherit !important;
+}
+
+th:nth-child(2) {
+  width: 16em;
 }

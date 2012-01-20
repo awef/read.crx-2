@@ -26,10 +26,15 @@ $z-index_notification: 8;
   }
 }
 
+@font-face {
+  font-family: "Textar";
+  src: url(/lib/textar/textar-min.woff);
+}
+
 @mixin ascii_art {
   font: {
     size: 16px;
-    family: "ＭＳ Ｐゴシック", "Konatu", "IPAMonaPGothic";
+    family: "MS PGothic", "IPAMonaPGothic", "Konatu", "Monapo", "Textar";
   };
   line-height: 18px;
 }
@@ -39,6 +44,11 @@ $z-index_notification: 8;
 }
 
 @mixin common_view_style_1 {
+  @media (max-width: 650px) {
+    .sort_item_selector {
+      display: inline-block !important;
+    }
+  }
   html, body {
     width: 100%;
     height: 100%;
@@ -67,39 +77,67 @@ $z-index_notification: 8;
     position: relative;
     > input, > .button {
       float: left;
+    }
+    > input, > .button, > .breadcrumb, > .sort_item_selector {
+      border-width: 1px;
+      border-style: solid;
       margin: 3px;
+      height: 19px;
     }
     > input {
-      border: 1px solid;
-      height: 19px;
       padding: 0 0 0 19px;
+      width: 150px;
+      @media (max-width: 400px) {
+        width: 100px;
+      }
     }
     > .button {
       width: 19px;
-      height: 19px;
-      border: 1px solid;
       cursor: pointer;
+      -webkit-transition: opacity 500ms;
       a {
         display: block;
         width: 100%;
         height: 100%;
       }
-      &.button_bookmark.bookmarked {
-        -webkit-box-shadow: 0 0 3px yellow inset;
+      &.disabled {
+        cursor: default;
+        opacity: 0.5;
       }
-      &.button_reload {
-        -webkit-transition: background-color 250ms;
-        &.disabled {
-          background-color: rgba(black, 0.1);
-          cursor: default;
-        }
+    }
+  }
+  .breadcrumb {
+    list-style-type: none;
+    float: right;
+    padding: 0;
+    font-size: 14px;
+    border-radius: 3px;
+    > li {
+      float: left;
+      padding: 3px;
+      > a {
+        color: inherit !important;
+        text-decoration: none;
       }
+    }
+  }
+  .sort_item_selector {
+    display: none;
+    float: right;
+    color: inherit;
+    background-color: inherit;
+    border-radius: 3px;
+    font-size: 14px;
+    outline: none;
+    height: 21px !important;
+    > option {
+      background-color: inherit;
     }
   }
   .content {
     -webkit-box-flex: 1;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll;
     position: relative;
     outline: none;
   }
@@ -135,12 +173,15 @@ $z-index_notification: 8;
   .view.theme_default {
     @include common_view_style_1_theme(
       $nav_bar_background_color: #fff,
+      $nav_bar_color: #333,
       $nav_bar_item_border_color: #ccc,
       $message_bar_info_background_color: #eef,
       $message_bar_info_border_color: #ccd,
       $message_bar_error_background_color: #ecc,
       $message_bar_error_border_color: #ebb,
       $icon_color: "333",
+      $active_icon_color: "39f",
+      $active_icon_shadow_color: yellow,
       $search_icon_color: "777",
       $color: #111
     );
@@ -149,12 +190,15 @@ $z-index_notification: 8;
   .view.theme_dark {
     @include common_view_style_1_theme(
       $nav_bar_background_color: #444,
+      $nav_bar_color: #eee,
       $nav_bar_item_border_color: #999,
       $message_bar_info_background_color: #345,
       $message_bar_info_border_color: #345,
       $message_bar_error_background_color: #933,
       $message_bar_error_border_color: #933,
       $icon_color: "ddd",
+      $active_icon_color: "f93",
+      $active_icon_shadow_color: #aa3,
       $search_icon_color: "aaa",
       $color: #eee
     );
@@ -169,18 +213,22 @@ $z-index_notification: 8;
 
 @mixin common_view_style_1_theme (
   $nav_bar_background_color,
+  $nav_bar_color,
   $nav_bar_item_border_color,
   $message_bar_info_background_color,
   $message_bar_info_border_color,
   $message_bar_error_background_color,
   $message_bar_error_border_color,
   $icon_color,
+  $active_icon_color,
+  $active_icon_shadow_color,
   $search_icon_color,
   $color
 ) {
   .nav_bar {
     background-color: $nav_bar_background_color;
-    > .button, > input {
+    color: $nav_bar_color;
+    > .button, > input, > .breadcrumb, > .sort_item_selector {
       border-color: $nav_bar_item_border_color;
     }
     > input {
@@ -191,14 +239,12 @@ $z-index_notification: 8;
       &.button_bookmark {
         background-image: url(/img/star_19x19_#{$icon_color}.png);
         &.bookmarked {
-          background-image: url(/img/star2_19x19.png);
+          background-image: url(/img/star_19x19_#{$active_icon_color}.png);
+          -webkit-box-shadow: 0 0 3px $active_icon_shadow_color inset;
         }
       }
       &.button_link {
         background-image: url(/img/link_19x19_#{$icon_color}.png);
-      }
-      &.button_board {
-        background-image: url(/img/arrow_19x19_#{$icon_color}.png);
       }
       &.button_reload {
         background-image: url(/img/reload_19x19_#{$icon_color}.png);
@@ -223,6 +269,7 @@ $z-index_notification: 8;
 @mixin content_table {
   table {
     width: 100%;
+    table-layout: fixed;
     font-size: 13px;
     border-collapse: collapse;
     -webkit-user-select: none;
@@ -236,6 +283,7 @@ $z-index_notification: 8;
     font-weight: normal;
     border-right: 1px solid;
     white-space: nowrap;
+    overflow: hidden;
   }
   tbody > tr {
     cursor: pointer;
@@ -243,6 +291,8 @@ $z-index_notification: 8;
   td {
     padding: 3px 5px;
     white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   tbody:after {
     display: block;

@@ -183,26 +183,6 @@ window.addEventListener('load', function() {
       .scale(0.7, 0.7);
   });
 
-  //スター2
-  add(function(paper, container) {
-    paper
-      .path([
-          'M50,15',
-          'L40,40 L15,45 L35,60 L25,85',
-          'L50,70',
-          'L75,85 L65,60 L85,45 L60 40',
-          'z'
-        ].join(''))
-      .attr({
-          fill: '#39f',
-          stroke: '#39f',
-          'stroke-width': 10,
-          'stroke-linecap': 'round',
-          'stroke-linejoin': 'round'
-        })
-      .scale(0.7, 0.7);
-  });
-
   //リンク
   add(function(paper, container) {
     var p1;

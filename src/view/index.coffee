@@ -34,17 +34,12 @@ app.view_tab_state = {}
 app.view_tab_state._get = ->
   data = []
 
-  tmp = Array::slice.apply(document.getElementsByClassName("tab_content"))
-
-  for tab_content in tmp
-    tab_url = tab_content.getAttribute("data-url")
-    tab_title = tab_content.getAttribute("data-title")
-
+  for tab_li in document.querySelectorAll(".tab_tabbar > li")
+    tab_id = tab_li.getAttribute("data-tab_id")
+    tab_content = document.querySelector(".tab_content[data-tab_id=\"#{tab_id}\"]")
     data.push
-      url: tab_url
-      title: tab_title
-
-    null
+      url: tab_content.getAttribute("data-url")
+      title: tab_content.getAttribute("data-title")
 
   data
 
@@ -71,37 +66,44 @@ app.view_setup_resizer = ->
 
   $body = $("#body")
 
-  if $body.hasClass("pane-3")
-    val = "height"
-    val_c = "Height"
-    val_axis = "Y"
-  else if $body.hasClass("pane-3h")
-    val = "width"
-    val_c = "Width"
-    val_axis = "X"
-  else
-    app.log("warn", "呼ばれるべきでない状況でapp.view_setup_resizerが呼ばれました")
-    return
-
   $tab_a = $("#tab_a")
   tab_a = $tab_a[0]
-  offset = $tab_a["outer#{val_c}"]() - $tab_a[val]()
 
-  min = MIN_TAB_HEIGHT
-  max = document.body["offset#{val_c}"] - MIN_TAB_HEIGHT
+  right_pane = document.getElementById("right_pane")
+
+  val = null
+  val_c = null
+  val_axis = null
+  min = null
+  max = null
+  offset = null
+
+  update_info = ->
+    if $body.hasClass("pane-3")
+      val = "height"
+      val_c = "Height"
+      val_axis = "Y"
+      offset = right_pane.offsetTop
+    else if $body.hasClass("pane-3h")
+      val = "width"
+      val_c = "Width"
+      val_axis = "X"
+      offset = right_pane.offsetLeft
+    min = MIN_TAB_HEIGHT
+    max = right_pane["offset#{val_c}"] - MIN_TAB_HEIGHT
+    return
+
+  update_info()
 
   tmp = app.config.get("tab_a_#{val}")
   if tmp
-    tab_a.style[val] =
-      Math.max(Math.min(tmp - offset, max), min) + "px"
+    tab_a.style[val] = Math.max(Math.min(tmp, max), min) + "px"
 
   $("#tab_resizer")
-    .bind "mousedown", (e) ->
-      that = this
+    .on "mousedown", (e) ->
       e.preventDefault()
 
-      min = MIN_TAB_HEIGHT
-      max = document.body["offset#{val_c}"] - MIN_TAB_HEIGHT
+      update_info()
 
       $("<div>", {css: {
         position: "absolute"
@@ -112,14 +114,13 @@ app.view_setup_resizer = ->
         "z-index": 999
         cursor: if val_axis is "X" then "col-resize" else "row-resize"
       }})
-        .bind "mousemove", (e) ->
-          offset = that.parentNode[if val_axis is "Y" then "offsetTop" else "offsetLeft"]
+        .on "mousemove", (e) =>
           tab_a.style[val] =
             Math.max(Math.min(e["page#{val_axis}"] - offset, max), min) + "px"
           return
 
-        .bind "mouseup", ->
-          $(this).remove()
+        .on "mouseup", ->
+          $(@).remove()
           app.config.set("tab_a_#{val}", parseInt(tab_a.style[val], 10))
           return
 
@@ -135,12 +136,13 @@ app.main = ->
 
   app.message.add_listener "notify", (message) ->
     text = message.message
+    html = message.html
     background_color = message.background_color or "#777"
     $("<div>")
       .css("background-color", background_color)
       .append(
-        $("<div>", {text}),
-        $("<button>").one "click", ->
+        (if html? then $("<div>", {html}) else $("<div>", {text})),
+        $("<div>").one "click", ->
           $(@)
             .parent()
               .animate({opacity: 0}, "fast")
@@ -158,7 +160,11 @@ app.main = ->
     if last_version?
       if app.manifest.version isnt last_version
         app.message.send "notify", {
-          message: "#{app.manifest.name} が #{last_version} から #{app.manifest.version} にアップデートされました。"
+          html: """
+            #{app.manifest.name} が #{last_version} から
+             #{app.manifest.version} にアップデートされました。
+             <a href="https://sites.google.com/site/idawef/read-crx-2/changelog" target="_blank">更新履歴</a>
+          """
           background_color: "green"
         }
       else
@@ -166,25 +172,50 @@ app.main = ->
     app.config.set("last_version", app.manifest.version)
 
   #タブ・ペインセットアップ
-  layout = app.config.get("layout")
+  $("#body").addClass(app.config.get("layout"))
+  $("#tab_a, #tab_b").tab()
+  $(".tab .tab_tabbar").sortable()
+  app.view_setup_resizer()
 
-  if layout is "pane-3"
-    $("#body").addClass("pane-3")
-    $("#tab_a, #tab_b").tab()
-    $(".tab .tab_tabbar").sortable()
-    app.view_setup_resizer()
+  app.message.add_listener "config_updated", (message) ->
+    if message.key is "layout"
+      $("#body")
+        .removeClass("pane-3 pane-3h pane-2")
+        .addClass(message.val)
+      $("#tab_a, #tab_b").css(width: "", height: "")
+      #タブ移動
+      #2->3
+      if message.val is "pane-3" or message.val is "pane-3h"
+        tab_a = document.getElementById("tab_a")
+        $tab_a = $(tab_a)
+        for tmp in tab_a.querySelectorAll(".tab_container > *")
+          if app.url.guess_type(tmp.getAttribute("data-url")).type is "thread"
+            app.message.send "open", {
+                new_tab: true
+                lazy: true
+                url: tmp.getAttribute("data-url")
+                title: tmp.getAttribute("data-title")
+              }
+            $tab_a.tab("remove", tab_id: tmp.getAttribute("data-tab_id"))
+      #3->2
+      if message.val is "pane-2"
+        tab_b = document.getElementById("tab_b")
+        $tab_b = $(tab_b)
+        for tmp in tab_b.querySelectorAll(".tab_container > *")
+          app.message.send "open", {
+              new_tab: true
+              lazy: true
+              url: tmp.getAttribute("data-url")
+              title: tmp.getAttribute("data-title")
+            }
+          $tab_b.tab("remove", tab_id: tmp.getAttribute("data-tab_id"))
+    return
 
-  else if layout is "pane-3h"
-    $("#body").addClass("pane-3h")
-    $("#tab_a, #tab_b").tab()
-    $(".tab .tab_tabbar").sortable()
-    app.view_setup_resizer()
-
-  else if layout is "pane-2"
-    $("#body").addClass("pane-2")
-    $("#tab_a").tab()
-    $("#tab_b, #tab_resizer").remove()
-    $(".tab .tab_tabbar").sortable()
+  # #13対策
+  $view
+    .find(".tab_tabbar")
+      .on("mouseenter", "li", -> @classList.add("hover"))
+      .on("mouseleave", "li", -> @classList.remove("hover"))
 
   #タブの状態の保存/復元関連
   is_restored = app.view_tab_state.restore()
@@ -249,8 +280,9 @@ app.main = ->
         $iframe.appendTo("#modal")
       else
         target = "#tab_a"
-        if iframe_info.src[0..16] is "/view/thread.html"
-          target = document.getElementById("tab_b") or target
+        if iframe_info.src[0..16] is "/view/thread.html" and
+            not $("#body").hasClass("pane-2")
+          target = "#tab_b"
 
         $(target)
           .tab("add", {

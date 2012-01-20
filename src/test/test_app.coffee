@@ -101,6 +101,17 @@ asyncTest "メッセージはparentやiframeにも伝播する", 1, ->
     start()
   , 600
 
+asyncTest "send後にメッセージが編集されても反映しない", 1, ->
+  app.message.add_listener "__test4", (message) ->
+    deepEqual(message, a: 0)
+    start()
+    return
+
+  message = a: 0
+  app.message.send("__test4", message)
+  message.a++
+  return
+
 module("app.config")
 
 test "文字列を保存/取得できる", ->

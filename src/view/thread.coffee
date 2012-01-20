@@ -5,8 +5,6 @@ app.boot "/view/thread.html", ->
   return alert("不正な引数です") unless view_url
   view_url = app.url.fix(view_url)
 
-  document.title = view_url
-
   $view = $(document.documentElement)
   $view.attr("data-url", view_url)
 
@@ -16,11 +14,6 @@ app.boot "/view/thread.html", ->
   app.view_module.view($view)
   app.view_module.bookmark_button($view)
   app.view_module.link_button($view)
-
-  $("<a>", {
-    href: app.safe_href(app.url.thread_to_board(view_url))
-    class: "open_in_rcrx"
-  }).appendTo($view.find(".button_board"))
 
   write = (param) ->
     param or= {}
@@ -253,18 +246,13 @@ app.boot "/view/thread.html", ->
         id_text = @textContent
           .replace(/^id:/i, "ID:")
           .replace(/\(\d+\)$/, "")
+          .replace(/\u25cf$/, "") #末尾●除去
 
         $popup = $("<div>")
         $view
-          .find(".id")
-            .filter(->
-              @textContent[0...id_text.length] is id_text and
-                /^\(\d+\)$/.test(@textContent[id_text.length...])
-            )
-              .closest("article")
-                .filter(".content > article")
-                  .clone()
-                    .appendTo($popup)
+          .find(".content > article[data-id=\"#{id_text}\"]")
+            .clone()
+              .appendTo($popup)
         $popup
       return
 
@@ -284,11 +272,11 @@ app.boot "/view/thread.html", ->
   #クイックジャンプパネル
   do ->
     jump_hoge =
-      jump_one: "article:nth-child(1)"
-      jump_newest: "article:last-child"
-      jump_not_read: "article.read + article"
-      jump_new: "article.received + article"
-      jump_last: "article.last"
+      ".jump_one": "article:nth-child(1)"
+      ".jump_newest": "article:last-child"
+      ".jump_not_read": "article.read + article"
+      ".jump_new": "article.received + article"
+      ".jump_last": "article.last"
 
     $jump_panel = $view.find(".jump_panel")
 
@@ -299,12 +287,12 @@ app.boot "/view/thread.html", ->
         res_num = +res.querySelector(".num").textContent if res
         if res and not already[res_num]
           $jump_panel[0]
-            .querySelector(".#{panel_item_selector}")
+            .querySelector(panel_item_selector)
               .style["display"] = "block"
           already[res_num] = true
         else
           $jump_panel[0]
-            .querySelector(".#{panel_item_selector}")
+            .querySelector(panel_item_selector)
               .style["display"] = "none"
       return
 
@@ -312,7 +300,7 @@ app.boot "/view/thread.html", ->
       $target = $(e.target)
 
       for key, val of jump_hoge
-        if $target.hasClass(key)
+        if $target.is(key)
           selector = val
           break
 
@@ -324,6 +312,7 @@ app.boot "/view/thread.html", ->
         else
           app.log("warn", "[view_thread] .jump_panel: ターゲットが存在しません")
       return
+    return
 
   #検索ボックス
   do ->
@@ -403,6 +392,7 @@ app.boot "/view/thread.html", ->
             text += " (未読#{next.res_count - (next.read_state?.read or 0)}件)"
           next_unread.href = app.safe_href(next.url)
           next_unread.textContent = text
+          next_unread.setAttribute("data-title", next.title)
           next_unread.style["display"] = "block"
         else
           next_unread.style["display"] = "none"
@@ -418,6 +408,24 @@ app.boot "/view/thread.html", ->
         .on "scroll", ->
           update_next_unread()
           return
+
+  #サムネイルロード時の縦位置調整
+  $view.on "lazy_load_complete", ".thumbnail > a > img", ->
+    a = @parentNode
+    container = a.parentNode
+    a.style["top"] = "#{(container.offsetHeight - a.offsetHeight) / 2}px"
+
+  #パンくずリスト表示
+  do ->
+    board_url = app.url.thread_to_board(view_url)
+    app.board_title_solver.ask(url: board_url, offline: true)
+      .always (title) ->
+        $view
+          .find(".breadcrumb > li > a")
+            .attr("href", board_url)
+            .text(if title? then "#{title.replace(/板$/, "")}板" else "板")
+        return
+    return
 
 app.view_thread._jump_to_res = ($view, res_num, animate_flg, offset = -10) ->
   content = $view[0].querySelector(".content")
@@ -453,26 +461,25 @@ app.view_thread._draw = ($view, force_update) ->
     #DOM構築
     do ->
       completed = content.childNodes.length
-      frag = document.createDocumentFragment()
+      tmp = ""
       for res, res_key in thread.res
         continue if res_key < completed
-        frag.appendChild(app.view_thread._const_res(res_key, res, $view, id_index, rep_index))
-      content.appendChild(frag)
+        tmp += app.view_thread._const_res_html(res_key, res, $view, id_index, rep_index)
+      content.insertAdjacentHTML("BeforeEnd", tmp)
+      return
     #idカウント, .freq/.link更新
     do ->
       for id, index of id_index
         id_count = index.length
-        text = "#{id}(#{id_count})"
         for res_key in index
           elm = content.childNodes[res_key].getElementsByClassName("id")[0]
-          elm.firstChild.nodeValue = text
+          elm.firstChild.nodeValue = elm.firstChild.nodeValue.replace(/(?:\(\d+\))?$/, "(#{id_count})")
           if id_count >= 5
             elm.classList.remove("link")
             elm.classList.add("freq")
           else if id_count >= 2
             elm.classList.add("link")
-          null
-        null
+      return
     #.one付与
     do ->
       one_id = content.firstChild?.getAttribute("data-id")
@@ -485,18 +492,16 @@ app.view_thread._draw = ($view, force_update) ->
         res = content.childNodes[res_key - 1]
         if res
           res_count = index.length
-          elm = res.getElementsByClassName("rep")[0]
-          unless elm
-            elm = document.createElement("span")
-            elm.className = "rep"
-            res.getElementsByClassName("other")[0].appendChild(elm)
-          elm.textContent = "返信 (#{res_count})"
-
-          if res_count >= 5
-            elm.classList.remove("link")
-            elm.classList.add("freq")
+          if elm = res.getElementsByClassName("rep")[0]
+            new_flg = false
           else
-            elm.classList.add("link")
+            new_flg = true
+            elm = document.createElement("span")
+          elm.textContent = "返信 (#{res_count})"
+          elm.className = if res_count >= 5 then "rep freq" else "rep link"
+          if new_flg
+            res.getElementsByClassName("other")[0].appendChild(elm)
+      return
     #サムネイル追加処理
     do ->
       imgs = []
@@ -558,17 +563,7 @@ app.view_thread._draw = ($view, force_update) ->
           if /\.(?:png|jpe?g|gif|bmp|webp)$/i.test(a.href)
             fn_add_thumbnail(a, a.href)
 
-      $(imgs).jail(
-        timeout: 20
-        effect: "fadeIn"
-        selector: ".content"
-        callbackAfterEachImage: (e) ->
-          img = e[0]
-          $(img).one "load", ->
-            a = img.parentNode
-            container = a.parentNode
-            a.style["top"] = "#{(container.offsetHeight - a.offsetHeight) / 2}px"
-      )
+      $(imgs).lazy_load(container: ".content")
 
     $view.trigger("view_loaded")
 
@@ -586,93 +581,96 @@ app.view_thread._draw = ($view, force_update) ->
 
   deferred.promise()
 
-app.view_thread._const_res = (res_key, res, $view, id_index, rep_index) ->
-  article = document.createElement("article")
-  article.className = "aa" if /(?:\　{5}|\　\ )(?!<br>|$)/i.test(res.message)
+app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
+  return null if typeof res_key isnt "number" or isNaN(res_key)
 
-  header = document.createElement("header")
+  attribute_data_id = null
+
+  html = "<header>"
 
   #.num
-  num = document.createElement("span")
-  num.className = "num"
-  num.textContent = res_key + 1
-  header.appendChild(num)
+  html += """<span class="num">#{res_key + 1}</span>"""
 
   #.name
-  name = document.createElement("span")
-  name.className = "name"
-  name.innerHTML = res.name
-    .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")
-    .replace(/<\/b>(.*?)<b>/g, '<span class="ob">$1</span>')
-  header.appendChild(name)
+  tmp = (
+    res.name
+      .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")
+      .replace(/<\/b>(.*?)<b>/g, """<span class="ob">$1</span>""")
+  )
+  html += """<span class="name">#{tmp}</span>"""
 
   #.mail
-  mail = document.createElement("span")
-  mail.className = "mail"
-  #タグ除去
-  mail.innerHTML = res.mail.replace(/<.*?(?:>|$)/g, "")
-  header.appendChild(mail)
+  tmp = res.mail.replace(/<.*?(?:>|$)/g, "")
+  html += """<span class="mail">#{tmp}</span>"""
 
   #.other
-  other = document.createElement("span")
-  other.className = "other"
-  other.innerHTML = res.other
-    #タグ除去
-    .replace(/<.*?(?:>|$)/g, "")
-    #.id
-    .replace /(^| )(ID:(?!\?\?\?)[^ <>"']+)/, ($0, $1, $2) ->
-      article.setAttribute("data-id", $2)
+  tmp = (
+    res.other
+      #タグ除去
+      .replace(/<.*?(?:>|$)/g, "")
+      #.id
+      .replace /(^| )(ID:(?!\?\?\?)[^ <>"']+)/, ($0, $1, $2) ->
+        fixed_id = $2.replace(/\u25cf$/, "") #末尾●除去
 
-      id_index[$2] = [] unless id_index[$2]?
-      id_index[$2].push(res_key)
+        attribute_data_id = fixed_id
 
-      """#{$1}<span class="id">#{$2}</span>"""
+        id_index[fixed_id] = [] unless id_index[fixed_id]?
+        id_index[fixed_id].push(res_key)
 
-  header.appendChild(other)
+        """#{$1}<span class="id">#{$2}</span>"""
+  )
+  html += """<span class="other">#{tmp}</span>"""
 
-  article.appendChild(header)
+  html += "</header>"
 
-  message = document.createElement("div")
-  message.className = "message"
-  message.innerHTML = res.message
-    #タグ除去
-    .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
-    #URLリンク
-    .replace(/(h)?(ttps?:\/\/(?:[a-hj-zA-HJ-Z\d_\-.!~*'();\/?:@=+$,%#]|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));)|[iI](?![dD]:)+)+)/g,
-      '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
-    #Beアイコン埋め込み表示
-    .replace ///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///, ($0, $1) ->
-      if app.url.tsld($view[0].getAttribute("data-url")) is "2ch.net"
-        """<img class="beicon" src="http://#{$1}" /><br />"""
-      else
-        $0
-    #アンカーリンク
-    .replace /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?)*/g, ($0) ->
-      str = $0.replace /[\uff10-\uff19]/g, ($0) ->
-        String.fromCharCode($0.charCodeAt(0) - 65248)
+  tmp = (
+    res.message
+      #タグ除去
+      .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
+      #URLリンク
+      .replace(/(h)?(ttps?:\/\/(?:[a-hj-zA-HJ-Z\d_\-.!~*'();\/?:@=+$,%#]|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));)|[iI](?![dD]:)+)+)/g,
+        '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
+      #Beアイコン埋め込み表示
+      .replace ///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///, ($0, $1) ->
+        if app.url.tsld($view[0].getAttribute("data-url")) is "2ch.net"
+          """<img class="beicon" src="http://#{$1}" /><br />"""
+        else
+          $0
+      #アンカーリンク
+      .replace /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?)*/g, ($0) ->
+        str = $0.replace /[\uff10-\uff19]/g, ($0) ->
+          String.fromCharCode($0.charCodeAt(0) - 65248)
 
-      anchor = app.util.parse_anchor($0)
-      disabled = anchor.target >= 25 or anchor.data.length is 0
+        anchor = app.util.parse_anchor($0)
+        disabled = anchor.target >= 25 or anchor.data.length is 0
 
-      #rep_index更新
-      if not disabled
-        #アンカー一つづつしか来ない処理なので、決め打ちで
-        for segment in anchor.data[0].segments
-          target = Math.max(1, segment[0])
-          while target <= segment[1]
-            rep_index[target] = [] unless rep_index[target]?
-            rep_index[target].push(res_key) unless res_key in rep_index[target]
-            target++
+        #rep_index更新
+        if not disabled
+          #アンカー一つづつしか来ない処理なので、決め打ちで
+          for segment in anchor.data[0].segments
+            target = Math.max(1, segment[0])
+            while target <= segment[1]
+              rep_index[target] = [] unless rep_index[target]?
+              rep_index[target].push(res_key) unless res_key in rep_index[target]
+              target++
 
-      "<a href=\"javascript:undefined;\" class=\"anchor" +
-      "#{if disabled then " disabled" else ""}\">#{$0}</a>"
-    #IDリンク
-    .replace /id:(?:[a-hj-z\d_\+\/\.]|i(?!d:))+/ig, ($0) ->
-      "<a href=\"javascript:undefined;\" class=\"anchor_id\">#{$0}</a>"
+        "<a href=\"javascript:undefined;\" class=\"anchor" +
+        "#{if disabled then " disabled" else ""}\">#{$0}</a>"
+      #IDリンク
+      .replace /id:(?:[a-hj-z\d_\+\/\.]|i(?!d:))+/ig, ($0) ->
+        "<a href=\"javascript:undefined;\" class=\"anchor_id\">#{$0}</a>"
+  )
+  html += """<div class="message">#{tmp}</div>"""
 
-  article.appendChild(message)
+  tmp = ""
+  if /(?:\　{5}|\　\ )(?!<br>|$)/i.test(res.message)
+    tmp += " class=\"aa\""
+  if attribute_data_id?
+    tmp += " data-id=\"#{attribute_data_id}\""
 
-  article
+  html = """<article#{tmp}>#{html}</article>"""
+
+  html
 
 app.view_thread._read_state_manager = ($view) ->
   view_url = $view.attr("data-url")

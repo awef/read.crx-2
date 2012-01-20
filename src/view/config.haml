@@ -1,5 +1,5 @@
 :ruby
-  app_version = "0.39"
+  app_version = "0.45"
 
 !!! 5
 %html.view.view_config(data-app-version="#{app_version}")
@@ -23,6 +23,8 @@
       %h2 バージョン情報
       %div
         .version_info
+        .notation
+          %a(href="https://sites.google.com/site/idawef/read-crx-2/changelog" target="_blank") 更新履歴
 
     %section
       %h2 レイアウト
@@ -36,7 +38,6 @@
         %label
           %input.direct(name="layout" type="radio" value="pane-2")
           2ペイン
-        ※変更は次回以降の起動時に反映されます
 
     %section
       %h2 背景色

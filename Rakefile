@@ -72,7 +72,7 @@ task :default => [
   :write,
   :test,
   :jquery,
-  :jail
+  :textar
 ]
 
 directory "debug"
@@ -97,21 +97,20 @@ lambda {
     "debug/img/close_16x16.png",
     "debug/img/dummy_1x1.png",
     "debug/img/loading.svg",
-    "debug/img/star2_19x19.png",
 
     "debug/img/search2_19x19_777.png",
     "debug/img/star_19x19_333.png",
+    "debug/img/star_19x19_39f.png",
     "debug/img/link_19x19_333.png",
     "debug/img/reload_19x19_333.png",
     "debug/img/pencil_19x19_333.png",
-    "debug/img/arrow_19x19_333.png",
 
     "debug/img/search2_19x19_aaa.png",
     "debug/img/star_19x19_ddd.png",
+    "debug/img/star_19x19_f93.png",
     "debug/img/link_19x19_ddd.png",
     "debug/img/reload_19x19_ddd.png",
-    "debug/img/pencil_19x19_ddd.png",
-    "debug/img/arrow_19x19_ddd.png"
+    "debug/img/pencil_19x19_ddd.png"
   ]
 
   directory "debug/img"
@@ -253,21 +252,24 @@ lambda {
   ] do
     cd "lib/jquery" do
       sh "git checkout -f"
-      sh "patch -p0 --no-backup-if-mismatch -i ../jquery_license.patch"
-      sh "patch -p0 --no-backup-if-mismatch -i ../jquery_csp.patch"
-      sh "patch -p0 --no-backup-if-mismatch -i ../jquery_delegate_middle_click.patch"
+      sh "git apply ../jquery_license.patch"
+      sh "git apply ../jquery_csp.patch"
+      sh "git apply ../jquery_delegate_middle_click.patch"
       sh "make min"
     end
   end
 }.call()
 
-#jail
+#Textar
 lambda {
-  task :jail => [
-    "debug/lib/jail",
-    "debug/lib/jail/jail.min.js"
+  task :textar => [
+    "debug/lib/textar",
+    "debug/lib/textar/textar-min.woff",
+    "debug/lib/textar/README",
+    "debug/lib/textar/IPA_Font_License_Agreement_v1.0.txt"
   ]
-
-  directory "debug/lib/jail"
-  file "debug/lib/jail/jail.min.js" => "lib/jail/jail.min.js", &p_cp
+  directory "debug/lib/textar"
+  file "debug/lib/textar/textar-min.woff" => "lib/textar/textar-min.woff", &p_cp
+  file "debug/lib/textar/README" => "lib/textar/README", &p_cp
+  file "debug/lib/textar/IPA_Font_License_Agreement_v1.0.txt" => "lib/textar/IPA_Font_License_Agreement_v1.0.txt", &p_cp
 }.call()
