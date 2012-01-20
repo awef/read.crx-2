@@ -4,15 +4,13 @@
 
 html {
   overflow: auto;
+  background-color: transparent;
 }
 
 .container {
-  @include drop_shadow;
-  min-width: 100px;
-  max-width: 500px;
-  margin: 50px;
   padding: 10px;
-  border-radius: 5px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
 }
 
 form {
@@ -21,28 +19,34 @@ form {
 
 input {
   display: block;
+  height: 1em;
+  box-sizing: content-box;
 }
 
 input:first-child {
+  @include input_text;
   -webkit-box-flex: 1;
   margin-right: 10px;
+}
+
+input[type="submit"] {
+  @include button;
 }
 
 .notice {
   display: none;
   margin-top: 5px;
   font-size: 14px;
-  color: white;
 }
 
 .view.theme_default {
   .container {
-    background-color: #444;
+    background-color: #fff;
   }
 }
 .view.theme_dark {
-  background-color: #444;
   .container {
-    background-color: #252525;
+    background-color: #444;
+    color: #fff;
   }
 }
