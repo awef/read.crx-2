@@ -1,9 +1,9 @@
 regs = [
-  ///^http://(?!find|info|p2)\w+\.2ch\.net/\w+/(?:#\d+)?$///
+  ///^http://(?!find|info|p2)\w+\.2ch\.net/\w+/(?:index\.html)?(?:#\d+)?$///
   ///^http://\w+\.2ch\.net/test/read\.cgi/\w+/\d+///
-  ///^http://jbbs\.livedoor\.jp/\w+/\d+/(?:#\d+)?$///
+  ///^http://jbbs\.livedoor\.jp/\w+/\d+/(?:index\.html)?(?:#\d+)?$///
   ///^http://jbbs\.livedoor\.jp/bbs/read\.cgi/\w+/\d+/\d+///
-  ///^http://\w+\.machi\.to/\w+/(?:#\d+)?$///
+  ///^http://\w+\.machi\.to/\w+/(?:index\.html)?(?:#\d+)?$///
   ///^http://\w+\.machi\.to/bbs/read\.cgi/\w+/\d+///
 ]
 
