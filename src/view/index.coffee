@@ -141,15 +141,15 @@ app.main = ->
     $("<div>")
       .css("background-color", background_color)
       .append(
-        (if html? then $("<div>", {html}) else $("<div>", {text})),
-        $("<div>").one "click", ->
-          $(@)
-            .parent()
-              .animate({opacity: 0}, "fast")
-              .delay("fast")
-              .slideUp("fast", -> $(@).remove())
-          return
+        (if html? then $("<div>", {html}) else $("<div>", {text}))
+        $("<div>")
       )
+      .one "click", "a, div:last-child", (e) ->
+        $(e.delegateTarget)
+          .animate({opacity: 0}, "fast")
+          .delay("fast")
+          .slideUp("fast", -> $(@).remove())
+        return
       .hide()
       .appendTo("#app_notice_container")
       .fadeIn()
