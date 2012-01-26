@@ -165,6 +165,12 @@ app.module "cache", ["jquery"], ($, callback) ->
 
   class Cache
     constructor: (@key) ->
+      @data = null
+      @last_updated = null
+      @last_modified = null
+      @etag = null
+      @res_length = null
+      @dat_size = null
 
     get: ->
       $.Deferred (deferred) =>
@@ -177,8 +183,7 @@ app.module "cache", ["jquery"], ($, callback) ->
                 if result.rows.length is 1
                   data = app.deep_copy(result.rows.item(0))
                   for key, val of data
-                    if val?
-                      @[key] = val
+                    @[key] = if val? then val else null
                   deferred.resolve()
                 else
                   deferred.reject()

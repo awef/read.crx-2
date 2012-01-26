@@ -111,6 +111,31 @@ asyncTest "キャッシュの保存/取得/更新/削除が出来る", ->
                 start()
     fn()
 
+asyncTest "設定されていない項目にアクセスした場合、nullを返す", 10, ->
+  app.module null, ["jquery", "cache"], ($, Cache) =>
+    cache = new Cache("__test")
+    strictEqual(cache.data, null)
+    strictEqual(cache.last_updated, null)
+    strictEqual(cache.last_modified, null)
+    strictEqual(cache.etag, null)
+    strictEqual(cache.res_length, null)
+    strictEqual(cache.dat_size, null)
+    cache.data = "test"
+    cache.last_updated = Date.now()
+
+    cache.put().done ->
+      cache = new Cache("__test")
+      cache.get().done ->
+        strictEqual(cache.last_modified, null)
+        strictEqual(cache.etag, null)
+        strictEqual(cache.res_length, null)
+        strictEqual(cache.dat_size, null)
+        cache.delete().done(start)
+        return
+      return
+    return
+  return
+
 asyncTest "期待されない値がputされた場合、rejectする", ->
   pattern = [
     {}
