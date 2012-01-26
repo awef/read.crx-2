@@ -7,3 +7,6 @@
 [submodule "lib/raphael"]
 	path = lib/raphael
 	url = https://github.com/DmitryBaranovskiy/raphael.git
+[submodule "lib/jquery-mockjax"]
+	path = lib/jquery-mockjax
+	url = https://github.com/appendto/jquery-mockjax.git
