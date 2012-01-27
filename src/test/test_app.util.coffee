@@ -68,7 +68,38 @@ test "実例テスト", 3, ->
       {segments: [[3, 3]], target: 1}
     ], target: 1011})
 
-module("app.util.ch_sever_move_detect")
+module "app.util.ch_sever_move_detect",
+  setup: ->
+    @pc11_linux_html = """
+      <html>
+      <head>
+      <script language="javascript">
+      window.location.href="http://hibari.2ch.net/linux/"</script>
+      <title>2chbbs..</title>
+      <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=Shift_JIS">
+      </head>
+      <body bgcolor="#FFFFFF">
+      Change your bookmark ASAP.
+      <a href="http://hibari.2ch.net/linux/">GO !</a>
+      </body>
+      </html>
+    """
+    @yuzuru_gameswf_html = """
+      <html>
+      <head>
+      <script language="javascript">
+      window.location.href="http://uni.2ch.net/gameswf/"</script>
+      <title>2chbbs..</title>
+      <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=Shift_JIS">
+      </head>
+      <body bgcolor="#FFFFFF">
+      Change your bookmark ASAP.
+      <a href="http://uni.2ch.net/gameswf/">GO !</a>
+      </body>
+      </html>
+    """
+    return
+  teardown: $.mockjaxClear
 
 asyncTest "htmlとして不正な文字列を渡された場合はrejectする", 1, ->
   html = "dummy"
@@ -76,49 +107,52 @@ asyncTest "htmlとして不正な文字列を渡された場合はrejectする",
     .fail ->
       ok(true)
       start()
+      return
+  return
 
 asyncTest "実例テスト: pc11/linux → hibari/linux (html)", 1, ->
-  html = """
-    <html>
-    <head>
-    <script language="javascript">
-    window.location.href="http://hibari.2ch.net/linux/"</script>
-    <title>2chbbs..</title>
-    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=Shift_JIS">
-    </head>
-    <body bgcolor="#FFFFFF">
-    Change your bookmark ASAP.
-    <a href="http://hibari.2ch.net/linux/">GO !</a>
-    </body>
-    </html>
-  """
-
-  app.util.ch_server_move_detect("http://pc11.2ch.net/linux/", html)
+  app.util.ch_server_move_detect("http://pc11.2ch.net/linux/", @pc11_linux_html)
     .done (new_board_url) ->
       strictEqual(new_board_url, "http://hibari.2ch.net/linux/")
       start()
-
-###
-TODO
+      return
+  return
 
 asyncTest "pc11/linux → hibari/linux (xhr)", 1, ->
+  $.mockjax
+    url: /// ^http://pc11\.2ch\.net/linux/ ///
+    responseText: @pc11_linux_html
+
   app.util.ch_server_move_detect("http://pc11.2ch.net/linux/")
     .done (new_board_url) ->
       strictEqual(new_board_url, "http://hibari.2ch.net/linux/")
       start()
+      return
+  return
 
 asyncTest "yuzuru/gameswf → hato/gameswf (xhr)", 1, ->
+  $.mockjax
+    url: /// ^http://yuzuru\.2ch\.net/gameswf/ ///
+    responseText: @yuzuru_gameswf_html
+
   app.util.ch_server_move_detect("http://yuzuru.2ch.net/gameswf/")
     .done (new_board_url) ->
-      strictEqual(new_board_url, "http://hato.2ch.net/gameswf/")
+      strictEqual(new_board_url, "http://uni.2ch.net/gameswf/")
       start()
+      return
+  return
 
 asyncTest "example.com (xhr)", 1, ->
+  $.mockjax
+    url: /// ^http://example\.com/ ///
+    responseText: "<!doctype html><html><head><title></title></head></html>"
+
   app.util.ch_server_move_detect("http://example.com/")
     .fail ->
       ok(true)
       start()
-###
+      return
+  return
 
 module "app.util.decode_char_reference", {
   setup: ->
