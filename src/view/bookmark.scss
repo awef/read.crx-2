@@ -32,8 +32,11 @@ tr.expired td:first-child:before {
 }
 
 th {
-  &:nth-child(2), &:nth-child(3), &:nth-child(4) {
+  &:nth-child(2), &:nth-child(3) {
     width: 4em;
+  }
+  &:nth-child(4) {
+    width: 7em;
   }
   &:nth-child(5) {
     width: 16em;

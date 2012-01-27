@@ -219,6 +219,7 @@ lambda {
     "debug/test/qunit/qunit.js",
     "debug/test/qunit/qunit.css",
     "debug/test/qunit/qunit-step.js",
+    "debug/test/jquery.mockjax.js",
     "debug/test/test.html",
     "debug/test/test.js",
     "debug/test/message_test.html",
@@ -231,6 +232,8 @@ lambda {
   file "debug/test/qunit/qunit.js" => "lib/qunit/qunit/qunit.js", &p_cp
   file "debug/test/qunit/qunit.css" => "lib/qunit/qunit/qunit.css", &p_cp
   file "debug/test/qunit/qunit-step.js" => "lib/qunit/addons/step/qunit-step.js", &p_cp
+
+  file "debug/test/jquery.mockjax.js" => "lib/jquery-mockjax/jquery.mockjax.js", &p_cp
 
   file "debug/test/test.js" => FileList["src/test/test_*.coffee"], &p_coffee
 }.call()

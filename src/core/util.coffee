@@ -66,20 +66,17 @@ app.util.ch_server_move_detect = (old_board_url, html) ->
   #htmlが渡されなかった場合は通信する
   .pipe null, ->
     $.Deferred (deferred) ->
-      xhr = new XMLHttpRequest()
-      timer = setTimeout (-> xhr.abort()), 1000 * 30
-      xhr.onreadystatechange = ->
-        if this.readyState is 4
-          clearTimeout(timer)
-
-          if xhr.status is 200
-            deferred.resolve(xhr.responseText)
+      $.ajax
+        url: old_board_url
+        cache: false
+        dataType: "text"
+        timeout: 1000 * 30
+        mimeType: "text/html; charset=Shift_JIS"
+        complete: ($xhr) ->
+          if $xhr.status is 200
+            deferred.resolve($xhr.responseText)
           else
             deferred.reject()
-
-      xhr.overrideMimeType("text/html; charset=Shift_JIS")
-      xhr.open("GET", "#{old_board_url}?_#{Date.now()}")
-      xhr.send(null)
 
   #htmlから移転を判定
   .pipe (html) ->

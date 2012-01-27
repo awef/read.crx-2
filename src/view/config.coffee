@@ -212,3 +212,18 @@ app.boot "/view/config.html", ->
       $status.text("インポートに失敗しました。read.crx v0.73以降がインストールされている事を確認して下さい。")
     .always ->
       $button.attr("disabled", false)
+
+  #「テーマなし」設定
+  if app.config.get("theme_id") is "none"
+    $view.find(".theme_none").attr("checked", true)
+
+  app.message.add_listener "config_updated", (message) ->
+    if message.key is "theme_id"
+      $view.find(".theme_none").attr("checked", message.val is "none")
+    return
+
+  $view.find(".theme_none").on "click", ->
+    app.config.set("theme_id", if @checked then "none" else "default")
+    return
+
+  return

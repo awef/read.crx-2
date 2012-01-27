@@ -32,29 +32,11 @@ form {
 }
 
 input[type="submit"] {
-  border: 1px solid #cccccc;
-  border-radius: 2px;
-  background: -webkit-linear-gradient(#eeeeee, #d5d5d5);
-  color: #444444;
-  font-weight: bold;
-  padding: 5px;
-  cursor: pointer;
-  &:disabled {
-    cursor: default;
-    background: #eeeeee;
-    color: #999999;
-  }
-  &:not([disabled]):active {
-    background: -webkit-linear-gradient(#d5d5d5, #eeeeee);
-  }
+  @include button;
 }
 
 textarea, input:not([type="submit"]) {
-  border: 1px solid #eeeeee;
-  border-radius: 2px;
-  box-shadow: 0 1px 1px #cccccc inset, 0 1px 0 white;
-  outline: none;
-  padding: 5px;
+  @include input_text;
 }
 
 textarea {
