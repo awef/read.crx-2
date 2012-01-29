@@ -44,6 +44,13 @@ textarea {
   -webkit-box-flex: 1;
   resize: none;
   width: 100%;
+  &.preview {
+    @include ascii_art;
+  }
+}
+
+.right {
+  text-align: right;
 }
 
 .iframe_container {

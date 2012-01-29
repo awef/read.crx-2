@@ -116,6 +116,7 @@ app.config =
       popup_trigger: "click"
       theme_id: "default"
       user_css: ""
+      message_preview: "off"
     if localStorage["config_#{key}"]?
       localStorage["config_#{key}"]
     else if def[key]?
