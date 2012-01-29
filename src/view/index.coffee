@@ -40,6 +40,7 @@ app.view_tab_state._get = ->
     data.push
       url: tab_content.getAttribute("data-url")
       title: tab_content.getAttribute("data-title")
+      selected: tab_content.classList.contains("tab_selected")
 
   data
 
@@ -57,7 +58,12 @@ app.view_tab_state.restore = ->
   if localStorage["tab_state"]
     for tab in JSON.parse(localStorage["tab_state"])
       is_restored = true
-      app.message.send("open", url: tab.url, title: tab.title, lazy: true, new_tab: true)
+      app.message.send("open", {
+        url: tab.url
+        title: tab.title
+        lazy: not tab.selected
+        new_tab: true
+      })
 
   is_restored
 
@@ -293,12 +299,15 @@ app.main = ->
           })
 
         if lazy
-          if $iframe.hasClass("tab_selected")
-            $iframe.attr("src", get_iframe_info($iframe.attr("data-url")).src)
-          else
-            $iframe.one "tab_selected", ->
-              $this = $(@)
-              $this.attr("src", get_iframe_info($this.attr("data-url")).src)
+          #連続でopenメッセージが送られて来た時のために、非同期実行にする
+          app.defer ->
+            if $iframe.hasClass("tab_selected")
+              $iframe.attr("src", get_iframe_info($iframe.attr("data-url")).src)
+            else
+              $iframe.one "tab_selected", ->
+                $this = $(@)
+                $this.attr("src", get_iframe_info($this.attr("data-url")).src)
+            return
 
   #初回スキャンに失敗した場合、タイミングの問題でopenメッセージを取得できな
   #いので、promiseを見てview_bookmark_source_selectorを呼び出す
