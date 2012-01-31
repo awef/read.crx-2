@@ -1,28 +1,6 @@
 app.boot "/write/write.html", ->
   $view = $(".view_write")
 
-  #テキストエリアのAA用フォント表示処理
-  do ->
-    update = (is_enabled) ->
-      if is_enabled
-        method = "addClass"
-        config = "on"
-      else
-        method = "removeClass"
-        config = "off"
-      $view.find("textarea")[method]("preview")
-      $view.find("input[name=\"preview\"]").attr("checked", is_enabled)
-      app.config.set("message_preview", config)
-      return
-
-    update(app.config.get("message_preview") is "on")
-
-    $view.find("input[name=\"preview\"]").on "change", ->
-      update(@checked)
-      return
-
-    return
-
   arg = app.url.parse_query(location.href)
   arg.url = app.url.fix(arg.url)
   arg.title or= arg.url
