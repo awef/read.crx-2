@@ -117,8 +117,8 @@ $ ->
     deepEqual(@$view.data("rep_index"), {})
 
   test "本文中のbrタグは容認される", 3, ->
-    @example1_data.message = "test<br>test<br><br>test"
-    @example1_dom.querySelector(".message").innerHTML = "test<br>test<br><br>test"
+    @example1_data.message = "test<br>test<br><br>test<BR>test"
+    @example1_dom.querySelector(".message").innerHTML = "test<br>test<br><br>test<BR>test"
     tmp_dom = @const_res(0, @example1_data, @$view, @$view.data("id_index"), @$view.data("rep_index"))
     strictEqual(tmp_dom.outerHTML, @example1_dom.outerHTML)
     deepEqual(@$view.data("id_index"), {"ID:iTGL5FKU": [0]})

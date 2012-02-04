@@ -632,7 +632,7 @@ app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
   tmp = (
     res.message
       #タグ除去
-      .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
+      .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/ig, "")
       #URLリンク
       .replace(/(h)?(ttps?:\/\/(?:[a-hj-zA-HJ-Z\d_\-.!~*'();\/?:@=+$,%#]|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));)|[iI](?![dD]:)+)+)/g,
         '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
