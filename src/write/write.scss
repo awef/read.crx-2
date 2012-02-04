@@ -19,9 +19,38 @@ body {
   padding: 8px;
 }
 
-h1 {
-  font-size: 18px;
+header {
   margin: 0 0 5px 0;
+  display: -webkit-box;
+  > h1 {
+    -webkit-box-flex: 1;
+    font-size: 18px;
+    margin: 0;
+  }
+  > button {
+    @include button;
+  }
+}
+
+.preview {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: hsl(0, 0%, 100%);
+  color: hsl(0, 0%, 0%);
+  > pre {
+    @include ascii_art;
+    margin: 5px;
+    overflow: auto;
+  }
+  > .close_preview {
+    @include button;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+  }
 }
 
 form {
