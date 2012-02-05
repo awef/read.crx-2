@@ -3,7 +3,7 @@ def haml(src, output)
 end
 
 def scss(src, output)
-  sh "scss --style compressed --no-cache #{src} #{output}"
+  sh "scss --style compressed #{src} #{output}"
 end
 
 def coffee(src, output)

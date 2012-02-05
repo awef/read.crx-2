@@ -1,5 +1,5 @@
 :ruby
-  app_version = "0.46"
+  app_version = "0.48"
 
 !!! 5
 %html(data-app-version="#{app_version}")
@@ -13,7 +13,9 @@
     %script(src="/write/write.js?v=#{app_version}")
   %body.view_write
     %form
-      %h1
+      %header
+        %h1
+        %button.preview_button AA表示確認
       %div
         %input(type="submit" value="書き込む")
         %label

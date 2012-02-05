@@ -60,3 +60,7 @@ ul {
     border-color: #5588bb;
   }
 }
+
+button {
+  @include button;
+}

@@ -1,6 +1,23 @@
 app.boot "/write/write.html", ->
   $view = $(".view_write")
 
+  $view.find(".preview_button").on "click", (e) ->
+    e.preventDefault()
+
+    text = $view.find("textarea").val()
+    #行頭のスペースは削除される。複数のスペースは一つに纏められる。
+    text = text.replace(/^\u0020*/g, "").replace(/\u0020+/g, " ")
+
+    $("<div>", class: "preview")
+      .append($("<pre>", {text}))
+      .append(
+        $("<button>", class: "close_preview", text: "戻る").on "click", ->
+          $(@).parent().remove()
+          return
+      )
+      .appendTo(document.body)
+    return
+
   arg = app.url.parse_query(location.href)
   arg.url = app.url.fix(arg.url)
   arg.title or= arg.url

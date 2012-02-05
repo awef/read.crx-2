@@ -115,6 +115,9 @@ app.boot "/view/thread.html", ->
         if not(app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"])
           $menu.find(".res_to_this, .res_to_this2").remove()
 
+        if not @webkitMatchesSelector(".popup > article > header > .num")
+          $menu.find(".jump_to_this").remove()
+
         $menu.appendTo($view)
         $.contextmenu($menu, e.clientX, e.clientY).appendTo(@parentNode)
 
@@ -126,7 +129,10 @@ app.boot "/view/thread.html", ->
       $res = $($this.parent().data("contextmenu_source"))
         .closest("article")
 
-      if $this.hasClass("res_to_this")
+      if $this.hasClass("jump_to_this")
+        app.view_thread._jump_to_res($view, +$res.find(".num").text(), true)
+
+      else if $this.hasClass("res_to_this")
         write(message: ">>#{$res.find(".num").text()}\n")
 
       else if $this.hasClass("res_to_this2")
@@ -626,7 +632,7 @@ app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
   tmp = (
     res.message
       #タグ除去
-      .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/g, "")
+      .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/ig, "")
       #URLリンク
       .replace(/(h)?(ttps?:\/\/(?:[a-hj-zA-HJ-Z\d_\-.!~*'();\/?:@=+$,%#]|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));)|[iI](?![dD]:)+)+)/g,
         '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
