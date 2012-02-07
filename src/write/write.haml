@@ -17,14 +17,14 @@
         %h1
         %button.preview_button AA表示確認
       %div
-        %input(type="submit" value="書き込む")
+        %input(type="submit" value="書き込む" tabindex="2")
         %label
           名前:
           %input.name(size="19")
         %label
           E-mail:
           %input.mail(size="19")
-      %textarea.message(wrap="off" autofocus required)
+      %textarea.message(wrap="off" tabindex="1" autofocus required)
       .notice
       .notice2 現在、Chromeのバグにより、read.crxより若いIDの拡張機能がインストールされている場合、書き込み機能が動作しない場合が有ります。
     .iframe_container
