@@ -55,6 +55,9 @@ task :clean do
     sh "git checkout -f"
     sh "make clean"
   end
+  cd "lib/jquery-mockjax" do
+    sh "git checkout -f"
+  end
 end
 
 task :default => [
@@ -233,6 +236,10 @@ lambda {
   file "debug/test/qunit/qunit.css" => "lib/qunit/qunit/qunit.css", &p_cp
   file "debug/test/qunit/qunit-step.js" => "lib/qunit/addons/step/qunit-step.js", &p_cp
 
+  cd "lib/jquery-mockjax" do
+    sh "git checkout -f"
+    sh "git apply ../jquery-mockjax_bugfix.patch"
+  end
   file "debug/test/jquery.mockjax.js" => "lib/jquery-mockjax/jquery.mockjax.js", &p_cp
 
   file "debug/test/test.js" => FileList["src/test/test_*.coffee"], &p_coffee
