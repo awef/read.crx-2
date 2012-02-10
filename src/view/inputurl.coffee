@@ -12,7 +12,8 @@ app.boot "/view/inputurl.html", ->
       url = "http://" + url
     guess_res = app.url.guess_type(url)
     if guess_res.type is "thread" or guess_res.type is "board"
-      app.message.send("open", {url})
+      app.message.send("open", {url, new_tab: true})
+      parent.postMessage(JSON.stringify(type: "request_killme"), location.origin)
     else
       $view
         .find(".notice")
