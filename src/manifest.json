@@ -12,6 +12,8 @@
     "tabs",
     "unlimitedStorage",
     "notifications",
+    "webRequest",
+    "webRequestBlocking",
     "http://*/*"
   ],
   "app" : {
@@ -41,9 +43,7 @@
     },
     {
       "matches" : [
-        "http://*.2ch.net/test/read.cgi/*",
         "http://*.2ch.net/test/bbs.cgi*",
-        "http://jbbs.livedoor.jp/bbs/read.cgi/*",
         "http://jbbs.livedoor.jp/bbs/write.cgi/*",
         "http://*.p2.2ch.net/p2/post_form.php?*",
         "http://*.p2.2ch.net/p2/post.php?*"

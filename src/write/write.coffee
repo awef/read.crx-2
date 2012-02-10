@@ -1,4 +1,33 @@
 app.boot "/write/write.html", ->
+  arg = app.url.parse_query(location.href)
+  arg.url = app.url.fix(arg.url)
+  arg.title or= arg.url
+  arg.name or= app.config.get("default_name")
+  arg.mail or= app.config.get("default_mail")
+  arg.message or= ""
+
+  chrome.webRequest.onBeforeSendHeaders.addListener(
+    (req) ->
+      origin = chrome.extension.getURL("")[...-1]
+      is_same_origin = req.requestHeaders.some((header) -> header.name is "Origin" and header.value is origin)
+      if req.method is "POST" and is_same_origin
+        if (
+          ///^http://\w+\.2ch\.net/test/bbs\.cgi ///.test(req.url) or
+          ///^http://jbbs\.livedoor\.jp/bbs/write\.cgi/ ///.test(req.url)
+        )
+          req.requestHeaders.push(name: "Referer", value: arg.url)
+          return requestHeaders: req.requestHeaders
+      return
+    {
+      urls: [
+        "http://*.2ch.net/test/bbs.cgi*"
+        "http://jbbs.livedoor.jp/bbs/write.cgi/*"
+      ]
+      types: ["sub_frame"]
+    }
+    ["requestHeaders", "blocking"]
+  )
+
   $view = $(".view_write")
 
   $view.find(".preview_button").on "click", (e) ->
@@ -17,13 +46,6 @@ app.boot "/write/write.html", ->
       )
       .appendTo(document.body)
     return
-
-  arg = app.url.parse_query(location.href)
-  arg.url = app.url.fix(arg.url)
-  arg.title or= arg.url
-  arg.name or= app.config.get("default_name")
-  arg.mail or= app.config.get("default_mail")
-  arg.message or= ""
 
   on_error = (message) ->
     $view.find("form input, form textarea").removeAttr("disabled")
@@ -90,41 +112,86 @@ app.boot "/write/write.html", ->
 
     $view.find("input, textarea").attr("disabled", true)
 
+    guess_res = app.url.guess_type(arg.url)
+
     iframe_arg =
       rcrx_name: $view.find(".name").val()
       rcrx_mail: $view.find(".mail").val()
       rcrx_message: $view.find(".message").val()
 
-    tmp = app.url.guess_type(arg.url)
-    if (tmp.bbs_type is "2ch" and ///http://\w+\.2ch\.net/ ///.test(arg.url)) or tmp.bbs_type is "jbbs"
-      if app.config.get("p2_write") is "on"
-        if not /^w\d+\.p2\.2ch\.net$/.test(app.config.get("p2_server"))
-          on_error("p2のサーバー設定が誤っています")
-          return
+    #p2
+    if app.config.get("p2_write") is "on" and ((guess_res.bbs_type is "2ch" and app.url.tsld(arg.url) is "2ch.net") or guess_res.bbs_type is "jbbs")
+      if not /^w\d+\.p2\.2ch\.net$/.test(app.config.get("p2_server"))
+        on_error("p2のサーバー設定が誤っています")
+        return
 
-        if res = ///^http://(\w+\.2ch\.net)/test/read\.cgi/(\w+)/(\d+)///.exec(arg.url)
-          iframe_arg.host = res[1]
-          iframe_arg.bbs = res[2]
-          iframe_arg.key = res[3]
-        else if res = ///^http://jbbs\.livedoor\.jp/bbs/read\.cgi/(\w+)/(\d+)/(\d+)///.exec(arg.url)
-          iframe_arg.host = "jbbs.livedoor.jp/#{res[1]}"
-          iframe_arg.bbs = res[2]
-          iframe_arg.key = res[3]
+      if res = ///^http://(\w+\.2ch\.net)/test/read\.cgi/(\w+)/(\d+)///.exec(arg.url)
+        iframe_arg.host = res[1]
+        iframe_arg.bbs = res[2]
+        iframe_arg.key = res[3]
+      else if res = ///^http://jbbs\.livedoor\.jp/bbs/read\.cgi/(\w+)/(\d+)/(\d+)///.exec(arg.url)
+        iframe_arg.host = "jbbs.livedoor.jp/#{res[1]}"
+        iframe_arg.bbs = res[2]
+        iframe_arg.key = res[3]
 
-        iframe_url = "http://#{app.config.get("p2_server")}"
-        iframe_url += "/p2/post_form.php?"
-        iframe_arg.expected_url = iframe_url
-        iframe_url += app.url.build_param(iframe_arg)
+      iframe_url = "http://#{app.config.get("p2_server")}"
+      iframe_url += "/p2/post_form.php?"
+      iframe_arg.expected_url = iframe_url
+      iframe_url += app.url.build_param(iframe_arg)
 
-      else
-        iframe_url = app.url.fix(arg.url) + "1?"
-        iframe_arg.expected_url = iframe_url
-        iframe_url += app.url.build_param(iframe_arg)
+    $iframe = $("<iframe>", src: iframe_url or "/view/empty.html")
+    unless iframe_url?
+      $iframe.one "load", ->
+        #2ch
+        if guess_res.bbs_type is "2ch"
+          tmp = arg.url.split("/")
+          form_data =
+            action: "http://#{tmp[2]}/test/bbs.cgi"
+            charset: "Shift_JIS"
+            input:
+              submit: "書きこむ"
+              time: Math.floor(Date.now() / 1000) - 60
+              bbs: tmp[5]
+              key: tmp[6]
+              FROM: iframe_arg.rcrx_name
+              mail: iframe_arg.rcrx_mail
+            textarea:
+              MESSAGE: iframe_arg.rcrx_message
+        #したらば
+        else if guess_res.bbs_type is "jbbs"
+          tmp = arg.url.split("/")
+          form_data =
+            action: "http://jbbs.livedoor.jp/bbs/write.cgi/#{tmp[5]}/#{tmp[6]}/#{tmp[7]}/"
+            charset: "EUC-JP"
+            input:
+              TIME: Math.floor(Date.now() / 1000) - 60
+              DIR: tmp[5]
+              BBS: tmp[6]
+              KEY: tmp[7]
+              NAME: iframe_arg.rcrx_name
+              MAIL: iframe_arg.rcrx_mail
+            textarea:
+              MESSAGE: iframe_arg.rcrx_message
+        #フォーム生成
+        form = @contentWindow.document.createElement("form")
+        form.setAttribute("accept-charset", form_data.charset)
+        form.action = form_data.action
+        form.method = "POST"
+        for key, val of form_data.input
+          input = @contentWindow.document.createElement("input")
+          input.name = key
+          input.setAttribute("value", val)
+          form.appendChild(input)
+        for key, val of form_data.textarea
+          textarea = @contentWindow.document.createElement("textarea")
+          textarea.name = key
+          textarea.textContent = val
+          form.appendChild(textarea)
+        form.__proto__.submit.call(form)
+        return
+    $iframe.appendTo(".iframe_container")
 
-      $("<iframe>")
-        .attr("src", iframe_url)
-        .appendTo($view.find(".iframe_container"))
-      write_timer.wake()
+    write_timer.wake()
 
-      $view.find(".notice").text("書き込み中")
-    return
+    $view.find(".notice").text("書き込み中")
+  return
