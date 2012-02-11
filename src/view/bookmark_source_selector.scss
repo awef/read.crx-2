@@ -30,13 +30,13 @@ p:last-child {
   background-color: #f9f9f9;
   border: 1px solid #bbbbbb;
   border-radius: 3px;
+  max-height: 300px;
 }
 
 ul {
   list-style-type: none;
   padding-left: 20px;
   margin: 0;
-  max-height: 300px;
 }
 
 .node_list > ul {
