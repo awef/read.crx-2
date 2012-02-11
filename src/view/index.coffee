@@ -429,3 +429,45 @@ app.main = ->
     .delegate ".tab_content.tab_focused", "view_loaded", ->
       $(@).contents().find(".content").focus()
       return
+
+  #タブコンテキストメニュー
+  $view.find(".tab_tabbar").on "contextmenu", "li", (e) ->
+    e.preventDefault()
+
+    $source = $(@)
+    $source_tab = $source.closest(".tab")
+    source_tab_id = $source.attr("data-tab_id")
+
+    $menu = $("#template > .tab_contextmenu").clone()
+    $menu.one "click", "li", ->
+      $this = $(@)
+
+      #再読み込み
+      if $this.is(".reload")
+        $view.find("iframe[data-tab_id=\"#{source_tab_id}\"]")[0]
+          .contentWindow.postMessage(
+            JSON.stringify(type: "request_reload")
+            location.origin
+          )
+      #タブを閉じる
+      else if $this.is(".close")
+        $source_tab.tab("remove", tab_id: source_tab_id)
+      #他のタブを全て閉じる
+      else if $this.is(".close_all_other")
+        $source.siblings().each ->
+          $source_tab.tab("remove", tab_id: $(@).attr("data-tab_id"))
+          return
+      #右側のタブを全て閉じる
+      else if $this.is(".close_right")
+        $source.nextAll().each ->
+          $source_tab.tab("remove", tab_id: $(@).attr("data-tab_id"))
+          return
+      $menu.remove()
+      return
+
+    app.defer ->
+      $menu.appendTo(document.body)
+      $.contextmenu($menu, e.clientX, e.clientY)
+      return
+    return
+  return
