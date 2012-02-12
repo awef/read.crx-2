@@ -195,3 +195,32 @@ test "実例テスト", 3, ->
     "お、おい！>>5が息してねえぞ！")
   @test("【ブログ貼付】 &lt;iframe&gt;タグの不具合 ",
     "【ブログ貼付】 <iframe>タグの不具合 ")
+
+module("app.util.levenshtein_distance")
+
+test "レーベンシュタイン距離を算出する", 15, ->
+  fn = (a, b, expected) ->
+    strictEqual(
+      app.util.levenshtein_distance(a, b)
+      expected
+      "#{a} : #{b}"
+    )
+    return
+
+  fn("", "", 0)
+  fn("a", "a", 0)
+  fn("テスト", "テスト", 0)
+  fn("", "a", 1)
+  fn("a", "", 1)
+  fn("a", "b", 1)
+  fn("b", "a", 1)
+  fn("test", "test", 0)
+  fn("tast", "test", 1)
+  fn("test", "tast", 1)
+  fn("快晴", "曇天", 2)
+  fn("google", "apple", 4)
+  fn("apple", "google", 4)
+  fn("apple", "     apple", 5)
+  fn("aaaaaa", "bbbbbb", 6)
+
+  return

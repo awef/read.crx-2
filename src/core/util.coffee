@@ -141,3 +141,20 @@ app.util.get_how_to_open = (original_e) ->
   else
     def
 
+app.util.levenshtein_distance = (a, b) ->
+  if 0 in [a.length, b.length]
+    return Math.max a.length, b.length
+
+  table = [[0..b.length]]
+  for ac in [1..a.length]
+    table[ac] = [ac]
+
+  for ac in [1..a.length]
+    for bc in [1..b.length]
+      table[ac][bc] = Math.min(
+        table[ac - 1][bc] + 1
+        table[ac][bc - 1] + 1
+        table[ac - 1][bc - 1] + if a[ac - 1] is b[bc - 1] then 0 else 1
+      )
+
+  table[a.length][b.length]
