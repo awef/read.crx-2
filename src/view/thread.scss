@@ -196,25 +196,28 @@ footer {
   position: absolute;
   bottom: 0;
   left: 0;
-  > * {
-    margin: 10px;
-    float: left;
+  right: 75px;
+  display: -webkit-box;
+  > .loading_indicator, > .next_unread, > .search_next_thread {
     display: none;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid hsl(0, 0%, 70%);
+    border-radius: 5px;
+    font-size: 12px;
   }
   > .loading_indicator {
-    font-size: 12px;
-    border: 1px solid #bbbbbb;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: #333333;
-    color: white;
+    background-color: hsl(0, 0%, 20%);
+    color: hsl(0, 0%, 100%);
+  }
+  > .next_unread {
+    -webkit-box-flex: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
   > .next_unread, > .search_next_thread {
     cursor: pointer;
-    font-size: 12px;
-    border: 1px solid #bbbbbb;
-    padding: 10px;
-    border-radius: 5px;
     text-decoration: none;
   }
 }
