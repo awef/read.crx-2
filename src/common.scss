@@ -105,7 +105,7 @@ $z-index_notification: 8;
     }
   }
   .nav_bar {
-    @include drop_shadow;
+    border-bottom: 2px solid hsla(0, 0%, 0%, 0.2);
     z-index: $z-index_tabbed_view_nav_bar;
     position: relative;
     > input, > .button {
