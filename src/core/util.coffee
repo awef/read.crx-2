@@ -155,3 +155,27 @@ app.util.levenshtein_distance = (a, b) ->
       )
 
   table[a.length][b.length]
+
+app.util.search_next_thread = (thread_url, thread_title) ->
+  $.Deferred (d) ->
+    thread_url = app.url.fix(thread_url)
+    board_url = app.url.thread_to_board(thread_url)
+    app.board.get board_url, (res) ->
+      if res.data?
+        tmp = res.data
+        tmp = tmp.filter (thread) ->
+          thread.url isnt thread_url
+        tmp = tmp.map (thread) ->
+          {
+            score: app.util.levenshtein_distance(thread_title, thread.title)
+            title: thread.title
+            url: thread.url
+          }
+        tmp.sort (a, b) ->
+          a.score - b.score
+        d.resolve(tmp[0...5])
+      else
+        d.reject()
+      return
+    return
+  .promise()
