@@ -366,15 +366,20 @@ app.boot "/view/thread.html", ->
               $(@).triggerHandler("input")
           return
 
-  #未読ブックマーク表示処理
+  #フッター表示処理
   do ->
     content = $view.find(".content")[0]
     next_unread = $view.find(".next_unread")[0]
+    search_next_thread = $view.find(".search_next_thread")[0]
 
-    update_next_unread = ->
+    update_footer = ->
       scroll_left = content.scrollHeight - (content.offsetHeight + content.scrollTop)
 
       if scroll_left is 0
+        #次スレ検索ボタン表示
+        if content.childNodes.length >= 1000
+          search_next_thread.style["display"] = "block"
+
         #表示するべき未読ブックマークが有るかをスキャン
         next = null
         for bookmark in app.bookmark.get_all()
@@ -404,16 +409,47 @@ app.boot "/view/thread.html", ->
           next_unread.style["display"] = "none"
       else
         next_unread.style["display"] = "none"
+        search_next_thread.style["display"] = "none"
 
     $view
       .on "tab_selected view_loaded", ->
-        update_next_unread()
+        update_footer()
         return
 
-      .find(".content")
-        .on "scroll", ->
-          update_next_unread()
-          return
+      .find(".content").on "scroll", ->
+        update_footer()
+        return
+      .end()
+
+      #次スレ検索
+      .find(".search_next_thread:not(.in_progress)").on "click", (e) ->
+        $button = $(@)
+        $button.text("検索中").addClass(".in_progress")
+        app.util.search_next_thread(view_url, document.title)
+          .done (res) ->
+            $div = $("#template > .next_thread_list").clone()
+            $div.find(".close").one "click", ->
+              $div.fadeOut("fast", -> $div.remove)
+              return
+            $ol = $div.find("ol")
+            for thread in res
+              $("<li>", {
+                class: "open_in_rcrx"
+                text: thread.title
+                "data-href": thread.url
+              }).appendTo($ol)
+            $div.appendTo(document.body)
+            $button.text("次スレ検索")
+            return
+          .fail ->
+            $button.text("検索失敗")
+            return
+          .always ->
+            $button.removeClass(".in_progress")
+            return
+        return
+
+    return
 
   #サムネイルロード時の縦位置調整
   $view.on "lazy_load_complete", ".thumbnail > a > img", ->
