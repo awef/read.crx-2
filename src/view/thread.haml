@@ -23,6 +23,9 @@
       .button.button_link(title="Chromeで直接開く")
       .button.button_reload
       .button.button_write
+      .button.button_tool
+        %ul
+          %li.button_tool_search_next_thread 次スレ検索
       %ul.breadcrumb
         %li
           %a.open_in_rcrx
@@ -49,6 +52,7 @@
       .next_thread_list
         %img.close(src="/img/close_16x16.png")
         %header
-          %h1 次スレ検索結果
-          %span (板内で最もタイトルの似ているスレッド)
+          %h1 次スレ検索
+          %span (板内でタイトルの似ているスレッドを検索します)
         %ol
+        .status

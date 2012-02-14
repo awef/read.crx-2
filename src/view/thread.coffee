@@ -422,15 +422,18 @@ app.boot "/view/thread.html", ->
       .end()
 
       #次スレ検索
-      .find(".search_next_thread:not(.in_progress)").on "click", (e) ->
-        $button = $(@)
-        $button.text("検索中").addClass(".in_progress")
+      .find(".button_tool_search_next_thread, .search_next_thread").on "click", (e) ->
+        if $view.find(".next_thread_list:visible").length isnt 0
+          return
+        $div = $("#template > .next_thread_list").clone()
+        $div.find(".close").one "click", ->
+          $div.fadeOut("fast", -> $div.remove)
+          return
+        $div.find(".status").text("検索中")
+        $div.appendTo(document.body)
         app.util.search_next_thread(view_url, document.title)
           .done (res) ->
-            $div = $("#template > .next_thread_list").clone()
-            $div.find(".close").one "click", ->
-              $div.fadeOut("fast", -> $div.remove)
-              return
+            $div.find(".status").text("")
             $ol = $div.find("ol")
             for thread in res
               $("<li>", {
@@ -438,14 +441,9 @@ app.boot "/view/thread.html", ->
                 text: thread.title
                 "data-href": thread.url
               }).appendTo($ol)
-            $div.appendTo(document.body)
-            $button.text("次スレ検索")
             return
           .fail ->
-            $button.text("検索失敗")
-            return
-          .always ->
-            $button.removeClass(".in_progress")
+            $div.find(".status").text("次スレ検索に失敗しました")
             return
         return
 
