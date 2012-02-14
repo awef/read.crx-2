@@ -366,15 +366,20 @@ app.boot "/view/thread.html", ->
               $(@).triggerHandler("input")
           return
 
-  #未読ブックマーク表示処理
+  #フッター表示処理
   do ->
     content = $view.find(".content")[0]
     next_unread = $view.find(".next_unread")[0]
+    search_next_thread = $view.find(".search_next_thread")[0]
 
-    update_next_unread = ->
+    update_footer = ->
       scroll_left = content.scrollHeight - (content.offsetHeight + content.scrollTop)
 
       if scroll_left is 0
+        #次スレ検索ボタン表示
+        if content.childNodes.length >= 1000
+          search_next_thread.style["display"] = "block"
+
         #表示するべき未読ブックマークが有るかをスキャン
         next = null
         for bookmark in app.bookmark.get_all()
@@ -404,16 +409,45 @@ app.boot "/view/thread.html", ->
           next_unread.style["display"] = "none"
       else
         next_unread.style["display"] = "none"
+        search_next_thread.style["display"] = "none"
 
     $view
       .on "tab_selected view_loaded", ->
-        update_next_unread()
+        update_footer()
         return
 
-      .find(".content")
-        .on "scroll", ->
-          update_next_unread()
+      .find(".content").on "scroll", ->
+        update_footer()
+        return
+      .end()
+
+      #次スレ検索
+      .find(".button_tool_search_next_thread, .search_next_thread").on "click", (e) ->
+        if $view.find(".next_thread_list:visible").length isnt 0
           return
+        $div = $("#template > .next_thread_list").clone()
+        $div.find(".close").one "click", ->
+          $div.fadeOut("fast", -> $div.remove)
+          return
+        $div.find(".status").text("検索中")
+        $div.appendTo(document.body)
+        app.util.search_next_thread(view_url, document.title)
+          .done (res) ->
+            $div.find(".status").text("")
+            $ol = $div.find("ol")
+            for thread in res
+              $("<li>", {
+                class: "open_in_rcrx"
+                text: thread.title
+                "data-href": thread.url
+              }).appendTo($ol)
+            return
+          .fail ->
+            $div.find(".status").text("次スレ検索に失敗しました")
+            return
+        return
+
+    return
 
   #サムネイルロード時の縦位置調整
   $view.on "lazy_load_complete", ".thumbnail > a > img", ->

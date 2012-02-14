@@ -196,25 +196,78 @@ footer {
   position: absolute;
   bottom: 0;
   left: 0;
-  > * {
-    margin: 10px;
-    float: left;
+  right: 75px;
+  display: -webkit-box;
+  > .loading_indicator, > .next_unread, > .search_next_thread {
     display: none;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid hsl(0, 0%, 70%);
+    border-radius: 5px;
+    font-size: 12px;
   }
   > .loading_indicator {
-    font-size: 12px;
-    border: 1px solid #bbbbbb;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: #333333;
-    color: white;
+    background-color: hsl(0, 0%, 20%);
+    color: hsl(0, 0%, 100%);
   }
   > .next_unread {
-    font-size: 12px;
-    border: 1px solid #bbbbbb;
-    padding: 10px;
-    border-radius: 5px;
+    -webkit-box-flex: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  > .next_unread, > .search_next_thread {
+    cursor: pointer;
     text-decoration: none;
+  }
+}
+
+.next_thread_list {
+  @include drop_shadow;
+  background-color: hsla(0, 0%, 0%, 0.85);
+  color: hsl(0, 0%, 100%);
+
+  padding: 10px;
+  margin: 0;
+
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border-radius: 3px;
+
+  > .close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+  }
+
+  > header {
+    color: inherit !important;
+    border-bottom: 1px solid hsl(0, 0%, 100%);
+    margin: 0 0 5px 0;
+    padding: 0 0 5px 0;
+
+    > h1 {
+      font-size: 16px;
+      margin: 0;
+      padding: 0;
+      display: inline;
+    }
+  }
+
+  > ol {
+    margin: 0;
+    padding: 0 0 0 2em;
+    line-height: 1.5em;
+
+    > li {
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 }
 
@@ -253,8 +306,8 @@ footer {
   $no_hit_message_color,
   $jump_panel_color,
   $jump_panel_background_color,
-  $next_unread_background_color,
-  $next_unread_color,
+  $footer_button_background_color,
+  $footer_button_color,
   $thread_res_info_color
 ) {
   & {
@@ -319,9 +372,9 @@ footer {
     }
   }
 
-  .next_unread, .next_unread:visited {
-    background-color: $next_unread_background_color;
-    color: $next_unread_color;
+  .next_unread, .next_unread:visited, .search_next_thread {
+    background-color: $footer_button_background_color;
+    color: $footer_button_color;
   }
 }
 
@@ -341,8 +394,8 @@ footer {
     $no_hit_message_color: #444,
     $jump_panel_background_color: rgba(#000, 0.8),
     $jump_panel_color: #fff,
-    $next_unread_background_color: #eee,
-    $next_unread_color: #222,
+    $footer_button_background_color: #eee,
+    $footer_button_color: #222,
     $thread_res_info_color: #666
   );
 }
@@ -363,8 +416,8 @@ footer {
     $no_hit_message_color: #ddd,
     $jump_panel_background_color: rgba(#333, 0.8),
     $jump_panel_color: #ccc,
-    $next_unread_background_color: #333,
-    $next_unread_color: #ddd,
+    $footer_button_background_color: #333,
+    $footer_button_color: #ddd,
     $thread_res_info_color: silver
   );
 }

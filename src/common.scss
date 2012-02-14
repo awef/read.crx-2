@@ -138,6 +138,26 @@ $z-index_notification: 8;
         opacity: 0.5;
       }
     }
+    > .button_tool {
+      position: relative;
+      > ul {
+        display: none;
+        position: absolute;
+        top: 19px;
+        list-style-type: none;
+        white-space: nowrap;
+        margin: 0;
+        padding: 0;
+        border: 1px solid;
+        -webkit-user-select: none;
+        > li {
+          padding: 5px;
+        }
+      }
+      &:hover > ul {
+        display: block;
+      }
+    }
   }
   .breadcrumb {
     list-style-type: none;
@@ -285,6 +305,13 @@ $z-index_notification: 8;
       }
       &.button_write {
         background-image: url(/img/pencil_19x19_#{$icon_color}.png);
+      }
+      &.button_tool {
+        background-image: url(/img/spanner_19x19_#{$icon_color}.png);
+        > ul {
+          background-color: $nav_bar_background_color;
+          border-color: $nav_bar_item_border_color;
+        }
       }
     }
   }

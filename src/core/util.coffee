@@ -141,3 +141,41 @@ app.util.get_how_to_open = (original_e) ->
   else
     def
 
+app.util.levenshtein_distance = (a, b) ->
+  table = [[0...b.length + 1]]
+  for ac in [1...a.length + 1]
+    table[ac] = [ac]
+
+  for ac in [1...a.length + 1]
+    for bc in [1...b.length + 1]
+      table[ac][bc] = Math.min(
+        table[ac - 1][bc] + 1
+        table[ac][bc - 1] + 1
+        table[ac - 1][bc - 1] + if a[ac - 1] is b[bc - 1] then 0 else 1
+      )
+
+  table[a.length][b.length]
+
+app.util.search_next_thread = (thread_url, thread_title) ->
+  $.Deferred (d) ->
+    thread_url = app.url.fix(thread_url)
+    board_url = app.url.thread_to_board(thread_url)
+    app.board.get board_url, (res) ->
+      if res.data?
+        tmp = res.data
+        tmp = tmp.filter (thread) ->
+          thread.url isnt thread_url
+        tmp = tmp.map (thread) ->
+          {
+            score: app.util.levenshtein_distance(thread_title, thread.title)
+            title: thread.title
+            url: thread.url
+          }
+        tmp.sort (a, b) ->
+          a.score - b.score
+        d.resolve(tmp[0...5])
+      else
+        d.reject()
+      return
+    return
+  .promise()
