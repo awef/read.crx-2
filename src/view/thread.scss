@@ -61,7 +61,7 @@ header {
   cursor: pointer;
 }
 
-.one:not(:first-child) .name:before {
+.one:not(:first-child) > header > .name:before {
   content: "(>>1)";
   margin-right: 1ex;
 }
@@ -93,7 +93,7 @@ header {
   margin-left: 0.5ex;
 }
 
-.aa .message {
+.aa > .message {
   @include ascii_art;
 }
 
@@ -129,14 +129,13 @@ header {
   max-height: 300px;
   overflow: auto;
   box-shadow: 0 3px 10px rgba(black, 0.75);
+  border: 3px solid #666;
   border-radius: 3px;
-  &:not(.popup_linkinfo) {
-    > article {
-      margin: 10px;
-    }
-    border: 3px solid #666666;
+  > article {
+    margin: 10px;
   }
   &.popup_linkinfo {
+    border: none;
     overflow: hidden;
     padding: 5px;
     background-color: rgba(black, 0.8);
@@ -145,7 +144,7 @@ header {
     -webkit-animation-duration: 150ms;
     -webkit-timing-function: ease-out;
   }
-  .anchor_popup_disabled_message {
+  > .anchor_popup_disabled_message {
     background-color: #666666;
     color: #eeeeee;
     padding: 5px;

@@ -129,7 +129,7 @@ $z-index_notification: 8;
       cursor: pointer;
       -webkit-transition: opacity 500ms;
       border-color: transparent;
-      a {
+      > a {
         display: block;
         width: 100%;
         height: 100%;
