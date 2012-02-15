@@ -128,6 +128,7 @@ $z-index_notification: 8;
       width: 19px;
       cursor: pointer;
       -webkit-transition: opacity 500ms;
+      border-color: transparent;
       a {
         display: block;
         width: 100%;
@@ -140,10 +141,12 @@ $z-index_notification: 8;
     }
     > .button_tool {
       position: relative;
+      float: right;
       > ul {
         display: none;
         position: absolute;
         top: 19px;
+        right: 0px;
         list-style-type: none;
         white-space: nowrap;
         margin: 0;
@@ -165,13 +168,17 @@ $z-index_notification: 8;
     padding: 0;
     font-size: 14px;
     border-radius: 3px;
+    border-color: transparent;
     > li {
       float: left;
       padding: 3px;
       > a {
         color: inherit !important;
-        text-decoration: none;
         line-height: 1em;
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
   }
@@ -234,8 +241,7 @@ $z-index_notification: 8;
       $message_bar_error_background_color: #ecc,
       $message_bar_error_border_color: #ebb,
       $icon_color: "333",
-      $active_icon_color: "39f",
-      $active_icon_shadow_color: yellow,
+      $active_icon_color: "007fff",
       $search_icon_color: "777",
       $color: #111
     );
@@ -252,7 +258,6 @@ $z-index_notification: 8;
       $message_bar_error_border_color: #933,
       $icon_color: "ddd",
       $active_icon_color: "f93",
-      $active_icon_shadow_color: #aa3,
       $search_icon_color: "aaa",
       $color: #eee
     );
@@ -275,14 +280,13 @@ $z-index_notification: 8;
   $message_bar_error_border_color,
   $icon_color,
   $active_icon_color,
-  $active_icon_shadow_color,
   $search_icon_color,
   $color
 ) {
   .nav_bar {
     background-color: $nav_bar_background_color;
     color: $nav_bar_color;
-    > .button, > input, > .breadcrumb, > .sort_item_selector {
+    > .button:hover, > input, > .sort_item_selector {
       border-color: $nav_bar_item_border_color;
     }
     > input {
@@ -294,7 +298,6 @@ $z-index_notification: 8;
         background-image: url(/img/star_19x19_#{$icon_color}.png);
         &.bookmarked {
           background-image: url(/img/star_19x19_#{$active_icon_color}.png);
-          -webkit-box-shadow: 0 0 3px $active_icon_shadow_color inset;
         }
       }
       &.button_link {
