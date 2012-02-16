@@ -50,18 +50,23 @@ td {
 }
 
 .loading_overlay {
-  .loading {
+  > div {
     &:before {
-      content: "更新中 : ";
+      content: "待機中　 : ";
     }
   }
-  .success {
+  > .loading {
+    &:before {
+      content: "更新中　 : ";
+    }
+  }
+  > .success {
     color: lightgreen;
     &:before {
       content: "更新成功 : ";
     }
   }
-  .fail {
+  > .error {
     color: red;
     &:before {
       content: "更新失敗 : ";

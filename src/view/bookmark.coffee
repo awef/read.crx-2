@@ -55,39 +55,49 @@ app.boot "/view/bookmark.html", ->
   app.view_module.link_button($view)
 
   #リロード時処理
-  $view.bind "request_reload", ->
+  $view.on "request_reload", ->
     return if $view.hasClass("loading")
 
-    $view
-      .addClass("loading")
-      .find(".searchbox_thread_title")
-        .val("")
-
+    $view.addClass("loading")
     $loading_overlay = $view.find(".loading_overlay")
 
     board_list = []
-    for bookmark in app.bookmark.get_all()
-      if bookmark.type is "thread"
-        board_url = app.url.thread_to_board(bookmark.url)
-        unless board_url in board_list
-          board_list.push(board_url)
+    for bookmark in app.bookmark.get_all() when bookmark.type is "thread"
+      board_url = app.url.thread_to_board(bookmark.url)
+      unless board_url in board_list
+        board_list.push(board_url)
 
-    $prev = null
-    fn = (result) ->
-      if result
-        if result.status is "success"
-          $prev.toggleClass("loading success")
-        else
-          $prev.toggleClass("loading fail")
+    for url in board_list
+      text = url.replace(/// ^http:// ///, "").replace(/// /$ ///, "")
+      $("<div>", {text, "data-url": url}).appendTo($loading_overlay)
 
-      if board_list.length > 0
-        board_url = board_list[0]
-        board_list.splice(0, 1)
-        $prev = $("<div>", text: board_url, class: "loading")
-        $prev.prependTo($loading_overlay)
-        app.board.get(board_url, fn)
-      else
+    count =
+      all: board_list.length
+      loading: 0
+      success: 0
+      error: 0
+
+    fn = (res) ->
+      if res?
+        count.loading--
+        status = if res.status is "success" then "success" else "error"
+        $prev = $loading_overlay.find("div[data-url=\"#{@prev}\"]")
+        $prev.toggleClass("loading #{status}")
+        count[status]++
+
+      if count.all is count.success + count.error
         location.reload(true)
+      # 最大同時接続数: 3
+      else if count.loading < 3
+        current = board_list.splice(0, 1)[0]
+        if current?
+          $current = $loading_overlay.find("div[data-url=\"#{current}\"]")
+          $current.addClass("loading")
+          count.loading++
+          app.board.get(current, fn.bind(prev: current))
+          fn()
+      return
+
     fn()
     return
 
