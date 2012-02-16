@@ -135,12 +135,17 @@ app.view_module.bookmark_button = ($view) ->
 
 app.view_module.link_button = ($view) ->
   url = $view.attr("data-url")
-  $button = $view.find(".button_link")
-  if ///^http://\w///.test(url)
-    $("<a>", href: app.safe_href(url), target: "_blank")
-      .appendTo($button)
+
+  if url is "bookmark"
+    url = "chrome-extension://eemcgdkfndhakfknompkggombfjjjeno/"
+    url += "main.html##{app.config.get("bookmark_id")}"
   else
-    $button.remove()
+    url = app.safe_href(url)
+
+  $view.find(".button_link").on "click", ->
+    open(url)
+    return
+  return
 
 app.view_module.board_contextmenu = ($view) ->
   $view

@@ -20,8 +20,10 @@
     %nav.nav_bar
       %input.searchbox_thread_title
       .button.button_bookmark
-      .button.button_link(title="Chromeで直接開く")
       .button.button_reload
+      .button.button_tool
+        %ul
+          %li.button_link Chromeで直接開く
       %select.sort_item_selector
         %option(label="標準" data-sort_order="asc" data-sort_type="num") data-thread_number
         %option(label="ブックマーク") 0

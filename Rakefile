@@ -101,7 +101,6 @@ lambda {
     "debug/img/search2_19x19_777.png",
     "debug/img/star_19x19_333.png",
     "debug/img/star_19x19_007fff.png",
-    "debug/img/link_19x19_333.png",
     "debug/img/reload_19x19_333.png",
     "debug/img/pencil_19x19_333.png",
     "debug/img/spanner_19x19_333.png",
@@ -109,7 +108,6 @@ lambda {
     "debug/img/search2_19x19_aaa.png",
     "debug/img/star_19x19_ddd.png",
     "debug/img/star_19x19_f93.png",
-    "debug/img/link_19x19_ddd.png",
     "debug/img/reload_19x19_ddd.png",
     "debug/img/pencil_19x19_ddd.png",
     "debug/img/spanner_19x19_ddd.png"

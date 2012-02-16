@@ -2,7 +2,7 @@
   app_version = "0.50"
 
 !!! 5
-%html.view.view_bookmark(data-app-version="#{app_version}")
+%html.view.view_bookmark(data-app-version="#{app_version}" data-url="bookmark")
   %head
     %meta(charset="utf-8")
     %meta(http-equiv="X-Frame-Options" content="SAMEORIGIN")
@@ -18,8 +18,10 @@
   %body
     %nav.nav_bar
       %input.searchbox_thread_title
-      .button.button_link(title="ブックマークマネージャを開く")
       .button.button_reload
+      .button.button_tool
+        %ul
+          %li.button_link ブックマークマネージャを開く
       %select.sort_item_selector
         %option(label="タイトル") 0
         %option(label="レス数") 1
