@@ -12,12 +12,12 @@
 
     # prop.query, prop.search_col
     if method is "search"
-      prop.query = prop.query.toLowerCase()
+      prop.query = app.util.normalize(prop.query)
       $table.addClass("table_search")
       hit_count = 0
       for tr in $table.find("tbody")[0].children
         td = tr.children[prop.target_col]
-        if td.textContent.toLowerCase().indexOf(prop.query) isnt -1
+        if app.util.normalize(td.textContent).indexOf(prop.query) isnt -1
           tr.classList.add("table_search_hit")
           hit_count++
         else

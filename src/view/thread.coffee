@@ -331,14 +331,14 @@ app.boot "/view/thread.html", ->
               search_stored_scrollTop = $view.find(".content").scrollTop()
 
             hit_count = 0
-            query = @value.toLowerCase()
+            query = app.util.normalize(@value)
 
             $view
               .find(".content")
                 .addClass("searching")
                 .children()
                 .each ->
-                  if @textContent.toLowerCase().indexOf(query) isnt -1
+                  if app.util.normalize(@textContent).indexOf(query) isnt -1
                     @classList.add("search_hit")
                     hit_count++
                   else
