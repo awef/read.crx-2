@@ -370,6 +370,15 @@ $z-index_notification: 8;
     text-align: center;
     font-size: 18px;
   }
+  table[data-table_search_hit_count]:not([data-table_search_hit_count="0"]):before {
+    content: attr(data-table_search_hit_count)"hit";
+    position: fixed;
+    left: 0;
+    top: 29px;
+    padding: 3px;
+    background-color: hsl(0, 0%, 40%);
+    color: hsl(0, 0%, 100%);
+  }
   table[data-table_search_hit_count="0"] > tbody:not(:empty) {
     display: block;
     &:after {
