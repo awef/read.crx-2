@@ -224,3 +224,37 @@ test "レーベンシュタイン距離を算出する", 15, ->
   fn("aaaaaa", "bbbbbb", 6)
 
   return
+
+module("app.util.normalize")
+
+test "検索用に文字列を変換する", 5, ->
+  fn = (message, a, b) ->
+    strictEqual(app.util.normalize(a), b, message)
+    return
+
+  fn(
+    "全角英数を半角英数に変換"
+    "０１２３４５６７８９ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ"
+    "0123456789abcdefghijklmnopqrstuvwxyz"
+  )
+  fn(
+    "大文字は小文字に変換"
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ"
+    "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+  )
+  fn(
+    "全角スペース/半角スペースを削除"
+    "　Google Chrome Ｇｏｏｇｌｅ　Ｃｈｒｏｍｅ "
+    "googlechromegooglechrome"
+  )
+  fn(
+    "半角カタカナを平仮名に変換する"
+    "ｦｧｨｩｪｫｬｭｮｯｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ"
+    "をぁぃぅぇぉゃゅょっあいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわん"
+  )
+  fn(
+    "空文字列も許容する"
+    ""
+    ""
+  )
+  return
