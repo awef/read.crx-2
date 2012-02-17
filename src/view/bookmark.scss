@@ -51,11 +51,13 @@ td {
 
 .loading_overlay {
   > div {
+    color: white;
     &:before {
       content: "待機中　 : ";
     }
   }
   > .loading {
+    color: lightblue;
     &:before {
       content: "更新中　 : ";
     }
