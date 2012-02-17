@@ -429,6 +429,7 @@ app.boot "/view/thread.html", ->
         $div.find(".close").one "click", ->
           $div.fadeOut("fast", -> $div.remove)
           return
+        $div.find(".current").text(document.title)
         $div.find(".status").text("検索中")
         $div.appendTo(document.body)
         app.util.search_next_thread(view_url, document.title)

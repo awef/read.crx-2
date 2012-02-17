@@ -242,17 +242,15 @@ footer {
     cursor: pointer;
   }
 
-  > header {
-    color: inherit !important;
+  > h1 {
+    font-size: 14px;
     border-bottom: 1px solid hsl(0, 0%, 100%);
     margin: 0 0 5px 0;
-    padding: 0 0 5px 0;
-
-    > h1 {
-      font-size: 16px;
-      margin: 0;
-      padding: 0;
-      display: inline;
+    padding: 0 20px 5px 0;
+    line-height: 1.25;
+    > .current {
+      font-weight: normal;
+      color: hsl(200, 100%, 90%);
     }
   }
 
