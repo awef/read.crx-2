@@ -140,3 +140,59 @@ test "与えられた文字列中の<>\"'&をエスケープする", 1, ->
     """ &lt;a href=&quot;&apos;#&apos;&quot;&gt;test&amp;test&amp;test&lt;/a&gt; """
   )
 
+module("app.module")
+
+asyncTest "非同期にモジュールを定義する事が出来る", 7, ->
+  app.module "__a", [], (callback) ->
+    QUnit.step(2)
+    callback(x: 123)
+
+  app.module "__b", ["__a"], (__a, callback) ->
+    QUnit.step(3)
+    deepEqual(__a, {x: 123})
+    callback({y: 234})
+
+  app.module "__c", ["__b", "__a"], (__b, __a, callback) ->
+    QUnit.step(4)
+    deepEqual(__a, {x: 123})
+    deepEqual(__b, {y: 234})
+    callback({})
+    start()
+
+  QUnit.step(1)
+
+asyncTest "依存関係が満たされるまで、モジュールの初期化は行われない", 6, ->
+  app.module "__d", [], (callback) ->
+    QUnit.step(2)
+    callback(x: 123)
+
+  app.module "__f", ["__d", "__e"], (__d, __e, callback) ->
+    QUnit.step(4)
+    deepEqual(__d, {x: 123})
+    deepEqual(__e, {y: 234})
+    callback({})
+    start()
+
+  app.module "__e", [], (callback) ->
+    QUnit.step(3)
+    callback(y: 234)
+
+  QUnit.step(1)
+
+asyncTest "モジュール名がnullの場合は依存関係の解決のみ行う", 8, ->
+  app.module null, ["__g"], (__g) ->
+    QUnit.step(3)
+    strictEqual(arguments.length, 1)
+    deepEqual(__g, {a: "test"})
+
+  app.module null, ["__g"], (__g) ->
+    QUnit.step(4)
+    strictEqual(arguments.length, 1)
+    deepEqual(__g, {a: "test"})
+    start()
+
+  app.module "__g", [], (callback) ->
+    QUnit.step(2)
+    callback(a: "test")
+
+  QUnit.step(1)
