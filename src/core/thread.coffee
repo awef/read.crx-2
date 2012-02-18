@@ -420,7 +420,10 @@ app.module "thread", ["jquery", "cache"], ($, Cache, callback) ->
           if force_update or Date.now() - cache.last_updated > 1000 * 3
             #通信が生じる場合のみ、notifyでキャッシュを送出する
             app.defer =>
-              res_deferred.notify(type: "cache_found", data: Thread.parse(@url, cache.data))
+              tmp = Thread.parse(@url, cache.data)
+              @res = tmp.res
+              @title = tmp.title
+              res_deferred.notify()
               return
             deferred.reject()
           else
