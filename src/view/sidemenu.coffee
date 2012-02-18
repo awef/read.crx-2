@@ -1,4 +1,4 @@
-app.boot "/view/sidemenu.html", ->
+app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
   $view = $(document.documentElement)
 
   board_to_li = (board) ->
@@ -71,7 +71,7 @@ app.boot "/view/sidemenu.html", ->
   do ->
     load = ->
       $view.addClass("loading")
-      app.bbsmenu.get (res) ->
+      BBSMenu.get (res) ->
         if res.message?
           app.message.send("notify", {
             message: res.message
@@ -95,10 +95,14 @@ app.boot "/view/sidemenu.html", ->
             .append(frag)
             .accordion()
         $view.removeClass("loading")
+        return
+      return
 
-    $view.bind "request_reload", ->
+    $view.on "request_reload", ->
       $view.find("h3:not(:first-of-type), ul:not(:first-of-type)").remove()
       load()
       return
 
     load()
+    return
+  return

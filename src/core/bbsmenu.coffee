@@ -126,10 +126,3 @@ app.module "bbsmenu", ["jquery", "cache"], ($, Cache, callback) ->
         update(force_reload)
       return
   return
-
-app.bbsmenu =
-  get: (callback, force_reload) ->
-    app.module null, ["bbsmenu"], (BBSMenu) ->
-      BBSMenu.get(callback, force_reload)
-      return
-    return

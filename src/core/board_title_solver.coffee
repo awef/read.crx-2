@@ -6,12 +6,16 @@ do ->
   dic_bbsmenu = {}
 
   update_dic_bbsmenu = ->
-    app.bbsmenu.get (result) ->
-      if result.data?
-        for category in result.data
-          for board in category.board
-            dic_bbsmenu[board.url] = board.title
-      deferred_first_bbsmenu_update.resolve()
+    app.module null, ["bbsmenu"], (BBSMenu) ->
+      BBSMenu.get (result) ->
+        if result.data?
+          for category in result.data
+            for board in category.board
+              dic_bbsmenu[board.url] = board.title
+        deferred_first_bbsmenu_update.resolve()
+        return
+      return
+    return
 
   $(-> update_dic_bbsmenu())
 

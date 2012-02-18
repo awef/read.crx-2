@@ -1,4 +1,4 @@
-app.boot "/view/config.html", ->
+app.boot "/view/config.html", ["bbsmenu"], (BBSMenu) ->
   $view = $(document.documentElement)
 
   app.view_module.view($view)
@@ -96,8 +96,8 @@ app.boot "/view/config.html", ->
                     $parent.remove()
 
   #板覧更新ボタン
-  $view.find(".bbsmenu_reload").bind "click", ->
-    $button = $(this)
+  $view.find(".bbsmenu_reload").on "click", ->
+    $button = $(@)
     $status = $view.find(".bbsmenu_reload_status")
 
     $button.attr("disabled", true)
@@ -106,7 +106,7 @@ app.boot "/view/config.html", ->
       .addClass("loading")
       .text("更新中")
 
-    app.bbsmenu.get (res) ->
+    BBSMenu.get((res) ->
       $button.removeAttr("disabled")
       $status.removeClass("loading")
       if res.status is "success"
@@ -124,8 +124,8 @@ app.boot "/view/config.html", ->
         $status
           .addClass("fail")
           .text("更新失敗")
-    , true
-
+      return
+    , true)
     return
 
   #履歴
