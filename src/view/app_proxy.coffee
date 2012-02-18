@@ -6,6 +6,7 @@ do ->
     "bookmark"
     "cache"
     "history"
+    "module"
     "ninja"
     "read_state"
     "thread"
@@ -15,3 +16,4 @@ do ->
 
   for module in modules
     app[module] = parent.app[module]
+  return

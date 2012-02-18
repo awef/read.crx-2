@@ -185,7 +185,7 @@ do ->
     app.module "jquery", [], (callback) ->
       callback(window.jQuery)
 
-app.boot = (path, fn) ->
+app.boot = (path, [requirements]..., fn) ->
   #Chromeがiframeのsrcと無関係な内容を読み込むバグへの対応
   if frameElement and frameElement.src isnt location.href
     location.href = frameElement.src
@@ -196,5 +196,10 @@ app.boot = (path, fn) ->
     if app.manifest.version isnt html_version
       location.reload(true)
     else
-      $(fn)
+      if requirements?
+        $ ->
+          app.module(null, requirements, fn)
+          return
+      else
+        $(fn)
   return
