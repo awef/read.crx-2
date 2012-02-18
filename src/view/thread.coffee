@@ -488,15 +488,14 @@ app.view_thread._draw = ($view, force_update) ->
   id_index = $view.data("id_index")
   rep_index = $view.data("rep_index")
 
-  fn = (result) ->
-    if result.type is "error"
-      $view.find(".message_bar").addClass("error").html(result.message)
+  fn = (thread, error) ->
+    if error
+      $view.find(".message_bar").addClass("error").html(thread.message)
     else
       $view.find(".message_bar").removeClass("error").empty()
 
-    (deferred.reject(); return) unless result.data?
+    (deferred.reject(); return) unless thread.res?
 
-    thread = result.data
     document.title = thread.title
 
     #DOM構築
@@ -610,15 +609,24 @@ app.view_thread._draw = ($view, force_update) ->
 
     deferred.resolve()
 
-  app.thread.get($view.attr("data-url"), force_update)
-    .progress (res) ->
-      fn(res)
-    .always (res) ->
-      if res.type is "success"
+  app.module null, ["thread"], (Thread) ->
+    thread = new Thread($view.attr("data-url"))
+    thread.get(force_update)
+      .progress ->
+        fn(thread, false)
+        return
+      .done ->
         $view.data("last_updated", Date.now())
-      fn(res)
-      $view.removeClass("loading")
-      setTimeout((-> $reload_button.removeClass("disabled")), 1000 * 5)
+        fn(thread, false)
+        return
+      .fail ->
+        fn(thread, true)
+        return
+      .always ->
+        $view.removeClass("loading")
+        setTimeout((-> $reload_button.removeClass("disabled")), 1000 * 5)
+        return
+    return
 
   deferred.promise()
 
