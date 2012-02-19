@@ -150,7 +150,7 @@ app.module "thread", ["jquery", "cache"], ($, Cache, callback) ->
           if promise_cache_get.isResolved()
             if cache.last_modified?
               ajax_data.headers["If-Modified-Since"] = new Date(cache.last_modified).toUTCString()
-            if cache.data.etag?
+            if cache.etag?
               ajax_data.headers["If-None-Match"] = cache.etag
 
           $.ajax(ajax_data)
