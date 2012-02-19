@@ -166,7 +166,7 @@ app.util.search_next_thread = (thread_url, thread_title) ->
       if res.data?
         tmp = res.data
         tmp = tmp.filter (thread) ->
-          thread.url isnt thread_url
+          thread.url isnt thread_url and thread.res_count < 1001
         tmp = tmp.map (thread) ->
           {
             score: app.util.levenshtein_distance(thread_title, app.util.normalize(thread.title))
