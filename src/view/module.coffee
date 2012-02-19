@@ -97,16 +97,22 @@ app.view_module.view = ($view) ->
         return
 
 app.view_module.searchbox_thread_title = ($view, target_col) ->
-  $view.find(".searchbox_thread_title")
-    .bind "input", ->
-      $view.find("table")
-        .table_search("search", {query: this.value, target_col})
-      return
-    .bind "keyup", (e) ->
-      if e.which is 27 #Esc
-        this.value = ""
-        $view.find("table").table_search("clear")
-      return
+  $view
+    .find(".searchbox_thread_title")
+      .on "input", ->
+        if @value isnt ""
+          $view
+            .find("table")
+              .table_search("search", {query: @value, target_col})
+        else
+          $view.find("table").table_search("clear")
+        return
+      .on "keyup", (e) ->
+        if e.which is 27 #Esc
+          @value = ""
+          $(@).triggerHandler("input")
+        return
+  return
 
 app.view_module.bookmark_button = ($view) ->
   url = $view.attr("data-url")
