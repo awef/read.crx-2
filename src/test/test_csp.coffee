@@ -52,3 +52,13 @@ test "インラインのイベントハンドラは動作しない", 1, ->
   span.dispatchEvent(e)
   ok(not window.csp_test?, "todo")
   delete window.csp_test
+
+asyncTest "Data URI schemeによる画像の読み込みが可能", 1, ->
+  img = document.createElement("img")
+  img.addEventListener "load", ->
+    ok(true)
+    start()
+    return
+  img.src = "data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+  document.querySelector("#qunit-fixture").appendChild(img)
+  return
