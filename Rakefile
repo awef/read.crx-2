@@ -236,11 +236,16 @@ lambda {
   file "debug/test/qunit/qunit.css" => "lib/qunit/qunit/qunit.css", &p_cp
   file "debug/test/qunit/qunit-step.js" => "lib/qunit/addons/step/qunit-step.js", &p_cp
 
-  cd "lib/jquery-mockjax" do
-    sh "git checkout -f"
-    sh "git apply ../jquery-mockjax_bugfix.patch"
+  file "debug/test/jquery.mockjax.js" => [
+    "lib/jquery-mockjax/jquery.mockjax.js",
+    "lib/jquery-mockjax_bugfix.patch"
+  ], do
+    cd "lib/jquery-mockjax" do
+      sh "git checkout -f"
+      sh "git apply ../jquery-mockjax_bugfix.patch"
+    end
+    cp "lib/jquery-mockjax/jquery.mockjax.js", "debug/test/jquery.mockjax.js"
   end
-  file "debug/test/jquery.mockjax.js" => "lib/jquery-mockjax/jquery.mockjax.js", &p_cp
 
   file "debug/test/test.js" => FileList["src/test/test_*.coffee"], &p_coffee
 }.call()
