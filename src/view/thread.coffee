@@ -469,6 +469,11 @@ app.boot "/view/thread.html", ->
             return
         return
 
+    app.message.add_listener "bookmark_updated", (message) ->
+      if scroll_left is 0
+        next_unread.show()
+      return
+
     return
 
   #サムネイルロード時の縦位置調整
