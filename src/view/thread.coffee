@@ -369,18 +369,16 @@ app.boot "/view/thread.html", ->
   #フッター表示処理
   do ->
     content = $view.find(".content")[0]
-    next_unread = $view.find(".next_unread")[0]
-    search_next_thread = $view.find(".search_next_thread")[0]
 
-    update_footer = ->
+    scroll_left = 0
+    update_scroll_left = ->
       scroll_left = content.scrollHeight - (content.offsetHeight + content.scrollTop)
+      return
 
-      if scroll_left is 0
-        #次スレ検索ボタン表示
-        if content.childNodes.length >= 1000
-          search_next_thread.style["display"] = "block"
-
-        #表示するべき未読ブックマークが有るかをスキャン
+    #未読ブックマーク数表示
+    next_unread =
+      _elm: $view.find(".next_unread")[0]
+      show: ->
         next = null
         for bookmark in app.bookmark.get_all()
           if bookmark.type isnt "thread" or bookmark.url is view_url
@@ -393,23 +391,45 @@ app.boot "/view/thread.html", ->
           #既にタブで開かれている場合は無視
           if parent.document.querySelector("[data-url=\"#{bookmark.url}\"]")
             continue
-          else
-            next = bookmark
-            break
+
+          next = bookmark
+          break
 
         if next
           text = "未読ブックマーク: #{next.title}"
           if next.res_count?
             text += " (未読#{next.res_count - (next.read_state?.read or 0)}件)"
-          next_unread.href = app.safe_href(next.url)
-          next_unread.textContent = text
-          next_unread.setAttribute("data-title", next.title)
-          next_unread.style["display"] = "block"
+          @_elm.href = app.safe_href(next.url)
+          @_elm.textContent = text
+          @_elm.setAttribute("data-title", next.title)
+          @_elm.style["display"] = "block"
         else
-          next_unread.style["display"] = "none"
+          @hide()
+        return
+      hide: ->
+        @_elm.style["display"] = "none"
+        return
+
+    search_next_thread =
+      _elm: $view.find(".search_next_thread")[0]
+      show: ->
+        if content.childNodes.length >= 1000
+          @_elm.style["display"] = "block"
+        else
+          @hide()
+        return
+      hide: ->
+        @_elm.style["display"] = "none"
+        return
+
+    update_footer = ->
+      if scroll_left is 0
+        next_unread.show()
+        search_next_thread.show()
       else
-        next_unread.style["display"] = "none"
-        search_next_thread.style["display"] = "none"
+        next_unread.hide()
+        search_next_thread.hide()
+      return
 
     $view
       .on "tab_selected view_loaded", ->
@@ -417,6 +437,7 @@ app.boot "/view/thread.html", ->
         return
 
       .find(".content").on "scroll", ->
+        update_scroll_left()
         update_footer()
         return
       .end()
