@@ -1,0 +1,15 @@
+diff --git a/jquery.mockjax.js b/jquery.mockjax.js
+index 06f5d4a..1df3ce9 100644
+--- a/jquery.mockjax.js
++++ b/jquery.mockjax.js
+@@ -346,7 +346,9 @@
+ 								getAllResponseHeaders: function() {
+ 									var headers = '';
+ 									$.each(m.headers, function(k, v) {
+-										headers += k + ': ' + v + "\n";
++										if ( typeof v === "string" ) {
++											headers += k + ': ' + v + "\n";
++										}
+ 									});
+ 									return headers;
+ 								}
