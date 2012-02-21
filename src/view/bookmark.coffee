@@ -61,6 +61,9 @@ app.boot "/view/bookmark.html", ->
     $view.addClass("loading")
     $loading_overlay = $view.find(".loading_overlay")
 
+    $reload_button = $view.find(".button_reload")
+    $reload_button.addClass("disabled")
+
     board_list = []
     for bookmark in app.bookmark.get_all() when bookmark.type is "thread"
       board_url = app.url.thread_to_board(bookmark.url)
@@ -96,6 +99,9 @@ app.boot "/view/bookmark.html", ->
             sort_order: "desc"
           })
           $view.removeClass("loading")
+          setTimeout(->
+            $reload_button.removeClass("disabled")
+          , 1000 * 5)
           return
         , 500)
       # 最大同時接続数: 3
