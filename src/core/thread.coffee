@@ -93,6 +93,7 @@ app.module "thread", ["jquery", "cache"], ($, Cache, callback) ->
       @title = null
       @res = null
       @message = null
+      @_cache_put = $.Deferred()
 
     get: (force_update) ->
       url = @url
@@ -247,7 +248,7 @@ app.module "thread", ["jquery", "cache"], ($, Cache, callback) ->
         return
 
       #キャッシュ更新部
-      .done ($xhr, thread) ->
+      .done ($xhr, thread) =>
         #通信に成功した場合
         if $xhr?.status is 200
           cache.last_updated = Date.now()
@@ -269,13 +270,17 @@ app.module "thread", ["jquery", "cache"], ($, Cache, callback) ->
           if etag
             cache.etag = etag
 
-          cache.put()
+          cache.put().done => @_cache_put.notify("done")
 
         #304だった場合はアップデート時刻のみ更新
         else if promise_cache_get.isResolved() and $xhr?.status is 304
           cache.last_updated = Date.now()
-          cache.put()
+          cache.put().done => @_cache_put.notify("done")
 
+        return
+
+      .fail =>
+        @_cache_put.notify("unexecuted")
         return
 
       #ブックマーク更新部

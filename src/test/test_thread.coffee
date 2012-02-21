@@ -1,6 +1,7 @@
 module "Thread::get",
   setup: ->
     @ch_url = "http://__mockjax.2ch.net/test/read.cgi/dummy/200/"
+    @ch_dat_url = "http://__mockjax.2ch.net/dummy/dat/200.dat"
     @ch_dat = """
     ﾉtasukeruyo </b>忍法帖【Lv=10,xxxPT】<b> </b>◆0a./bc.def <b><><>2011/04/04(月) 10:19:46.92 ID:abcdEfGH0 BE:1234567890-2BP(1)<> テスト。 <br> http://qb5.2ch.net/test/read.cgi/operate/132452341234/1 <br> <hr><font color="blue">Monazilla/1.00 (V2C/2.5.1)</font> <>[test] テスト 123 [ﾃｽﾄ]
      </b>【東電 84.2 %】<b>  </b>◆0a./bc.def <b><>sage<>2011/04/04(月) 10:21:08.27 ID:abcdEfGH0<> てすとてすとテスト! <>
@@ -45,6 +46,7 @@ module "Thread::get",
       ]
 
     @ch_broken_url = "http://__mockjax.2ch.net/test/read.cgi/dummy/3526345446225/"
+    @ch_broken_dat_url = "http://__mockjax.2ch.net/dummy/dat/3526345446225.dat"
     @ch_broken_dat = """
       偽*** ★<><>2011/10/21(金) 19:26:30.52 ID:???<> てすと　試験テスト <>***を追跡する #dummy
       </b> dummy <b><><>11/10/21(金) 20:49:40 ID:ehenfox<>62¥¥¥
@@ -81,6 +83,7 @@ module "Thread::get",
       ]
 
     @machi_url = "http://__mockjax.machi.to/bbs/read.cgi/dummy/511234524356/"
+    @machi_dat_url = "http://__mockjax.machi.to/bbs/offlaw.cgi/dummy/511234524356/"
     @machi_dat = """
       1<>まちこさん<><>2007/06/10(日) 09:20:35 ID:aBC.DeFG<>テストテストテスト。<br><br>sage推奨<>【test】色々testスレ（トリップテストとか）【テスト】　７題目
       2<>◆</b>1a2BC3DeFg<b><><>2007/06/11(月) 22:33:18 ID:Ab0cdeFG<>あ　い　う　え　tesu<>
@@ -122,6 +125,7 @@ module "Thread::get",
       ]
 
     @jbbs_url = "http://jbbs.livedoor.jp/bbs/read.cgi/__mockjax/42710/1290070091/"
+    @jbbs_dat_url = "http://jbbs.livedoor.jp/bbs/rawmode.cgi/__mockjax/42710/1290070091/"
     @jbbs_dat = """
       1<><font color=#FF0000>awef★</font><><>2010/11/18(木) 17:48:11<>read.crxについての質問・要望・不具合報告等を気楽に書き込んで下さい<br><br>インストールはこちらから<br>ttps://chrome.google.com/extensions/detail/hhjpdicibjffnpggdiecaimdgdghainl<br>関連文章<br>ttp://wiki.livedoor.jp/awef/d/read.crx<br>UserVoice<br>ttp://readcrx.uservoice.com/<br>前スレ<br>ttp://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273802908/<br><br>既出の要望・バグ等は全てUserVoiceで管理します<br>直接UserVoiceに投稿しちゃっても構いません<>read.crx総合 part2<>???
       2<>名無しさん<><>2010/12/03(金) 02:50:42<>試験用削除<><>ABCD0eFg
@@ -163,6 +167,7 @@ module "Thread::get",
       ]
 
     @jbbs_deleted_url = "http://jbbs.livedoor.jp/bbs/read.cgi/__mockjax/42710/1310968239/"
+    @jbbs_deleted_dat_url = "http://jbbs.livedoor.jp/bbs/rawmode.cgi/__mockjax/42710/1310968239/"
     @jbbs_deleted_dat = """
       1<><font color=#FF0000>awef★</font><><>2011/07/18(月) 14:50:39<>テスト<>削除レスとかの動作を確認するためのスレ<>???
       2<><font color=#FF0000>awef★</font><><>2011/07/18(月) 14:51:47<>テスト2<><>???
@@ -219,6 +224,7 @@ module "Thread::get",
       ]
 
     @pink_url = "http://__mockjax.bbspink.com/test/read.cgi/erobbs/23455435345543/"
+    @pink_dat_url = "http://__mockjax.bbspink.com/erobbs/dat/23455435345543.dat"
     @pink_dat = """
       名無し編集部員<><>2008/03/22(土) 03:34:04 ID:aBcD0Ef1<> てすとてすとてすと <>レス削除練習用のスレ
       うふ～ん<>うふ～ん<>うふ～ん ID:DELETED<>うふ～ん<>うふ～ん<>
@@ -246,146 +252,184 @@ module "Thread::get",
           other: "2008/03/22(土) 03:53:57 ID:aB+C0Def"
         }
       ]
+
+    @test_200 = (config) ->
+      $.mockjax
+        url: config.dat_url
+        status: 200
+        headers:
+          etag: null
+        responseText: config.dat
+        response: ->
+          QUnit.step(2)
+          return
+
+      app.module null, ["thread", "cache"], (Thread, Cache) =>
+        new Cache(config.dat_url).delete().done =>
+          QUnit.step(1)
+          before = Date.now()
+
+          thread = new Thread(config.url)
+          thread.get().done =>
+            QUnit.step(3)
+            strictEqual(thread.title, config.thread_expected.title)
+            deepEqual(thread.res, config.thread_expected.res)
+
+          thread._cache_put.progress (status) =>
+            QUnit.step(4)
+            strictEqual(status, "done", "cache.put()")
+            cache = new Cache(config.dat_url)
+            cache.get().done =>
+              QUnit.step(5)
+              strictEqual(cache.data, config.dat, "cache.data")
+              ok(before < cache.last_updated < Date.now(), "cache.last_updated")
+              strictEqual(cache.last_modified, null, "cache.last_modified")
+              strictEqual(cache.etag, null, "cache.etag")
+              strictEqual(cache.res_length, config.thread_expected.res.length, "cache.res_length")
+              strictEqual(cache.dat_size, null, "cache.dat_size")
+              start()
+              return
+            return
+          return
+      return
+
+    #存在しないスレを取得しようとした時(まちBBS/したらば用)
+    @test_machi_jbbs_none = (config) ->
+      $.mockjax
+        url: config.dat_url
+        status: 200
+        responseText: config.dat
+        response: ->
+          QUnit.step(2)
+          return
+
+      app.module null, ["thread", "cache"], (Thread, Cache) =>
+        new Cache(config.dat_url).delete().done =>
+          QUnit.step(1)
+
+          thread = new Thread(config.url)
+          thread.get().fail =>
+            QUnit.step(3)
+            strictEqual(thread.title, null, "thread.title")
+            strictEqual(thread.res, null, "thread.res")
+            start()
+            return
+
+          thread._cache_put.progress (status) =>
+            QUnit.step(4)
+            strictEqual(status, "unexecuted", "cache.put()")
+            cache = new Cache(config.dat_url)
+            cache.get().fail =>
+              QUnit.step(5)
+              return
+            return
+          return
+      return
+
     return
 
   teardown: $.mockjaxClear
 
-asyncTest "2chのスレを取得出来る", 3, ->
-  $.mockjax
-    url: ///^http://__mockjax\.2ch\.net/dummy/dat/200\.dat///
-    status: 200
-    responseText: @ch_dat
-    response: ->
-      ok(true)
-      return
-
-  app.module null, ["thread"], (Thread) =>
-    thread = new Thread(@ch_url)
-    thread.get().done =>
-      strictEqual(thread.title, @ch_expected.title)
-      deepEqual(thread.res, @ch_expected.res)
-      start()
-      return
+asyncTest "2chのスレを取得出来る", 14, ->
+  @test_200
+    url: @ch_url
+    dat_url: @ch_dat_url
+    dat: @ch_dat
+    thread_expected: @ch_expected
   return
 
-asyncTest "404時はrejectする", 4, ->
+asyncTest "404時はrejectする", 9, ->
+  dat_url = "http://__mockjax.2ch.net/dummy/dat/404.dat"
+
   $.mockjax
-    url: ///^http://__mockjax\.2ch\.net/dummy/dat/404\.dat///
+    url: dat_url
     status: 404
+    headers:
+      etag: null
     response: ->
-      ok(true)
+      QUnit.step(2)
       return
 
   #DAT取得失敗時、鯖移転の検出処理が走る
   $.mockjax
-    url: ///^http://__mockjax\.2ch\.net/dummy/ ///
+    url: "http://__mockjax\.2ch\.net/dummy/"
     response: ->
-      ok(true)
+      QUnit.step(5)
       return
 
-  app.module null, ["thread"], (Thread) =>
-    thread = new Thread("http://__mockjax.2ch.net/test/read.cgi/dummy/404/")
-    thread.get().fail =>
-      strictEqual(thread.title, null)
-      deepEqual(thread.res, null)
-      start()
-      return
-  return
+  app.module null, ["thread", "cache"], (Thread, Cache) =>
+    new Cache(dat_url).delete().done =>
+      QUnit.step(1)
 
-asyncTest "2chのDATの破損部分は、破損メッセージで代替する", 3, ->
-  $.mockjax
-    url: ///^http://__mockjax\.2ch\.net/dummy/dat/3526345446225\.dat///
-    status: 200
-    responseText: @ch_broken_dat
-    response: ->
-      ok(true)
-      return
-
-  app.module null, ["cache", "thread"], (Cache, Thread) =>
-    new Cache("http://__mockjax.2ch.net/dummy/dat/3526345446225.dat").delete().done =>
-      thread = new Thread(@ch_broken_url)
-      thread.get().done =>
-        strictEqual(thread.title, @ch_broken_expected.title)
-        deepEqual(thread.res, @ch_broken_expected.res)
+      thread = new Thread("http://__mockjax.2ch.net/test/read.cgi/dummy/404/")
+      thread.get().fail =>
+        QUnit.step(6)
+        strictEqual(thread.title, null)
+        deepEqual(thread.res, null)
         start()
+        return
+
+      thread._cache_put.progress (status) =>
+        QUnit.step(3)
+        strictEqual(status, "unexecuted", "cache.put()")
+        cache = new Cache(dat_url)
+        cache.get().fail =>
+          QUnit.step(4)
+          return
         return
       return
   return
 
-asyncTest "まちBBSのスレを取得出来る", 3, ->
-  $.mockjax
-    url: ///^http://__mockjax\.machi\.to/bbs/offlaw\.cgi/dummy/511234524356///
-    status: 200
-    responseText: @machi_dat
-    response: ->
-      ok(true)
-      return
-
-  app.module null, ["cache", "thread"], (Cache, Thread) =>
-    new Cache("http://__mockjax.machi.to/bbs/offlaw.cgi/dummy/511234524356/").delete().done =>
-      thread = new Thread(@machi_url)
-      thread.get().done =>
-        strictEqual(thread.title, @machi_expected.title)
-        deepEqual(thread.res, @machi_expected.res)
-        start()
-        return
-      return
+asyncTest "2chのDATの破損部分は、破損メッセージで代替する", 14, ->
+  @test_200
+    url: @ch_broken_url
+    dat_url: @ch_broken_dat_url
+    dat: @ch_broken_dat
+    thread_expected: @ch_broken_expected
   return
 
-asyncTest "したらばのスレを取得出来る", 3, ->
-  $.mockjax
-    url: ///^http://jbbs\.livedoor\.jp/bbs/rawmode\.cgi/__mockjax/42710/1290070091///
-    status: 200
-    responseText: @jbbs_dat
-    response: ->
-      ok(true)
-      return
-
-  app.module null, ["cache", "thread"], (Cache, Thread) =>
-    new Cache("http://jbbs.livedoor.jp/bbs/rawmode.cgi/__mockjax/42710/1290070091/").delete().done =>
-      thread = new Thread(@jbbs_url)
-      thread.get().done =>
-        strictEqual(thread.title, @jbbs_expected.title)
-        deepEqual(thread.res, @jbbs_expected.res)
-        start()
-        return
-      return
+asyncTest "まちBBSのスレを取得出来る", 14, ->
+  @test_200
+    url: @machi_url
+    dat_url: @machi_dat_url
+    dat: @machi_dat
+    thread_expected: @machi_expected
   return
 
-asyncTest "したらばのスレを取得出来る(削除系確認)", 3, ->
-  $.mockjax
-    url: ///^http://jbbs\.livedoor\.jp/bbs/rawmode\.cgi/__mockjax/42710/1310968239///
-    status: 200
-    responseText: @jbbs_deleted_dat
-    response: ->
-      ok(true)
-      return
-
-  app.module null, ["cache", "thread"], (Cache, Thread) =>
-    new Cache("http://jbbs.livedoor.jp/bbs/rawmode.cgi/__mockjax/42710/1310968239/").delete().done =>
-      thread = new Thread(@jbbs_deleted_url)
-      thread.get().done =>
-        strictEqual(thread.title, @jbbs_deleted_expected.title)
-        deepEqual(thread.res, @jbbs_deleted_expected.res)
-        start()
-        return
-      return
+asyncTest "まちBBSの存在しないスレを取得しようとした時", 8, ->
+  @test_machi_jbbs_none
+    url: "http://__mockjax.machi.to/bbs/read.cgi/dummy/404/"
+    dat_url: "http://__mockjax.machi.to/bbs/offlaw.cgi/dummy/404/"
+    dat: "<ERROR>スレッドを発見できません</ERROR>"
   return
 
-asyncTest "BBSPINKのスレをパース出来る", 3, ->
-  $.mockjax
-    url: ///^http://__mockjax\.bbspink\.com/erobbs/dat/23455435345543\.dat///
-    status: 200
-    responseText: @pink_dat
-    response: ->
-      ok(true)
-      return
+asyncTest "したらばのスレを取得出来る", 14, ->
+  @test_200
+    url: @jbbs_url
+    dat_url: @jbbs_dat_url
+    dat: @jbbs_dat
+    thread_expected: @jbbs_expected
+  return
 
-  app.module null, ["thread"], (Thread) =>
-    thread = new Thread(@pink_url)
-    thread.get().done =>
-      strictEqual(thread.title, @pink_expected.title)
-      deepEqual(thread.res, @pink_expected.res)
-      start()
-      return
+asyncTest "したらばの存在しないスレを取得しようとした時", 8, ->
+  @test_machi_jbbs_none
+    url: "http://jbbs.livedoor.jp/bbs/read.cgi/__mockjax/42710/404/"
+    dat_url: "http://jbbs.livedoor.jp/bbs/rawmode.cgi/__mockjax/42710/404/"
+    dat: ""
+  return
+
+asyncTest "したらばのスレを取得出来る(削除系確認)", 14, ->
+  @test_200
+    url: @jbbs_deleted_url
+    dat_url: @jbbs_deleted_dat_url
+    dat: @jbbs_deleted_dat
+    thread_expected: @jbbs_deleted_expected
+  return
+
+asyncTest "BBSPINKのスレをパース出来る", 14, ->
+  @test_200
+    url: @pink_url
+    dat_url: @pink_dat_url
+    dat: @pink_dat
+    thread_expected: @pink_expected
   return
