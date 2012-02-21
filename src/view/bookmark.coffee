@@ -86,7 +86,18 @@ app.boot "/view/bookmark.html", ->
         count[status]++
 
       if count.all is count.success + count.error
-        location.reload(true)
+        #更新完了
+        #ソート後にブックマークが更新されてしまう場合に備えて、少し待つ
+        setTimeout(->
+          $loading_overlay.empty()
+          $view.find("table").table_sort("update", {
+            sort_index: 2
+            sort_type: "num"
+            sort_order: "desc"
+          })
+          $view.removeClass("loading")
+          return
+        , 500)
       # 最大同時接続数: 3
       else if count.loading < 3
         current = board_list.splice(0, 1)[0]
