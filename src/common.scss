@@ -290,7 +290,7 @@ $z-index_notification: 8;
   .nav_bar {
     background-color: $nav_bar_background_color;
     color: $nav_bar_color;
-    > .button:hover, > input, > .sort_item_selector {
+    > .button:not(.disabled):hover, > input, > .sort_item_selector {
       border-color: $nav_bar_item_border_color;
     }
     > input {
