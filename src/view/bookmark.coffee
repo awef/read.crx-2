@@ -101,18 +101,26 @@ app.boot "/view/bookmark.html", ->
           $view.removeClass("loading")
           setTimeout(->
             $reload_button.removeClass("disabled")
-          , 1000 * 5)
+          , 1000 * 10)
           return
         , 500)
-      # 最大同時接続数: 3
-      else if count.loading < 3
-        current = board_list.splice(0, 1)[0]
-        if current?
+      # 合計最大同時接続数: 2
+      # 同一サーバーへの最大接続数: 1
+      else if count.loading < 2
+        loading_server = (
+          $loading_overlay
+            .children(".loading")
+              .map(-> $(@).attr("data-url").split("/")[2])
+        )
+        for current, key in board_list
+          continue if current.split("/")[2] in loading_server
+          board_list.splice(key, 1)
           $current = $loading_overlay.find("div[data-url=\"#{current}\"]")
           $current.addClass("loading")
           count.loading++
           app.board.get(current, fn.bind(prev: current))
           fn()
+          break
       return
 
     fn()
