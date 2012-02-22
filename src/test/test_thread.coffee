@@ -88,6 +88,7 @@ module "Thread::get",
       1<>まちこさん<><>2007/06/10(日) 09:20:35 ID:aBC.DeFG<>テストテストテスト。<br><br>sage推奨<>【test】色々testスレ（トリップテストとか）【テスト】　７題目
       2<>◆</b>1a2BC3DeFg<b><><>2007/06/11(月) 22:33:18 ID:Ab0cdeFG<>あ　い　う　え　tesu<>
       5<>◆</b>abcd.EfGHI<b><>sage<>2007/06/13(水) 14:49:19 ID:aBcdEfgH<>あ　い　う　え　tesu３<>
+
     """
     @machi_expected =
       title: "【test】色々testスレ（トリップテストとか）【テスト】　７題目"
@@ -130,6 +131,7 @@ module "Thread::get",
       1<><font color=#FF0000>awef★</font><><>2010/11/18(木) 17:48:11<>read.crxについての質問・要望・不具合報告等を気楽に書き込んで下さい<br><br>インストールはこちらから<br>ttps://chrome.google.com/extensions/detail/hhjpdicibjffnpggdiecaimdgdghainl<br>関連文章<br>ttp://wiki.livedoor.jp/awef/d/read.crx<br>UserVoice<br>ttp://readcrx.uservoice.com/<br>前スレ<br>ttp://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273802908/<br><br>既出の要望・バグ等は全てUserVoiceで管理します<br>直接UserVoiceに投稿しちゃっても構いません<>read.crx総合 part2<>???
       2<>名無しさん<><>2010/12/03(金) 02:50:42<>試験用削除<><>ABCD0eFg
       5<>名無しさん<>sage<>2010/12/04(土) 22:57:40<><a href="/bbs/read.cgi/computer/42710/1290070091/2" target="_blank">&gt&gt2</a><br>少なくとも、今のブックマーク表示は、他の板とそれ程区別する必要は無いと思ってます<br><br><a href="/bbs/read.cgi/computer/42710/1290070091/4" target="_blank">&gt&gt4</a><br>サッとプロトコル見てみましたけど、多分無理っすね<br>こちら側も鯖立てないとムリっぽいし<><>.aBCefGh
+
     """
     @jbbs_expected =
       title: "read.crx総合 part2"
@@ -293,6 +295,204 @@ module "Thread::get",
           return
       return
 
+    #正常取得 -> 更新なし -> 更新有り
+    @test_update = (config) ->
+      app.module null, ["thread", "cache"], (Thread, Cache) ->
+        dummy =
+          etag: null
+          last_modified: null
+          update: ->
+            @etag = Date.now().toString(36) + "-" + Date.now().toString(36)
+            @last_modified = (new Date()).toUTCString()
+            return
+
+        thread = new Thread(config.url)
+        before_1st_get = null
+        before_2nd_get = null
+        before_3rd_get = null
+
+        #初回取得準備
+        $.Deferred (d) ->
+          QUnit.step(1)
+
+          dummy.update()
+
+          $.mockjax
+            url: config.dat_url
+            status: 200
+            headers:
+              "ETag": dummy.etag
+              "Last-Modified": dummy.last_modified
+            responseText: config.dat
+            response: (ajax_settings) ->
+              QUnit.step(3)
+              deepEqual(ajax_settings.headers, {})
+              return
+
+          new Cache(config.dat_url).delete().done ->
+            d.resolve()
+            return
+        #初回取得
+        .pipe -> $.Deferred (d) ->
+          QUnit.step(2)
+
+          before_1st_get = Date.now()
+
+          thread.get().done ->
+            QUnit.step(4)
+            strictEqual(thread.title, config.thread_expected.title)
+            deepEqual(thread.res, config.thread_expected.res)
+            return
+
+          run = false
+          thread._cache_put.progress (status) ->
+            return if run
+            run = true
+
+            QUnit.step(5)
+
+            strictEqual(status, "done", "cache.put()")
+            cache = new Cache(config.dat_url)
+            cache.get().done =>
+              QUnit.step(6)
+              strictEqual(cache.data, config.dat, "cache.data")
+              ok(before_1st_get < cache.last_updated < Date.now(), "cache.last_updated")
+              strictEqual(cache.last_modified, Date.parse(dummy.last_modified), "cache.last_modified")
+              strictEqual(cache.etag, dummy.etag, "cache.etag")
+              strictEqual(cache.res_length, config.thread_expected.res.length, "cache.res_length")
+              strictEqual(cache.dat_size, null, "cache.dat_size")
+              d.resolve()
+              return
+            return
+          return
+        #2回目取得（更新無し）準備
+        .pipe -> $.Deferred (d) ->
+          QUnit.step(7)
+
+          $.mockjaxClear()
+          $.mockjax
+            url: config.delta_dat_url
+            status: 304
+            headers:
+              "ETag": dummy.etag
+              "Last-Modified": dummy.last_modified
+            responseText: ""
+            response: (ajax_settings) ->
+              QUnit.step(9)
+              deepEqual(
+                ajax_settings.headers
+                {
+                  "If-Modified-Since": dummy.last_modified
+                  "If-None-Match": dummy.etag
+                }
+              )
+              return
+          d.resolve()
+          return
+        #過剰リロード防止機構回避
+        .pipe -> $.Deferred (d) ->
+          setTimeout(d.resolve, 3500)
+          return
+        #2回目取得
+        .pipe -> $.Deferred (d) ->
+          QUnit.step(8)
+          before_2nd_get = Date.now()
+
+          thread.get().done ->
+            QUnit.step(10)
+            strictEqual(thread.title, config.thread_expected.title)
+            deepEqual(thread.res, config.thread_expected.res)
+            return
+
+          run = 0
+          thread._cache_put.progress (status) ->
+            return if ++run isnt 2 #直前のnotifyの分まで呼ばれてしまうので、その対策
+
+            QUnit.step(11)
+
+            strictEqual(status, "done", "cache.put()")
+            cache = new Cache(config.dat_url)
+            cache.get().done ->
+              QUnit.step(12)
+              strictEqual(cache.data, config.dat, "cache.data")
+              ok(before_2nd_get < cache.last_updated < Date.now(), "cache.last_updated")
+              strictEqual(cache.last_modified, Date.parse(dummy.last_modified), "cache.last_modified")
+              strictEqual(cache.etag, dummy.etag, "cache.etag")
+              strictEqual(cache.res_length, config.thread_expected.res.length, "cache.res_length")
+              strictEqual(cache.dat_size, null, "cache.dat_size")
+              d.resolve()
+              return
+            return
+          return
+        #3回目取得（更新）準備
+        .pipe -> $.Deferred (d) ->
+          QUnit.step(13)
+
+          $.mockjaxClear()
+          old_dummy =
+            etag: dummy.etag
+            last_modified: dummy.last_modified
+          dummy.update()
+          $.mockjax
+            url: config.delta_dat_url
+            status: config.delta_status
+            headers:
+              "ETag": dummy.etag
+              "Last-Modified": dummy.last_modified
+            responseText: config.delta_dat
+            response: (ajax_settings) ->
+              QUnit.step(15)
+              deepEqual(
+                ajax_settings.headers
+                {
+                  "If-Modified-Since": old_dummy.last_modified
+                  "If-None-Match": old_dummy.etag
+                }
+              )
+              return
+          d.resolve()
+          return
+
+        #過剰リロード防止機構回避
+        .pipe -> $.Deferred (d) ->
+          setTimeout(d.resolve, 3500)
+          return
+        #3回目取得
+        .pipe -> $.Deferred (d) ->
+          QUnit.step(14)
+          before_3rd_get = Date.now()
+
+          thread.get().done ->
+            QUnit.step(16)
+            strictEqual(thread.title, config.thread_expected.title)
+            deepEqual(thread.res, config.thread_expected.res.concat(config.delta_res))
+            return
+
+          run = 0
+          thread._cache_put.progress (status) ->
+            return if ++run isnt 2 #直前のnotifyの分まで呼ばれてしまうので、その対策
+
+            QUnit.step(17)
+
+            strictEqual(status, "done", "cache.put()")
+            cache = new Cache(config.dat_url)
+            cache.get().done ->
+              QUnit.step(18)
+              strictEqual(cache.data, config.last_dat, "cache.data")
+              ok(before_3rd_get < cache.last_updated < Date.now(), "cache.last_updated")
+              strictEqual(cache.last_modified, Date.parse(dummy.last_modified), "cache.last_modified")
+              strictEqual(cache.etag, dummy.etag, "cache.etag")
+              strictEqual(cache.res_length, config.thread_expected.res.length + config.delta_res.length, "cache.res_length")
+              strictEqual(cache.dat_size, null, "cache.dat_size")
+              d.resolve()
+              return
+            return
+          return
+
+        .always(start)
+        return
+      return
+
     #存在しないスレを取得しようとした時(まちBBS/したらば用)
     @test_machi_jbbs_none = (config) ->
       $.mockjax
@@ -336,6 +536,31 @@ asyncTest "2chのスレを取得出来る", 14, ->
     dat_url: @ch_dat_url
     dat: @ch_dat
     thread_expected: @ch_expected
+  return
+
+asyncTest "2chのスレの取得/更新テスト", 48, ->
+  delta_dat = @ch_dat + """
+    動け動けウゴウゴ２ちゃんねる<><>2011/04/04(月) 10:55:00.00 ID:aaccrrr3<> test <>
+
+  """
+
+  @test_update
+    url: @ch_url
+    dat_url: @ch_dat_url
+    dat: @ch_dat
+    thread_expected: @ch_expected
+    delta_dat_url: @ch_dat_url
+    delta_status: 200
+    delta_dat: delta_dat
+    delta_res: [
+      {
+        name: "動け動けウゴウゴ２ちゃんねる"
+        mail: ""
+        message: " test "
+        other: "2011/04/04(月) 10:55:00.00 ID:aaccrrr3"
+      }
+    ]
+    last_dat: delta_dat
   return
 
 asyncTest "404時はrejectする", 9, ->
@@ -396,6 +621,30 @@ asyncTest "まちBBSのスレを取得出来る", 14, ->
     thread_expected: @machi_expected
   return
 
+asyncTest "まちBBSのスレの取得/更新テスト", 48, ->
+  delta_dat = """
+    6<>test<>sage<>2007/06/14(水) 14:49:19 ID:aBcdEfgH<>abcde<>
+
+  """
+  @test_update
+    url: @machi_url
+    dat_url: @machi_dat_url
+    dat: @machi_dat
+    thread_expected: @machi_expected
+    delta_dat_url: @machi_dat_url + (@machi_expected.res.length + 1) + "-"
+    delta_status: 200
+    delta_dat: delta_dat
+    delta_res: [
+      {
+        name: "test"
+        mail: "sage"
+        message: "abcde"
+        other: "2007/06/14(水) 14:49:19 ID:aBcdEfgH"
+      }
+    ]
+    last_dat: @machi_dat + delta_dat
+  return
+
 asyncTest "まちBBSの存在しないスレを取得しようとした時", 8, ->
   @test_machi_jbbs_none
     url: "http://__mockjax.machi.to/bbs/read.cgi/dummy/404/"
@@ -409,6 +658,30 @@ asyncTest "したらばのスレを取得出来る", 14, ->
     dat_url: @jbbs_dat_url
     dat: @jbbs_dat
     thread_expected: @jbbs_expected
+  return
+
+asyncTest "したらばのスレの取得/更新テスト", 48, ->
+  delta_dat = """
+    6<>名無しさん<>sage<>2010/12/05(土) 22:57:40<>test<><>.aBCefGh
+
+  """
+  @test_update
+    url: @jbbs_url
+    dat_url: @jbbs_dat_url
+    dat: @jbbs_dat
+    thread_expected: @jbbs_expected
+    delta_dat_url: @jbbs_dat_url + (@jbbs_expected.res.length + 1) + "-"
+    delta_status: 200
+    delta_dat: delta_dat
+    delta_res: [
+      {
+        name: "名無しさん"
+        mail: "sage"
+        message: 'test'
+        other: "2010/12/05(土) 22:57:40 ID:.aBCefGh"
+      }
+    ]
+    last_dat: @jbbs_dat + delta_dat
   return
 
 asyncTest "したらばの存在しないスレを取得しようとした時", 8, ->
