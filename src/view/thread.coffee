@@ -44,10 +44,11 @@ app.boot "/view/thread.html", ->
     $view.find(".button_write").remove()
 
   #リロード処理
-  $view.bind "request_reload", (e, ex) ->
+  $view.on "request_reload", (e, ex) ->
     #先にread_state更新処理を走らせるために、処理を飛ばす
     app.defer ->
       return if $view.hasClass("loading")
+      return if $view.find(".button_reload").hasClass("disabled")
 
       $view
         .find(".content")

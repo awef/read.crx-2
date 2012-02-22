@@ -57,11 +57,12 @@ app.boot "/view/bookmark.html", ->
   #リロード時処理
   $view.on "request_reload", ->
     return if $view.hasClass("loading")
+    $reload_button = $view.find(".button_reload")
+    return if $reload_button.hasClass("disabled")
 
     $view.addClass("loading")
     $loading_overlay = $view.find(".loading_overlay")
 
-    $reload_button = $view.find(".button_reload")
     $reload_button.addClass("disabled")
 
     board_list = []

@@ -48,8 +48,9 @@ app.boot "/view/board.html", ->
         document.title = title
       app.history.add(url, title or url, opened_at)
 
-  $view.bind "request_reload", ->
+  $view.on "request_reload", ->
     return if $view.hasClass("loading")
+    return if $view.find(".button_reload").hasClass("disabled")
     location.reload(true)
     return
 
