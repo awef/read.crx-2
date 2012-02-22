@@ -276,6 +276,7 @@ module "Thread::get",
             QUnit.step(3)
             strictEqual(thread.title, config.thread_expected.title)
             deepEqual(thread.res, config.thread_expected.res)
+            strictEqual(thread.message, null)
 
           thread._cache_put.progress (status) =>
             QUnit.step(4)
@@ -342,6 +343,7 @@ module "Thread::get",
             QUnit.step(4)
             strictEqual(thread.title, config.thread_expected.title)
             deepEqual(thread.res, config.thread_expected.res)
+            strictEqual(thread.message, null)
             return
 
           run = false
@@ -402,6 +404,7 @@ module "Thread::get",
             QUnit.step(10)
             strictEqual(thread.title, config.thread_expected.title)
             deepEqual(thread.res, config.thread_expected.res)
+            strictEqual(thread.message, null)
             return
 
           run = 0
@@ -466,6 +469,7 @@ module "Thread::get",
             QUnit.step(16)
             strictEqual(thread.title, config.thread_expected.title)
             deepEqual(thread.res, config.thread_expected.res.concat(config.delta_res))
+            strictEqual(thread.message, null)
             return
 
           run = 0
@@ -512,6 +516,7 @@ module "Thread::get",
             QUnit.step(3)
             strictEqual(thread.title, null, "thread.title")
             strictEqual(thread.res, null, "thread.res")
+            strictEqual(thread.message, "スレッドの読み込みに失敗しました。", "thread.message")
             start()
             return
 
@@ -530,7 +535,7 @@ module "Thread::get",
 
   teardown: $.mockjaxClear
 
-asyncTest "2chのスレを取得出来る", 14, ->
+asyncTest "2chのスレを取得出来る", 15, ->
   @test_200
     url: @ch_url
     dat_url: @ch_dat_url
@@ -538,7 +543,7 @@ asyncTest "2chのスレを取得出来る", 14, ->
     thread_expected: @ch_expected
   return
 
-asyncTest "2chのスレの取得/更新テスト", 48, ->
+asyncTest "2chのスレの取得/更新テスト", 51, ->
   delta_dat = @ch_dat + """
     動け動けウゴウゴ２ちゃんねる<><>2011/04/04(月) 10:55:00.00 ID:aaccrrr3<> test <>
 
@@ -605,7 +610,7 @@ asyncTest "404時はrejectする", 9, ->
       return
   return
 
-asyncTest "2chのDATの破損部分は、破損メッセージで代替する", 14, ->
+asyncTest "2chのDATの破損部分は、破損メッセージで代替する", 15, ->
   @test_200
     url: @ch_broken_url
     dat_url: @ch_broken_dat_url
@@ -613,7 +618,7 @@ asyncTest "2chのDATの破損部分は、破損メッセージで代替する", 
     thread_expected: @ch_broken_expected
   return
 
-asyncTest "まちBBSのスレを取得出来る", 14, ->
+asyncTest "まちBBSのスレを取得出来る", 15, ->
   @test_200
     url: @machi_url
     dat_url: @machi_dat_url
@@ -621,7 +626,7 @@ asyncTest "まちBBSのスレを取得出来る", 14, ->
     thread_expected: @machi_expected
   return
 
-asyncTest "まちBBSのスレの取得/更新テスト", 48, ->
+asyncTest "まちBBSのスレの取得/更新テスト", 51, ->
   delta_dat = """
     6<>test<>sage<>2007/06/14(水) 14:49:19 ID:aBcdEfgH<>abcde<>
 
@@ -645,14 +650,14 @@ asyncTest "まちBBSのスレの取得/更新テスト", 48, ->
     last_dat: @machi_dat + delta_dat
   return
 
-asyncTest "まちBBSの存在しないスレを取得しようとした時", 8, ->
+asyncTest "まちBBSの存在しないスレを取得しようとした時", 9, ->
   @test_machi_jbbs_none
     url: "http://__mockjax.machi.to/bbs/read.cgi/dummy/404/"
     dat_url: "http://__mockjax.machi.to/bbs/offlaw.cgi/dummy/404/"
     dat: "<ERROR>スレッドを発見できません</ERROR>"
   return
 
-asyncTest "したらばのスレを取得出来る", 14, ->
+asyncTest "したらばのスレを取得出来る", 15, ->
   @test_200
     url: @jbbs_url
     dat_url: @jbbs_dat_url
@@ -660,7 +665,7 @@ asyncTest "したらばのスレを取得出来る", 14, ->
     thread_expected: @jbbs_expected
   return
 
-asyncTest "したらばのスレの取得/更新テスト", 48, ->
+asyncTest "したらばのスレの取得/更新テスト", 51, ->
   delta_dat = """
     6<>名無しさん<>sage<>2010/12/05(土) 22:57:40<>test<><>.aBCefGh
 
@@ -684,14 +689,14 @@ asyncTest "したらばのスレの取得/更新テスト", 48, ->
     last_dat: @jbbs_dat + delta_dat
   return
 
-asyncTest "したらばの存在しないスレを取得しようとした時", 8, ->
+asyncTest "したらばの存在しないスレを取得しようとした時", 9, ->
   @test_machi_jbbs_none
     url: "http://jbbs.livedoor.jp/bbs/read.cgi/__mockjax/42710/404/"
     dat_url: "http://jbbs.livedoor.jp/bbs/rawmode.cgi/__mockjax/42710/404/"
     dat: ""
   return
 
-asyncTest "したらばのスレを取得出来る(削除系確認)", 14, ->
+asyncTest "したらばのスレを取得出来る(削除系確認)", 15, ->
   @test_200
     url: @jbbs_deleted_url
     dat_url: @jbbs_deleted_dat_url
@@ -699,7 +704,7 @@ asyncTest "したらばのスレを取得出来る(削除系確認)", 14, ->
     thread_expected: @jbbs_deleted_expected
   return
 
-asyncTest "BBSPINKのスレをパース出来る", 14, ->
+asyncTest "BBSPINKのスレをパース出来る", 15, ->
   @test_200
     url: @pink_url
     dat_url: @pink_dat_url
