@@ -13,7 +13,7 @@ app.boot "/view/thread.html", ->
 
   app.view_module.view($view)
   app.view_module.bookmark_button($view)
-  app.view_module.link_button($view)
+  app.view_module.tool_menu($view)
 
   write = (param) ->
     param or= {}
@@ -493,25 +493,6 @@ app.boot "/view/thread.html", ->
             .attr("href", board_url)
             .text(if title? then "#{title.replace(/板$/, "")}板" else "板")
         return
-    return
-
-  # 「スレッドのタイトルをコピー」及び「スレッドのURLをコピー」
-  do ->
-    copy = (str) ->
-      input = document.createElement("input")
-      input.value = str
-      document.body.appendChild(input)
-      input.select()
-      document.execCommand("copy")
-      document.body.removeChild(input)
-      return
-
-    $view.find(".button_copy_title").on "click", ->
-      copy(document.title)
-      return
-    $view.find(".button_copy_url").on "click", ->
-      copy($view.attr("data-url"))
-      return
     return
 
   return

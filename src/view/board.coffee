@@ -37,10 +37,10 @@ app.boot "/view/board.html", ->
   app.view_module.view($view)
   app.view_module.searchbox_thread_title($view, 1)
   app.view_module.bookmark_button($view)
-  app.view_module.link_button($view)
   app.view_module.board_contextmenu($view)
   app.view_module.sort_item_selector($view)
   app.view_module.board_title($view)
+  app.view_module.tool_menu($view)
 
   app.board_title_solver.ask({url})
     .always (title) ->

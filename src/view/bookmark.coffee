@@ -52,7 +52,7 @@ app.boot "/view/bookmark.html", ->
   app.view_module.board_contextmenu($view)
   app.view_module.sort_item_selector($view)
   app.view_module.board_title($view)
-  app.view_module.link_button($view)
+  app.view_module.tool_menu($view)
 
   #リロード時処理
   $view.on "request_reload", ->

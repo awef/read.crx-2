@@ -139,20 +139,6 @@ app.view_module.bookmark_button = ($view) ->
   else
     $button.remove()
 
-app.view_module.link_button = ($view) ->
-  url = $view.attr("data-url")
-
-  if url is "bookmark"
-    url = "chrome-extension://eemcgdkfndhakfknompkggombfjjjeno/"
-    url += "main.html##{app.config.get("bookmark_id")}"
-  else
-    url = app.safe_href(url)
-
-  $view.find(".button_link").on "click", ->
-    open(url)
-    return
-  return
-
 app.view_module.board_contextmenu = ($view) ->
   $view
     #コンテキストメニュー 表示
@@ -244,4 +230,39 @@ app.view_module.board_title = ($view) ->
         td.removeAttribute("title")
         td = null
       return
+  return
+
+app.view_module.tool_menu = ($view) ->
+  copy = (str) ->
+    input = document.createElement("input")
+    input.value = str
+    document.body.appendChild(input)
+    input.select()
+    document.execCommand("copy")
+    document.body.removeChild(input)
+    return
+
+  # Chromeで直接開く
+  $view.find(".button_link").on "click", ->
+    url = $view.attr("data-url")
+
+    if url is "bookmark"
+      url = "chrome-extension://eemcgdkfndhakfknompkggombfjjjeno/"
+      url += "main.html##{app.config.get("bookmark_id")}"
+    else
+      url = app.safe_href(url)
+
+    open(url)
+    return
+
+  # タイトルをコピー
+  $view.find(".button_copy_title").on "click", ->
+    copy(document.title)
+    return
+
+  # URLをコピー
+  $view.find(".button_copy_url").on "click", ->
+    copy($view.attr("data-url"))
+    return
+
   return
