@@ -495,6 +495,27 @@ app.boot "/view/thread.html", ->
         return
     return
 
+  # 「スレッドのタイトルをコピー」及び「スレッドのURLをコピー」
+  do ->
+    copy = (str) ->
+      input = document.createElement("input")
+      input.value = str
+      document.body.appendChild(input)
+      input.select()
+      document.execCommand("copy")
+      document.body.removeChild(input)
+      return
+
+    $view.find(".button_copy_title").on "click", ->
+      copy(document.title)
+      return
+    $view.find(".button_copy_url").on "click", ->
+      copy($view.attr("data-url"))
+      return
+    return
+
+  return
+
 app.view_thread._jump_to_res = ($view, res_num, animate_flg, offset = -10) ->
   content = $view[0].querySelector(".content")
   target = content.childNodes[res_num - 1]
