@@ -452,6 +452,11 @@ app.main = ->
       #タブを閉じる
       else if $this.is(".close")
         $source_tab.tab("remove", tab_id: source_tab_id)
+      #タブを全て閉じる
+      else if $this.is(".close_all")
+        $source.siblings().andSelf().each ->
+          $source_tab.tab("remove", tab_id: $(@).attr("data-tab_id"))
+          return
       #他のタブを全て閉じる
       else if $this.is(".close_all_other")
         $source.siblings().each ->
