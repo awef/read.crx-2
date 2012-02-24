@@ -568,7 +568,7 @@ asyncTest "2chのスレの取得/更新テスト", 51, ->
     last_dat: delta_dat
   return
 
-asyncTest "404時はrejectする", 9, ->
+asyncTest "2chの存在しないスレを取得しようとした場合", 10, ->
   dat_url = "http://__mockjax.2ch.net/dummy/dat/404.dat"
 
   $.mockjax
@@ -576,6 +576,17 @@ asyncTest "404時はrejectする", 9, ->
     status: 404
     headers:
       etag: null
+    responseText: """
+      <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+      <html><head>
+      <title>404 Not Found</title>
+      </head><body>
+      <h1>Not Found</h1>
+      <p>The requested URL /dummy/dat/404.dat was not found on this server.</p>
+      <hr>
+      <address>Apache/2.2.21 (Unix) mod_ssl/2.2.21 OpenSSL/0.9.8q PHP/5.3.8 mod_antiloris/0.4 Server at __mockjax.2ch.net Port 80</address>
+      </body></html>
+    """
     response: ->
       QUnit.step(2)
       return
@@ -596,6 +607,7 @@ asyncTest "404時はrejectする", 9, ->
         QUnit.step(6)
         strictEqual(thread.title, null)
         deepEqual(thread.res, null)
+        strictEqual(thread.message, "スレッドの読み込みに失敗しました。")
         start()
         return
 
