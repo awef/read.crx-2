@@ -1,6 +1,6 @@
 {
   "name" : "read.crx 2",
-  "version" : "0.50",
+  "version" : "0.51",
   "description" : "2chブラウザ",
   "minimum_chrome_version" : "17",
   "content_security_policy": "default-src 'self'; img-src 'self' http://* https://* data:; style-src 'self' 'unsafe-inline'; connect-src 'self' http://*; frame-src 'self' http://*",
