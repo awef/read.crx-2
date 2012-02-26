@@ -253,7 +253,7 @@ app.view_module.tool_menu = ($view) ->
     return
 
   # Chromeで直接開く
-  $view.find(".button_link").on "click", ->
+  do ->
     url = $view.attr("data-url")
 
     if url is "bookmark"
@@ -262,7 +262,7 @@ app.view_module.tool_menu = ($view) ->
     else
       url = app.safe_href(url)
 
-    open(url)
+    $view.find(".button_link > a").attr("href", url)
     return
 
   # タイトルをコピー

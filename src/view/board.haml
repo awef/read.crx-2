@@ -23,7 +23,8 @@
       .button.button_reload
       .button.button_tool
         %ul
-          %li.button_link Chromeで直接開く
+          %li.button_link
+            %a(target="_blank") Chromeで直接開く
       %select.sort_item_selector
         %option(label="標準" data-sort_order="asc" data-sort_type="num") data-thread_number
         %option(label="ブックマーク") 0
