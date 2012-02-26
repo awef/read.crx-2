@@ -18,6 +18,7 @@
         return
 
       .on "mousedown", ".tab_tabbar > li", (e) ->
+        if e.which is 3 then return
         if $(e.target).is(".tab_tabbar > li > img") then return
         (if e.which is 2 then tab_remove else tab_select)
           .call(that, {tab_id: $(@).attr("data-tab_id")})
