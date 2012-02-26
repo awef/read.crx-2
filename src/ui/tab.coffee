@@ -17,9 +17,10 @@
           tab_select.call(that, {tab_id: next.getAttribute("data-tab_id")})
         return
 
-      .delegate ".tab_tabbar li", "mousedown", (e) ->
+      .on "mousedown", ".tab_tabbar > li", (e) ->
+        if $(e.target).is(".tab_tabbar > li > img") then return
         (if e.which is 2 then tab_remove else tab_select)
-          .call(that, {tab_id: $(this).attr("data-tab_id")})
+          .call(that, {tab_id: $(@).attr("data-tab_id")})
         return
 
       .delegate ".tab_tabbar img", "mousedown", (e) ->
