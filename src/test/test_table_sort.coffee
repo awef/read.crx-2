@@ -43,7 +43,6 @@ test "thがクリックされた場合、降順ソートする", 7, ->
       ["02", "bbb", "21"]
       ["01", "aaa", "123"]
     ])
-    console.log arguments
     deepEqual(ex, {
       sort_index: 0
       sort_order: "desc"
