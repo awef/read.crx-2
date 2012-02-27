@@ -4,6 +4,9 @@ app.boot "/view/history.html", ->
   app.view_module.view($view)
 
   load = ->
+    return if $view.hasClass("loading")
+    return if $view.find(".button_reload").hasClass("disabled")
+
     $view.addClass("loading")
     app.history.get(undefined, 500).done (data) ->
       $view.find("tbody").empty()
@@ -24,6 +27,11 @@ app.boot "/view/history.html", ->
       $view.find("tbody").append(frag)
       $view.removeClass("loading")
       $view.trigger("view_loaded")
+      $view.find(".button_reload").addClass("disabled")
+      setTimeout(->
+        $view.find(".button_reload").removeClass("disabled")
+        return
+      , 5000)
       return
 
   load()
