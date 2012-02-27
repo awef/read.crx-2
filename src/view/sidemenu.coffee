@@ -72,6 +72,8 @@ app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
     load = ->
       $view.addClass("loading")
       BBSMenu.get (res) ->
+        $view.find("h3:not(:first-of-type), ul:not(:first-of-type)").remove()
+
         if res.message?
           app.message.send("notify", {
             message: res.message
@@ -99,7 +101,6 @@ app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
       return
 
     $view.on "request_reload", ->
-      $view.find("h3:not(:first-of-type), ul:not(:first-of-type)").remove()
       load()
       return
 
