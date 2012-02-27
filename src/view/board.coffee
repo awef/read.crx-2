@@ -5,9 +5,7 @@ app.boot "/view/board.html", ->
   opened_at = Date.now()
 
   $view = $(document.documentElement)
-  $view
-    .attr("data-url", url)
-    .addClass("loading")
+  $view.attr("data-url", url)
 
   $view
     .find("table")
@@ -42,16 +40,16 @@ app.boot "/view/board.html", ->
   app.view_module.board_title($view)
   app.view_module.tool_menu($view)
 
-  app.board_title_solver.ask({url})
-    .always (title) ->
-      if title
-        document.title = title
-      app.history.add(url, title or url, opened_at)
+  app.board_title_solver.ask({url}).always (title) ->
+    if title
+      document.title = title
+    app.history.add(url, title or url, opened_at)
+    return
 
   $view.on "request_reload", ->
     return if $view.hasClass("loading")
     return if $view.find(".button_reload").hasClass("disabled")
-    location.reload(true)
+    app.view_board._load($view)
     return
 
   #ブックマーク更新処理
@@ -62,6 +60,7 @@ app.boot "/view/board.html", ->
           .find("tr[data-href=\"#{message.bookmark.url}\"]")
             .find("td:nth-child(1)")
               .text(if message.type is "added" then "★" else "")
+    return
 
   #read_state更新時処理
   app.message.add_listener "read_state_updated", (message) ->
@@ -70,19 +69,16 @@ app.boot "/view/board.html", ->
       if tr
         unread = message.read_state.received - message.read_state.read
         tr.children[3].textContent = Math.max(unread, 0) or ""
+    return
 
-  app.view_board._draw($view)
-    .done ->
-      $button = $view.find(".button_reload")
-      $button.addClass("disabled")
-      setTimeout ->
-        $button.removeClass("disabled")
-      , 1000 * 5
-      app.message.send("request_update_read_state", {board_url: url})
+  app.view_board._load($view)
+  return
 
 app.view_board = {}
 
-app.view_board._draw = ($view) ->
+app.view_board._load = ($view) ->
+  $view.addClass("loading")
+
   url = $view.attr("data-url")
 
   deferred_get_read_state = app.read_state.get_by_board(url)
@@ -99,6 +95,8 @@ app.view_board._draw = ($view) ->
         deferred.resolve(res.data)
       else
         deferred.reject()
+      return
+    return
 
   $.when(deferred_get_read_state, deferred_board_get)
     .done (array_of_read_state, board) ->
@@ -109,6 +107,7 @@ app.view_board._draw = ($view) ->
       now = Date.now()
 
       tbody = $view.find("tbody")[0]
+      $(tbody).empty()
       for thread, thread_key in board
         tr = document.createElement("tr")
         tr.className = "open_in_rcrx"
@@ -155,7 +154,16 @@ app.view_board._draw = ($view) ->
         tbody.appendChild(tr)
 
       $view.find("table").table_sort("update")
+      return
 
     .always ->
       $view.removeClass("loading")
       $view.trigger("view_loaded")
+
+      $button = $view.find(".button_reload")
+      $button.addClass("disabled")
+      setTimeout((-> $button.removeClass("disabled")), 1000 * 5)
+      app.message.send("request_update_read_state", {board_url: url})
+      return
+
+    .promise()
