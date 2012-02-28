@@ -423,7 +423,7 @@ app.boot "/view/thread.html", ->
         @_elm.style["display"] = "none"
         return
 
-    update_footer = ->
+    update_thread_footer = ->
       if scroll_left is 0
         next_unread.show()
         search_next_thread.show()
@@ -434,12 +434,12 @@ app.boot "/view/thread.html", ->
 
     $view
       .on "tab_selected view_loaded", ->
-        update_footer()
+        update_thread_footer()
         return
 
       .find(".content").on "scroll", ->
         update_scroll_left()
-        update_footer()
+        update_thread_footer()
         return
       .end()
 
