@@ -7,15 +7,23 @@ def scss(src, output)
 end
 
 def coffee(src, output)
-  sh "cat #{src} | coffee -cbsp > #{output}"
+  if src.is_a? Array
+    src = src.join(" ")
+  end
+
+  sh "coffee -cbj #{output} #{src}"
 end
 
-p_cp = proc do |t|
-  sh "cp #{t.prerequisites[0]} #{t.name}"
+def file_coffee(target, src)
+  file target => src, do
+    coffee(src, target)
+  end
 end
 
-p_coffee = proc do |t|
-  coffee(t.prerequisites.join(" "), t.name)
+def file_copy(target, src)
+  file target => src, do
+    sh "cp #{src} #{target}"
+  end
 end
 
 rule ".html" => "%{^debug/,src/}X.haml" do |t|
@@ -80,15 +88,15 @@ task :default => [
 
 directory "debug"
 
-file "debug/manifest.json" => "src/manifest.json", &p_cp
+file_copy "debug/manifest.json", "src/manifest.json"
 
-file "debug/app_core.js" => FileList["src/core/*.coffee"], &p_coffee
+file_coffee "debug/app_core.js", FileList["src/core/*.coffee"]
 
-file "debug/cs_search.js" => [
+file_coffee "debug/cs_search.js", [
   "src/app.coffee",
   "src/core/url.coffee",
   "src/cs_search.coffee"
-], &p_coffee
+]
 
 #img
 lambda {
@@ -126,7 +134,7 @@ lambda {
       src/image/svg/read.crx.svg #{t.name}"
   end
 
-  file "debug/img/loading.svg" => "src/image/svg/loading.svg", &p_cp
+  file_copy "debug/img/loading.svg", "src/image/svg/loading.svg"
 }.call()
 
 #ui
@@ -137,7 +145,7 @@ lambda {
     scss("src/ui/ui.scss", t.name)
   end
 
-  file "debug/ui.js" => FileList["src/ui/*.coffee"], &p_coffee
+  file_coffee "debug/ui.js", FileList["src/ui/*.coffee"]
 }.call()
 
 #View
@@ -173,14 +181,14 @@ lambda {
 lambda {
   task :zombie => ["debug/zombie.html", "debug/zombie.js"]
 
-  file "debug/zombie.js" => [
+  file_coffee "debug/zombie.js", [
     "src/core/url.coffee",
     "src/core/cache.coffee",
     "src/core/read_state.coffee",
     "src/core/history.coffee",
     "src/core/bookmark.coffee",
     "src/zombie.coffee"
-  ], &p_coffee
+  ]
 }.call()
 
 #Write
@@ -202,16 +210,16 @@ lambda {
     scss("src/write/write.scss", t.name)
   end
 
-  file "debug/write/write.js" => [
+  file_coffee "debug/write/write.js", [
     "src/core/url.coffee",
     "src/write/write.coffee"
-  ], &p_coffee
+  ]
 
-  file "debug/write/cs_write.js" => [
+  file_coffee "debug/write/cs_write.js", [
     "src/app.coffee",
     "src/core/url.coffee",
     "src/write/cs_write.coffee"
-  ], &p_coffee
+  ]
 }.call()
 
 #Test
@@ -232,9 +240,9 @@ lambda {
   directory "debug/test"
 
   directory "debug/test/qunit"
-  file "debug/test/qunit/qunit.js" => "lib/qunit/qunit/qunit.js", &p_cp
-  file "debug/test/qunit/qunit.css" => "lib/qunit/qunit/qunit.css", &p_cp
-  file "debug/test/qunit/qunit-step.js" => "lib/qunit/addons/step/qunit-step.js", &p_cp
+  file_copy "debug/test/qunit/qunit.js", "lib/qunit/qunit/qunit.js"
+  file_copy "debug/test/qunit/qunit.css", "lib/qunit/qunit/qunit.css"
+  file_copy "debug/test/qunit/qunit-step.js", "lib/qunit/addons/step/qunit-step.js"
 
   file "debug/test/jquery.mockjax.js" => [
     "lib/jquery-mockjax/jquery.mockjax.js",
@@ -249,7 +257,7 @@ lambda {
     cp "lib/jquery-mockjax/jquery.mockjax.js", "debug/test/jquery.mockjax.js"
   end
 
-  file "debug/test/test.js" => FileList["src/test/test_*.coffee"], &p_coffee
+  file_coffee "debug/test/test.js", FileList["src/test/test_*.coffee"]
 }.call()
 
 #jQuery
@@ -260,7 +268,7 @@ lambda {
   ]
 
   directory "debug/lib/jquery"
-  file "debug/lib/jquery/jquery.min.js" => "lib/jquery/dist/jquery.min.js", &p_cp
+  file_copy "debug/lib/jquery/jquery.min.js", "lib/jquery/dist/jquery.min.js"
   file "lib/jquery/dist/jquery.min.js" => [
     "lib/jquery_license.patch",
     "lib/jquery_csp.patch",
@@ -286,7 +294,7 @@ lambda {
     "debug/lib/textar/IPA_Font_License_Agreement_v1.0.txt"
   ]
   directory "debug/lib/textar"
-  file "debug/lib/textar/textar-min.woff" => "lib/textar/textar-min.woff", &p_cp
-  file "debug/lib/textar/README" => "lib/textar/README", &p_cp
-  file "debug/lib/textar/IPA_Font_License_Agreement_v1.0.txt" => "lib/textar/IPA_Font_License_Agreement_v1.0.txt", &p_cp
+  file_copy "debug/lib/textar/textar-min.woff", "lib/textar/textar-min.woff"
+  file_copy "debug/lib/textar/README", "lib/textar/README"
+  file_copy "debug/lib/textar/IPA_Font_License_Agreement_v1.0.txt", "lib/textar/IPA_Font_License_Agreement_v1.0.txt"
 }.call()
