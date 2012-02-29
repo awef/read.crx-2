@@ -37,7 +37,11 @@ html {
 }
 
 article {
-  margin: 20px 5px;
+  cursor: pointer;
+  padding: 0 5px 20px 5px;
+  &:first-child {
+    padding-top: 10px;
+  }
 }
 
 .last:not(:last-child):after {
@@ -60,7 +64,6 @@ header {
 }
 
 .num {
-  cursor: pointer;
   &:after {
     content: " ";
   }
@@ -131,6 +134,25 @@ header {
   }
 }
 
+.res_footer {
+  display: inline-block;
+  border: 1px solid hsl(0, 0%, 50%);
+  font-size: 0;
+}
+
+.res_footer_item {
+  display: inline-block;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 12px;
+  &:hover {
+    background-color: hsla(0, 0%, 50%, 0.25);
+  }
+  &:not(:first-child) {
+    border-left: 1px solid hsl(0, 0%, 50%);
+  }
+}
+
 .popup {
   position: fixed;
   z-index: $z-index_popup;
@@ -141,7 +163,7 @@ header {
   border: 3px solid #666;
   border-radius: 3px;
   > article {
-    margin: 10px;
+    padding: 10px;
   }
   &.popup_linkinfo {
     border: none;
@@ -200,7 +222,7 @@ header {
   display: none;
 }
 
-footer {
+.thread_footer {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -283,14 +305,14 @@ footer {
     ~ .loading_overlay {
       display: none !important;
     }
-    ~ footer .loading_indicator {
+    ~ .thread_footer .loading_indicator {
       display: block !important;
     }
     &:empty {
       ~ .loading_overlay {
         display: block !important;
       }
-      ~ footer .loading_indicator {
+      ~ .thread_footer .loading_indicator {
         display: none !important;
       }
     }
@@ -312,8 +334,8 @@ footer {
   $no_hit_message_color,
   $jump_panel_color,
   $jump_panel_background_color,
-  $footer_button_background_color,
-  $footer_button_color,
+  $thread_footer_button_background_color,
+  $thread_footer_button_color,
   $thread_res_info_color
 ) {
   & {
@@ -379,8 +401,8 @@ footer {
   }
 
   .next_unread, .next_unread:visited, .search_next_thread {
-    background-color: $footer_button_background_color;
-    color: $footer_button_color;
+    background-color: $thread_footer_button_background_color;
+    color: $thread_footer_button_color;
   }
 }
 
@@ -400,8 +422,8 @@ footer {
     $no_hit_message_color: #444,
     $jump_panel_background_color: rgba(#000, 0.8),
     $jump_panel_color: #fff,
-    $footer_button_background_color: #eee,
-    $footer_button_color: #222,
+    $thread_footer_button_background_color: #eee,
+    $thread_footer_button_color: #222,
     $thread_res_info_color: #666
   );
 }
@@ -422,8 +444,8 @@ footer {
     $no_hit_message_color: #ddd,
     $jump_panel_background_color: rgba(#333, 0.8),
     $jump_panel_color: #ccc,
-    $footer_button_background_color: #333,
-    $footer_button_color: #ddd,
+    $thread_footer_button_background_color: #333,
+    $thread_footer_button_color: #ddd,
     $thread_res_info_color: silver
   );
 }

@@ -33,7 +33,7 @@
         %li
           %a.open_in_rcrx
     .content(tabindex="0")
-    %footer
+    %footer.thread_footer
       .loading_indicator 読み込み中
       %a.next_unread.open_in_rcrx
       %button.search_next_thread 次スレ検索
@@ -46,12 +46,12 @@
     .loading_overlay Loading...
 
     #template(hidden)
-      %ul.view_thread_resmenu
-        %li.jump_to_this このレスまでスクロール
-        %li.res_to_this このレスにレス
-        %li.res_to_this2 引用してレス
-        %li.toggle_aa_mode AAモード切り替え
-        %li.res_permalink このレスを直接開く
+      %footer.res_footer
+        %span.res_footer_item.jump_to_this このレスまでスクロール
+        %span.res_footer_item.res_to_this 返信
+        %span.res_footer_item.res_to_this2 引用して返信
+        %span.res_footer_item.toggle_aa_mode AAモード切り替え
+        %span.res_footer_item.res_permalink Chromeで直接開く
       .next_thread_list
         %img.close(src="/img/close_16x16.png")
         %h1
