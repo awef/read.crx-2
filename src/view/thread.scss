@@ -60,7 +60,6 @@ header {
 }
 
 .num {
-  cursor: pointer;
   &:after {
     content: " ";
   }
@@ -128,6 +127,25 @@ header {
         height: 50px;
       }
     }
+  }
+}
+
+.res_footer {
+  display: inline-block;
+  border: 1px solid hsl(0, 0%, 50%);
+  font-size: 0;
+}
+
+.res_footer_item {
+  display: inline-block;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 12px;
+  &:hover {
+    background-color: hsla(0, 0%, 50%, 0.25);
+  }
+  &:not(:first-child) {
+    border-left: 1px solid hsl(0, 0%, 50%);
   }
 }
 

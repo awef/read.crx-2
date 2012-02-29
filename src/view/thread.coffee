@@ -104,31 +104,32 @@ app.boot "/view/thread.html", ->
         $("<div>").append($(res).clone())
       return
 
-    #コンテキストメニュー 表示
-    .delegate ".num", "click contextmenu", (e) ->
-      if e.type is "contextmenu"
-        e.preventDefault()
+    #レスメニュー表示
+    .on "click", "article", (e) ->
+      return if $(e.target).is("a, .link, .freq")
+      append_flg = $(@).has(".res_footer").length is 0
+      $view
+        .find("article > .res_footer")
+          .hide(100, (-> $(@).remove(); return))
+      if append_flg
+        $menu = $view.find("#template > .res_footer").clone()
 
-      app.defer =>
-        $menu = $("#template > .view_thread_resmenu").clone()
-        $menu.data("contextmenu_source", this)
-
-        if not(app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"])
+        unless app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"]
           $menu.find(".res_to_this, .res_to_this2").remove()
 
-        if not @webkitMatchesSelector(".popup > article > header > .num")
+        unless $(@).is(".popup > article")
           $menu.find(".jump_to_this").remove()
 
-        $menu.appendTo($view)
-        $.contextmenu($menu, e.clientX, e.clientY).appendTo(@parentNode)
-
+        $menu
+          .hide()
+          .appendTo(@)
+          .show(100)
       return
 
-    #コンテキストメニュー 項目クリック
-    .delegate ".view_thread_resmenu > *", "click", ->
-      $this = $(this)
-      $res = $($this.parent().data("contextmenu_source"))
-        .closest("article")
+    #レスメニュー項目クリック
+    .on "click", ".res_footer > span", "click", ->
+      $this = $(@)
+      $res = $this.closest("article")
 
       if $this.hasClass("jump_to_this")
         app.view_thread._jump_to_res($view, +$res.find(".num").text(), true)
@@ -147,8 +148,6 @@ app.boot "/view/thread.html", ->
 
       else if $this.hasClass("res_permalink")
         open(view_url + $res.find(".num").text())
-
-      $this.parent().remove()
 
       return
 
