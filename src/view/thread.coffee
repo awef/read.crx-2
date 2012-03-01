@@ -106,7 +106,7 @@ app.boot "/view/thread.html", ->
 
     #レスメニュー表示
     .on "click", "article", (e) ->
-      return if $(e.target).is("a, .link, .freq")
+      return if $(e.target).is("a, .link, .freq, .name_num")
       append_flg = $(@).has(".res_footer").length is 0
       $view
         .find("article > .res_footer")
