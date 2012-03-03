@@ -1,20 +1,17 @@
-:ruby
-  app_version = "0.51"
-
 !!! 5
-%html.view.view_bookmark(data-app-version="#{app_version}" data-url="bookmark")
+%html.view.view_bookmark(data-app-version="#{MANIFEST["version"]}" data-url="bookmark")
   %head
     %meta(charset="utf-8")
     %meta(http-equiv="X-Frame-Options" content="SAMEORIGIN")
     %title ブックマーク
-    %link(rel="stylesheet" href="/ui.css?v=#{app_version}")
-    %link(rel="stylesheet" href="bookmark.css?v=#{app_version}")
-    %script(src="/lib/jquery/jquery.min.js?v=#{app_version}")
-    %script(src="/ui.js?v=#{app_version}")
-    %script(src="/app.js?v=#{app_version}")
-    %script(src="app_proxy.js?v=#{app_version}")
-    %script(src="module.js?v=#{app_version}")
-    %script(src="bookmark.js?v=#{app_version}")
+    %link(rel="stylesheet" href="/ui.css?v=#{MANIFEST["version"]}")
+    %link(rel="stylesheet" href="bookmark.css?v=#{MANIFEST["version"]}")
+    %script(src="/lib/jquery/jquery.min.js?v=#{MANIFEST["version"]}")
+    %script(src="/ui.js?v=#{MANIFEST["version"]}")
+    %script(src="/app.js?v=#{MANIFEST["version"]}")
+    %script(src="app_proxy.js?v=#{MANIFEST["version"]}")
+    %script(src="module.js?v=#{MANIFEST["version"]}")
+    %script(src="bookmark.js?v=#{MANIFEST["version"]}")
   %body
     %nav.nav_bar
       %input.searchbox_thread_title

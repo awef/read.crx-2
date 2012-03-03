@@ -1,5 +1,4 @@
 sed -r -e "s/\"0\.[0-9]+\"/\"0\.$1\"/" -i src/manifest.json
-find src -name *.haml -exec sed -r -e "s/app_version = \"0\.[0-9]+\"/app_version = \"0.$1\"/" -i {} \;
 
 rake clean
 rake

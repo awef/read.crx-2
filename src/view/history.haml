@@ -1,18 +1,15 @@
-:ruby
-  app_version = "0.51"
-
 !!! 5
-%html.view.view_history(data-app-version="#{app_version}")
+%html.view.view_history(data-app-version="#{MANIFEST["version"]}")
   %head
     %meta(charset="utf-8")
     %meta(http-equiv="X-Frame-Options" content="SAMEORIGIN")
     %title 閲覧履歴
-    %link(rel="stylesheet" href="history.css?v=#{app_version}")
-    %script(src="/lib/jquery/jquery.min.js?v=#{app_version}")
-    %script(src="/app.js?v=#{app_version}")
-    %script(src="app_proxy.js?v=#{app_version}")
-    %script(src="module.js?v=#{app_version}")
-    %script(src="history.js?v=#{app_version}")
+    %link(rel="stylesheet" href="history.css?v=#{MANIFEST["version"]}")
+    %script(src="/lib/jquery/jquery.min.js?v=#{MANIFEST["version"]}")
+    %script(src="/app.js?v=#{MANIFEST["version"]}")
+    %script(src="app_proxy.js?v=#{MANIFEST["version"]}")
+    %script(src="module.js?v=#{MANIFEST["version"]}")
+    %script(src="history.js?v=#{MANIFEST["version"]}")
   %body
     %nav.nav_bar
       .button.button_reload

@@ -1,14 +1,11 @@
-:ruby
-  app_version = "0.51"
-
 !!! 5
-%html(data-app-version="#{app_version}")
+%html(data-app-version="#{MANIFEST["version"]}")
   %head
     %meta(charset="utf-8")
     %meta(http-equiv="X-Frame-Options" content="SAMEORIGIN")
     %title read.crx 2
-    %script(src="/lib/jquery/jquery.min.js?v=#{app_version}")
-    %script(src="/app.js?v=#{app_version}")
-    %script(src="/zombie.js?v=#{app_version}")
+    %script(src="/lib/jquery/jquery.min.js?v=#{MANIFEST["version"]}")
+    %script(src="/app.js?v=#{MANIFEST["version"]}")
+    %script(src="/zombie.js?v=#{MANIFEST["version"]}")
   %body
     read.crx 2 を終了しています

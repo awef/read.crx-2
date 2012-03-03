@@ -1,5 +1,5 @@
 def haml(src, output)
-  sh "haml -q #{src} #{output}"
+  sh "haml -r ./haml_requirement.rb -q #{src} #{output}"
 end
 
 def scss(src, output)
