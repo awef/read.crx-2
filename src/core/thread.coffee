@@ -18,7 +18,7 @@ app.module "thread", ["jquery", "cache"], ($, Cache, callback) ->
   parse_ch = (text) ->
     # name, mail, other, message, thread_title
     reg = /^(.*?)<>(.*?)<>(.*?)<>(.*?)<>(.*?)(?:<>)?$/
-
+    number_of_broken = 0
     thread = res: []
     first_flg = true
     for line in text.split("\n")
@@ -34,12 +34,17 @@ app.module "thread", ["jquery", "cache"], ($, Cache, callback) ->
           other: reg_res[3]
       else
         continue if line is ""
+        number_of_broken++
         thread.res.push
           name: "</b>データ破損<b>"
           mail: ""
           message: "データが破損しています"
           other: ""
-    if thread.res.length > 0 then thread else null
+
+    if thread.res.length > 0 and thread.res.length > number_of_broken
+      thread
+    else
+      null
 
   parse_machi = (text) ->
     # res_num, name, mail, other, message, thread_title

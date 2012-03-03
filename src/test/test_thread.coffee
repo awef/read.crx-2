@@ -723,3 +723,21 @@ asyncTest "BBSPINKのスレをパース出来る", 15, ->
     dat: @pink_dat
     thread_expected: @pink_expected
   return
+
+module "Thread.parse"
+
+asyncTest "[2ch]全ての行が破損データだった場合、nullを返す", 1, ->
+  #2chで一部のスレを開いた時、302 -> 200で404.htmlが返される挙動になる事への対策
+  html = """
+  <html>
+    <head><title>test</title></head>
+    <body>
+      Error
+    </body>
+  </html>
+  """
+  app.module null, ["thread"], (Thread) ->
+    strictEqual(Thread.parse("http://hibari.2ch.net/test/read.cgi/pc/123/", html), null)
+    start()
+    return
+  return
