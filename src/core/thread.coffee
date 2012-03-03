@@ -116,6 +116,7 @@ app.module "thread", ["jquery", "cache"], ($, Cache, callback) ->
             #通信が生じる場合のみ、notifyでキャッシュを送出する
             app.defer =>
               tmp = Thread.parse(@url, cache.data)
+              return unless tmp?
               @res = tmp.res
               @title = tmp.title
               res_deferred.notify()
