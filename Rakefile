@@ -1,3 +1,46 @@
+task :default => [
+  "debug",
+  "debug/manifest.json",
+  "debug/lib",
+  "debug/app.js",
+  "debug/app_core.js",
+  "debug/cs_addlink.js",
+  "debug/cs_search.js",
+  :img,
+  :ui,
+  :view,
+  :zombie,
+  :write,
+  :build_test,
+  :jquery,
+  :textar
+]
+
+task :clean do
+  sh "rm -f ./read.crx_2.zip"
+  sh "rm -rf debug"
+  #jQuery
+  cd "lib/jquery" do
+    sh "git checkout -f"
+    sh "make clean"
+  end
+  cd "lib/jquery-mockjax" do
+    sh "git checkout -f"
+  end
+end
+
+task :pack do
+  Rake::Task[:clean].invoke
+  Rake::Task[:default].invoke
+  sh "zip -9 -r -X -T ./read.crx_2.zip ./debug -x ./debug/test/\*"
+  sh "clamscan ./read.crx_2.zip"
+  Rake::Task[:test].invoke
+end
+
+task :test do
+  sh "google-chrome chrome-extension://pjgcfbpjgcmblkffcjfmdgcgmdhdaohh/test/test.html"
+end
+
 def haml(src, output)
   sh "haml -r ./haml_requirement.rb -q #{src} #{output}"
 end
@@ -55,36 +98,6 @@ rule ".png" => "src/image/svg/%{_\\d+x\\d+(?:_\\w+)?$,}n.svg" do |t|
       #{t.prerequisites[0]} #{t.name}"
   end
 end
-
-task :clean do
-  sh "rm -rf debug"
-  #jQuery
-  cd "lib/jquery" do
-    sh "git checkout -f"
-    sh "make clean"
-  end
-  cd "lib/jquery-mockjax" do
-    sh "git checkout -f"
-  end
-end
-
-task :default => [
-  "debug",
-  "debug/manifest.json",
-  "debug/lib",
-  "debug/app.js",
-  "debug/app_core.js",
-  "debug/cs_addlink.js",
-  "debug/cs_search.js",
-  :img,
-  :ui,
-  :view,
-  :zombie,
-  :write,
-  :test,
-  :jquery,
-  :textar
-]
 
 directory "debug"
 
@@ -224,7 +237,7 @@ lambda {
 
 #Test
 lambda {
-  task :test => [
+  task :build_test => [
     "debug/test",
     "debug/test/qunit",
     "debug/test/qunit/qunit.js",
