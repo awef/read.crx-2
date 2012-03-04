@@ -38,7 +38,13 @@ task :pack do
 end
 
 task :test do
-  sh "google-chrome chrome-extension://pjgcfbpjgcmblkffcjfmdgcgmdhdaohh/test/test.html"
+  sh "google-chrome chrome-extension://#{debug_id}/test/test.html"
+end
+
+def debug_id
+  require "digest"
+  hash = Digest::SHA256.hexdigest(File.absolute_path("debug"))
+  hash[0...32].tr("0-9a-f", "a-p")
 end
 
 def haml(src, output)
