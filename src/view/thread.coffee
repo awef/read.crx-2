@@ -114,6 +114,10 @@ app.boot "/view/thread.html", ->
       if append_flg
         $menu = $view.find("#template > .res_footer").clone()
 
+        $menu
+          .find(".res_permalink")
+            .attr("href", app.safe_href(view_url + $(@).find(".num").text()))
+
         unless app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"]
           $menu.find(".res_to_this, .res_to_this2").remove()
 
@@ -145,9 +149,6 @@ app.boot "/view/thread.html", ->
 
       else if $this.hasClass("toggle_aa_mode")
         $res.toggleClass("aa")
-
-      else if $this.hasClass("res_permalink")
-        open(view_url + $res.find(".num").text())
 
       return
 

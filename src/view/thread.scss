@@ -152,6 +152,11 @@ header {
   }
 }
 
+.res_permalink {
+  color: inherit !important;
+  text-decoration: none;
+}
+
 .popup {
   position: fixed;
   z-index: $z-index_popup;
