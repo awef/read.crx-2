@@ -31,7 +31,7 @@
     setTimeout(remove, 300)
     return
 
-  $.popup = (default_parent, popup, x, y, source) ->
+  $.popup = (default_parent, popup, mouse_x, mouse_y, source) ->
     $popup = $(popup)
     $popup
       .addClass("popup active")
@@ -61,16 +61,36 @@
       if not ($this = $(@)).is($popup)
         popup_destroy($this)
 
-    #画面内に収まるよう、表示位置を修正
-    if x < document.body.offsetWidth / 5 * 3
-      left = x + 20
-      $popup.css("left", "#{left}px")
-      $popup.css("max-width", document.body.offsetWidth - left - 20)
-    else
-      right = document.body.offsetWidth - x + 20
-      $popup.css("right", "#{right}px")
-      $popup.css("max-width", document.body.offsetWidth - right - 20)
-    $popup.css("top", "#{Math.min(y, document.body.offsetHeight - $popup.outerHeight()) - 20}px")
+    #表示位置決定
+    do ->
+      margin = 20
+
+      #カーソルの上下左右のスペースを測定
+      space =
+        left: mouse_x
+        right: document.body.offsetWidth - mouse_x
+        top: mouse_y
+        bottom: document.body.offsetHeight - mouse_y
+
+      #通常はカーソル左か右のスペースを用いるが、そのどちらもが狭い場合は上下に配置する
+      if Math.max(space.left, space.right) > 400
+        #例え右より左が広くても、右に十分なスペースが有れば右に配置
+        if space.right > 350
+          $popup.css("left", "#{space.left + margin}px")
+          $popup.css("max-width", document.body.offsetWidth - space.left - margin * 2)
+        else
+          $popup.css("right", "#{space.right + margin}px")
+          $popup.css("max-width", document.body.offsetWidth - space.right - margin * 2)
+        $popup.css("top", "#{Math.min(space.top, document.body.offsetHeight - $popup.outerHeight()) - margin}px")
+      else
+        #例え上より下が広くても、上に十分なスペースが有れば上に配置
+        if space.top > Math.min(250, space.bottom)
+          $popup.css("bottom", space.bottom + margin)
+        else
+          $popup.css("top", document.body.offsetHeight - space.bottom + margin)
+        $popup.css("left", margin)
+        $popup.css("max-width", document.body.offsetWidth - margin * 2)
+      return
 
     $(source)
       .data("popup", $popup[0])
