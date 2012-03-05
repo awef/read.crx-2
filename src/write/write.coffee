@@ -6,27 +6,30 @@ app.boot "/write/write.html", ->
   arg.mail or= app.config.get("default_mail")
   arg.message or= ""
 
-  chrome.webRequest.onBeforeSendHeaders.addListener(
-    (req) ->
-      origin = chrome.extension.getURL("")[...-1]
-      is_same_origin = req.requestHeaders.some((header) -> header.name is "Origin" and header.value is origin)
-      if req.method is "POST" and is_same_origin
-        if (
-          ///^http://\w+\.2ch\.net/test/bbs\.cgi ///.test(req.url) or
-          ///^http://jbbs\.livedoor\.jp/bbs/write\.cgi/ ///.test(req.url)
-        )
-          req.requestHeaders.push(name: "Referer", value: arg.url)
-          return requestHeaders: req.requestHeaders
-      return
-    {
-      urls: [
-        "http://*.2ch.net/test/bbs.cgi*"
-        "http://jbbs.livedoor.jp/bbs/write.cgi/*"
-      ]
-      types: ["sub_frame"]
-    }
-    ["requestHeaders", "blocking"]
-  )
+  chrome.tabs.getCurrent (tab) ->
+    chrome.webRequest.onBeforeSendHeaders.addListener(
+      (req) ->
+        origin = chrome.extension.getURL("")[...-1]
+        is_same_origin = req.requestHeaders.some((header) -> header.name is "Origin" and header.value is origin)
+        if req.method is "POST" and is_same_origin
+          if (
+            ///^http://\w+\.2ch\.net/test/bbs\.cgi ///.test(req.url) or
+            ///^http://jbbs\.livedoor\.jp/bbs/write\.cgi/ ///.test(req.url)
+          )
+            req.requestHeaders.push(name: "Referer", value: arg.url)
+            return requestHeaders: req.requestHeaders
+        return
+      {
+        tabId: tab.id
+        types: ["sub_frame"]
+        urls: [
+          "http://*.2ch.net/test/bbs.cgi*"
+          "http://jbbs.livedoor.jp/bbs/write.cgi/*"
+        ]
+      }
+      ["requestHeaders", "blocking"]
+    )
+    return
 
   $view = $(".view_write")
 
