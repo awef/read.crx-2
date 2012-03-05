@@ -135,15 +135,14 @@ header {
 
 .res_footer {
   display: inline-block;
-  border: 1px solid hsl(0, 0%, 50%);
-  font-size: 0;
+  font-size: 12px;
 }
 
 .res_footer_item {
   display: inline-block;
   cursor: pointer;
   padding: 5px;
-  font-size: 12px;
+  border: 1px solid hsl(0, 0%, 50%);
   &:hover {
     background-color: hsla(0, 0%, 50%, 0.25);
   }
