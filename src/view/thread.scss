@@ -38,8 +38,16 @@ html {
 
 article {
   padding: 0 5px 20px 5px;
+  cursor: pointer;
   &:first-child {
     padding-top: 10px;
+  }
+}
+
+.link, .freq, .name_num {
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
   }
 }
 
@@ -68,10 +76,6 @@ header {
   }
 }
 
-.name_num {
-  cursor: pointer;
-}
-
 .one:not(:first-child) > header > .name:before {
   content: "(>>1)";
   margin-right: 1ex;
@@ -93,14 +97,10 @@ header {
 
 .id {
   white-space: nowrap;
-  &.link, &.freq {
-    cursor: pointer;
-  }
 }
 
 .rep {
   white-space: nowrap;
-  cursor: pointer;
   margin-left: 0.5ex;
 }
 
