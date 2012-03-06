@@ -32,7 +32,7 @@ end
 task :pack do
   Rake::Task[:clean].invoke
   Rake::Task[:default].invoke
-  sh "zip -9 -r -X -T ./read.crx_2.zip ./debug -x ./debug/test/\*"
+  sh "zip -9 -r -X -T ./read.crx_2.zip ./debug -x ./debug/test/\\*"
   sh "clamscan ./read.crx_2.zip"
   Rake::Task[:test].invoke
 end
