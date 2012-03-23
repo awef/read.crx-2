@@ -38,7 +38,7 @@
           )
           $th.addClass("table_sort_#{sort_order}")
           unless sort_type?
-            sort_type = $th.attr("data-table_sort_type", sort_type)
+            sort_type = $th.attr("data-table_sort_type")
         else if not sort_attribute?
           $th = $this.find(".table_sort_asc, .table_sort_desc")
           if $th.length isnt 1
