@@ -1,15 +1,14 @@
 diff --git a/src/event.js b/src/event.js
-index 4b841bb..b6ebe9a 100644
+index 621464f..0ef5dee 100644
 --- a/src/event.js
 +++ b/src/event.js
-@@ -398,8 +398,8 @@ jQuery.event = {
- 		event.delegateTarget = this;
+@@ -405,8 +405,7 @@ jQuery.event = {
+ 		}
  
  		// Determine handlers that should run if there are delegated events
--		// Avoid disabled elements in IE (#6911) and non-left-click bubbling in Firefox (#3861)
--		if ( delegateCount && !event.target.disabled && !(event.button && event.type === "click") ) {
-+		// Avoid disabled elements in IE (#6911)
-+		if ( delegateCount && !event.target.disabled ) {
+-		// Avoid non-left-click bubbling in Firefox (#3861)
+-		if ( delegateCount && !(event.button && event.type === "click") ) {
++		if ( delegateCount ) {
  
  			// Pregenerate a single jQuery object for reuse with .is()
  			jqcur = jQuery(this);
