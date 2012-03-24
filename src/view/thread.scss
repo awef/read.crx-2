@@ -149,6 +149,11 @@ header {
   &:not(:first-child) {
     border-left: 1px solid hsl(0, 0%, 50%);
   }
+  > input {
+    margin: 0;
+    width: 11px;
+    height: 11px;
+  }
 }
 
 .res_permalink {

@@ -118,6 +118,9 @@ app.boot "/view/thread.html", ->
           .find(".res_permalink")
             .attr("href", app.safe_href(view_url + $(@).find(".num").text()))
 
+        if $(@).is(".aa")
+          $menu.find(".toggle_aa_mode > input").attr("checked", true)
+
         unless app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"]
           $menu.find(".res_to_this, .res_to_this2").remove()
 
@@ -131,7 +134,9 @@ app.boot "/view/thread.html", ->
       return
 
     #レスメニュー項目クリック
-    .on "click", ".res_footer > span", "click", ->
+    .on "click", ".res_footer_item", "click", (e) ->
+      e.preventDefault()
+
       $this = $(@)
       $res = $this.closest("article")
 
