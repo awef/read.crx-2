@@ -25,7 +25,7 @@ app.boot "/view/index.html", ->
       history.pushState(null, null, "/view/index.html")
       app.main()
       if query
-        app.message.send("open", url: query)
+        app.message.send("open", url: query, new_tab: true)
 
 # #app.view_tab_state
 # タブの状態の保存/復元を行う
