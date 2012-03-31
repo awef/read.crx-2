@@ -163,16 +163,15 @@ app.boot "/view/thread.html", ->
         $popup = $("<div>")
         if not @classList.contains("disabled")
           tmp = $view.find(".content")[0].children
-          for anchor in app.util.parse_anchor(this.innerHTML).data
-            for segment in anchor.segments
-              now = segment[0] - 1
-              end = segment[1] - 1
-              while now <= end
-                if tmp[now]
-                  $popup.append(tmp[now].cloneNode(true))
-                else
-                  break
-                now++
+          for segment in app.util.parse_anchor(@innerHTML).segments
+            now = segment[0] - 1
+            end = segment[1] - 1
+            while now <= end
+              if tmp[now]
+                $popup.append(tmp[now].cloneNode(true))
+              else
+                break
+              now++
         else
           $("<div>", {
               text: "指定されたレスの量が極端に多いため、ポップアップを表示しません"
@@ -187,8 +186,8 @@ app.boot "/view/thread.html", ->
       e.preventDefault()
       return if @classList.contains("disabled")
 
-      tmp = app.util.parse_anchor(this.innerHTML)
-      target_res_num = tmp.data[0]?.segments[0]?[0]
+      tmp = app.util.parse_anchor(@innerHTML)
+      target_res_num = tmp.segments[0]?[0]
       if target_res_num?
         app.view_thread._jump_to_res($view, target_res_num, true)
       return
@@ -722,12 +721,11 @@ app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
       #アンカーリンク
       .replace /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?)*/g, ($0) ->
         anchor = app.util.parse_anchor($0)
-        disabled = anchor.target >= 25 or anchor.data.length is 0
+        disabled = anchor.target_count >= 25 or anchor.target_count is 0
 
         #rep_index更新
         if not disabled
-          #アンカー一つづつしか来ない処理なので、決め打ちで
-          for segment in anchor.data[0].segments
+          for segment in anchor.segments
             target = Math.max(1, segment[0])
             while target <= segment[1]
               rep_index[target] = [] unless rep_index[target]?

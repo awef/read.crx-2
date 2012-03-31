@@ -19,9 +19,9 @@ app.util.calc_heat = (now, thread_created, res_count) ->
 # #app.util.anchor_parse
 # 文字列中の全てのアンカーの情報をパースする
 app.util.parse_anchor = (str) ->
-  total =
-    data: []
-    target: 0
+  data =
+    target_count: 0
+    segments: []
 
   str = str.replace(/\u30fc/g, "-")
   str = str.replace /[\uff10-\uff19]/g, ($0) ->
@@ -29,10 +29,6 @@ app.util.parse_anchor = (str) ->
 
   anchor_reg = /(?:&gt;|＞){1,2}\d+(?:\-\d+)?(?:\s*,\s*\d+(?:\-\d+)?)*/g
   while anchor_res = anchor_reg.exec(str)
-    anchor =
-      segments: []
-      target: 0
-
     segment_reg = /(\d+)(?:-(\d+))?/g
     while segment_res = segment_reg.exec(anchor_res[0])
       if segment_res[2]
@@ -42,14 +38,10 @@ app.util.parse_anchor = (str) ->
       else
         segrange_start = segrange_end = +segment_res[1]
 
-      anchor.target += segrange_end - segrange_start + 1
-      anchor.segments.push([segrange_start, segrange_end])
+      data.target_count += segrange_end - segrange_start + 1
+      data.segments.push([segrange_start, segrange_end])
 
-    if anchor.target > 0
-      total.target += anchor.target
-      total.data.push(anchor)
-
-  total
+  data
 
 #2chの鯖移転検出関数
 #移転を検出した場合は移転先のURLをresolveに載せる

@@ -1,73 +1,3 @@
-module("app.util.parse_anchor")
-
-test "アンカーが含まれる文字列を解析する", 4, ->
-  deepEqual(app.util.parse_anchor("&gt;&gt;1"),
-    {data: [{segments: [[1, 1]], target: 1}], target: 1})
-  deepEqual(app.util.parse_anchor("&gt;&gt;100"),
-    {data: [{segments: [[100, 100]], target: 1}], target: 1})
-  deepEqual(app.util.parse_anchor("&gt;&gt;1000"),
-    {data: [{segments: [[1000, 1000]], target: 1}], target: 1})
-  deepEqual(app.util.parse_anchor("&gt;&gt;10000"),
-    {data: [{segments: [[10000, 10000]], target: 1}], target: 1})
-
-test "ハイフンで範囲指定が出来る", 4, ->
-  deepEqual(app.util.parse_anchor("&gt;&gt;1-3"),
-    {data: [{segments: [[1, 3]], target: 3}], target: 3})
-  deepEqual(app.util.parse_anchor("&gt;&gt;10-25"),
-    {data: [{segments: [[10, 25]], target: 16}], target: 16})
-  deepEqual(app.util.parse_anchor("&gt;&gt;1ー3"),
-    {data: [{segments: [[1, 3]], target: 3}], target: 3})
-  deepEqual(app.util.parse_anchor("&gt;&gt;1ー3, 4ー6"),
-    {data: [{segments: [[1, 3], [4, 6]], target: 6}], target: 6})
-
-test "カンマで区切って複数のアンカーを指定出来る", 3, ->
-  deepEqual(app.util.parse_anchor("&gt;&gt;1,2,3 ,"),
-    {data: [{segments: [[1, 1], [2, 2], [3, 3]], target: 3}], target: 3})
-  deepEqual(app.util.parse_anchor("&gt;&gt;1, 20"),
-    {data: [{segments: [[1, 1], [20, 20]], target: 2}], target: 2})
-  deepEqual(app.util.parse_anchor("&gt;&gt;1,    2, 3,"),
-    {data: [{segments: [[1, 1], [2, 2], [3, 3]], target: 3}], target: 3})
-
-test "範囲指定とカンマ区切りは混合出来る", 1, ->
-  deepEqual(app.util.parse_anchor("&gt;&gt;1,2-10,12 ,"),
-    {data: [{segments: [[1, 1], [2, 10], [12, 12]], target: 11}], target: 11})
-
-test "\&gt;\"の数は一つでも認識する", 1, ->
-  deepEqual(app.util.parse_anchor("&gt;1,2-10,12 ,"),
-    {data: [{segments: [[1, 1], [2, 10], [12, 12]], target: 11}], target: 11})
-
-test "全角の\"＞\"も開始文字として認識する", 1, ->
-  deepEqual(app.util.parse_anchor("＞1,2-10,12 ,"),
-    {data: [{segments: [[1, 1], [2, 10], [12, 12]], target: 11}], target: 11})
-
-test "半角\">\"は開始文字として認識しない", 1, ->
-  deepEqual(app.util.parse_anchor(">>1,2-10,12 ,"), {data: [], target: 0})
-
-test "ありえない範囲のアンカーは無視する", 2, ->
-  deepEqual(app.util.parse_anchor("&gt;&gt;2-1"), {data: [], target: 0})
-  deepEqual(app.util.parse_anchor("&gt;&gt;1-3, 5-1, 4-6, 2002-1"),
-    {data: [{segments: [[1, 3], [4, 6]], target: 6}], target: 6})
-
-test "実例テスト", 3, ->
-  text = "test"
-  deepEqual(app.util.parse_anchor(text), {data: [], target: 0})
-
-  text = """<a href="/bbs/read.cgi/computer/42710/1273732874/11" target="_blank">&gt;&gt;11</a>""";
-  deepEqual(app.util.parse_anchor(text),
-    {data: [{segments: [[11, 11]], target: 1}], target: 1})
-
-  text = """
-    <a href="/bbs/read.cgi/computer/42710/1273732874/1-5" target="_blank">&gt;&gt;1-5</a><br><a href="/bbs/read.cgi/computer/42710/1273732874/2-5" target="_blank">&gt;&gt;2-5</a><br><a href="/bbs/read.cgi/computer/42710/1273732874/1-1000" target="_blank">&gt;&gt;1-1000</a><br><br><a href="/bbs/read.cgi/computer/42710/1273732874/3" target="_blank">&gt;&gt;3</a>--4<br><a href="/bbs/read.cgi/computer/42710/1273732874/3-0" target="_blank">&gt;&gt;3-0</a><br><a href="/bbs/read.cgi/computer/42710/1273732874/3" target="_blank">&gt;&gt;3</a>-a
-  """
-  deepEqual(app.util.parse_anchor(text),
-    {data: [
-      {segments: [[1, 5]], target: 5}
-      {segments: [[2, 5]], target: 4}
-      {segments: [[1, 1000]], target: 1000}
-      {segments: [[3, 3]], target: 1}
-      {segments: [[3, 3]], target: 1}
-    ], target: 1011})
-
 module "app.util.ch_sever_move_detect",
   setup: ->
     @pc11_linux_html = """
@@ -257,4 +187,57 @@ test "検索用に文字列を変換する", 5, ->
     ""
     ""
   )
+  return
+
+module "app.util.parse_anchor",
+  setup: ->
+    @test = (str, expected) ->
+      deepEqual(app.util.parse_anchor(str), expected, str)
+      return
+    return
+
+test "アンカーが含まれる文字列を解析する", 1, ->
+  @test("&gt;&gt;1", {target_count: 1, segments: [[1, 1]]})
+  return
+
+test "アンカー開始文字は&gt;もしくは＞（全角）", ->
+  @test("&gt;&gt;1", {target_count: 1, segments: [[1, 1]]})
+  @test("&gt;1", {target_count: 1, segments: [[1, 1]]})
+  @test("＞＞1", {target_count: 1, segments: [[1, 1]]})
+  @test("＞1", {target_count: 1, segments: [[1, 1]]})
+  @test(">>1", {target_count: 0, segments: []})
+  @test(">1", {target_count: 0, segments: []})
+  return
+
+test "ハイフンで範囲指定が出来る", 3, ->
+  @test("&gt;&gt;1-3", {target_count: 3, segments: [[1, 3]]})
+  @test("&gt;&gt;10-25", {target_count: 16, segments: [[10, 25]]})
+  @test("&gt;&gt;1ー3", {target_count: 3, segments: [[1, 3]]})
+  return
+
+test "カンマで区切って複数のアンカーを指定出来る", 3, ->
+  @test("&gt;&gt;1, 2", {target_count: 2, segments: [[1, 1], [2, 2]]})
+  @test("&gt;&gt;1,2,3 ,",
+    {target_count: 3, segments: [[1, 1], [2, 2], [3, 3]]})
+  @test("&gt;&gt;1,    2, 3,",
+    {target_count: 3, segments: [[1, 1], [2, 2], [3, 3]]})
+  return
+
+test "範囲指定とカンマ区切りは混合出来る", 1, ->
+  @test("&gt;&gt;1,2-10,12 ,",
+    {target_count: 11, segments: [[1, 1], [2, 10], [12, 12]]})
+  return
+
+test "ありえない範囲のアンカーは無視する", 2, ->
+  @test("&gt;&gt;2-1", {target_count: 0, segments: []})
+  @test("&gt;&gt;1-3, 5-1, 4-6, 2002-1",
+    {target_count: 6, segments: [[1, 3], [4, 6]]})
+  return
+
+test "実例テスト", 3, ->
+  @test("test", {target_count: 0, segments: []})
+  @test("""<a href="/bbs/read.cgi/computer/42710/1273732874/11" target="_blank">&gt;&gt;11</a>""",
+    {target_count: 1, segments: [[11, 11]]})
+  @test("""<a href="/bbs/read.cgi/computer/42710/1273732874/1-5" target="_blank">&gt;&gt;1-5</a><br><a href="/bbs/read.cgi/computer/42710/1273732874/2-5" target="_blank">&gt;&gt;2-5</a><br><a href="/bbs/read.cgi/computer/42710/1273732874/1-1000" target="_blank">&gt;&gt;1-1000</a><br><br><a href="/bbs/read.cgi/computer/42710/1273732874/3" target="_blank">&gt;&gt;3</a>--4<br><a href="/bbs/read.cgi/computer/42710/1273732874/3-0" target="_blank">&gt;&gt;3-0</a><br><a href="/bbs/read.cgi/computer/42710/1273732874/3" target="_blank">&gt;&gt;3</a>-a""",
+    {target_count: 1011, segments: [[1, 5], [2, 5], [1, 1000], [3, 3], [3, 3]]})
   return
