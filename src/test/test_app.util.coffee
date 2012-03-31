@@ -228,7 +228,10 @@ test "範囲指定とカンマ区切りは混合出来る", 1, ->
     {target_count: 11, segments: [[1, 1], [2, 10], [12, 12]]})
   return
 
-test "ありえない範囲のアンカーは無視する", 2, ->
+test "ありえない範囲のアンカーは無視する", 5, ->
+  @test("&gt;&gt;0", {target_count: 0, segments: []})
+  @test("&gt;&gt;0-1", {target_count: 0, segments: []})
+  @test("&gt;&gt;-1", {target_count: 0, segments: []})
   @test("&gt;&gt;2-1", {target_count: 0, segments: []})
   @test("&gt;&gt;1-3, 5-1, 4-6, 2002-1",
     {target_count: 6, segments: [[1, 3], [4, 6]]})

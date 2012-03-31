@@ -726,7 +726,7 @@ app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
         #rep_index更新
         if not disabled
           for segment in anchor.segments
-            target = Math.max(1, segment[0])
+            target = segment[0]
             while target <= segment[1]
               rep_index[target] = [] unless rep_index[target]?
               rep_index[target].push(res_key) unless res_key in rep_index[target]

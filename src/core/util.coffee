@@ -31,8 +31,9 @@ app.util.parse_anchor = (str) ->
   while anchor_res = anchor_reg.exec(str)
     segment_reg = /(\d+)(?:-(\d+))?/g
     while segment_res = segment_reg.exec(anchor_res[0])
+      continue if +segment_res[1] < 1
       if segment_res[2]
-        continue if (+segment_res[2]) < (+segment_res[1])
+        continue if +segment_res[2] < +segment_res[1]
         segrange_start = +segment_res[1]
         segrange_end = +segment_res[2]
       else
