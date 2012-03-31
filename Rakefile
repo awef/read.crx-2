@@ -37,8 +37,14 @@ task :pack do
   Rake::Task[:test].invoke
 end
 
-task :test do
-  sh "google-chrome chrome-extension://#{debug_id}/test/test.html"
+task :test, :filter do |t, args|
+  require "cgi"
+
+  url = "chrome-extension://#{debug_id}/test/test.html"
+  if args[:filter]
+    url += "?filter=#{CGI.escape(args[:filter])}"
+  end
+  sh "google-chrome #{url}"
 end
 
 def debug_id
