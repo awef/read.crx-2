@@ -23,19 +23,18 @@ app.util.parse_anchor = (str) ->
     data: []
     target: 0
 
-  anchor_reg = /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:[\-ー][\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:[\-ー][\d\uff10-\uff19]+)?)*/g
-  while anchor_res = anchor_reg.exec(str)
-    anchor_str = anchor_res[0]
-      .replace(/ー/g, "-")
-      .replace /[\uff10-\uff19]/g, ($0) ->
-        String.fromCharCode($0.charCodeAt(0) - 65248)
+  str = str.replace(/\u30fc/g, "-")
+  str = str.replace /[\uff10-\uff19]/g, ($0) ->
+    String.fromCharCode($0.charCodeAt(0) - 65248)
 
+  anchor_reg = /(?:&gt;|＞){1,2}\d+(?:\-\d+)?(?:\s*,\s*\d+(?:\-\d+)?)*/g
+  while anchor_res = anchor_reg.exec(str)
     anchor =
       segments: []
       target: 0
 
     segment_reg = /(\d+)(?:-(\d+))?/g
-    while segment_res = segment_reg.exec(anchor_str)
+    while segment_res = segment_reg.exec(anchor_res[0])
       if segment_res[2]
         continue if (+segment_res[2]) < (+segment_res[1])
         segrange_start = +segment_res[1]
