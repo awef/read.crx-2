@@ -721,9 +721,6 @@ app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
           $0
       #アンカーリンク
       .replace /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?)*/g, ($0) ->
-        str = $0.replace /[\uff10-\uff19]/g, ($0) ->
-          String.fromCharCode($0.charCodeAt(0) - 65248)
-
         anchor = app.util.parse_anchor($0)
         disabled = anchor.target >= 25 or anchor.data.length is 0
 
