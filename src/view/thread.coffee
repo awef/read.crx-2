@@ -633,7 +633,7 @@ app.view_thread._draw = ($view, force_update) ->
 
         #サムネイル表示(画像っぽいURL)
         if config_thumbnail_ext
-          if /\.(?:png|jpe?g|gif|bmp|webp)$/i.test(a.href)
+          if /\.(?:png|jpe?g|gif|bmp|webp)(?:[\?#].*)?$/i.test(a.href)
             fn_add_thumbnail(a, a.href)
 
       $(imgs).lazy_load(container: ".content")
