@@ -102,7 +102,7 @@ asyncTest "キャッシュの保存/取得/更新/削除が出来る", ->
           start()
   fn()
 
-test "期待されない引数が渡された場合、rejectする", ->
+asyncTest "期待されない引数が渡された場合、rejectする", ->
   pattern = [
     []
     [""]
@@ -119,5 +119,17 @@ test "期待されない引数が渡された場合、rejectする", ->
   ]
 
   expect(pattern.length)
-  for tmp in pattern
-    app.cache.set.apply(null, tmp).fail -> ok(true)
+
+  next = ->
+    if tmp = pattern.splice(0, 1)[0]
+      do (tmp) ->
+        app.cache.set.apply(null, tmp).fail ->
+          ok(true, JSON.stringify(tmp))
+          next()
+          return
+        return
+    else
+      start()
+    return
+  next()
+  return
