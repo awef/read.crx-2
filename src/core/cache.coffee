@@ -78,7 +78,7 @@ app.module "cache", ["jquery"], ($, callback) ->
           (not @etag? or typeof @etag is "string") and
           (not @res_length? or (typeof @res_length is "number" and not isNaN(@res_length))) and
           (not @dat_size? or (typeof @dat_size is "number" and not isNaN(@dat_size)))
-        app.log("error", "Cache::set データが不正です", @)
+        app.log("error", "Cache::put データが不正です", @)
         return $.Deferred().reject().promise()
 
       $.Deferred (deferred) =>
