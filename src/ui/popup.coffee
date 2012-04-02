@@ -84,7 +84,7 @@
         $popup.css("top", "#{Math.min(space.top, document.body.offsetHeight - $popup.outerHeight()) - margin}px")
       else
         #例え上より下が広くても、上に十分なスペースが有れば上に配置
-        if space.top > Math.min(250, space.bottom)
+        if space.top > Math.min(350, space.bottom)
           $popup.css("bottom", space.bottom + margin)
         else
           $popup.css("top", document.body.offsetHeight - space.bottom + margin)
