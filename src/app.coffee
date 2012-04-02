@@ -160,7 +160,9 @@ do ->
       app.defer ->
         definition(dep_modules..., callback)
     else
-      definition(dep_modules...)
+      app.defer ->
+        definition(dep_modules...)
+        return
 
   add_ready_module = (module) ->
     ready_modules[@module_id] = {@dependencies, module}

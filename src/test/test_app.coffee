@@ -196,3 +196,16 @@ asyncTest "モジュール名がnullの場合は依存関係の解決のみ行�
     callback(a: "test")
 
   QUnit.step(1)
+
+asyncTest "モジュール定義は必ず非同期で行われる", 3, ->
+  app.module null, [], ->
+    QUnit.step(2)
+    return
+
+  app.module "__h", [], ->
+    QUnit.step(3)
+    start()
+    return
+
+  QUnit.step(1)
+  return
