@@ -496,6 +496,11 @@ app.boot "/view/thread.html", ->
           .find(".breadcrumb > li > a")
             .attr("href", board_url)
             .text(if title? then "#{title.replace(/板$/, "")}板" else "板")
+            .css("display", "none")
+        # Windows版Chromeで描画が崩れる現象を防ぐため、わざとリフローさせる。
+        app.defer ->
+          $view.find(".breadcrumb > li > a").css("display", "inline-block")
+          return
         return
     return
 
