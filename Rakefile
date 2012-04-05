@@ -255,6 +255,7 @@ lambda {
     "debug/test/qunit/qunit.js",
     "debug/test/qunit/qunit.css",
     "debug/test/qunit/qunit-step.js",
+    "debug/test/qunit/qunit-measure.js",
     "debug/test/jquery.mockjax.js",
     "debug/test/test.html",
     "debug/test/test.js",
@@ -268,6 +269,7 @@ lambda {
   file_copy "debug/test/qunit/qunit.js", "lib/qunit/qunit/qunit.js"
   file_copy "debug/test/qunit/qunit.css", "lib/qunit/qunit/qunit.css"
   file_copy "debug/test/qunit/qunit-step.js", "lib/qunit/addons/step/qunit-step.js"
+  file_copy "debug/test/qunit/qunit-measure.js", "lib/qunit-measure/qunit-measure.js"
 
   file "debug/test/jquery.mockjax.js" => [
     "lib/jquery-mockjax/jquery.mockjax.js",
