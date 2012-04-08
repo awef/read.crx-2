@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 task :default => [
   "debug",
   "debug/manifest.json",
@@ -32,9 +34,20 @@ end
 task :pack do
   Rake::Task[:clean].invoke
   Rake::Task[:default].invoke
-  sh "zip -9 -r -X -T ./read.crx_2.zip ./debug -x ./debug/test/\\*"
-  sh "clamscan ./read.crx_2.zip"
   Rake::Task[:test].invoke
+
+  sh "clamscan -ir debug"
+
+  rm_rf "_packtmp"
+  cp_r "debug", "_packtmp"
+  rm_r "_packtmp/test"
+
+  puts "秘密鍵のパスを入力して下さい"
+  pem_path = STDIN.gets
+  sh "google-chrome --pack-extension=_packtmp --pack-extension-key=#{pem_path}"
+  mv "_packtmp.crx", "read.crx_2.crx"
+
+  rm_r "_packtmp"
 end
 
 task :test, :filter do |t, args|
