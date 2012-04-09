@@ -135,7 +135,6 @@ app.boot "/view/thread.html", ->
 
     #レスメニュー項目クリック
     .on "click", ".res_footer_item", "click", (e) ->
-      e.preventDefault()
 
       $this = $(@)
       $res = $this.closest("article")
@@ -153,6 +152,7 @@ app.boot "/view/thread.html", ->
         """)
 
       else if $this.hasClass("toggle_aa_mode")
+        e.preventDefault()
         $res.toggleClass("aa")
 
       return
