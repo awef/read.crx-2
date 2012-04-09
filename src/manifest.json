@@ -1,6 +1,7 @@
 {
   "name" : "read.crx 2",
   "version" : "0.52",
+  "update_url": "http://idawef.com/crx/crx.xml",
   "description" : "2chブラウザ",
   "manifest_version": 2,
   "minimum_chrome_version" : "18",
