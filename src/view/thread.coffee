@@ -105,37 +105,36 @@ app.boot "/view/thread.html", ->
       return
 
     #レスメニュー表示
-    .on "click", "article", (e) ->
+    .on "click", "article > header", (e) ->
       return if $(e.target).is("a, .link, .freq, .name_num")
-      append_flg = $(@).has(".res_footer").length is 0
+      $article = $(@).parent()
+      append_flg = $article.has(".res_footer").length is 0
       $view
         .find("article > .res_footer")
-          .hide(100, (-> $(@).remove(); return))
+          .slideUp(100, (-> $(@).remove(); return))
       if append_flg
         $menu = $view.find("#template > .res_footer").clone()
 
         $menu
           .find(".res_permalink")
-            .attr("href", app.safe_href(view_url + $(@).find(".num").text()))
+            .attr("href", app.safe_href(view_url + $article.find(".num").text()))
 
-        if $(@).is(".aa")
+        if $article.is(".aa")
           $menu.find(".toggle_aa_mode > input").attr("checked", true)
 
         unless app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"]
           $menu.find(".res_to_this, .res_to_this2").remove()
 
-        unless $(@).is(".popup > article")
+        unless $article.is(".popup > article")
           $menu.find(".jump_to_this").remove()
 
-        $menu
-          .hide()
-          .appendTo(@)
-          .show(100)
+        $menu.hide()
+        $(@).after($menu)
+        $menu.slideDown(100)
       return
 
     #レスメニュー項目クリック
     .on "click", ".res_footer_item", "click", (e) ->
-
       $this = $(@)
       $res = $this.closest("article")
 
@@ -155,6 +154,7 @@ app.boot "/view/thread.html", ->
         e.preventDefault()
         $res.toggleClass("aa")
 
+      $(@).parent().slideUp(100, (-> $(@).remove(); return))
       return
 
     #アンカーポップアップ

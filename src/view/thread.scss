@@ -38,7 +38,6 @@ html {
 
 article {
   padding: 0 5px 20px 5px;
-  cursor: pointer;
   &:first-child {
     padding-top: 10px;
   }
@@ -68,6 +67,7 @@ article {
 
 header {
   font-size: 14px;
+  cursor: pointer;
 }
 
 .num {
@@ -136,6 +136,7 @@ header {
 .res_footer {
   display: inline-block;
   font-size: 12px;
+  margin: 5px 0;
 }
 
 .res_footer_item {
