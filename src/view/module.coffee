@@ -98,6 +98,9 @@ app.view_module.view = ($view) ->
 
 app.view_module.searchbox_thread_title = ($view, target_col) ->
   $view
+    .on "request_reload", ->
+      $view.find(".searchbox_thread_title").val("").triggerHandler("input")
+      return
     .find(".searchbox_thread_title")
       .on "input", ->
         if @value isnt ""
