@@ -244,3 +244,11 @@ test "実例テスト", 3, ->
   @test("""<a href="/bbs/read.cgi/computer/42710/1273732874/1-5" target="_blank">&gt;&gt;1-5</a><br><a href="/bbs/read.cgi/computer/42710/1273732874/2-5" target="_blank">&gt;&gt;2-5</a><br><a href="/bbs/read.cgi/computer/42710/1273732874/1-1000" target="_blank">&gt;&gt;1-1000</a><br><br><a href="/bbs/read.cgi/computer/42710/1273732874/3" target="_blank">&gt;&gt;3</a>--4<br><a href="/bbs/read.cgi/computer/42710/1273732874/3-0" target="_blank">&gt;&gt;3-0</a><br><a href="/bbs/read.cgi/computer/42710/1273732874/3" target="_blank">&gt;&gt;3</a>-a""",
     {target_count: 1011, segments: [[1, 5], [2, 5], [1, 1000], [3, 3], [3, 3]]})
   return
+
+test "6桁以上のレス番号の指定は無視する", 4, ->
+  @test("&gt;&gt;10000", {target_count: 1, segments: [[10000, 10000]]})
+  @test("&gt;&gt;100000", {target_count: 0, segments: []})
+  @test("&gt;&gt;1000000", {target_count: 0, segments: []})
+  @test("&gt;&gt;1-3, 2-333333, 4-6, 777777-8",
+    {target_count: 6, segments: [[1, 3], [4, 6]]})
+  return
