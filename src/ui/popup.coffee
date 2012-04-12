@@ -1,22 +1,24 @@
-(($) ->
+do ($ = jQuery) ->
   $root = null
 
   popup_destroy = ($popup) ->
-    $popup.find(".popup").andSelf()
-      .each ->
-        $($(@).data("popup_source"))
-          .unbind("mouseleave", on_mouseenter)
-          .unbind("mouseenter", on_mouseleave)
+    $popup.find(".popup").andSelf().each ->
+      $($(@).data("popup_source"))
+        .off("mouseleave", on_mouseenter)
+        .off("mouseenter", on_mouseleave)
+      return
     $popup.remove()
+    return
 
   remove = ->
     return unless $root
-    $root.find(".popup").andSelf().filter(":not(.active)")
-      .each ->
-        $this = $(@)
-        if $this.has(".popup.active").length is 0
-          $root = null if $this.is($root)
-          popup_destroy($this)
+    $root.find(".popup").andSelf().not(".active").each ->
+      $this = $(@)
+      if $this.has(".popup.active").length is 0
+        $root = null if $this.is($root)
+        popup_destroy($this)
+      return
+    return
 
   on_mouseenter = ->
     $this = $(@)
@@ -51,15 +53,15 @@
     flg = false
     $popup.siblings(".popup").each ->
       flg or= $($(this).data("popup_source")).is(source)
-      null
+      return
     if flg
       $popup.remove()
       return
 
     #兄弟ノードの削除
-    $parent.children(".popup").each ->
-      if not ($this = $(@)).is($popup)
-        popup_destroy($this)
+    $parent.children(".popup").not($popup).each ->
+      popup_destroy($(@))
+      return
 
     #表示位置決定
     do ->
@@ -95,8 +97,7 @@
     $(source)
       .data("popup", $popup[0])
       .add($popup)
-        .bind("mouseenter", on_mouseenter)
-        .bind("mouseleave", on_mouseleave)
-
-)(jQuery)
-
+        .on("mouseenter", on_mouseenter)
+        .on("mouseleave", on_mouseleave)
+    return
+  return
