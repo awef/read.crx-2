@@ -32,6 +32,10 @@ task :clean do
 end
 
 task :pack do
+  require "json"
+
+  MANIFEST = JSON.parse(open("src/manifest.json").read)
+
   Rake::Task[:clean].invoke
   Rake::Task[:default].invoke
   Rake::Task[:test].invoke
@@ -45,7 +49,7 @@ task :pack do
   puts "秘密鍵のパスを入力して下さい"
   pem_path = STDIN.gets
   sh "google-chrome --pack-extension=_packtmp --pack-extension-key=#{pem_path}"
-  mv "_packtmp.crx", "read.crx_2.crx"
+  mv "_packtmp.crx", "read.crx_2.#{MANIFEST["version"]}.crx"
 
   rm_r "_packtmp"
 end
