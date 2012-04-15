@@ -1,6 +1,6 @@
 app.view_thread = {}
 
-app.boot "/view/thread.html", ->
+app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
   view_url = app.url.parse_query(location.href).q
   return alert("不正な引数です") unless view_url
   view_url = app.url.fix(view_url)
@@ -241,12 +241,11 @@ app.boot "/view/thread.html", ->
       else
         return
 
-      app.board_title_solver.ask({url: board_url, offline: true})
-        .done (title) =>
-          popup_helper this, e, =>
-            $("<div>")
-              .addClass("popup_linkinfo")
-              .append($("<div>").text(title + after))
+      BoardTitleSolver.ask(url: board_url, offline: true).done (title) =>
+        popup_helper @, e, =>
+          $("<div>", {class: "popup_linkinfo"})
+            .append($("<div>", text: title + after))
+        return
       return
 
     #IDポップアップ
@@ -490,18 +489,17 @@ app.boot "/view/thread.html", ->
   #パンくずリスト表示
   do ->
     board_url = app.url.thread_to_board(view_url)
-    app.board_title_solver.ask(url: board_url, offline: true)
-      .always (title) ->
-        $view
-          .find(".breadcrumb > li > a")
-            .attr("href", board_url)
-            .text(if title? then "#{title.replace(/板$/, "")}板" else "板")
-            .css("display", "none")
-        # Windows版Chromeで描画が崩れる現象を防ぐため、わざとリフローさせる。
-        app.defer ->
-          $view.find(".breadcrumb > li > a").css("display", "inline-block")
-          return
+    BoardTitleSolver.ask(url: board_url, offline: true).always (title) ->
+      $view
+        .find(".breadcrumb > li > a")
+          .attr("href", board_url)
+          .text(if title? then "#{title.replace(/板$/, "")}板" else "板")
+          .css("display", "none")
+      # Windows版Chromeで描画が崩れる現象を防ぐため、わざとリフローさせる。
+      app.defer ->
+        $view.find(".breadcrumb > li > a").css("display", "inline-block")
         return
+      return
     return
 
   return

@@ -1,4 +1,4 @@
-app.boot "/view/board.html", ->
+app.boot "/view/board.html", ["board_title_solver"], (BoardTitleSolver) ->
   url = app.url.parse_query(location.href).q
   (alert("不正な引数です"); return) unless url?
   url = app.url.fix(url)
@@ -40,7 +40,7 @@ app.boot "/view/board.html", ->
   app.view_module.board_title($view)
   app.view_module.tool_menu($view)
 
-  app.board_title_solver.ask({url}).always (title) ->
+  BoardTitleSolver.ask({url}).always (title) ->
     if title
       document.title = title
     app.history.add(url, title or url, opened_at)

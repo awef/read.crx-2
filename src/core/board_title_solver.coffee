@@ -80,17 +80,3 @@ app.module "board_title_solver", ["jquery", "bbsmenu"], ($, BBSMenu, callback) -
 
   callback(new BoardTitleSolver)
   return
-
-app.board_title_solver =
-  ask: (prop) ->
-    d = $.Deferred()
-    app.module null, ["board_title_solver"], (BoardTitleSolver) ->
-      BoardTitleSolver.ask(prop)
-        .done (res) ->
-          d.resolve(res)
-          return
-        .fail ->
-          d.reject()
-          return
-      return
-    d.promise()
