@@ -63,6 +63,7 @@
     "/view/empty.html",
     "/view/history.html",
     "/view/inputurl.html",
+    "/view/search.html",
     "/view/sidemenu.html",
     "/view/thread.html",
     "/test/message_test.html"

@@ -1,0 +1,79 @@
+@import "../common.scss";
+
+@include common_view_style_1;
+@include content_table;
+
+@media (max-width: 750px) and (min-width: 501px) {
+  th:nth-child(6) {
+    width: 0 !important;
+  }
+}
+
+@media (max-width: 600px) {
+  th:nth-child(n+3) {
+    width: 0 !important;
+  }
+}
+
+.view:not(.loading) tbody:empty {
+  display: block;
+  &:after {
+    content: "表示可能項目無し";
+  }
+}
+
+th {
+  &:hover {
+    background: inherit !important;
+  }
+  &:nth-child(1) {
+    width: 2em;
+  }
+  &:nth-child(3) {
+    width: 10em;
+  }
+  &:nth-child(4) {
+    width: 4em;
+  }
+  &:nth-child(5) {
+    width: 7em;
+  }
+  &:nth-child(6) {
+    width: 16em;
+  }
+}
+
+td {
+  &:nth-child(4), &:nth-child(5) {
+    text-align: right;
+  }
+}
+
+.theme_default {
+  .more:hover {
+    background: #e8e8e8;
+  }
+}
+
+.theme_dark {
+  td:nth-child(1) {
+    color: #f93;
+  }
+  .more:hover {
+    background: #222;
+  }
+}
+
+.more {
+  text-align: center;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.table_search + .more {
+  display: none;
+}
+
+.view.loading .content {
+  display: block !important;
+}

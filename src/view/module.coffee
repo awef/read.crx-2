@@ -177,6 +177,9 @@ app.view_module.board_contextmenu = ($view) ->
       else if $view.is(".view_board")
         title = $tr.find("td:nth-child(2)").text()
         res_count = +$tr.find("td:nth-child(3)").text()
+      else if $view.is(".view_search")
+        title = $tr.find("td:nth-child(2)").text()
+        res_count = +$tr.find("td:nth-child(3)").text()
       else
         app.log("error", "app.view_module.board_contextmenu: 想定外の状況で呼び出されました")
 

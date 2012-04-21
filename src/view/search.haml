@@ -1,0 +1,35 @@
+!!! 5
+%html.view.view_search(data-app-version="#{MANIFEST["version"]}")
+  %head
+    %meta(charset="utf-8")
+    %meta(http-equiv="X-Frame-Options" content="SAMEORIGIN")
+    %title search
+    %link(rel="stylesheet" href="/ui.css?v=#{MANIFEST["version"]}")
+    %link(rel="stylesheet" href="search.css?v=#{MANIFEST["version"]}")
+    %script(src="/lib/jquery/jquery.min.js?v=#{MANIFEST["version"]}")
+    %script(src="/ui.js?v=#{MANIFEST["version"]}")
+    %script(src="/app.js?v=#{MANIFEST["version"]}")
+    %script(src="app_proxy.js?v=#{MANIFEST["version"]}")
+    %script(src="module.js?v=#{MANIFEST["version"]}")
+    %script(src="search.js?v=#{MANIFEST["version"]}")
+  %body
+    .message_bar
+    %nav.nav_bar
+      %input.searchbox_thread_title
+    .content(tabindex="0")
+      %table
+        %thead
+          %tr
+            %th ★
+            %th タイトル
+            %th 板名
+            %th(data-table_sort_type="num") レス数
+            %th(data-table_sort_type="num") 勢い
+            %th 作成日時
+        %tbody
+      .more
+
+  #template(hidden)
+    %ul.view_module_board_contextmenu
+      %li.add_bookmark ブックマークに追加
+      %li.del_bookmark ブックマークを解除

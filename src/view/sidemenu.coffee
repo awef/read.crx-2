@@ -20,14 +20,15 @@ app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
   #スレタイ検索ボックス
   $view
     .find(".search")
-      .bind "keydown", (e) ->
+      .on "keydown", (e) ->
         if e.which is 27 #Esc
-          @STR.value = ""
+          @q.value = ""
         return
 
-      .bind "submit", ->
-        app.defer =>
-          @STR.value = ""
+      .on "submit", (e) ->
+        e.preventDefault()
+        app.message.send("open", {url: "search:#{@q.value}", new_tab: true})
+        @q.value = ""
         return
 
   #ブックマーク関連
