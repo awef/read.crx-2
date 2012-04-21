@@ -13,10 +13,8 @@
     %script(src="module.js?v=#{MANIFEST["version"]}")
     %script(src="sidemenu.js?v=#{MANIFEST["version"]}")
   %body
-    %form.search(action="http://find.2ch.net/#rcrx" accept-charset="euc-jp" target="_blank")
-      %input(type="hidden" name="BBS" value="ALL")
-      %input(type="hidden" name="TYPE" value="TITLE")
-      %input(type="text" name="STR" placeholder="スレッド検索")
+    %form.search
+      %input(type="text" name="q" placeholder="スレッド検索")
       %input(type="submit" value="")
     %h3 read.crx
     %ul

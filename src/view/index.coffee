@@ -236,7 +236,7 @@ app.main = ->
   #openメッセージ受信部
   app.message.add_listener "open", (message) ->
     $iframe = $view
-      .find("iframe[data-url=\"#{app.url.fix(message.url)}\"]")
+      .find("iframe[data-url=\"#{app.url.fix(message.url).replace(/"/g, "\\\"")}\"]")
 
     get_iframe_info = (url) ->
       guess_result = app.url.guess_type(url)
@@ -257,6 +257,9 @@ app.main = ->
         src: "/view/bookmark_source_selector.html"
         url: "bookmark_source_selector"
         modal: true
+      else if res = /^search:(.+)$/.exec(url)
+        src: "/view/search.html?#{app.url.build_param(query: res[1])}"
+        url: "search:#{res[1]}"
       else if guess_result.type is "board"
         src: "/view/board.html?#{app.url.build_param(q: message.url)}"
         url: app.url.fix(message.url)
