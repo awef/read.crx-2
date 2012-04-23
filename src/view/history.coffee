@@ -3,28 +3,19 @@ app.boot "/view/history.html", ->
 
   app.view_module.view($view)
 
+  $table = $("<table>")
+  $table.thread_list("create", th: ["title", "viewed_date"])
+  $table.appendTo(".content")
+
   load = ->
     return if $view.hasClass("loading")
     return if $view.find(".button_reload").hasClass("disabled")
 
     $view.addClass("loading")
+
     app.history.get(undefined, 500).done (data) ->
-      $view.find("tbody").empty()
-      frag = document.createDocumentFragment()
-      for val in data
-        tr = document.createElement("tr")
-        tr.setAttribute("data-href", val.url)
-        tr.className = "open_in_rcrx"
-
-        td = document.createElement("td")
-        td.textContent = val.title
-        tr.appendChild(td)
-
-        td = document.createElement("td")
-        td.textContent = app.util.date_to_string(new Date(val.date))
-        tr.appendChild(td)
-        frag.appendChild(tr)
-      $view.find("tbody").append(frag)
+      $table.thread_list("empty")
+      $table.thread_list("add_item", data)
       $view.removeClass("loading")
       $view.trigger("view_loaded")
       $view.find(".button_reload").addClass("disabled")
@@ -33,11 +24,8 @@ app.boot "/view/history.html", ->
         return
       , 5000)
       return
-
-  load()
-
-  $view.on "request_reload", ->
-    load()
     return
 
+  $view.on("request_reload", load)
+  load()
   return
