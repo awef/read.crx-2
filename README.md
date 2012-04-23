@@ -20,3 +20,6 @@ read.crx 2は[Google Chrome][chrome]のアプリとして作られた2chブラ�
 [2ch]: http://www.2ch.net/
 [machi]: http://www.machi.to/
 [jbbs]: http://rentalbbs.livedoor.com/
+
+#商用利用時の注意
+read.crx 2のソースコードはMITライセンスですが、read.crx 2がアクセスするサービスの中には商用利用に制限が存在する場合が有ります。ご注意下さい。
