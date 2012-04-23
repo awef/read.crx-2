@@ -1,6 +1,16 @@
 app.boot "/view/bookmark.html", ->
   $view = $(document.documentElement)
 
+  $table = $("<table>")
+  $table.thread_list("create", {
+    th: ["title", "res", "unread", "heat", "created_date"]
+    bookmark_add_rm: true
+  })
+  $table.appendTo(".content")
+  $table.find("th.res, th.unread, th.heat").attr("data-table_sort_type", "num")
+  $table.find("th.unread").addClass("table_sort_desc")
+  $table.table_sort()
+
   app.view_module.view($view)
   app.view_module.searchbox_thread_title($view, 0)
   app.view_module.board_contextmenu($view)
@@ -82,13 +92,6 @@ app.boot "/view/bookmark.html", ->
     fn()
     return
 
-  $table = $("<table>")
-  $table.thread_list("create", {
-    th: ["title", "res", "unread", "heat", "created_date"]
-    bookmark_add_rm: true
-  })
-  $table.appendTo(".content")
-
   $table.thread_list "add_item",
     for a in app.bookmark.get_all() when a.type is "thread"
       title: a.title
@@ -98,10 +101,8 @@ app.boot "/view/bookmark.html", ->
       created_at: /\/(\d+)\/$/.exec(a.url)[1] * 1000
       expired: a.expired
 
-  $table.find("th.res, th.unread, th.heat").attr("data-table_sort_type", "num")
-  $table.find("th.unread").addClass("table_sort_desc")
   app.message.send("request_update_read_state", {})
-  $table.table_sort("init").table_sort("update")
+  $table.table_sort("update")
 
   $view.trigger("view_loaded")
   return
