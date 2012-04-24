@@ -433,7 +433,7 @@ $z-index_notification: 8;
     border-color: $cell_border_color;
   }
 
-  th:hover, tbody > tr:hover {
+  .table_sort th:hover, tbody > tr:hover {
     background-color: $cell_hover_background_color;
   }
 
