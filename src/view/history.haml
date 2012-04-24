@@ -6,6 +6,7 @@
     %title 閲覧履歴
     %link(rel="stylesheet" href="history.css?v=#{MANIFEST["version"]}")
     %script(src="/lib/jquery/jquery.min.js?v=#{MANIFEST["version"]}")
+    %script(src="/ui.js?v=#{MANIFEST["version"]}")
     %script(src="/app.js?v=#{MANIFEST["version"]}")
     %script(src="app_proxy.js?v=#{MANIFEST["version"]}")
     %script(src="module.js?v=#{MANIFEST["version"]}")
@@ -14,10 +15,4 @@
     %nav.nav_bar
       .button.button_reload
     .content(tabindex="0")
-      %table
-        %thead
-          %tr
-            %th タイトル
-            %th 閲覧日時
-        %tbody
     .loading_overlay Loading...

@@ -222,22 +222,6 @@ app.view_module.sort_item_selector = ($view) ->
       return
   return
 
-app.view_module.board_title = ($view) ->
-  td = null
-  $view
-    .on "mouseenter", "td", ->
-      td = @
-      app.defer ->
-        td.title = td.textContent
-        return
-      return
-    .on "mouseleave", "td", ->
-      if td?
-        td.removeAttribute("title")
-        td = null
-      return
-  return
-
 app.view_module.tool_menu = ($view) ->
   copy = (str) ->
     input = document.createElement("input")
