@@ -124,72 +124,70 @@ do ($ = jQuery) ->
       tbody = @table.querySelector("tbody")
       now = Date.now()
 
+      html = ""
+
       for item in arg
-        tr = document.createElement("tr")
-
-        tr.className = "open_in_rcrx"
+        tmp = "open_in_rcrx"
         if item.expired
-          tr.className += " expired"
+          tmp += " expired"
 
-        tr.setAttribute("data-href", item.url)
-        tr.setAttribute("data-title", item.title)
+        html += "<tr class=\"#{tmp}\""
+        html += " data-href=\"#{app.escape_html(item.url)}\""
+        html += " data-title=\"#{app.escape_html(item.title)}\""
 
         if item.thread_number?
-          tr.setAttribute("data-thread_number", item.thread_number)
+          html += " data-thread_number=\"#{app.escape_html(""+item.thread_number)}\""
+
+        html += ">"
 
         #ブックマーク状況
         if @flg.bookmark
-          td = document.createElement("td")
+          html += "<td>"
           if app.bookmark.get(item.url)
-           td.textContent = "★"
-          tr.appendChild(td)
+            html += "★"
+          html += "</td>"
 
         #タイトル
         if @flg.title
-          td = document.createElement("td")
-          td.textContent = item.title
-          tr.appendChild(td)
+          html += "<td>#{app.escape_html(item.title)}</td>"
 
         #板名
         if @flg.board_title
-          td = document.createElement("td")
-          td.textContent = item.board_title
-          tr.appendChild(td)
+          html += "<td>#{app.escape_html(item.board_title)}</td>"
 
         #レス数
         if @flg.res
-          td = document.createElement("td")
+          html += "<td>"
           if item.res_count > 0
-            td.textContent = item.res_count
-          tr.appendChild(td)
+            html += app.escape_html(""+item.res_count)
+          html += "</td>"
 
         #未読数
         if @flg.unread
-          td = document.createElement("td")
+          html += "<td>"
           if item.read_state and item.res_count > item.read_state.read
-            td.textContent = item.res_count - item.read_state.read
-          tr.appendChild(td)
+            html += app.escape_html(""+(item.res_count - item.read_state.read))
+          html += "</td>"
 
         #勢い
         if @flg.heat
-          td = document.createElement("td")
-          td.textContent = calc_heat(now, item.created_at, item.res_count)
-          tr.appendChild(td)
+          html += "<td>"
+          html += app.escape_html(calc_heat(now, item.created_at, item.res_count))
+          html += "</td>"
 
         #作成日時
         if @flg.created_date
-          td = document.createElement("td")
-          td.textContent = date_to_string(new Date(item.created_at))
-          tr.appendChild(td)
+          html += "<td>"
+          html += app.escape_html(date_to_string(new Date(item.created_at)))
+          html += "</td>"
 
         #閲覧日時
         if @flg.viewed_date
-          td = document.createElement("td")
-          td.textContent = date_to_string(new Date(item.date))
-          tr.appendChild(td)
+          html += "<td>"
+          html += app.escape_html(date_to_string(new Date(item.date)))
+          html += "</td>"
 
-        tbody.appendChild(tr)
-
+      tbody.insertAdjacentHTML("BeforeEnd", html)
       return
 
     empty: ->
