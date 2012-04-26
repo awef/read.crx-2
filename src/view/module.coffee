@@ -11,7 +11,7 @@ app.view_module.view = ($view) ->
 
   #ユーザーCSS挿入
   do ->
-    if $view.is(".view_index, .view_sidemenu, .view_bookmark, .view_board, .view_history, .view_inputurl, .view_thread")
+    if $view.is(".view_index, .view_sidemenu, .view_bookmark, .view_board, .view_history, .view_inputurl, .view_thread, .view_search")
       style = document.createElement("style")
       style.textContent = app.config.get("user_css")
       document.head.appendChild(style)
