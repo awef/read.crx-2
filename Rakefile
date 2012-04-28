@@ -7,7 +7,6 @@ task :default => [
   "debug/app.js",
   "debug/app_core.js",
   "debug/cs_addlink.js",
-  "debug/cs_search.js",
   :img,
   :ui,
   :view,
@@ -133,12 +132,6 @@ directory "debug"
 file_copy "debug/manifest.json", "src/manifest.json"
 
 file_coffee "debug/app_core.js", FileList["src/core/*.coffee"]
-
-file_coffee "debug/cs_search.js", [
-  "src/app.coffee",
-  "src/core/url.coffee",
-  "src/cs_search.coffee"
-]
 
 #img
 lambda {

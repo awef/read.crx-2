@@ -39,12 +39,6 @@
     },
     {
       "matches" : [
-        "http://find.2ch.net/*"
-      ],
-      "js" : ["/cs_search.js"]
-    },
-    {
-      "matches" : [
         "http://*.2ch.net/test/bbs.cgi*",
         "http://jbbs.livedoor.jp/bbs/write.cgi/*",
         "http://*.p2.2ch.net/p2/post_form.php?*",
