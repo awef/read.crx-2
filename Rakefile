@@ -87,13 +87,13 @@ def coffee(src, output)
 end
 
 def file_coffee(target, src)
-  file target => src, do
+  file target => src do
     coffee(src, target)
   end
 end
 
 def file_copy(target, src)
-  file target => src, do
+  file target => src do
     sh "cp #{src} #{target}"
   end
 end
@@ -291,7 +291,7 @@ lambda {
   file "debug/test/jquery.mockjax.js" => [
     "lib/jquery-mockjax/jquery.mockjax.js",
     "lib/jquery-mockjax_cancelable_etag.patch"
-  ], do
+  ] do
     cd "lib/jquery-mockjax" do
       sh "git checkout -f"
       sh "git apply ../jquery-mockjax_cancelable_etag.patch"
