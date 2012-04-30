@@ -13,8 +13,7 @@ task :default => [
   :zombie,
   :write,
   :build_test,
-  :jquery,
-  :textar
+  :jquery
 ]
 
 task :clean do
@@ -318,18 +317,4 @@ lambda {
       sh "make min"
     end
   end
-}.call()
-
-#Textar
-lambda {
-  task :textar => [
-    "debug/lib/textar",
-    "debug/lib/textar/textar-min.woff",
-    "debug/lib/textar/README",
-    "debug/lib/textar/IPA_Font_License_Agreement_v1.0.txt"
-  ]
-  directory "debug/lib/textar"
-  file_copy "debug/lib/textar/textar-min.woff", "lib/textar/textar-min.woff"
-  file_copy "debug/lib/textar/README", "lib/textar/README"
-  file_copy "debug/lib/textar/IPA_Font_License_Agreement_v1.0.txt", "lib/textar/IPA_Font_License_Agreement_v1.0.txt"
 }.call()

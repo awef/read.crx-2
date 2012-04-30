@@ -1,3 +1,42 @@
+do ->
+  return if /windows/i.test(navigator.userAgent)
+  $.Deferred (d) ->
+    if "textar_font" of localStorage
+      d.resolve()
+    else
+      d.reject()
+    return
+  .pipe null, ->
+    $.Deferred (d) ->
+      xhr = new XMLHttpRequest()
+      xhr.open("GET", "http://idawef.com/read.crx-2/textar-min.woff")
+      xhr.responseType = "arraybuffer"
+      xhr.onload = ->
+        if @status is 200
+          buffer = new Uint8Array(@response)
+          s = ""
+          for a in buffer
+            s += String.fromCharCode(a)
+          localStorage.textar_font = "data:application/x-font-woff;base64," + btoa(s)
+          d.resolve()
+        return
+      xhr.send()
+      return
+  .done ->
+    $ ->
+      style = document.createElement("style")
+      style.textContent = """
+        @font-face {
+          font-family: "Textar";
+          src: url(#{localStorage.textar_font});
+        }
+      """
+      document.head.appendChild(style)
+      return
+    return
+  return
+
+
 app.view_thread = {}
 
 app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->

@@ -26,11 +26,6 @@ $z-index_notification: 8;
   }
 }
 
-@font-face {
-  font-family: "Textar";
-  src: url(/lib/textar/textar-min.woff);
-}
-
 @mixin ascii_art {
   font: {
     size: 16px;
