@@ -1,6 +1,6 @@
 {
   "name" : "read.crx 2",
-  "version" : "0.57",
+  "version" : "0.58",
   "update_url": "http://idawef.com/crx/crx.xml",
   "description" : "2chブラウザ",
   "manifest_version": 2,
