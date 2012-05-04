@@ -12,16 +12,16 @@
     %form
       %header
         %h1
-        %button.preview_button AA表示確認
+        %button.preview_button(tabindex="1") AA表示確認
       %div
-        %input(type="submit" value="書き込む" tabindex="2")
+        %input(type="submit" value="書き込む" tabindex="5")
         %label
           名前:
-          %input.name(size="19")
+          %input.name(size="19" tabindex="2")
         %label
           E-mail:
-          %input.mail(size="19")
-      %textarea.message(wrap="off" tabindex="1" autofocus required)
+          %input.mail(size="19" tabindex="3")
+      %textarea.message(wrap="off" tabindex="4" autofocus required)
       .notice
     .iframe_container
       .hide_iframe
