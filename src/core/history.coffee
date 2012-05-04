@@ -92,17 +92,22 @@ app.history.get_count = ->
 
     .promise()
 
-app.history.clear = ->
-  app.history._db_open
-
-    .pipe (db) ->
-      $.Deferred (deferred) ->
-        db.transaction (transaction) ->
+app.history.clear = (offset) ->
+  app.history._db_open.pipe (db) -> $.Deferred (d) ->
+    db.transaction(
+      (transaction) ->
+        if typeof offset is "number"
+          transaction.executeSql("DELETE FROM History WHERE rowid < (SELECT rowid FROM History ORDER BY date DESC LIMIT 1 OFFSET ?)", [offset - 1])
+        else
           transaction.executeSql("DELETE FROM History")
-        , ->
-          app.log("error", "app.history.clear: トランザクション中断")
-          deferred.reject()
-        , ->
-          deferred.resolve()
-
-    .promise()
+        return
+      ->
+        app.log("error", "app.history.clear: トランザクション中断")
+        d.reject()
+        return
+      ->
+        d.resolve()
+        return
+    )
+    return
+  .promise()
