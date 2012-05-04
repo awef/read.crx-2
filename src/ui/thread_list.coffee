@@ -23,9 +23,7 @@ do ($ = jQuery) ->
         created_date: false
         viewed_date: false
 
-        bookmark_indicator: false
         bookmark_add_rm: !!option.bookmark_add_rm
-        search: false
 
       key_to_label =
         bookmark: "★"
