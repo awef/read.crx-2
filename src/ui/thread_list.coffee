@@ -24,6 +24,7 @@ do ($ = jQuery) ->
         viewed_date: false
 
         bookmark_add_rm: !!option.bookmark_add_rm
+        searchbox: undefined
 
       key_to_label =
         bookmark: "★"
@@ -114,6 +115,29 @@ do ($ = jQuery) ->
             $unread = $tr.children(unread_selector)
             $unread.text(Math.max(+$res.text() - msg.read_state.read, 0) or "")
           return
+
+      #リスト内検索
+      if typeof option.searchbox is "object"
+        title_index = $table.find("th.title").index()
+
+        $(option.searchbox)
+          .closest(".view")
+            .on "request_reload", ->
+              $(option.searchbox).val("").triggerHandler("input")
+              return
+          .end()
+          .on "input", ->
+            if @value isnt ""
+              $table.table_search("search", {
+                query: @value, target_col: title_index})
+            else
+              $table.table_search("clear")
+            return
+          .on "keyup", (e) ->
+            if e.which is 27 #Esc
+              @value = ""
+              $(@).triggerHandler("input")
+            return
       return
 
     add_item: (arg) ->

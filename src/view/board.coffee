@@ -10,6 +10,7 @@ app.boot "/view/board.html", ["board_title_solver"], (BoardTitleSolver) ->
   $table = $("<table>")
   $table.thread_list("create",
     th: ["bookmark", "title", "res", "unread", "heat", "created_date"]
+    searchbox: $view.find(".searchbox_thread_title")
   )
   $table.table_sort()
   $table.find("th.res, th.unread, th.heat").attr("data-table_sort_type", "num")
@@ -40,7 +41,6 @@ app.boot "/view/board.html", ["board_title_solver"], (BoardTitleSolver) ->
         return
 
   app.view_module.view($view)
-  app.view_module.searchbox_thread_title($view, 1)
   app.view_module.bookmark_button($view)
   app.view_module.board_contextmenu($view)
   app.view_module.sort_item_selector($view)

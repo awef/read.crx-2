@@ -96,27 +96,6 @@ app.view_module.view = ($view) ->
           $view.trigger("request_reload")
         return
 
-app.view_module.searchbox_thread_title = ($view, target_col) ->
-  $view
-    .on "request_reload", ->
-      $view.find(".searchbox_thread_title").val("").triggerHandler("input")
-      return
-    .find(".searchbox_thread_title")
-      .on "input", ->
-        if @value isnt ""
-          $view
-            .find("table")
-              .table_search("search", {query: @value, target_col})
-        else
-          $view.find("table").table_search("clear")
-        return
-      .on "keyup", (e) ->
-        if e.which is 27 #Esc
-          @value = ""
-          $(@).triggerHandler("input")
-        return
-  return
-
 app.view_module.bookmark_button = ($view) ->
   url = $view.attr("data-url")
   $button = $view.find(".button_bookmark")

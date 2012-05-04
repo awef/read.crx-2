@@ -13,7 +13,6 @@ app.boot "/view/search.html", ["thread_search"], (ThreadSearch) ->
   $message_bar = $view.find(".message_bar")
 
   app.view_module.view($view)
-  app.view_module.searchbox_thread_title($view, 1)
   app.view_module.board_contextmenu($view)
 
   document.title = "検索:#{query}"
@@ -22,6 +21,7 @@ app.boot "/view/search.html", ["thread_search"], (ThreadSearch) ->
   $table = $("<table>")
   $table.thread_list("create",
     th: ["bookmark", "title", "board_title", "res", "heat", "created_date"]
+    searchbox: $view.find(".searchbox_thread_title")
   )
   $table.prependTo(".content")
 
