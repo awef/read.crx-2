@@ -21,7 +21,7 @@ app.boot "/view/search.html", ["thread_search"], (ThreadSearch) ->
   $table = $("<table>")
   $table.thread_list("create",
     th: ["bookmark", "title", "board_title", "res", "heat", "created_date"]
-    searchbox: $view.find(".searchbox_thread_title")
+    searchbox: $view.find(".searchbox")
   )
   $table.prependTo(".content")
 

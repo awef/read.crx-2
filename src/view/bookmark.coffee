@@ -5,7 +5,7 @@ app.boot "/view/bookmark.html", ->
   $table.thread_list("create", {
     th: ["title", "res", "unread", "heat", "created_date"]
     bookmark_add_rm: true
-    searchbox: $view.find(".searchbox_thread_title")
+    searchbox: $view.find(".searchbox")
   })
   $table.appendTo(".content")
   $table.find("th.res, th.unread, th.heat").attr("data-table_sort_type", "num")

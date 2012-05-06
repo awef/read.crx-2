@@ -10,7 +10,7 @@ app.boot "/view/board.html", ["board_title_solver"], (BoardTitleSolver) ->
   $table = $("<table>")
   $table.thread_list("create",
     th: ["bookmark", "title", "res", "unread", "heat", "created_date"]
-    searchbox: $view.find(".searchbox_thread_title")
+    searchbox: $view.find(".searchbox")
   )
   $table.table_sort()
   $table.find("th.res, th.unread, th.heat").attr("data-table_sort_type", "num")
