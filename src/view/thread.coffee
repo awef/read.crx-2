@@ -96,6 +96,10 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
         .end()
         .find(".searchbox")
           .val("")
+        .end()
+        .find(".hit_count")
+          .hide()
+          .text("")
 
       app.view_thread._draw($view, ex?.force_update)
 
@@ -380,15 +384,19 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
               .find(".content")
                 .addClass("searching")
                 .children()
-                .each ->
-                  if app.util.normalize(@textContent).indexOf(query) isnt -1
-                    @classList.add("search_hit")
-                    hit_count++
-                  else
-                    @classList.remove("search_hit")
-                  return
+                  .each ->
+                    if app.util.normalize(@textContent).indexOf(query) isnt -1
+                      @classList.add("search_hit")
+                      hit_count++
+                    else
+                      @classList.remove("search_hit")
+                    return
+                .end()
+                .attr("data-res_search_hit_count", hit_count)
               .end()
-              .attr("data-res_search_hit_count", hit_count)
+              .find(".hit_count")
+                .text(hit_count + "hit")
+                .show()
           else
             $view
               .find(".content")
@@ -396,6 +404,11 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
                 .removeAttr("data-res_search_hit_count")
                 .find(".search_hit")
                   .removeClass("search_hit")
+                .end()
+              .end()
+              .find(".hit_count")
+                .hide()
+                .text("")
 
             if typeof search_stored_scrollTop is "number"
               $view.find(".content").scrollTop(search_stored_scrollTop)

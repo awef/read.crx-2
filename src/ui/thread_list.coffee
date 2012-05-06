@@ -119,8 +119,9 @@ do ($ = jQuery) ->
       #リスト内検索
       if typeof option.searchbox is "object"
         title_index = $table.find("th.title").index()
+        $searchbox = $(option.searchbox)
 
-        $(option.searchbox)
+        $searchbox
           .closest(".view")
             .on "request_reload", ->
               $(option.searchbox).val("").triggerHandler("input")
@@ -130,8 +131,11 @@ do ($ = jQuery) ->
             if @value isnt ""
               $table.table_search("search", {
                 query: @value, target_col: title_index})
+              hit_count = $table.attr("data-table_search_hit_count")
+              $(@).siblings(".hit_count").text(hit_count + "hit").show()
             else
               $table.table_search("clear")
+              $(@).siblings(".hit_count").text("").hide()
             return
           .on "keyup", (e) ->
             if e.which is 27 #Esc

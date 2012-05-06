@@ -16,15 +16,6 @@ html {
 
 .content {
   padding-bottom: 50px;
-  &[data-res_search_hit_count]:not([data-res_search_hit_count="0"]):before {
-    content: attr(data-res_search_hit_count)"hit";
-    position: fixed;
-    left: 0;
-    top: 29px;
-    padding: 3px;
-    background-color: hsl(0, 0%, 40%);
-    color: hsl(0, 0%, 100%);
-  }
   &[data-res_search_hit_count="0"]:after {
     display: block;
     position: absolute;
