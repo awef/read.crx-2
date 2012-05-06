@@ -11,6 +11,7 @@ app.boot "/view/search.html", ["thread_search"], (ThreadSearch) ->
   $view.attr("data-url", "search:#{query}")
 
   $message_bar = $view.find(".message_bar")
+  $button_reload = $view.find(".button_reload")
 
   app.view_module.view($view)
   app.view_module.board_contextmenu($view)
@@ -31,6 +32,7 @@ app.boot "/view/search.html", ["thread_search"], (ThreadSearch) ->
   load = ->
     return if $view.hasClass("loading")
     $view.addClass("loading")
+    $button_reload.addClass("disabled")
     $view.find(".more").text("検索中")
     thread_search.read()
       .done (result) ->
@@ -50,6 +52,16 @@ app.boot "/view/search.html", ["thread_search"], (ThreadSearch) ->
         $view.find(".more").hide()
         $view.removeClass("loading")
         return
+      .always ->
+        setTimeout((-> $button_reload.removeClass("disabled"); return), 5000)
+        return
+    return
+
+  $button_reload.on "click", ->
+    return if $button_reload.hasClass("disabled")
+    $table.thread_list("empty")
+    thread_search = new ThreadSearch(query)
+    load()
     return
 
   $view.find(".more").on("click", load)
