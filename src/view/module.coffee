@@ -121,55 +121,6 @@ app.view_module.bookmark_button = ($view) ->
   else
     $button.remove()
 
-app.view_module.board_contextmenu = ($view) ->
-  $view
-    #コンテキストメニュー 表示
-    .delegate "tbody tr", "click, contextmenu", (e) ->
-      if e.type is "contextmenu"
-        e.preventDefault()
-
-      app.defer =>
-        $menu = $("#template > .view_module_board_contextmenu")
-          .clone()
-            .data("contextmenu_source", this)
-            .appendTo($view)
-
-        url = this.getAttribute("data-href")
-        if app.bookmark.get(url)
-          $menu.find(".add_bookmark").remove()
-        else
-          $menu.find(".del_bookmark").remove()
-
-        $.contextmenu($menu, e.clientX, e.clientY)
-
-      return
-
-    #コンテキストメニュー 項目クリック
-    .delegate ".view_module_board_contextmenu > *", "click", ->
-      $this = $(this)
-      $tr = $($this.parent().data("contextmenu_source"))
-
-      url = $tr.attr("data-href")
-      if $view.is(".view_bookmark")
-        title = $tr.find("td:nth-child(1)").text()
-        res_count = +$tr.find("td:nth-child(2)").text()
-      else if $view.is(".view_board")
-        title = $tr.find("td:nth-child(2)").text()
-        res_count = +$tr.find("td:nth-child(3)").text()
-      else if $view.is(".view_search")
-        title = $tr.find("td:nth-child(2)").text()
-        res_count = +$tr.find("td:nth-child(3)").text()
-      else
-        app.log("error", "app.view_module.board_contextmenu: 想定外の状況で呼び出されました")
-
-      if $this.hasClass("add_bookmark")
-        app.bookmark.add(url, title, res_count)
-      else if $this.hasClass("del_bookmark")
-        app.bookmark.remove(url)
-
-      $this.parent().remove()
-      return
-
 app.view_module.sort_item_selector = ($view) ->
   $table = $(".table_sort")
   $selector = $view.find(".sort_item_selector")

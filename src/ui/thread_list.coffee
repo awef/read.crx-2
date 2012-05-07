@@ -142,6 +142,49 @@ do ($ = jQuery) ->
               @value = ""
               $(@).triggerHandler("input")
             return
+
+      #コンテキストメニュー
+      if @flg.bookmark or @flg.bookmark_add_rm
+        do ->
+          on_click= ->
+            $this = $(@)
+            $tr = $($this.parent().data("contextmenu_source"))
+
+            thread_url = $tr.attr("data-href")
+            thread_title = $tr.find(title_selector).text()
+            thread_res = $tr.find(res_selector).text()
+
+            if $this.hasClass("add_bookmark")
+              app.bookmark.add(thread_url, thread_title, thread_res)
+            else if $this.hasClass("del_bookmark")
+              app.bookmark.remove(thread_url)
+
+            $this.parent().remove()
+            return
+
+          $table
+            .on "contextmenu", "tbody > tr", (e) ->
+              if e.type is "contextmenu"
+                e.preventDefault()
+
+              app.defer =>
+                $menu = $("#template > .thread_list_contextmenu")
+                  .clone()
+                    .data("contextmenu_source", @)
+                    .appendTo($table.closest(".view"))
+
+                url = @getAttribute("data-href")
+                if app.bookmark.get(@getAttribute("data-href"))
+                  $menu.find(".add_bookmark").remove()
+                else
+                  $menu.find(".del_bookmark").remove()
+
+                $menu.one("click", "li", on_click)
+
+                $.contextmenu($menu, e.clientX, e.clientY)
+                return
+              return
+            return
       return
 
     add_item: (arg) ->

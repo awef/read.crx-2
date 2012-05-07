@@ -14,7 +14,6 @@ app.boot "/view/search.html", ["euc_jp_escape", "thread_search"], (euc_jp_escape
   $button_reload = $view.find(".button_reload")
 
   app.view_module.view($view)
-  app.view_module.board_contextmenu($view)
   app.view_module.tool_menu($view)
 
   document.title = "検索:#{query}"

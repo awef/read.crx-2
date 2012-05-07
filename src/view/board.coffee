@@ -42,7 +42,6 @@ app.boot "/view/board.html", ["board_title_solver"], (BoardTitleSolver) ->
 
   app.view_module.view($view)
   app.view_module.bookmark_button($view)
-  app.view_module.board_contextmenu($view)
   app.view_module.sort_item_selector($view)
   app.view_module.tool_menu($view)
 
