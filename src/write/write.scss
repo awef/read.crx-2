@@ -1,5 +1,7 @@
 @import "../common.scss";
 
+@include common;
+
 * {
   box-sizing: border-box;
 }

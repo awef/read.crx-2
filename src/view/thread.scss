@@ -1,5 +1,6 @@
 @import "../common.scss";
 
+@include common;
 @include common_view_style_1;
 
 @mixin view_thread_res_info {

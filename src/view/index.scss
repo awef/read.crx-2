@@ -1,5 +1,7 @@
 @import "../common.scss";
 
+@include common;
+
 html, body, #body {
   position: relative;
   width: 100%;

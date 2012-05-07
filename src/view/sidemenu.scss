@@ -1,5 +1,7 @@
 @import "../common.scss";
 
+@include common;
+
 body {
   margin: 0;
   padding-bottom: 100px;

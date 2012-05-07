@@ -1,5 +1,7 @@
 @import "../common.scss";
 
+@include common;
+
 html {
   background-image: -webkit-radial-gradient(#666666, #333333);
   width: 100%;

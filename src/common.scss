@@ -8,21 +8,32 @@ $z-index_dialog: 6;
 $z-index_modal: 7;
 $z-index_notification: 8;
 
-button, input, select, textarea {
-  font-family: inherit;
-}
+@mixin common {
+  button, input, select, textarea {
+    font-family: inherit;
+  }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-  border: 1px solid #cccccc;
-  background-color: #dddddd;
-}
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    border: 1px solid #cccccc;
+    background-color: #dddddd;
+  }
 
-::-webkit-scrollbar-thumb {
-  background-color: #999999;
-  &:hover {
-    background-color: #888888;
+  ::-webkit-scrollbar-thumb {
+    background-color: #999999;
+    &:hover {
+      background-color: #888888;
+    }
+  }
+
+  @-webkit-keyframes fade_in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
 }
 
@@ -436,14 +447,5 @@ button, input, select, textarea {
 
   tbody:after {
     color: $empty_message_color;
-  }
-}
-
-@-webkit-keyframes fade_in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
   }
 }
