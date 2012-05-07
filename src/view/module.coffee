@@ -228,6 +228,8 @@ app.view_module.tool_menu = ($view) ->
     if url is "bookmark"
       url = "chrome-extension://eemcgdkfndhakfknompkggombfjjjeno/"
       url += "main.html##{app.config.get("bookmark_id")}"
+    else if /^search:/.test(url)
+      return
     else
       url = app.safe_href(url)
 
