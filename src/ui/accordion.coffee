@@ -1,6 +1,6 @@
-(($) ->
+do ($ = jQuery) ->
   $.fn.accordion = ->
-    $this = $(this)
+    $this = $(@)
     refresh = $this.hasClass("accordion")
     $this
       .addClass("accordion")
@@ -17,8 +17,8 @@
 
     if not refresh
       $this
-        .delegate ".accordion > :header", "click", ->
-          $(this)
+        .on "click", ".accordion > :header", ->
+          $(@)
             .toggleClass("accordion_open")
             .next()
               .stop(true, true)
@@ -30,5 +30,5 @@
                 .stop(true, true)
                 .slideUp(250)
           return
-    this
-)(jQuery)
+    @
+  return
