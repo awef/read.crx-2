@@ -217,7 +217,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
               now++
         else
           $("<div>", {
-              text: "指定されたレスの量が極端に多いため、ポップアップを表示しません"
+              text: @getAttribute("data-disabled_reason")
               class: "anchor_popup_disabled_message"
             })
             .appendTo($popup)
@@ -776,7 +776,15 @@ app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
       #アンカーリンク
       .replace /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?)*/g, ($0) ->
         anchor = app.util.parse_anchor($0)
-        disabled = anchor.target_count >= 25 or anchor.target_count is 0
+
+        if anchor.target_count >= 25
+          disabled = true
+          disabled_reason = "指定されたレスの量が極端に多いため、ポップアップを表示しません"
+        else if anchor.target_count is 0
+          disabled = true
+          disabled_reason = "指定されたレスが存在しません"
+        else
+          disabled = false
 
         #rep_index更新
         if not disabled
@@ -788,7 +796,8 @@ app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
               target++
 
         "<a href=\"javascript:undefined;\" class=\"anchor" +
-        "#{if disabled then " disabled" else ""}\">#{$0}</a>"
+        (if disabled then " disabled\" data-disabled_reason=\"#{disabled_reason}\"" else "\"") +
+        ">#{$0}</a>"
       #IDリンク
       .replace /id:(?:[a-hj-z\d_\+\/\.]|i(?!d:))+/ig, ($0) ->
         "<a href=\"javascript:undefined;\" class=\"anchor_id\">#{$0}</a>"
