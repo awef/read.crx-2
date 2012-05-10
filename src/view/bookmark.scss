@@ -32,18 +32,6 @@ tr.expired td:first-child:before {
   color: red;
 }
 
-th {
-  &:nth-child(2), &:nth-child(3) {
-    width: 4em;
-  }
-  &:nth-child(4) {
-    width: 7em;
-  }
-  &:nth-child(5) {
-    width: 16em;
-  }
-}
-
 td {
   &:nth-child(2), &:nth-child(3), &:nth-child(4) {
     text-align: right;

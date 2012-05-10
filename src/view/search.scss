@@ -23,24 +23,6 @@
   }
 }
 
-th {
-  &:nth-child(1) {
-    width: 2em;
-  }
-  &:nth-child(3) {
-    width: 10em;
-  }
-  &:nth-child(4) {
-    width: 4em;
-  }
-  &:nth-child(5) {
-    width: 7em;
-  }
-  &:nth-child(6) {
-    width: 16em;
-  }
-}
-
 td {
   &:nth-child(4), &:nth-child(5) {
     text-align: right;

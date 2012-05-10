@@ -381,6 +381,21 @@ $z-index_notification: 8;
     border-right: 1px solid;
     white-space: nowrap;
     overflow: hidden;
+    &.bookmark {
+      width: 2em;
+    }
+    &.board_title {
+      width: 10em;
+    }
+    &.res, &.unread {
+      width: 4em;
+    }
+    &.heat {
+      width: 7em;
+    }
+    &.created_date, &.viewed_date {
+      width: 16em;
+    }
   }
   tbody > tr {
     cursor: pointer;
