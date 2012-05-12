@@ -50,6 +50,8 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
   $view.data("id_index", {})
   $view.data("rep_index", {})
 
+  $content = $view.find(".content")
+
   app.view_module.view($view)
   app.view_module.bookmark_button($view)
   app.view_module.tool_menu($view)
@@ -112,20 +114,21 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
     app.view_thread._read_state_manager($view)
     $view.one "read_state_attached", ->
       on_scroll = false
-      $view.find(".content").one "scroll", ->
+      $content.one "scroll", ->
         on_scroll = true
+        return
 
-      $last = $view.find(".content > .last")
+      $last = $content.find(".last")
       if $last.length is 1
         app.view_thread._jump_to_res($view, +$last.find(".num").text(), false)
 
       #スクロールされなかった場合も余所の処理を走らすためにscrollを発火
       unless on_scroll
-        $view.find(".content").triggerHandler("scroll")
+        $content.triggerHandler("scroll")
 
       #二度目以降のread_state_attached時に、最後に見ていたスレが当時最新のレスだった場合、新着を強調表示するためにスクロールを行う
       $view.on "read_state_attached", ->
-        $tmp = $view.find(".content > .last.received + article")
+        $tmp = $content.children(".last.received + article")
         return if $tmp.length isnt 1
         app.view_thread._jump_to_res($view, +$tmp.find(".num").text(), true, -100)
 
@@ -143,7 +146,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
 
     .delegate ".name_num", "click", (e) ->
       popup_helper this, e, =>
-        res = $view.find(".content")[0].children[+this.textContent - 1]
+        res = $content[0].children[+this.textContent - 1]
         $("<div>").append($(res).clone())
       return
 
@@ -205,7 +208,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
       popup_helper this, e, =>
         $popup = $("<div>")
         if not @classList.contains("disabled")
-          tmp = $view.find(".content")[0].children
+          tmp = $content[0].children
           for segment in app.util.parse_anchor(@innerHTML).segments
             now = segment[0] - 1
             end = segment[1] - 1
@@ -302,17 +305,16 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
           .replace(/\u25cf$/, "") #末尾●除去
 
         $popup = $("<div>")
-        $view
-          .find(".content > article[data-id=\"#{id_text}\"]")
-            .clone()
-              .appendTo($popup)
+        $content.children("article[data-id=\"#{id_text}\"]")
+          .clone()
+            .appendTo($popup)
         $popup
       return
 
     #リプライポップアップ
     .delegate ".rep", app.config.get("popup_trigger"), (e) ->
       popup_helper this, e, =>
-        tmp = $view.find(".content")[0].children
+        tmp = $content[0].children
 
         frag = document.createDocumentFragment()
         res_key = +$(@).closest("article").find(".num").text()
@@ -375,7 +377,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
         .on "input", ->
           if @value isnt ""
             if typeof search_stored_scrollTop isnt "number"
-              search_stored_scrollTop = $view.find(".content").scrollTop()
+              search_stored_scrollTop = $content.scrollTop()
 
             hit_count = 0
             query = app.util.normalize(@value)
@@ -411,7 +413,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
                 .text("")
 
             if typeof search_stored_scrollTop is "number"
-              $view.find(".content").scrollTop(search_stored_scrollTop)
+              $content.scrollTop(search_stored_scrollTop)
               search_stored_scrollTop = null
           return
 
@@ -424,7 +426,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
 
   #フッター表示処理
   do ->
-    content = $view.find(".content")[0]
+    content = $content[0]
 
     scroll_left = 0
     update_scroll_left = ->
