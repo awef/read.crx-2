@@ -120,7 +120,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
 
       $last = $content.find(".last")
       if $last.length is 1
-        app.view_thread._jump_to_res($view, +$last.find(".num").text(), false)
+        $content.thread("scroll_to", +$last.find(".num").text(), false)
 
       #スクロールされなかった場合も余所の処理を走らすためにscrollを発火
       unless on_scroll
@@ -130,7 +130,8 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
       $view.on "read_state_attached", ->
         $tmp = $content.children(".last.received + article")
         return if $tmp.length isnt 1
-        app.view_thread._jump_to_res($view, +$tmp.find(".num").text(), true, -100)
+        $content.thread("scroll_to", +$tmp.find(".num").text(), true, -100)
+        return
 
     app.view_thread._draw($view)
       .always ->
@@ -185,7 +186,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
       $res = $this.closest("article")
 
       if $this.hasClass("jump_to_this")
-        app.view_thread._jump_to_res($view, +$res.find(".num").text(), true)
+        $content.thread("scroll_to", +$res.find(".num").text(), true)
 
       else if $this.hasClass("res_to_this")
         write(message: ">>#{$res.find(".num").text()}\n")
@@ -235,7 +236,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
       tmp = app.util.parse_anchor(@innerHTML)
       target_res_num = tmp.segments[0]?[0]
       if target_res_num?
-        app.view_thread._jump_to_res($view, target_res_num, true)
+        $content.thread("scroll_to", target_res_num, true)
       return
 
     #通常リンク
@@ -363,7 +364,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
         res_num = $view.find(selector).index() + 1
 
         if typeof res_num is "number"
-          app.view_thread._jump_to_res($view, res_num, true)
+          $content.thread("scroll_to", res_num, true)
         else
           app.log("warn", "[view_thread] .jump_panel: ターゲットが存在しません")
       return
@@ -557,16 +558,6 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
     return
 
   return
-
-app.view_thread._jump_to_res = ($view, res_num, animate_flg, offset = -10) ->
-  content = $view[0].querySelector(".content")
-  target = content.childNodes[res_num - 1]
-  if target
-    return if content.classList.contains("searching") and not target.classList.contains("search_hit")
-    if animate_flg
-      $(content).animate(scrollTop: target.offsetTop + offset)
-    else
-      content.scrollTop = target.offsetTop + offset
 
 app.view_thread._draw = ($view, force_update) ->
   deferred = $.Deferred()
