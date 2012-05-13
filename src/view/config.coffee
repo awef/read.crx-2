@@ -1,4 +1,4 @@
-app.boot "/view/config.html", ["bbsmenu"], (BBSMenu) ->
+app.boot "/view/config.html", ["cache", "bbsmenu"], (Cache, BBSMenu) ->
   $view = $(document.documentElement)
 
   app.view_module.view($view)
@@ -156,18 +156,22 @@ app.boot "/view/config.html", ["bbsmenu"], (BBSMenu) ->
     $clear_button = $view.find(".cache_clear")
     $status = $view.find(".cache_status")
 
-    app.cache.get_count().done (count) ->
+    cache = new Cache("*")
+    cache.count().done (count) ->
       $status.text("#{count}件")
+      return
 
     $clear_button.on "click", ->
       $clear_button.remove()
       $status.text("削除中")
 
-      app.cache.clear()
+      cache.delete()
         .done ->
           $status.text("削除完了")
+          return
         .fail ->
           $status.text("削除失敗")
+          return
       return
 
   #ブックマークフォルダ変更ボタン
