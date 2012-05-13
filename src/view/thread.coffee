@@ -54,15 +54,13 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
   app.view_module.bookmark_button($view)
   app.view_module.tool_menu($view)
 
-  write = (param) ->
-    param or= {}
-    param.url = view_url
-    param.title = document.title
-    open(
-      "/write/write.html?#{app.url.build_param(param)}"
-      undefined
-      'width=600,height=300'
-    )
+  write = ->
+    app.message.send("notify", {
+      html: """審査を通過できないため、Chrome Web Store版read.crx 2から書き込み機能は削除されました。<br />
+      書き込み機能は<a href="http://idawef.com/read.crx-2/" target="_blank">idawef.com版read.crx 2</a>で利用可能です。"""
+      background_color: "hsl(0, 50%, 50%)"
+    })
+    return
 
   popup_helper = (that, e, fn) ->
     $popup = fn()

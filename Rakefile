@@ -9,7 +9,6 @@ task :default => [
   :ui,
   :view,
   :zombie,
-  :write,
   :build_test,
   :jquery
 ]
@@ -209,37 +208,6 @@ lambda {
     "src/core/history.coffee",
     "src/core/bookmark.coffee",
     "src/zombie.coffee"
-  ]
-}.call()
-
-#Write
-lambda {
-  task :write => [
-    "debug/write",
-    "debug/write/write.html",
-    "debug/write/write.css",
-    "debug/write/write.js",
-    "debug/write/cs_write.js"
-  ]
-
-  directory "debug/write"
-
-  file "debug/write/write.css" => [
-      "src/common.scss",
-      "src/write/write.scss"
-    ] do |t|
-    scss("src/write/write.scss", t.name)
-  end
-
-  file_coffee "debug/write/write.js", [
-    "src/core/url.coffee",
-    "src/write/write.coffee"
-  ]
-
-  file_coffee "debug/write/cs_write.js", [
-    "src/app.coffee",
-    "src/core/url.coffee",
-    "src/write/cs_write.coffee"
   ]
 }.call()
 

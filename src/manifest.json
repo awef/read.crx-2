@@ -14,8 +14,6 @@
     "tabs",
     "unlimitedStorage",
     "notifications",
-    "webRequest",
-    "webRequestBlocking",
     "http://*/*"
   ],
   "app" : {
@@ -36,17 +34,6 @@
         "http://*.machi.to/*"
       ],
       "js" : ["/cs_addlink.js"]
-    },
-    {
-      "matches" : [
-        "http://*.2ch.net/test/bbs.cgi*",
-        "http://jbbs.livedoor.jp/bbs/write.cgi/*",
-        "http://*.p2.2ch.net/p2/post_form.php?*",
-        "http://*.p2.2ch.net/p2/post.php?*"
-      ],
-      "js" : ["/write/cs_write.js"],
-      "run_at" : "document_end",
-      "all_frames" : true
     }
   ],
   "web_accessible_resources": [
