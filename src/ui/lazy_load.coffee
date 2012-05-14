@@ -24,6 +24,10 @@ do ($ = jQuery) ->
       interval = setInterval(->
         if scroll_flg
           imgs = imgs.filter (img) ->
+            # imgが非表示の時はロードしない
+            if img.offsetWidth is 0
+              return true
+
             top = 0
             current = img
             while current isnt null and current isnt container
