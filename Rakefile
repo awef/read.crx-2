@@ -29,6 +29,10 @@ task :clean do
   end
 end
 
+task :doc do
+  sh "yuidoc --server 4001 debug"
+end
+
 task :pack do
   require "json"
 
