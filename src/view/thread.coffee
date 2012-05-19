@@ -39,7 +39,7 @@ do ->
 
 app.view_thread = {}
 
-app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
+app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolver, History) ->
   view_url = app.url.parse_query(location.href).q
   return alert("不正な引数です") unless view_url
   view_url = app.url.fix(view_url)
@@ -131,7 +131,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
 
     app.view_thread._draw($view)
       .always ->
-        app.history.add(view_url, document.title, opened_at)
+        History.add(view_url, document.title, opened_at)
 
   $view
     #名前欄が数字だった場合のポップアップ

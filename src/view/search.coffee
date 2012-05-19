@@ -1,4 +1,4 @@
-app.boot "/view/search.html", ["euc_jp_escape", "thread_search"], (euc_jp_escape, ThreadSearch) ->
+app.boot "/view/search.html", ["euc_jp_escape", "thread_search", "history"], (euc_jp_escape, ThreadSearch, History) ->
   query = app.url.parse_query(location.href).query
 
   unless query?
@@ -17,7 +17,7 @@ app.boot "/view/search.html", ["euc_jp_escape", "thread_search"], (euc_jp_escape
   app.view_module.tool_menu($view)
 
   document.title = "検索:#{query}"
-  app.history.add($view.attr("data-url"), document.title, opened_at)
+  History.add($view.attr("data-url"), document.title, opened_at)
 
   euc_jp_escape.escape(query).done (q) ->
     $view.find(".button_link > a").attr("href", "http://find.2ch.net/index.php?BBS=2ch&TYPE=TITLE&SORT=CREATED&STR=" + q)

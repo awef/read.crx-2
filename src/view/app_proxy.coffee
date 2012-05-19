@@ -3,7 +3,6 @@ do ->
     "board"
     "bookmark"
     "cache"
-    "history"
     "module"
     "ninja"
     "read_state"
