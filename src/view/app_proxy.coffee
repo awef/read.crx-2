@@ -2,7 +2,6 @@ do ->
   modules = [
     "board"
     "bookmark"
-    "cache"
     "module"
     "ninja"
     "read_state"
