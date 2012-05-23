@@ -139,11 +139,12 @@ app.safe_href = (url) ->
 
 # app.manifest
 do ->
-  if location.origin is chrome.extension.getURL("")[...-1]
+  if /^chrome-extension:\/\//.test(location.origin)
     xhr = new XMLHttpRequest()
     xhr.open("GET", "/manifest.json", false)
-    xhr.send(null)
+    xhr.send()
     app.manifest = JSON.parse(xhr.responseText)
+  return
 
 # app.module
 do ->
