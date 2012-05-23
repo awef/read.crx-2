@@ -9,8 +9,9 @@ app.critical_error = (message) ->
     )
     .show()
 
-  chrome.tabs.getCurrent (tab) ->
-    chrome.tabs.remove(tab.id)
+  parent.chrome.tabs.getCurrent (tab) ->
+    parent.chrome.tabs.remove(tab.id)
+    return
 
   return
 
