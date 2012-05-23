@@ -805,7 +805,7 @@ app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
   html += """<div class="message">#{tmp}</div>"""
 
   tmp = ""
-  if /(?:\u3000{5}|\u3000\u0020|[^>]\u0020\u3000)(?!<br>|$)/i.test(res.message)
+  if /(?:\u3000\u3000\u3000\u3000\u3000|\u3000\u0020|[^>]\u0020\u3000)(?!<br>|$)/i.test(res.message)
     tmp += " class=\"aa\""
   if attribute_data_id?
     tmp += " data-id=\"#{attribute_data_id}\""
