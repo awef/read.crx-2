@@ -46,5 +46,5 @@ app.boot "/view/bookmark_source_selector.html", ->
         fn(tree.children, cul)
     null
 
-  chrome.bookmarks.getTree (array_of_tree) ->
+  parent.chrome.bookmarks.getTree (array_of_tree) ->
     fn(array_of_tree[0].children, $view.find(".node_list > ul")[0])

@@ -193,14 +193,14 @@ app.boot "/view/config.html", ["cache", "bbsmenu", "history"], (Cache, BBSMenu, 
     $status.text("インポート中")
 
     $.Deferred (deferred) ->
-      chrome.extension.sendRequest rcrx_webstore, req, (res) ->
+      parent.chrome.extension.sendRequest rcrx_webstore, req, (res) ->
         if res
           deferred.resolve(res)
         else
           deferred.reject()
     .pipe null, ->
       $.Deferred (deferred) ->
-        chrome.extension.sendRequest rcrx_debug, req, (res) ->
+        parent.chrome.extension.sendRequest rcrx_debug, req, (res) ->
           if res
             deferred.resolve(res)
           else
