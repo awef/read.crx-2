@@ -9,8 +9,9 @@ app.critical_error = (message) ->
     )
     .show()
 
-  chrome.tabs.getCurrent (tab) ->
-    chrome.tabs.remove(tab.id)
+  parent.chrome.tabs.getCurrent (tab) ->
+    parent.chrome.tabs.remove(tab.id)
+    return
 
   return
 
@@ -139,11 +140,12 @@ app.safe_href = (url) ->
 
 # app.manifest
 do ->
-  if location.origin is chrome.extension.getURL("")[...-1]
+  if /^chrome-extension:\/\//.test(location.origin)
     xhr = new XMLHttpRequest()
     xhr.open("GET", "/manifest.json", false)
-    xhr.send(null)
+    xhr.send()
     app.manifest = JSON.parse(xhr.responseText)
+  return
 
 # app.module
 do ->
