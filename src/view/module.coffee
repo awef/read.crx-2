@@ -46,12 +46,7 @@ app.view_module.view = ($view) ->
       new_tab = app.config.get("always_new_tab") is "on"
       new_tab or= how_to_open.new_tab or how_to_open.new_window
       background = how_to_open.background
-      if frameElement
-        app.message.send("open", {url, new_tab, background, title})
-      else
-        tmp = chrome.extension.getURL("/view/index.html?")
-        tmp += app.url.build_param(q: url)
-        open(tmp)
+      app.message.send("open", {url, new_tab, background, title})
       return
 
   #unloadイベント → view_unloadイベント

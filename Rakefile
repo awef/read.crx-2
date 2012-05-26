@@ -29,6 +29,10 @@ task :clean do
   end
 end
 
+task :doc do
+  sh "yuidoc --server 4001 debug"
+end
+
 task :pack do
   require "json"
 
@@ -212,18 +216,7 @@ lambda {
 }.call()
 
 #Zombie
-lambda {
-  task :zombie => ["debug/zombie.html", "debug/zombie.js"]
-
-  file_coffee "debug/zombie.js", [
-    "src/core/url.coffee",
-    "src/core/cache.coffee",
-    "src/core/read_state.coffee",
-    "src/core/history.coffee",
-    "src/core/bookmark.coffee",
-    "src/zombie.coffee"
-  ]
-}.call()
+task :zombie => ["debug/zombie.html", "debug/zombie.js"]
 
 #Write
 lambda {

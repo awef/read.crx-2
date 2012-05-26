@@ -1,35 +1,76 @@
 app.module "cache", ["jquery"], ($, callback) ->
-  db = null
-  db_open = $.Deferred (deferred) ->
-    db = openDatabase("Cache", "", "Cache", 0)
-    db.transaction(
-      (tr) ->
-        tr.executeSql """
-          CREATE TABLE IF NOT EXISTS Cache(
-            url TEXT NOT NULL PRIMARY KEY,
-            data TEXT NOT NULL,
-            last_updated INTEGER NOT NULL,
-            last_modified INTEGER,
-            etag TEXT,
-            res_length INTEGER,
-            dat_size INTEGER
-          )
-        """
-      -> deferred.reject()
-      -> deferred.resolve(db)
-    )
-
+  ###*
+  @class Cache
+  @constructor
+  @param {String} key
+  ###
   class Cache
     constructor: (@key) ->
+      ###*
+      @property data
+      @type String
+      ###
       @data = null
+
+      ###*
+      @property last_updated
+      @type Number
+      ###
       @last_updated = null
+
+      ###*
+      @property last_modified
+      @type Number
+      ###
       @last_modified = null
+
+      ###*
+      @property etag
+      @type String
+      ###
       @etag = null
+
+      ###*
+      @property res_length
+      @type Number
+      ###
       @res_length = null
+
+      ###*
+      @property dat_size
+      @type Number
+      ###
       @dat_size = null
 
+      unless Cache._db_open?
+        Cache._db_open = $.Deferred (d) ->
+          db = openDatabase("Cache", "", "Cache", 0)
+          db.transaction(
+            (tr) ->
+              tr.executeSql """
+                CREATE TABLE IF NOT EXISTS Cache(
+                  url TEXT NOT NULL PRIMARY KEY,
+                  data TEXT NOT NULL,
+                  last_updated INTEGER NOT NULL,
+                  last_modified INTEGER,
+                  etag TEXT,
+                  res_length INTEGER,
+                  dat_size INTEGER
+                )
+              """
+              return
+            -> d.reject(); return
+            -> d.resolve(db); return
+          )
+          return
+      return
+
+    ###*
+    @method get
+    @return {Promise}
+    ###
     get: ->
-      $.Deferred (deferred) =>
+      Cache._db_open.pipe (db) => $.Deferred (d) =>
         db.transaction(
           (tr) =>
             tr.executeSql(
@@ -40,36 +81,52 @@ app.module "cache", ["jquery"], ($, callback) ->
                   data = app.deep_copy(result.rows.item(0))
                   for key, val of data
                     @[key] = if val? then val else null
-                  deferred.resolve()
+                  d.resolve()
                 else
-                  deferred.reject()
+                  d.reject()
+                return
             )
+            return
           ->
             app.log("error", "Cache::get トランザクション中断")
-            deferred.reject()
+            d.reject()
+            return
         )
+        return
       .promise()
 
+    ###*
+    @method count
+    @return {Promise}
+    ###
     count: ->
       unless @key is "*"
         app.log("error", "Cache::count 未実装")
         return $.Deferred().reject().promise()
 
-      $.Deferred (deferred) ->
+      Cache._db_open.pipe (db) => $.Deferred (d) ->
         db.transaction(
           (tr) ->
             tr.executeSql(
               "SELECT count() FROM Cache"
               []
               (tr, result) ->
-                deferred.resolve(result.rows.item(0)["count()"])
+                d.resolve(result.rows.item(0)["count()"])
+                return
             )
+            return
           ->
             app.log("error", "Cache::count トランザクション中断")
-            deferred.reject()
+            d.reject()
+            return
         )
+        return
       .promise()
 
+    ###*
+    @method put
+    @return {Promise}
+    ###
     put: ->
       unless typeof @key is "string" and
           typeof @data is "string" and
@@ -81,7 +138,7 @@ app.module "cache", ["jquery"], ($, callback) ->
         app.log("error", "Cache::put データが不正です", @)
         return $.Deferred().reject().promise()
 
-      $.Deferred (deferred) =>
+      Cache._db_open.pipe (db) => $.Deferred (d) =>
         db.transaction(
           (tr) =>
             tr.executeSql(
@@ -96,32 +153,41 @@ app.module "cache", ["jquery"], ($, callback) ->
                 @dat_size or null
               ]
             )
+            return
           ->
             app.log("error", "Cache::put トランザクション失敗")
-            deferred.reject()
+            d.reject()
+            return
           ->
-            deferred.resolve()
+            d.resolve()
+            return
         )
+        return
       .promise()
 
+    ###*
+    @method delete
+    @return {Promise}
+    ###
     delete: ->
-      $.Deferred (deferred) =>
+      Cache._db_open.pipe (db) => $.Deferred (d) =>
         db.transaction(
           (tr) =>
             if @key is "*"
               tr.executeSql("DELETE FROM Cache")
             else
               tr.executeSql("DELETE FROM Cache WHERE url = ?", [@key])
+            return
           ->
             app.log("error", "Cache::delete: トランザクション中断")
-            deferred.reject()
+            d.reject()
+            return
           ->
-            deferred.resolve()
+            d.resolve()
+            return
         )
+        return
       .promise()
 
-  db_open
-    .done ->
-      callback(Cache)
-    .fail ->
-      app.critical_error("キャッシュ管理システムの起動に失敗しました")
+  callback(Cache)
+  return

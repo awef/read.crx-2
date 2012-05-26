@@ -1,4 +1,4 @@
-app.boot "/view/config.html", ["cache", "bbsmenu"], (Cache, BBSMenu) ->
+app.boot "/view/config.html", ["cache", "bbsmenu", "history"], (Cache, BBSMenu, History) ->
   $view = $(document.documentElement)
 
   app.view_module.view($view)
@@ -134,15 +134,16 @@ app.boot "/view/config.html", ["cache", "bbsmenu"], (Cache, BBSMenu) ->
     $status = $view.find(".history_status")
 
     #履歴件数表示
-    app.history.get_count().done (count) ->
+    History.count().done (count) ->
       $status.text("#{count}件")
+      return
 
     #履歴削除ボタン
     $clear_button.on "click", ->
       $clear_button.remove()
       $status.text("削除中")
 
-      $.when(app.history.clear(), app.read_state.clear())
+      $.when(History.clear(), app.read_state.clear())
         .done ->
           $status.text("削除完了")
           parent.$("iframe[src=\"/view/history.html\"]").each ->
@@ -192,14 +193,14 @@ app.boot "/view/config.html", ["cache", "bbsmenu"], (Cache, BBSMenu) ->
     $status.text("インポート中")
 
     $.Deferred (deferred) ->
-      chrome.extension.sendRequest rcrx_webstore, req, (res) ->
+      parent.chrome.extension.sendRequest rcrx_webstore, req, (res) ->
         if res
           deferred.resolve(res)
         else
           deferred.reject()
     .pipe null, ->
       $.Deferred (deferred) ->
-        chrome.extension.sendRequest rcrx_debug, req, (res) ->
+        parent.chrome.extension.sendRequest rcrx_debug, req, (res) ->
           if res
             deferred.resolve(res)
           else
