@@ -810,7 +810,8 @@ app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
 app.view_thread._read_state_manager = ($view) ->
   view_url = $view.attr("data-url")
   board_url = app.url.thread_to_board(view_url)
-  content = $view[0].querySelector(".content")
+  $content = $($view.find(".content"))
+  content = $content[0]
 
   #したらば、まちBBSの最新レス削除時対策
   cached_info = null
@@ -863,11 +864,7 @@ app.view_thread._read_state_manager = ($view) ->
         read_state.received = received
         read_state_updated = true
 
-      last = read_state.received
-      for res, res_num in content.children
-        if res.offsetTop > bottom
-          last = res_num - 1
-          break
+      last = $content.thread("get_read")
 
       if read_state.last isnt last
         read_state.last = last
