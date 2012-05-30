@@ -89,8 +89,6 @@ do ($ = jQuery) ->
                 '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
               #Beアイコン埋め込み表示
               .replace ///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///, ($0, $1) =>
-                console.log "hoge"
-                console.log @url
                 if app.url.tsld(@url) is "2ch.net"
                   """<img class="beicon" src="http://#{$1}" /><br />"""
                 else
