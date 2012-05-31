@@ -439,23 +439,30 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       _elm: $view.find(".next_unread")[0]
       show: ->
         next = null
-        for bookmark in app.bookmark.get_all()
-          if bookmark.type isnt "thread" or bookmark.url is view_url
-            continue
+
+        bookmarks = app.bookmark.get_all().filter((bookmark) -> bookmark.type is "thread" and bookmark.url isnt view_url)
+
+        #閲覧中のスレッドに新着が有った場合は優先して扱う
+        if bookmark = app.bookmark.get(view_url)
+          bookmarks.unshift(bookmark)
+
+        for bookmark in bookmarks
+          if iframe = parent.document.querySelector("[data-url=\"#{bookmark.url}\"]")
+            bookmark.read_state =
+              read: iframe.contentDocument.querySelectorAll(".content > article").length or bookmark.read_state.read or 0
 
           if bookmark.res_count?
             if bookmark.res_count - (bookmark.read_state?.read or 0) <= 0
               continue
 
-          #既にタブで開かれている場合は無視
-          if parent.document.querySelector("[data-url=\"#{bookmark.url}\"]")
-            continue
-
           next = bookmark
           break
 
         if next
-          text = "未読ブックマーク: #{next.title}"
+          if next.url is view_url
+            text = "新着レスがあります"
+          else
+            text = "未読ブックマーク: #{next.title}"
           if next.res_count?
             text += " (未読#{next.res_count - (next.read_state?.read or 0)}件)"
           @_elm.href = app.safe_href(next.url)
