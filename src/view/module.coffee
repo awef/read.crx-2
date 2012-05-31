@@ -192,4 +192,9 @@ app.view_module.tool_menu = ($view) ->
     copy($view.attr("data-url"))
     return
 
+  # タイトルとURLをコピー
+  $view.find(".button_copy_title_and_url").on "click", ->
+    copy(document.title + " " + $view.attr("data-url"))
+    return
+
   return
