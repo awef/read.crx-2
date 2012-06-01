@@ -725,8 +725,6 @@ app.view_thread._read_state_manager = ($view) ->
           received < cached_info.res_count
         received = cached_info.res_count
 
-      bottom = content.scrollTop + content.clientHeight
-
       if read_state.received isnt received
         read_state.received = received
         read_state_updated = true
