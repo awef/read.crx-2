@@ -717,17 +717,6 @@ app.view_thread._read_state_manager = ($view) ->
       received = content.childNodes.length
       #onbeforeunload内で呼び出された時に、この値が0になる場合が有る
       return if received is 0
-      #したらば、まちBBSの最新レス削除時対策
-      #スレ覧のキャッシュよりも新しいスレのデータを用いているにも関わらず、
-      #キャッシュされているデータ内でのレス数の方が多い場合、
-      #最新レスが削除されたためと判断し、receivedを変更する
-      if cached_info?.modified < $view.data("last_updated") and
-          received < cached_info.res_count
-        received = cached_info.res_count
-
-      if read_state.received isnt received
-        read_state.received = received
-        read_state_updated = true
 
       last = $content.thread("get_read")
 
@@ -735,9 +724,25 @@ app.view_thread._read_state_manager = ($view) ->
         read_state.last = last
         read_state_updated = true
 
+      if read_state.received isnt received
+        read_state.received = received
+        read_state_updated = true
+
       if read_state.read < read_state.last
         read_state.read = read_state.last
         read_state_updated = true
+
+      #したらば、まちBBSの最新レス削除時対策
+      #スレ覧のキャッシュよりも新しいスレのデータを用いているにも関わらず、
+      #キャッシュされているデータ内でのレス数の方が多い場合、
+      #最新レスが削除されたためと判断し、receivedを変更する
+      if cached_info?.modified < $view.data("last_updated") and
+          received < cached_info.res_count
+        if read_state.read is received
+          read_state.read = cached_info.res_count
+        read_state.received = cached_info.res_count
+        read_state_updated = true
+      return
 
     #アンロード時は非同期系の処理をzombie.htmlに渡す
     #そのためにlocalStorageに更新するread_stateの情報を渡す
