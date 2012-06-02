@@ -1,4 +1,4 @@
-app.module "thread", ["jquery", "cache"], ($, Cache, callback) ->
+app.module "thread", ["jquery", "cache", "board"], ($, Cache, Board, callback) ->
   get_xhr_info = (thread_url) ->
     tmp = ///^http://(\w+\.(\w+\.\w+))/(?:test|bbs)/read\.cgi/
       (\w+)/(\d+)/(?:(\d+)/)?$///.exec(thread_url)
@@ -110,6 +110,18 @@ app.module "thread", ["jquery", "cache"], ($, Cache, callback) ->
       xhr_path = xhr_info.path
       xhr_charset = xhr_info.charset
 
+      getCachedInfo = $.Deferred (d) ->
+        if app.url.tsld(url) in ["livedoor.jp", "machi.to"]
+          Board.get_cached_res_count(url)
+            .done (res) ->
+              d.resolve(res)
+              return
+            .fail ->
+              d.reject()
+        else
+          d.reject()
+        return
+
       cache = new Cache(xhr_path)
       delta_flg = false
 
@@ -199,6 +211,24 @@ app.module "thread", ["jquery", "cache"], ($, Cache, callback) ->
           else
             deferred.reject($xhr)
       ), fn)
+
+      #したらば/まちBBS最新レス削除対策
+      .pipe ($xhr, thread) ->
+        $.Deferred (d) ->
+          getCachedInfo
+            .done (cachedInfo) ->
+              while thread.res.length < cachedInfo.res_count
+                thread.res.push
+                  name: "あぼーん"
+                  mail: "あぼーん"
+                  message: "あぼーん"
+                  other: "あぼーん"
+              d.resolve($xhr, thread)
+              return
+            .fail ->
+              d.resolve($xhr, thread)
+              return
+          return
 
       #コールバック
       .always ($xhr, thread) =>

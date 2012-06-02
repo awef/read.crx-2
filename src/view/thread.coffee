@@ -660,7 +660,6 @@ app.view_thread._draw = ($view, force_update) ->
         fn(thread, false)
         return
       .done ->
-        $view.data("last_updated", Date.now())
         fn(thread, false)
         return
       .fail ->
@@ -679,12 +678,6 @@ app.view_thread._read_state_manager = ($view) ->
   board_url = app.url.thread_to_board(view_url)
   $content = $($view.find(".content"))
   content = $content[0]
-
-  #したらば、まちBBSの最新レス削除時対策
-  cached_info = null
-  if app.url.tsld(view_url) in ["livedoor.jp", "machi.to"]
-    app.board.get_cached_res_count view_url, ({res_count, modified}) ->
-      cached_info = {res_count, modified}
 
   #read_stateの取得
   get_read_state = $.Deferred (deferred) ->
@@ -720,27 +713,16 @@ app.view_thread._read_state_manager = ($view) ->
 
       last = $content.thread("get_read")
 
-      if read_state.last isnt last
-        read_state.last = last
-        read_state_updated = true
-
       if read_state.received isnt received
         read_state.received = received
         read_state_updated = true
 
-      if read_state.read < read_state.last
-        read_state.read = read_state.last
+      if read_state.last isnt last
+        read_state.last = last
         read_state_updated = true
 
-      #したらば、まちBBSの最新レス削除時対策
-      #スレ覧のキャッシュよりも新しいスレのデータを用いているにも関わらず、
-      #キャッシュされているデータ内でのレス数の方が多い場合、
-      #最新レスが削除されたためと判断し、receivedを変更する
-      if cached_info?.modified < $view.data("last_updated") and
-          received < cached_info.res_count
-        if read_state.read is received
-          read_state.read = cached_info.res_count
-        read_state.received = cached_info.res_count
+      if read_state.read < read_state.last
+        read_state.read = read_state.last
         read_state_updated = true
       return
 
