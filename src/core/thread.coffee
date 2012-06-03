@@ -322,8 +322,7 @@ app.module "thread", ["jquery", "cache", "board"], ($, Cache, Board, callback) -
       #ブックマーク更新部
       .always ($xhr, thread) ->
         if thread?
-          if $xhr?.status is 200 or $xhr?.status is 203
-            app.bookmark.update_res_count(url, thread.res.length)
+          app.bookmark.update_res_count(url, thread.res.length)
         return
 
       #dat落ち検出
