@@ -1,9 +1,28 @@
-app.module "bbsmenu", ["jquery", "cache"], ($, Cache, callback) ->
-  callbacks = $.Callbacks()
+###*
+@namespace app
+@class BBSMenu
+@static
+@requires app.Cache
+@requires jQuery
+###
+class app.BBSMenu
+  ###*
+  @method get
+  @param {Function} Callback
+  @param {Boolean} [ForceReload=false]
+  ###
+  @get: (callback, forceReload = false) ->
+    BBSMenu._callbacks.add(callback)
+    unless BBSMenu._updating
+      BBSMenu._update(forceReload)
+    return
 
-  url = "http://menu.2ch.net/bbsmenu.html"
-
-  parse = (html) ->
+  ###*
+  @method parse
+  @param {String} html
+  @return {Array}
+  ###
+  @parse: (html) ->
     reg_category = ///<b>(.+?)</b>(?:.*\n<a\s.*?>.+?</a>)+///gi
     reg_board = ///<a\shref=(http://(?!info\.2ch\.net/)
       \w+\.(?:2ch\.net|machi\.to)/\w+/)(?:\s.*?)?>(.+?)</a>///gi
@@ -23,83 +42,84 @@ app.module "bbsmenu", ["jquery", "cache"], ($, Cache, callback) ->
       if category.board.length > 0
         menu.push(category)
 
-    if menu.length > 0 then menu else null
+    menu
 
-  updating = false
+  @_callbacks: $.Callbacks()
+  @_updating: false
+  @_update: (force_reload) ->
+    BBSMenu._updating = true
 
-  update = (force_reload) ->
-    updating = true
+    url = "http://menu.2ch.net/bbsmenu.html"
     #キャッシュ取得
-    cache = new Cache(url)
+    cache = new app.Cache(url)
     cache.get()
-      .pipe () ->
-        $.Deferred (d) ->
-          if force_reload
-            d.reject()
-          else if Date.now() - cache.last_updated < 1000 * 60 * 60 * 12
-            d.resolve()
-          else
-            d.reject()
-          return
+      .pipe(-> $.Deferred (d) ->
+        if force_reload
+          d.reject()
+        else if Date.now() - cache.last_updated < 1000 * 60 * 60 * 12
+          d.resolve()
+        else
+          d.reject()
+        return
+      )
       #通信
-      .pipe null, ->
-        $.Deferred (d) ->
-          ajax_data =
-            url: url
-            cache: false
-            dataType: "text"
-            headers: {}
-            mimeType: "text/plain; charset=Shift_JIS"
-            timeout: 1000 * 30
-            complete: ($xhr) ->
-              if $xhr.status is 200
-                d.resolve($xhr)
-              else if cache.data? and $xhr.status is 304
-                d.resolve($xhr)
-              else
-                d.reject($xhr)
-              return
-
-          if cache.last_modified?
-            ajax_data.headers["If-Modified-Since"] = new Date(cache.last_modified).toUTCString()
-
-          if cache.etag?
-            ajax_data.headers["If-None-Match"] = cache.etag
-
-          $.ajax(ajax_data)
-          return
-      #パース
-      .pipe((fn = ($xhr) ->
-        $.Deferred (d) ->
-          if $xhr?.status is 200
-            menu = parse($xhr.responseText)
-          else if cache.data?
-            menu = parse(cache.data)
-
-          if menu
-            if $xhr?.status is 200 or $xhr?.status is 304 or (not $xhr and cache.data?)
-              d.resolve($xhr, menu)
+      .pipe(null, -> $.Deferred (d) ->
+        ajax_data =
+          url: url
+          cache: false
+          dataType: "text"
+          headers: {}
+          mimeType: "text/plain; charset=Shift_JIS"
+          timeout: 1000 * 30
+          complete: ($xhr) ->
+            if $xhr.status is 200
+              d.resolve($xhr)
+            else if cache.data? and $xhr.status is 304
+              d.resolve($xhr)
             else
-              d.reject($xhr, menu)
+              d.reject($xhr)
+            return
+
+        if cache.last_modified?
+          ajax_data.headers["If-Modified-Since"] = new Date(cache.last_modified).toUTCString()
+
+        if cache.etag?
+          ajax_data.headers["If-None-Match"] = cache.etag
+
+        $.ajax(ajax_data)
+        return
+      )
+      #パース
+      .pipe((fn = ($xhr) -> $.Deferred (d) ->
+        if $xhr?.status is 200
+          menu = BBSMenu.parse($xhr.responseText)
+        else if cache.data?
+          menu = BBSMenu.parse(cache.data)
+
+        if menu?.length > 0
+          if $xhr?.status is 200 or $xhr?.status is 304 or (not $xhr and cache.data?)
+            d.resolve($xhr, menu)
           else
-            d.reject()
-          return
+            d.reject($xhr, menu)
+        else
+          d.reject()
+        return
       ), fn)
       #コールバック
       .done ($xhr, menu) ->
-        callbacks.fire(status: "success", data: menu)
+        BBSMenu._callbacks.fire(status: "success", data: menu)
         return
       .fail ($xhr, menu) ->
         message = "板一覧の取得に失敗しました。"
         if menu?
           message += "キャッシュに残っていたデータを表示します。"
-          callbacks.fire({status: "error", data:menu, message})
+          BBSMenu._callbacks.fire({status: "error", data: menu, message})
         else
-          callbacks.fire({status: "error", message})
+          BBSMenu._callbacks.fire({status: "error", message})
         return
       .always ->
-        updating = false
-        callbacks.empty()
+        BBSMenu._updating = false
+        BBSMenu._callbacks.empty()
         return
       #キャッシュ更新
       .done ($xhr, menu) ->
@@ -119,10 +139,6 @@ app.module "bbsmenu", ["jquery", "cache"], ($, Cache, callback) ->
         return
     return
 
-  callback
-    get: (callback, force_reload = false) ->
-      callbacks.add(callback)
-      unless updating
-        update(force_reload)
-      return
+app.module "bbsmenu", [], (callback) ->
+  callback(app.BBSMenu)
   return
