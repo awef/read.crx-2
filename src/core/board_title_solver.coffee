@@ -8,6 +8,7 @@
 class app.BoardTitleSolver
   ###*
   @property _bbsmenu
+  @private
   @type Object | null
   ###
   @_bbsmenu: null
