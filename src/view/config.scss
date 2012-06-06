@@ -116,6 +116,10 @@ section button {
   }
 }
 
+input[type="text"]:invalid {
+  background-color: #ffcccc;
+}
+
 .label_textarea, .label_textarea > a {
   vertical-align: top;
 }

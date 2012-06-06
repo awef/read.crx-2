@@ -78,11 +78,7 @@ $z-index_notification: 8;
   box-shadow: 0 1px 1px #ccc inset;
   &:focus {
     outline: none;
-    border-color: hsl(225, 100%, 60%);
-  }
-  &:invalid {
-    border-color: hsl(0, 80%, 60%);
-    background-color: hsl(0, 50%, 95%);
+    border-color: #36f;
   }
 }
 
