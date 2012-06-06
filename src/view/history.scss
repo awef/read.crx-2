@@ -4,6 +4,12 @@
 @include common_view_style_1;
 @include content_table;
 
+@media (max-width: 500px) {
+  th.viewed_date {
+    width: 0;
+  }
+}
+
 .content {
   tbody:empty {
     display: block;

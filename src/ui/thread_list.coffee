@@ -94,12 +94,14 @@ do ($ = jQuery) ->
 
         if @flg.res and msg.type is "res_count"
           $tr = $table.find("tr[data-href=\"#{msg.bookmark.url}\"]")
-          $tr.children(res_selector).text(msg.bookmark.res_count)
+          $td = $tr.children(res_selector)
+          old_res_count = +$td.text()
+          $td.text(msg.bookmark.res_count)
           if @flg.unread
-            unread = msg.bookmark.res_count - (msg.bookmark.read_state?.read or 0)
-            if unread <= 0
-              unread = ""
-            $tr.children(unread_selector).text(unread)
+            $td = $tr.children(unread_selector)
+            old_unread = +$td.text()
+            unread = old_unread + (msg.bookmark.res_count - old_res_count)
+            $td.text(unread or "")
 
         if @flg.title and msg.type is "title"
           $tr = $table.find("tr[data-href=\"#{msg.bookmark.url}\"]")

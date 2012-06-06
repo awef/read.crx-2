@@ -4,6 +4,7 @@
     %meta(charset="utf-8")
     %meta(http-equiv="X-Frame-Options" content="SAMEORIGIN")
     %title 閲覧履歴
+    %link(rel="stylesheet" href="/ui.css?v=#{MANIFEST["version"]}")
     %link(rel="stylesheet" href="history.css?v=#{MANIFEST["version"]}")
     %script(src="/lib/jquery/jquery.min.js?v=#{MANIFEST["version"]}")
     %script(src="/ui.js?v=#{MANIFEST["version"]}")
@@ -13,6 +14,9 @@
     %script(src="history.js?v=#{MANIFEST["version"]}")
   %body
     %nav.nav_bar
+      %label
+        %input.searchbox
+        %span.hit_count
       .button.button_reload
     .content(tabindex="0")
     .loading_overlay Loading...

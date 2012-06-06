@@ -68,12 +68,11 @@
       .find("[data-tab_id=\"#{prop.tab_id}\"]")
         .filter(".tab_tabbar li.tab_selected")
           .each(->
-            $this = $(this)
-
-            next = $this.prev("li").add($this.next("li"))
-            if next.length
-              tab_select.call(that, {tab_id: next.attr("data-tab_id")})
-            null
+            if next = @nextElementSibling or @previousElementSibling
+              tab_select.call(that, {
+                tab_id: next.getAttribute("data-tab_id")
+              })
+            return
           )
         .end()
         .filter(".tab_content")

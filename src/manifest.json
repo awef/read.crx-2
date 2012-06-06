@@ -1,9 +1,9 @@
 {
   "name" : "read.crx 2",
-  "version" : "0.60",
+  "version" : "0.61",
   "description" : "2chブラウザ",
   "manifest_version": 2,
-  "minimum_chrome_version" : "18",
+  "minimum_chrome_version" : "19",
   "content_security_policy": "default-src 'self'; img-src 'self' http://* https://* data:; style-src 'self' 'unsafe-inline'; connect-src 'self' http://*; frame-src 'self' http://*; font-src data:",
   "incognito" : "split",
   "options_page" : "view/index.html?q=config",

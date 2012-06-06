@@ -47,8 +47,10 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
   $view = $(document.documentElement)
   $view.attr("data-url", view_url)
 
-  $view.data("id_index", {})
-  $view.data("rep_index", {})
+  $content = $view.find(".content")
+  $content.thread("init", url: view_url)
+  $view.data("id_index", $content.thread("id_index"))
+  $view.data("rep_index", $content.thread("rep_index"))
 
   app.view_module.view($view)
   app.view_module.bookmark_button($view)
@@ -110,22 +112,24 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
     app.view_thread._read_state_manager($view)
     $view.one "read_state_attached", ->
       on_scroll = false
-      $view.find(".content").one "scroll", ->
+      $content.one "scroll", ->
         on_scroll = true
+        return
 
-      $last = $view.find(".content > .last")
+      $last = $content.find(".last")
       if $last.length is 1
-        app.view_thread._jump_to_res($view, +$last.find(".num").text(), false)
+        $content.thread("scroll_to", +$last.find(".num").text(), false)
 
       #スクロールされなかった場合も余所の処理を走らすためにscrollを発火
       unless on_scroll
-        $view.find(".content").triggerHandler("scroll")
+        $content.triggerHandler("scroll")
 
       #二度目以降のread_state_attached時に、最後に見ていたスレが当時最新のレスだった場合、新着を強調表示するためにスクロールを行う
       $view.on "read_state_attached", ->
-        $tmp = $view.find(".content > .last.received + article")
+        $tmp = $content.children(".last.received + article")
         return if $tmp.length isnt 1
-        app.view_thread._jump_to_res($view, +$tmp.find(".num").text(), true, -100)
+        $content.thread("scroll_to", +$tmp.find(".num").text(), true, -100)
+        return
 
     app.view_thread._draw($view)
       .always ->
@@ -141,7 +145,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
 
     .delegate ".name_num", "click", (e) ->
       popup_helper this, e, =>
-        res = $view.find(".content")[0].children[+this.textContent - 1]
+        res = $content[0].children[+this.textContent - 1]
         $("<div>").append($(res).clone())
       return
 
@@ -180,7 +184,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       $res = $this.closest("article")
 
       if $this.hasClass("jump_to_this")
-        app.view_thread._jump_to_res($view, +$res.find(".num").text(), true)
+        $content.thread("scroll_to", +$res.find(".num").text(), true)
 
       else if $this.hasClass("res_to_this")
         write(message: ">>#{$res.find(".num").text()}\n")
@@ -203,7 +207,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       popup_helper this, e, =>
         $popup = $("<div>")
         if not @classList.contains("disabled")
-          tmp = $view.find(".content")[0].children
+          tmp = $content[0].children
           for segment in app.util.parse_anchor(@innerHTML).segments
             now = segment[0] - 1
             end = segment[1] - 1
@@ -230,7 +234,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       tmp = app.util.parse_anchor(@innerHTML)
       target_res_num = tmp.segments[0]?[0]
       if target_res_num?
-        app.view_thread._jump_to_res($view, target_res_num, true)
+        $content.thread("scroll_to", target_res_num, true)
       return
 
     #通常リンク
@@ -300,22 +304,21 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
           .replace(/\u25cf$/, "") #末尾●除去
 
         $popup = $("<div>")
-        $view
-          .find(".content > article[data-id=\"#{id_text}\"]")
-            .clone()
-              .appendTo($popup)
+        $content.children("article[data-id=\"#{id_text}\"]")
+          .clone()
+            .appendTo($popup)
         $popup
       return
 
     #リプライポップアップ
     .delegate ".rep", app.config.get("popup_trigger"), (e) ->
       popup_helper this, e, =>
-        tmp = $view.find(".content")[0].children
+        tmp = $content[0].children
 
         frag = document.createDocumentFragment()
-        res_key = +$(@).closest("article").find(".num").text()
-        for num in $view.data("rep_index")[res_key]
-          frag.appendChild(tmp[num].cloneNode(true))
+        res_num = +$(@).closest("article").find(".num").text()
+        for target_res_num in $view.data("rep_index")[res_num]
+          frag.appendChild(tmp[target_res_num - 1].cloneNode(true))
 
         $popup = $("<div>").append(frag)
       return
@@ -359,7 +362,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         res_num = $view.find(selector).index() + 1
 
         if typeof res_num is "number"
-          app.view_thread._jump_to_res($view, res_num, true)
+          $content.thread("scroll_to", res_num, true)
         else
           app.log("warn", "[view_thread] .jump_panel: ターゲットが存在しません")
       return
@@ -373,7 +376,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         .on "input", ->
           if @value isnt ""
             if typeof search_stored_scrollTop isnt "number"
-              search_stored_scrollTop = $view.find(".content").scrollTop()
+              search_stored_scrollTop = $content.scrollTop()
 
             hit_count = 0
             query = app.util.normalize(@value)
@@ -409,7 +412,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
                 .text("")
 
             if typeof search_stored_scrollTop is "number"
-              $view.find(".content").scrollTop(search_stored_scrollTop)
+              $content.scrollTop(search_stored_scrollTop)
               search_stored_scrollTop = null
           return
 
@@ -422,7 +425,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
 
   #フッター表示処理
   do ->
-    content = $view.find(".content")[0]
+    content = $content[0]
 
     scroll_left = 0
     update_scroll_left = ->
@@ -434,23 +437,30 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       _elm: $view.find(".next_unread")[0]
       show: ->
         next = null
-        for bookmark in app.bookmark.get_all()
-          if bookmark.type isnt "thread" or bookmark.url is view_url
-            continue
+
+        bookmarks = app.bookmark.get_all().filter((bookmark) -> bookmark.type is "thread" and bookmark.url isnt view_url)
+
+        #閲覧中のスレッドに新着が有った場合は優先して扱う
+        if bookmark = app.bookmark.get(view_url)
+          bookmarks.unshift(bookmark)
+
+        for bookmark in bookmarks
+          if iframe = parent.document.querySelector("[data-url=\"#{bookmark.url}\"]")
+            bookmark.read_state =
+              read: iframe.contentDocument.querySelectorAll(".content > article").length or bookmark.read_state.read or 0
 
           if bookmark.res_count?
             if bookmark.res_count - (bookmark.read_state?.read or 0) <= 0
               continue
 
-          #既にタブで開かれている場合は無視
-          if parent.document.querySelector("[data-url=\"#{bookmark.url}\"]")
-            continue
-
           next = bookmark
           break
 
         if next
-          text = "未読ブックマーク: #{next.title}"
+          if next.url is view_url
+            text = "新着レスがあります"
+          else
+            text = "未読ブックマーク: #{next.title}"
           if next.res_count?
             text += " (未読#{next.res_count - (next.read_state?.read or 0)}件)"
           @_elm.href = app.safe_href(next.url)
@@ -554,16 +564,6 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
 
   return
 
-app.view_thread._jump_to_res = ($view, res_num, animate_flg, offset = -10) ->
-  content = $view[0].querySelector(".content")
-  target = content.childNodes[res_num - 1]
-  if target
-    return if content.classList.contains("searching") and not target.classList.contains("search_hit")
-    if animate_flg
-      $(content).animate(scrollTop: target.offsetTop + offset)
-    else
-      content.scrollTop = target.offsetTop + offset
-
 app.view_thread._draw = ($view, force_update) ->
   deferred = $.Deferred()
 
@@ -571,8 +571,6 @@ app.view_thread._draw = ($view, force_update) ->
   $reload_button = $view.find(".button_reload")
   $reload_button.addClass("disabled")
   content = $view.find(".content")[0]
-  id_index = $view.data("id_index")
-  rep_index = $view.data("rep_index")
 
   fn = (thread, error) ->
     if error
@@ -584,50 +582,8 @@ app.view_thread._draw = ($view, force_update) ->
 
     document.title = thread.title
 
-    #DOM構築
-    do ->
-      completed = content.childNodes.length
-      tmp = ""
-      for res, res_key in thread.res
-        continue if res_key < completed
-        tmp += app.view_thread._const_res_html(res_key, res, $view, id_index, rep_index)
-      content.insertAdjacentHTML("BeforeEnd", tmp)
-      return
-    #idカウント, .freq/.link更新
-    do ->
-      for id, index of id_index
-        id_count = index.length
-        for res_key in index
-          elm = content.childNodes[res_key].getElementsByClassName("id")[0]
-          elm.firstChild.nodeValue = elm.firstChild.nodeValue.replace(/(?:\(\d+\))?$/, "(#{id_count})")
-          if id_count >= 5
-            elm.classList.remove("link")
-            elm.classList.add("freq")
-          else if id_count >= 2
-            elm.classList.add("link")
-      return
-    #.one付与
-    do ->
-      one_id = content.firstChild?.getAttribute("data-id")
-      if one_id?
-        for id in id_index[one_id]
-          content.children[id].classList.add("one")
-    #参照関係再構築
-    do ->
-      for res_key, index of rep_index
-        res = content.childNodes[res_key - 1]
-        if res
-          res_count = index.length
-          if elm = res.getElementsByClassName("rep")[0]
-            new_flg = false
-          else
-            new_flg = true
-            elm = document.createElement("span")
-          elm.textContent = "返信 (#{res_count})"
-          elm.className = if res_count >= 5 then "rep freq" else "rep link"
-          if new_flg
-            res.getElementsByClassName("other")[0].appendChild(elm)
-      return
+    $(content).thread("add_item", thread.res.slice(content.children.length))
+
     #サムネイル追加処理
     do ->
       imgs = []
@@ -702,7 +658,6 @@ app.view_thread._draw = ($view, force_update) ->
         fn(thread, false)
         return
       .done ->
-        $view.data("last_updated", Date.now())
         fn(thread, false)
         return
       .fail ->
@@ -716,112 +671,11 @@ app.view_thread._draw = ($view, force_update) ->
 
   deferred.promise()
 
-app.view_thread._const_res_html = (res_key, res, $view, id_index, rep_index) ->
-  return null if typeof res_key isnt "number" or isNaN(res_key)
-
-  attribute_data_id = null
-
-  html = "<header>"
-
-  #.num
-  html += """<span class="num">#{res_key + 1}</span>"""
-
-  #.name
-  tmp = (
-    res.name
-      .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")
-      .replace(/<\/b>(.*?)<b>/g, """<span class="ob">$1</span>""")
-  )
-  html += """<span class="name">#{tmp}</span>"""
-
-  #.mail
-  tmp = res.mail.replace(/<.*?(?:>|$)/g, "")
-  html += """<span class="mail">#{tmp}</span>"""
-
-  #.other
-  tmp = (
-    res.other
-      #タグ除去
-      .replace(/<.*?(?:>|$)/g, "")
-      #.id
-      .replace /(^| )(ID:(?!\?\?\?)[^ <>"']+)/, ($0, $1, $2) ->
-        fixed_id = $2.replace(/\u25cf$/, "") #末尾●除去
-
-        attribute_data_id = fixed_id
-
-        id_index[fixed_id] = [] unless id_index[fixed_id]?
-        id_index[fixed_id].push(res_key)
-
-        """#{$1}<span class="id">#{$2}</span>"""
-  )
-  html += """<span class="other">#{tmp}</span>"""
-
-  html += "</header>"
-
-  tmp = (
-    res.message
-      #タグ除去
-      .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/ig, "")
-      #URLリンク
-      .replace(/(h)?(ttps?:\/\/(?:[a-hj-zA-HJ-Z\d_\-.!~*'();\/?:@=+$,%#]|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));)|[iI](?![dD]:)+)+)/g,
-        '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
-      #Beアイコン埋め込み表示
-      .replace ///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///, ($0, $1) ->
-        if app.url.tsld($view[0].getAttribute("data-url")) is "2ch.net"
-          """<img class="beicon" src="http://#{$1}" /><br />"""
-        else
-          $0
-      #アンカーリンク
-      .replace /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?)*/g, ($0) ->
-        anchor = app.util.parse_anchor($0)
-
-        if anchor.target_count >= 25
-          disabled = true
-          disabled_reason = "指定されたレスの量が極端に多いため、ポップアップを表示しません"
-        else if anchor.target_count is 0
-          disabled = true
-          disabled_reason = "指定されたレスが存在しません"
-        else
-          disabled = false
-
-        #rep_index更新
-        if not disabled
-          for segment in anchor.segments
-            target = segment[0]
-            while target <= segment[1]
-              rep_index[target] = [] unless rep_index[target]?
-              rep_index[target].push(res_key) unless res_key in rep_index[target]
-              target++
-
-        "<a href=\"javascript:undefined;\" class=\"anchor" +
-        (if disabled then " disabled\" data-disabled_reason=\"#{disabled_reason}\"" else "\"") +
-        ">#{$0}</a>"
-      #IDリンク
-      .replace /id:(?:[a-hj-z\d_\+\/\.]|i(?!d:))+/ig, ($0) ->
-        "<a href=\"javascript:undefined;\" class=\"anchor_id\">#{$0}</a>"
-  )
-  html += """<div class="message">#{tmp}</div>"""
-
-  tmp = ""
-  if /(?:\u3000\u3000\u3000\u3000\u3000|\u3000\u0020|[^>]\u0020\u3000)(?!<br>|$)/i.test(res.message)
-    tmp += " class=\"aa\""
-  if attribute_data_id?
-    tmp += " data-id=\"#{attribute_data_id}\""
-
-  html = """<article#{tmp}>#{html}</article>"""
-
-  html
-
 app.view_thread._read_state_manager = ($view) ->
   view_url = $view.attr("data-url")
   board_url = app.url.thread_to_board(view_url)
-  content = $view[0].querySelector(".content")
-
-  #したらば、まちBBSの最新レス削除時対策
-  cached_info = null
-  if app.url.tsld(view_url) in ["livedoor.jp", "machi.to"]
-    app.board.get_cached_res_count view_url, ({res_count, modified}) ->
-      cached_info = {res_count, modified}
+  $content = $($view.find(".content"))
+  content = $content[0]
 
   #read_stateの取得
   get_read_state = $.Deferred (deferred) ->
@@ -854,25 +708,12 @@ app.view_thread._read_state_manager = ($view) ->
       received = content.childNodes.length
       #onbeforeunload内で呼び出された時に、この値が0になる場合が有る
       return if received is 0
-      #したらば、まちBBSの最新レス削除時対策
-      #スレ覧のキャッシュよりも新しいスレのデータを用いているにも関わらず、
-      #キャッシュされているデータ内でのレス数の方が多い場合、
-      #最新レスが削除されたためと判断し、receivedを変更する
-      if cached_info?.modified < $view.data("last_updated") and
-          received < cached_info.res_count
-        received = cached_info.res_count
 
-      bottom = content.scrollTop + content.clientHeight
+      last = $content.thread("get_read")
 
       if read_state.received isnt received
         read_state.received = received
         read_state_updated = true
-
-      last = read_state.received
-      for res, res_num in content.children
-        if res.offsetTop > bottom
-          last = res_num - 1
-          break
 
       if read_state.last isnt last
         read_state.last = last
@@ -881,6 +722,7 @@ app.view_thread._read_state_manager = ($view) ->
       if read_state.read < read_state.last
         read_state.read = read_state.last
         read_state_updated = true
+      return
 
     #アンロード時は非同期系の処理をzombie.htmlに渡す
     #そのためにlocalStorageに更新するread_stateの情報を渡す

@@ -5,7 +5,7 @@ app.view_module.view = ($view) ->
   $view.addClass("theme_#{app.config.get("theme_id")}")
   app.message.add_listener "config_updated", (message) ->
     if message.key is "theme_id"
-      $view.removeClass("theme_default theme_dark")
+      $view.removeClass("theme_default theme_dark theme_none")
       $view.addClass("theme_#{message.val}")
     return
 
@@ -190,6 +190,11 @@ app.view_module.tool_menu = ($view) ->
   # URLをコピー
   $view.find(".button_copy_url").on "click", ->
     copy($view.attr("data-url"))
+    return
+
+  # タイトルとURLをコピー
+  $view.find(".button_copy_title_and_url").on "click", ->
+    copy(document.title + " " + $view.attr("data-url"))
     return
 
   return

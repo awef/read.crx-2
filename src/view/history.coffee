@@ -4,7 +4,10 @@ app.boot "/view/history.html", ["history"], (History) ->
   app.view_module.view($view)
 
   $table = $("<table>")
-  $table.thread_list("create", th: ["title", "viewed_date"])
+  $table.thread_list("create", {
+    th: ["title", "viewed_date"]
+    searchbox: $view.find(".searchbox")
+  })
   $table.appendTo(".content")
 
   load = ->
