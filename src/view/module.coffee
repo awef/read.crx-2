@@ -148,15 +148,6 @@ app.view_module.sort_item_selector = ($view) ->
   return
 
 app.view_module.tool_menu = ($view) ->
-  copy = (str) ->
-    input = document.createElement("input")
-    input.value = str
-    document.body.appendChild(input)
-    input.select()
-    document.execCommand("copy")
-    document.body.removeChild(input)
-    return
-
   # 項目クリック時にメニューを隠す
   $view.find(".button_tool > ul").on "click", ->
     app.defer =>
@@ -184,17 +175,17 @@ app.view_module.tool_menu = ($view) ->
 
   # タイトルをコピー
   $view.find(".button_copy_title").on "click", ->
-    copy(document.title)
+    app.clipboardWrite(document.title)
     return
 
   # URLをコピー
   $view.find(".button_copy_url").on "click", ->
-    copy($view.attr("data-url"))
+    app.clipboardWrite($view.attr("data-url"))
     return
 
   # タイトルとURLをコピー
   $view.find(".button_copy_title_and_url").on "click", ->
-    copy(document.title + " " + $view.attr("data-url"))
+    app.clipboardWrite(document.title + " " + $view.attr("data-url"))
     return
 
   return
