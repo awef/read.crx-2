@@ -102,6 +102,10 @@ do ($ = jQuery) ->
             old_unread = +$td.text()
             unread = old_unread + (msg.bookmark.res_count - old_res_count)
             $td.text(unread or "")
+            if unread > 0
+              $tr.addClass("updated")
+            else
+              $tr.removeClass("updated")
 
         if @flg.title and msg.type is "title"
           $tr = $table.find("tr[data-href=\"#{msg.bookmark.url}\"]")
@@ -115,7 +119,12 @@ do ($ = jQuery) ->
           if $tr.length is 1
             $res = $tr.children(res_selector)
             $unread = $tr.children(unread_selector)
-            $unread.text(Math.max(+$res.text() - msg.read_state.read, 0) or "")
+            unread = Math.max(+$res.text() - msg.read_state.read, 0)
+            $unread.text(unread or "")
+            if unread > 0
+              $tr.addClass("updated")
+            else
+              $tr.removeClass("updated")
           return
 
       #リスト内検索
@@ -198,65 +207,67 @@ do ($ = jQuery) ->
       html = ""
 
       for item in arg
-        tmp = "open_in_rcrx"
+        trClassName = "open_in_rcrx"
         if item.expired
-          tmp += " expired"
+          trClassName += " expired"
 
-        html += "<tr class=\"#{tmp}\""
-        html += " data-href=\"#{app.escape_html(item.url)}\""
-        html += " data-title=\"#{app.escape_html(item.title)}\""
+        tmp_html = " data-href=\"#{app.escape_html(item.url)}\""
+        tmp_html += " data-title=\"#{app.escape_html(item.title)}\""
 
         if item.thread_number?
-          html += " data-thread_number=\"#{app.escape_html(""+item.thread_number)}\""
+          tmp_html += " data-thread_number=\"#{app.escape_html(""+item.thread_number)}\""
 
-        html += ">"
+        tmp_html += ">"
 
         #ブックマーク状況
         if @flg.bookmark
-          html += "<td>"
+          tmp_html += "<td>"
           if app.bookmark.get(item.url)
-            html += "★"
-          html += "</td>"
+            tmp_html += "★"
+          tmp_html += "</td>"
 
         #タイトル
         if @flg.title
-          html += "<td>#{app.escape_html(item.title)}</td>"
+          tmp_html += "<td>#{app.escape_html(item.title)}</td>"
 
         #板名
         if @flg.board_title
-          html += "<td>#{app.escape_html(item.board_title)}</td>"
+          tmp_html += "<td>#{app.escape_html(item.board_title)}</td>"
 
         #レス数
         if @flg.res
-          html += "<td>"
+          tmp_html += "<td>"
           if item.res_count > 0
-            html += app.escape_html(""+item.res_count)
-          html += "</td>"
+            tmp_html += app.escape_html(""+item.res_count)
+          tmp_html += "</td>"
 
         #未読数
         if @flg.unread
-          html += "<td>"
+          tmp_html += "<td>"
           if item.read_state and item.res_count > item.read_state.read
-            html += app.escape_html(""+(item.res_count - item.read_state.read))
-          html += "</td>"
+            trClassName += " updated"
+            tmp_html += app.escape_html(""+(item.res_count - item.read_state.read))
+          tmp_html += "</td>"
 
         #勢い
         if @flg.heat
-          html += "<td>"
-          html += app.escape_html(calc_heat(now, item.created_at, item.res_count))
-          html += "</td>"
+          tmp_html += "<td>"
+          tmp_html += app.escape_html(calc_heat(now, item.created_at, item.res_count))
+          tmp_html += "</td>"
 
         #作成日時
         if @flg.created_date
-          html += "<td>"
-          html += app.escape_html(date_to_string(new Date(item.created_at)))
-          html += "</td>"
+          tmp_html += "<td>"
+          tmp_html += app.escape_html(date_to_string(new Date(item.created_at)))
+          tmp_html += "</td>"
 
         #閲覧日時
         if @flg.viewed_date
-          html += "<td>"
-          html += app.escape_html(date_to_string(new Date(item.date)))
-          html += "</td>"
+          tmp_html += "<td>"
+          tmp_html += app.escape_html(date_to_string(new Date(item.date)))
+          tmp_html += "</td>"
+
+        html += "<tr class=\"#{trClassName}\"" + tmp_html + "</tr>"
 
       tbody.insertAdjacentHTML("BeforeEnd", html)
       return
