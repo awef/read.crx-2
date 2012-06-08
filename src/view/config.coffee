@@ -41,8 +41,12 @@ app.boot "/view/config.html", ["cache", "bbsmenu", "history"], (Cache, BBSMenu, 
         return
 
   #バージョン情報表示
-  $view.find(".version_info")
+  $view.find(".version_text")
     .text("#{app.manifest.name} v#{app.manifest.version} + #{navigator.userAgent}")
+
+  $view.find(".version_copy").on "click", ->
+    app.clipboardWrite($(".version_text").text())
+    return
 
   #忍法帖関連機能
   do ->
