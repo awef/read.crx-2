@@ -407,7 +407,7 @@ $z-index_notification: 8;
     text-overflow: ellipsis;
     overflow: hidden;
   }
-  tbody:after {
+  table::after, tbody::after {
     display: block;
     position: absolute;
     width: 100%;
