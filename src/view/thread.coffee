@@ -446,17 +446,18 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         if bookmark = app.bookmark.get(view_url)
           bookmarks.unshift(bookmark)
 
-        for bookmark in bookmarks
+        for bookmark in bookmarks when bookmark.res_count?
+          read = null
+
           if iframe = parent.document.querySelector("[data-url=\"#{bookmark.url}\"]")
-            bookmark.read_state =
-              read: iframe.contentDocument.querySelectorAll(".content > article").length or bookmark.read_state?.read or 0
+            read = iframe.contentDocument.querySelectorAll(".content > article").length
 
-          if bookmark.res_count?
-            if bookmark.res_count - (bookmark.read_state?.read or 0) <= 0
-              continue
+          unless read
+            read = bookmark.read_state?.read or 0
 
-          next = bookmark
-          break
+          if bookmark.res_count > read
+            next = bookmark
+            break
 
         if next
           if next.url is view_url
