@@ -14,7 +14,7 @@
 
 @media (max-width: 500px) {
   th:not(.table_sort_asc):not(.table_sort_desc) {
-    &:nth-child(n+2) {
+    &:nth-child(2), &:nth-child(n+4) {
       width: 0;
     }
   }
