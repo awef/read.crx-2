@@ -449,7 +449,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         for bookmark in bookmarks
           if iframe = parent.document.querySelector("[data-url=\"#{bookmark.url}\"]")
             bookmark.read_state =
-              read: iframe.contentDocument.querySelectorAll(".content > article").length or bookmark.read_state.read or 0
+              read: iframe.contentDocument.querySelectorAll(".content > article").length or bookmark.read_state?.read or 0
 
           if bookmark.res_count?
             if bookmark.res_count - (bookmark.read_state?.read or 0) <= 0
