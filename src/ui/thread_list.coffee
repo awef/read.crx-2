@@ -36,7 +36,8 @@ do ($ = jQuery) ->
         created_date: "作成日時"
         viewed_date: "閲覧日時"
 
-      $table = $(@table)
+      table = @table
+      $table = $(table)
       $thead = $("<thead>").appendTo($table)
       $table.append("<tbody>")
       $tr = $("<tr>").appendTo($thead)
@@ -93,19 +94,20 @@ do ($ = jQuery) ->
             $table.find("tr[data-href=\"#{msg.bookmark.url}\"]").remove()
 
         if @flg.res and msg.type is "res_count"
-          $tr = $table.find("tr[data-href=\"#{msg.bookmark.url}\"]")
-          $td = $tr.children(res_selector)
-          old_res_count = +$td.text()
-          $td.text(msg.bookmark.res_count)
-          if @flg.unread
-            $td = $tr.children(unread_selector)
-            old_unread = +$td.text()
-            unread = old_unread + (msg.bookmark.res_count - old_res_count)
-            $td.text(unread or "")
-            if unread > 0
-              $tr.addClass("updated")
-            else
-              $tr.removeClass("updated")
+          tr = table.querySelector("tr[data-href=\"#{msg.bookmark.url}\"]")
+          if tr
+            td = tr.querySelector(res_selector)
+            old_res_count = +td.textContent
+            td.textContent = msg.bookmark.res_count
+            if @flg.unread
+              td = tr.querySelector(unread_selector)
+              old_unread = +td.textContent
+              unread = old_unread + (msg.bookmark.res_count - old_res_count)
+              td.textContent = unread or ""
+              if unread > 0
+                tr.classList.add("updated")
+              else
+                tr.classList.remove("updated")
 
         if @flg.title and msg.type is "title"
           $tr = $table.find("tr[data-href=\"#{msg.bookmark.url}\"]")
@@ -115,16 +117,16 @@ do ($ = jQuery) ->
       #未読数更新
       if @flg.unread
         app.message.add_listener "read_state_updated", (msg) ->
-          $tr = $table.find("tr[data-href=\"#{msg.read_state.url}\"]")
-          if $tr.length is 1
-            $res = $tr.children(res_selector)
-            $unread = $tr.children(unread_selector)
-            unread = Math.max(+$res.text() - msg.read_state.read, 0)
-            $unread.text(unread or "")
-            if unread > 0
-              $tr.addClass("updated")
+          tr = table.querySelector("tr[data-href=\"#{msg.read_state.url}\"]")
+          if tr
+            res = tr.querySelector(res_selector)
+            unread = tr.querySelector(unread_selector)
+            unreadCount = Math.max(+res.textContent - msg.read_state.read, 0)
+            unread.textContent = unreadCount or ""
+            if unreadCount > 0
+              tr.classList.add("updated")
             else
-              $tr.removeClass("updated")
+              tr.classList.remove("updated")
           return
 
       #リスト内検索
