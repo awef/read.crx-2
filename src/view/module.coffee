@@ -107,11 +107,19 @@ app.view_module.bookmark_button = ($view) ->
         else if message.type is "removed"
           $button.removeClass("bookmarked")
 
-    $button.bind "click", ->
+    $button.on "click", ->
       if app.bookmark.get(url)
         app.bookmark.remove(url)
       else
-        app.bookmark.add(url, $view.find("title").text() or url)
+        title = $view.find("title").text() or url
+
+        if $view.hasClass("view_thread")
+          resCount = $view.find(".content").children().length
+
+        if resCount? and resCount > 0
+          app.bookmark.add(url, title, resCount)
+        else
+          app.bookmark.add(url, title)
       return
   else
     $button.remove()
