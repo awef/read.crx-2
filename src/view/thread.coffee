@@ -383,6 +383,8 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
             hit_count = 0
             query = app.util.normalize(@value)
 
+            scrollTop = $content.scrollTop()
+
             $view
               .find(".content")
                 .addClass("searching")
@@ -400,6 +402,9 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
               .find(".hit_count")
                 .text(hit_count + "hit")
                 .show()
+
+            if scrollTop is $content.scrollTop()
+              $content.triggerHandler("scroll")
           else
             $view
               .find(".content")
