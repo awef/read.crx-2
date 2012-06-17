@@ -128,6 +128,9 @@ $z-index_notification: 8;
       > input {
         padding: 0 0 0 19px;
         width: 150px;
+        &[disabled] {
+          visibility: hidden;
+        }
         @media (max-width: 400px) {
           width: 100px;
         }
@@ -407,7 +410,7 @@ $z-index_notification: 8;
     text-overflow: ellipsis;
     overflow: hidden;
   }
-  tbody:after {
+  table::after, tbody::after {
     display: block;
     position: absolute;
     width: 100%;

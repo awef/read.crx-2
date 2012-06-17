@@ -23,6 +23,8 @@ do ($ = jQuery) ->
       $(container).on("scroll", listener)
       interval = setInterval(->
         if scroll_flg
+          scroll_flg = false
+
           imgs = imgs.filter (img) ->
             # imgが非表示の時はロードしない
             if img.offsetWidth is 0

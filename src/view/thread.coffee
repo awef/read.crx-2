@@ -150,36 +150,35 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       return
 
     #レスメニュー表示
-    .on "click", "article > header", (e) ->
-      return if $(e.target).is("a, .link, .freq, .name_num")
+    .on "click contextmenu", "article > header", (e) ->
+      if $(e.target).is("a, .link, .freq, .name_num")
+        return
+
+      if e.type is "contextmenu"
+        e.preventDefault()
+
       $article = $(@).parent()
-      append_flg = $article.has(".res_footer").length is 0
-      $view
-        .find("article > .res_footer")
-          .slideUp(100, (-> $(@).remove(); return))
-      if append_flg
-        $menu = $view.find("#template > .res_footer").clone()
+      $menu = $("#template > .res_menu").clone().hide().appendTo($article)
 
-        $menu
-          .find(".res_permalink")
-            .attr("href", app.safe_href(view_url + $article.find(".num").text()))
+      if $article.is(".aa")
+        $menu.find(".toggle_aa_mode").text("AA表示モードを解除")
+      else
+        $menu.find(".toggle_aa_mode").text("AA表示モードに変更")
 
-        if $article.is(".aa")
-          $menu.find(".toggle_aa_mode > input").attr("checked", true)
+      unless app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"]
+        $menu.find(".res_to_this, .res_to_this2").remove()
 
-        unless app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"]
-          $menu.find(".res_to_this, .res_to_this2").remove()
+      unless $article.is(".popup > article")
+        $menu.find(".jump_to_this").remove()
 
-        unless $article.is(".popup > article")
-          $menu.find(".jump_to_this").remove()
-
-        $menu.hide()
-        $(@).after($menu)
-        $menu.slideDown(100)
+      app.defer ->
+        $menu.show()
+        $.contextmenu($menu, e.clientX, e.clientY)
+        return
       return
 
     #レスメニュー項目クリック
-    .on "click", ".res_footer_item", "click", (e) ->
+    .on "click", ".res_menu > li", "click", (e) ->
       $this = $(@)
       $res = $this.closest("article")
 
@@ -196,10 +195,12 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         """)
 
       else if $this.hasClass("toggle_aa_mode")
-        e.preventDefault()
         $res.toggleClass("aa")
 
-      $(@).parent().slideUp(100, (-> $(@).remove(); return))
+      else if $this.hasClass("res_permalink")
+        open(app.safe_href(view_url + $res.find(".num").text()))
+
+      $this.parent().remove()
       return
 
     #アンカーポップアップ
@@ -381,6 +382,8 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
             hit_count = 0
             query = app.util.normalize(@value)
 
+            scrollTop = $content.scrollTop()
+
             $view
               .find(".content")
                 .addClass("searching")
@@ -398,6 +401,9 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
               .find(".hit_count")
                 .text(hit_count + "hit")
                 .show()
+
+            if scrollTop is $content.scrollTop()
+              $content.triggerHandler("scroll")
           else
             $view
               .find(".content")
@@ -444,17 +450,18 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         if bookmark = app.bookmark.get(view_url)
           bookmarks.unshift(bookmark)
 
-        for bookmark in bookmarks
+        for bookmark in bookmarks when bookmark.res_count?
+          read = null
+
           if iframe = parent.document.querySelector("[data-url=\"#{bookmark.url}\"]")
-            bookmark.read_state =
-              read: iframe.contentDocument.querySelectorAll(".content > article").length or bookmark.read_state.read or 0
+            read = iframe.contentDocument.querySelectorAll(".content > article").length
 
-          if bookmark.res_count?
-            if bookmark.res_count - (bookmark.read_state?.read or 0) <= 0
-              continue
+          unless read
+            read = bookmark.read_state?.read or 0
 
-          next = bookmark
-          break
+          if bookmark.res_count > read
+            next = bookmark
+            break
 
         if next
           if next.url is view_url

@@ -1,17 +1,18 @@
 .contextmenu_menu {
+  @include drop_shadow;
   margin: 0;
   padding: 0;
-  box-shadow: 0 0 5px black;
   list-style-type: none;
-  background-color: #333333;
-  color: white;
+  background: hsl(0, 0%, 100%);
+  color: hsl(0, 0%, 10%);
   font-size: 14px;
   z-index: $z-index_contextmenu;
   > li {
     cursor: pointer;
     padding: 5px 10px;
     &:hover {
-      background-color: #666666;
+      background: hsl(0, 0%, 50%);
+      color: hsl(0, 0%, 100%);
     }
   }
 }

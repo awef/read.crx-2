@@ -27,7 +27,7 @@ task :clean do
 end
 
 task :doc do
-  sh "yuidoc --server 4001"
+  sh "yuidoc -q --server 4001"
 end
 
 task :pack do

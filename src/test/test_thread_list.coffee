@@ -54,7 +54,7 @@ test "view_bookmark", 2, ->
   ]
 
   tbody_reg = ///
-    <tr\sclass="open_in_rcrx"\sdata\-href="#{dummyurl0}"\sdata\-title="dummy0">
+    <tr\sclass="open_in_rcrx\u0020updated"\sdata\-href="#{dummyurl0}"\sdata\-title="dummy0">
       <td>dummy0</td><td>123</td><td>73</td><td>[\d\.]+</td><td>2009/02/14\s08:31</td>
     </tr>
     <tr\sclass="open_in_rcrx"\sdata\-href="#{dummyurl1}"\sdata\-title="dummy1">
@@ -130,7 +130,7 @@ test "view_board", 2, ->
   ]
 
   tbody_reg = ///
-    <tr\sclass="open_in_rcrx"\sdata\-href="#{dummyurl0}"\sdata\-title="dummy0"\sdata\-thread_number="0">
+    <tr\sclass="open_in_rcrx\u0020updated"\sdata\-href="#{dummyurl0}"\sdata\-title="dummy0"\sdata\-thread_number="0">
       <td></td><td>dummy0</td><td>123</td><td>73</td><td>[\d\.]+</td><td>2009/02/14\s08:31</td>
     </tr>
     <tr\sclass="open_in_rcrx"\sdata\-href="#{dummyurl1}"\sdata\-title="dummy1"\sdata\-thread_number="1">

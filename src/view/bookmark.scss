@@ -14,7 +14,7 @@
 
 @media (max-width: 500px) {
   th:not(.table_sort_asc):not(.table_sort_desc) {
-    &:nth-child(n+2) {
+    &:nth-child(2), &:nth-child(n+4) {
       width: 0;
     }
   }
@@ -38,29 +38,48 @@ td {
   }
 }
 
+.view.loading {
+  table::after {
+    content: "更新チェック中";
+  }
+
+  > body > .content {
+    display: block;
+
+    > table > tbody > tr:not(.updated) {
+      display: none;
+    }
+  }
+}
+
 .loading_overlay {
-  > div {
-    color: white;
-    &:before {
-      content: "待機中　 : ";
+  position: fixed;
+  top: initial;
+  bottom: 0;
+  height: initial;
+  background: transparent;
+  > .pending {
+    color: hsl(0, 0%, 50%);
+    &::before {
+      content: "待機中: ";
     }
   }
   > .loading {
-    color: lightblue;
-    &:before {
-      content: "更新中　 : ";
+    color: hsl(30, 50%, 45%);
+    &::before {
+      content: "更新中: ";
     }
   }
   > .success {
-    color: lightgreen;
-    &:before {
-      content: "更新成功 : ";
+    color: hsl(120, 50%, 40%);
+    &::before {
+      content: "更新成功: ";
     }
   }
   > .error {
-    color: red;
-    &:before {
-      content: "更新失敗 : ";
+    color: hsl(0, 50%, 50%);
+    &::before {
+      content: "更新失敗: ";
     }
   }
 }

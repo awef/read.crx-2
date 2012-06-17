@@ -107,11 +107,19 @@ app.view_module.bookmark_button = ($view) ->
         else if message.type is "removed"
           $button.removeClass("bookmarked")
 
-    $button.bind "click", ->
+    $button.on "click", ->
       if app.bookmark.get(url)
         app.bookmark.remove(url)
       else
-        app.bookmark.add(url, $view.find("title").text() or url)
+        title = $view.find("title").text() or url
+
+        if $view.hasClass("view_thread")
+          resCount = $view.find(".content").children().length
+
+        if resCount? and resCount > 0
+          app.bookmark.add(url, title, resCount)
+        else
+          app.bookmark.add(url, title)
       return
   else
     $button.remove()
@@ -148,15 +156,6 @@ app.view_module.sort_item_selector = ($view) ->
   return
 
 app.view_module.tool_menu = ($view) ->
-  copy = (str) ->
-    input = document.createElement("input")
-    input.value = str
-    document.body.appendChild(input)
-    input.select()
-    document.execCommand("copy")
-    document.body.removeChild(input)
-    return
-
   # 項目クリック時にメニューを隠す
   $view.find(".button_tool > ul").on "click", ->
     app.defer =>
@@ -184,17 +183,17 @@ app.view_module.tool_menu = ($view) ->
 
   # タイトルをコピー
   $view.find(".button_copy_title").on "click", ->
-    copy(document.title)
+    app.clipboardWrite(document.title)
     return
 
   # URLをコピー
   $view.find(".button_copy_url").on "click", ->
-    copy($view.attr("data-url"))
+    app.clipboardWrite($view.attr("data-url"))
     return
 
   # タイトルとURLをコピー
   $view.find(".button_copy_title_and_url").on "click", ->
-    copy(document.title + " " + $view.attr("data-url"))
+    app.clipboardWrite(document.title + " " + $view.attr("data-url"))
     return
 
   return

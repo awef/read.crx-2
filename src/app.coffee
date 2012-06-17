@@ -207,3 +207,12 @@ app.boot = (path, [requirements]..., fn) ->
       else
         $(fn)
   return
+
+app.clipboardWrite = (str) ->
+  input = document.createElement("input")
+  input.value = str
+  document.body.appendChild(input)
+  input.select()
+  document.execCommand("copy")
+  document.body.removeChild(input)
+  return

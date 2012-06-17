@@ -13,6 +13,7 @@ app.module "euc_jp_escape", ["jquery"], ($, callback) ->
         .one "load", ->
           $(@).one "load", ->
             d.resolve(@contentWindow.location.search.replace(/^\?q=/, ""))
+            $(@).remove()
             return
           $("<form>", {
               action: "/view/empty.html"
@@ -23,6 +24,7 @@ app.module "euc_jp_escape", ["jquery"], ($, callback) ->
             .append($("<input>", name: "q", value: str))
             .appendTo(document.body)
             .submit()
+            .remove()
           return
         .appendTo(document.body)
       return
