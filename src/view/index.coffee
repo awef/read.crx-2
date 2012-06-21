@@ -27,46 +27,6 @@ app.boot "/view/index.html", ->
       if query
         app.message.send("open", url: query, new_tab: true)
 
-# #app.view_tab_state
-# タブの状態の保存/復元を行う
-app.view_tab_state = {}
-
-app.view_tab_state._get = ->
-  data = []
-
-  for tab_li in document.querySelectorAll(".tab_tabbar > li")
-    tab_id = tab_li.getAttribute("data-tab_id")
-    tab_content = document.querySelector(".tab_content[data-tab_id=\"#{tab_id}\"]")
-    data.push
-      url: tab_content.getAttribute("data-url")
-      title: tab_content.getAttribute("data-title")
-      selected: tab_content.classList.contains("tab_selected")
-
-  data
-
-# ##app.view_tab_state.store
-# 現在の全てのタブのURLとタイトルを保存  
-# unload時に使用出来るよう、非同期処理は用いてはいけない
-app.view_tab_state.store = ->
-  localStorage["tab_state"] = JSON.stringify(app.view_tab_state._get())
-
-# ##app.view_tab_state.restore
-# 保存されていたタブを復元
-app.view_tab_state.restore = ->
-  is_restored = false
-
-  if localStorage["tab_state"]
-    for tab in JSON.parse(localStorage["tab_state"])
-      is_restored = true
-      app.message.send("open", {
-        url: tab.url
-        title: tab.title
-        lazy: not tab.selected
-        new_tab: true
-      })
-
-  is_restored
-
 app.view_setup_resizer = ->
   MIN_TAB_HEIGHT = 100
 
@@ -179,7 +139,10 @@ app.main = ->
 
   #タブ・ペインセットアップ
   $("#body").addClass(app.config.get("layout"))
-  $("#tab_a, #tab_b").tab()
+  tabA = new UI.Tab(document.querySelector("#tab_a"))
+  $("#tab_a").data("tab", tabA)
+  tabB = new UI.Tab(document.querySelector("#tab_b"))
+  $("#tab_b").data("tab", tabB)
   $(".tab .tab_tabbar").sortable()
   app.view_setup_resizer()
 
@@ -192,29 +155,25 @@ app.main = ->
       #タブ移動
       #2->3
       if message.val is "pane-3" or message.val is "pane-3h"
-        tab_a = document.getElementById("tab_a")
-        $tab_a = $(tab_a)
-        for tmp in tab_a.querySelectorAll(".tab_container > *")
-          if app.url.guess_type(tmp.getAttribute("data-url")).type is "thread"
+        for tmp in tabA.getAll()
+          if app.url.guess_type(tmp.url).type is "thread"
             app.message.send "open", {
                 new_tab: true
                 lazy: true
-                url: tmp.getAttribute("data-url")
-                title: tmp.getAttribute("data-title")
+                url: tmp.url
+                title: tmp.titl
               }
-            $tab_a.tab("remove", tab_id: tmp.getAttribute("data-tab_id"))
+            tabA.remove(tmp.tabId)
       #3->2
       if message.val is "pane-2"
-        tab_b = document.getElementById("tab_b")
-        $tab_b = $(tab_b)
-        for tmp in tab_b.querySelectorAll(".tab_container > *")
+        for tmp in tabB.getAll()
           app.message.send "open", {
               new_tab: true
               lazy: true
-              url: tmp.getAttribute("data-url")
-              title: tmp.getAttribute("data-title")
+              url: tmp.url
+              title: tmp.title
             }
-          $tab_b.tab("remove", tab_id: tmp.getAttribute("data-tab_id"))
+          tabB.remove(tmp.tabId)
     return
 
   # #13対策
@@ -223,21 +182,32 @@ app.main = ->
       .on("mouseenter", "li", -> @classList.add("hover"))
       .on("mouseleave", "li", -> @classList.remove("hover"))
 
-  #タブの状態の保存/復元関連
-  is_restored = app.view_tab_state.restore()
-  window.addEventListener "unload", ->
-    app.view_tab_state.store()
-    return
+  #タブ復元
+  if localStorage.tab_state?
+    for tab in JSON.parse(localStorage.tab_state)
+      is_restored = true
+      app.message.send("open", {
+        url: tab.url
+        title: tab.title
+        lazy: not tab.selected
+        new_tab: true
+      })
 
   #もし、タブが一つも復元されなかったらブックマークタブを開く
   unless is_restored
     app.message.send("open", url: "bookmark")
 
+  #終了時にタブの状態を保存する
+  window.addEventListener "unload", ->
+    data = for tab in tabA.getAll().concat(tabB.getAll())
+      url: document.querySelector("iframe[data-tabid=\"#{tab.tabId}\"]").getAttribute("data-url")
+      title: tab.title
+      selected: tab.selected
+    localStorage.tab_state = JSON.stringify(data)
+    return
+
   #openメッセージ受信部
   app.message.add_listener "open", (message) ->
-    $iframe = $view
-      .find("iframe[data-url=\"#{app.url.fix(message.url).replace(/"/g, "\\\"")}\"]")
-
     get_iframe_info = (url) ->
       guess_result = app.url.guess_type(url)
       if url is "config"
@@ -261,56 +231,55 @@ app.main = ->
         src: "/view/search.html?#{app.url.build_param(query: res[1])}"
         url: "search:#{res[1]}"
       else if guess_result.type is "board"
-        src: "/view/board.html?#{app.url.build_param(q: message.url)}"
-        url: app.url.fix(message.url)
+        src: "/view/board.html?#{app.url.build_param(q: url)}"
+        url: app.url.fix(url)
       else if guess_result.type is "thread"
-        src: "/view/thread.html?#{app.url.build_param(q: message.url)}"
-        url: app.url.fix(message.url)
+        src: "/view/thread.html?#{app.url.build_param(q: url)}"
+        url: app.url.fix(url)
       else
         null
 
-    if $iframe.length is 1
-      if $iframe.hasClass("tab_content")
-        $iframe
-          .closest(".tab")
-            .tab("select", tab_id: $iframe.attr("data-tab_id"))
+    iframe_info = get_iframe_info(message.url)
+    return unless iframe_info
+
+    if iframe_info.modal
+      unless $view.find("iframe[src=\"#{iframe_info.src}\"]").length
+        $("<iframe>")
+          .attr("src", iframe_info.src)
+          .attr("data-url", iframe_info.url)
+          .attr("data-title", message.title or iframe_info.url)
+          .appendTo("#modal")
+    else
+      $li = $view.find(".tab_tabbar > li[data-tabsrc=\"#{iframe_info.src}\"]")
+      if $li.length
+        $li.closest(".tab").data("tab").update($li.attr("data-tabid"), selected: true)
         if message.url isnt "bookmark" #ブックマーク更新は時間がかかるので例外扱い
           tmp = JSON.stringify(type: "request_reload")
+          $iframe = $view.find("iframe[data-tabid=\"#{$li.attr("data-tabid")}\"]")
           $iframe[0].contentWindow.postMessage(tmp, location.origin)
-    else if iframe_info = get_iframe_info(message.url)
-      lazy = message.lazy and (not message.modal)
-
-      $iframe = $("<iframe>")
-        .attr("src", if lazy then "/view/empty.html" else  iframe_info.src)
-        .attr("data-url", iframe_info.url)
-        .attr("data-title", message.title or iframe_info.url)
-
-      if iframe_info.modal
-        $iframe.appendTo("#modal")
       else
-        target = "#tab_a"
+        target = tabA
         if iframe_info.src[0..16] is "/view/thread.html" and
             not $("#body").hasClass("pane-2")
-          target = "#tab_b"
+          target = tabB
 
-        $(target)
-          .tab("add", {
-            element: $iframe[0],
-            title: $iframe.attr("data-title"),
-            background: lazy or message.background,
-            new_tab: message.new_tab is true
+        if message.new_tab or not (selectedTab = target.getSelected())
+          tabId = target.add(iframe_info.src, {
+            title: message.title or iframe_info.url
+            selected: not (message.background or message.lazy)
+            lazy: message.lazy
           })
-
-        if lazy
-          #連続でopenメッセージが送られて来た時のために、非同期実行にする
-          app.defer ->
-            if $iframe.hasClass("tab_selected")
-              $iframe.attr("src", get_iframe_info($iframe.attr("data-url")).src)
-            else
-              $iframe.one "tab_selected", ->
-                $this = $(@)
-                $this.attr("src", get_iframe_info($this.attr("data-url")).src)
-            return
+        else
+          tabId = selectedTab.tabId
+          target.update(tabId, {
+            url: iframe_info.src
+            title: message.title or iframe_info.url
+            selected: true
+          })
+        $view
+          .find("iframe[data-tabid=\"#{tabId}\"]")
+            .attr("data-url", iframe_info.url)
+    return
 
   #初回スキャンに失敗した場合、タイミングの問題でopenメッセージを取得できな
   #いので、promiseを見てview_bookmark_source_selectorを呼び出す
@@ -342,12 +311,11 @@ app.main = ->
     switch message.type
       #タブ内コンテンツがtitle_updatedを送出した場合、タブのタイトルを更新
       when "title_updated"
-        $iframe
-          .closest(".tab")
-            .tab("update_title", {
-              tab_id: $iframe.attr("data-tab_id")
-              title: message.title
-            })
+        if $iframe.hasClass("tab_content")
+          $iframe
+            .closest(".tab")
+              .data("tab")
+                .update($iframe.attr("data-tabid"), title: message.title)
 
       #request_killmeの処理
       when "request_killme"
@@ -355,7 +323,8 @@ app.main = ->
         if $iframe.hasClass("tab_content")
           $iframe
             .closest(".tab")
-              .tab("remove", tab_id: $iframe.attr("data-tab_id"))
+              .data("tab")
+                .remove($iframe.attr("data-tabid"))
         #モーダルのviewが送ってきた場合
         else if $iframe.is("#modal > iframe")
           $iframe.fadeOut "fast", ->
@@ -439,7 +408,7 @@ app.main = ->
 
     $source = $(@)
     $source_tab = $source.closest(".tab")
-    source_tab_id = $source.attr("data-tab_id")
+    source_tab_id = $source.attr("data-tabid")
 
     $menu = $("#template > .tab_contextmenu").clone()
     $menu.one "click", "li", ->
@@ -447,28 +416,28 @@ app.main = ->
 
       #再読み込み
       if $this.is(".reload")
-        $view.find("iframe[data-tab_id=\"#{source_tab_id}\"]")[0]
+        $view.find("iframe[data-tabid=\"#{source_tab_id}\"]")[0]
           .contentWindow.postMessage(
             JSON.stringify(type: "request_reload")
             location.origin
           )
       #タブを閉じる
       else if $this.is(".close")
-        $source_tab.tab("remove", tab_id: source_tab_id)
+        $source_tab.data("tab").remove(source_tab_id)
       #タブを全て閉じる
       else if $this.is(".close_all")
         $source.siblings().andSelf().each ->
-          $source_tab.tab("remove", tab_id: $(@).attr("data-tab_id"))
+          $source_tab.data("tab").remove($(@).attr("data-tabid"))
           return
       #他のタブを全て閉じる
       else if $this.is(".close_all_other")
         $source.siblings().each ->
-          $source_tab.tab("remove", tab_id: $(@).attr("data-tab_id"))
+          $source_tab.data("tab").remove($(@).attr("data-tabid"))
           return
       #右側のタブを全て閉じる
       else if $this.is(".close_right")
         $source.nextAll().each ->
-          $source_tab.tab("remove", tab_id: $(@).attr("data-tab_id"))
+          $source_tab.data("tab").remove($(@).attr("data-tabid"))
           return
       $menu.remove()
       return
