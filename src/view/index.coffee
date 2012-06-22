@@ -356,6 +356,12 @@ app.main = ->
       return
 
   $(document.documentElement)
+    .on "tab_removed tab_urlupdated", "iframe", ->
+      @contentWindow.___e = @contentDocument.createEvent("Event")
+      @contentWindow.___e.initEvent("view_unload", true, true)
+      @contentWindow.dispatchEvent(@contentWindow.___e)
+      return
+
     #tab_selected(event) -> tab_selected(postMessage) 翻訳処理
     .delegate "iframe.tab_content", "tab_selected", ->
       tmp = JSON.stringify(type: "tab_selected")

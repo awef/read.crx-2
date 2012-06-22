@@ -49,10 +49,6 @@ app.view_module.view = ($view) ->
       app.message.send("open", {url, new_tab, background, title})
       return
 
-  #unloadイベント → view_unloadイベント
-  window.addEventListener "unload", ->
-    $view.trigger("view_unload")
-
   window.addEventListener "message", (e) ->
     if e.origin is location.origin
       message = JSON.parse(e.data)
