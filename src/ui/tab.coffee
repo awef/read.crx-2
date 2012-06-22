@@ -149,6 +149,7 @@ class UI.Tab
         .end()
         .find("iframe[data-tabid=\"#{tabId}\"]")
           .attr("src", param.url)
+          .trigger("tab_urlupdated")
 
     if typeof param.title is "string"
       $(@element)

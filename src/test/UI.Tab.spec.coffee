@@ -151,6 +151,29 @@ describe "UI.Tab", ->
       expect(tab.getSelected().title).toBe("test")
       return
 
+    it "タブのURLを変更する", ->
+      url1 = getDummyURL()
+      url2 = getDummyURL()
+
+      tabId = tab.add(url1)
+      expect(tab.getSelected().url).toBe(url1)
+      tab.update(tabId, url: url2)
+      expect(tab.getSelected().url).toBe(url2)
+      return
+
+    it "タブのURL変更時、iframeにtab_urlupdatedイベントを送出する", ->
+      url1 = getDummyURL()
+      url2 = getDummyURL()
+
+      onTabURLUpdated = jasmine.createSpy("onTabSelected")
+      $(div).one("tab_selected", "iframe", onTabURLUpdated)
+
+      tabId = tab.add(url1)
+      tab.update(tabId, url: url2)
+
+      expect(onTabURLUpdated.calls.length).toBe(1)
+      return
+
     it "タブ選択時、iframeにtab_selectedイベントを送出する", ->
       url1 = getDummyURL()
       url2 = getDummyURL()
