@@ -142,13 +142,54 @@ describe "UI.Tab", ->
     return
 
   describe "::update", ->
+    it "タブの選択状態を変更する", ->
+      url1 = getDummyURL()
+      url2 = getDummyURL()
+      url3 = getDummyURL()
+
+      id1 = tab.add(url1)
+      id2 = tab.add(url2)
+      id3 = tab.add(url3)
+
+      li1 = div.querySelector("li[data-tabid=\"#{id1}\"]")
+      li2 = div.querySelector("li[data-tabid=\"#{id2}\"]")
+      li3 = div.querySelector("li[data-tabid=\"#{id3}\"]")
+      iframe1 = div.querySelector("iframe[data-tabid=\"#{id1}\"]")
+      iframe2 = div.querySelector("iframe[data-tabid=\"#{id2}\"]")
+      iframe3 = div.querySelector("iframe[data-tabid=\"#{id3}\"]")
+
+      tab.update(id2, selected: true)
+      expect(tab.getSelected().tabId).toBe(id2)
+      expect(div.querySelector("li.tab_selected")).toBe(li2)
+      expect(div.querySelector("iframe.tab_selected")).toBe(iframe2)
+
+      tab.update(id1, selected: true)
+      expect(tab.getSelected().tabId).toBe(id1)
+      expect(div.querySelector("li.tab_selected")).toBe(li1)
+      expect(div.querySelector("iframe.tab_selected")).toBe(iframe1)
+
+      tab.update(id3, selected: true)
+      expect(tab.getSelected().tabId).toBe(id3)
+      expect(div.querySelector("li.tab_selected")).toBe(li3)
+      expect(div.querySelector("iframe.tab_selected")).toBe(iframe3)
+      return
+
     it "タイトルを変更する", ->
       url = getDummyURL()
+      title = "test234"
 
       tab.add(url)
+      li = div.querySelector("li")
+
       expect(tab.getSelected().title).toBe(url)
-      tab.update(tab.getSelected().tabId, title: "test")
-      expect(tab.getSelected().title).toBe("test")
+      expect(li.title).toBe(url)
+      expect(li.firstChild.textContent).toBe(url)
+
+      tab.update(tab.getSelected().tabId, {title})
+
+      expect(tab.getSelected().title).toBe(title)
+      expect(li.title).toBe(title)
+      expect(li.firstChild.textContent).toBe(title)
       return
 
     it "タブのURLを変更する", ->
@@ -156,9 +197,18 @@ describe "UI.Tab", ->
       url2 = getDummyURL()
 
       tabId = tab.add(url1)
+      li = div.querySelector("li.tab_selected")
+      iframe = div.querySelector("iframe.tab_selected")
+
       expect(tab.getSelected().url).toBe(url1)
+      expect(li.getAttribute("data-tabsrc")).toBe(url1)
+      expect(iframe.src).toBe(url1)
+
       tab.update(tabId, url: url2)
+
       expect(tab.getSelected().url).toBe(url2)
+      expect(li.getAttribute("data-tabsrc")).toBe(url2)
+      expect(iframe.src).toBe(url2)
       return
 
     it "タブのURL変更時、iframeにtab_urlupdatedイベントを送出する", ->
