@@ -262,11 +262,11 @@ describe "UI.Tab", ->
       ])
       return
 
-    it "タブの一覧は十個まで保持する", ->
-      for [0...15]
+    it "タブの一覧は五十個まで保持する", ->
+      for [0...55]
         tab.remove(tab.add(getDummyURL()))
 
-      expect(tab.getRecentClosed().length).toBe(10)
+      expect(tab.getRecentClosed().length).toBe(50)
       return
 
     it "同一のURLのタブの履歴は最新の物のみ残す", ->

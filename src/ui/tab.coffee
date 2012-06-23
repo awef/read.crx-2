@@ -203,7 +203,7 @@ class UI.Tab
             title: @title
           })
 
-          if tab._recentClosed.length > 10
+          if tab._recentClosed.length > 50
             tab._recentClosed.shift()
 
           if @classList.contains("tab_selected")
