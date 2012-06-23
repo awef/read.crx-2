@@ -25,6 +25,8 @@ class UI.Tab
     "tabId" + ++@_idCount
 
   constructor: (@element) ->
+    @_recentClosed = []
+
     tab = @
 
     $(@element)
@@ -187,16 +189,43 @@ class UI.Tab
   remove: (tabId) ->
     tab = @
     $(@element)
-      .find("[data-tabid=\"#{tabId}\"]")
-        .filter("li.tab_selected")
-          .each(->
+      .find("li[data-tabid=\"#{tabId}\"]")
+        .each(->
+          tab._recentClosed.push({
+            tabId: @getAttribute("data-tabid")
+            url: @getAttribute("data-tabsrc")
+            title: @title
+          })
+
+          if tab._recentClosed.length > 10
+            tab._recentClosed.shift()
+
+          if @classList.contains("tab_selected")
             if next = @nextElementSibling or @previousElementSibling
               tab.update(next.getAttribute("data-tabid"), selected: true)
-            return
-          )
-        .end()
-        .filter(".tab_content")
-          .trigger("tab_removed")
-        .end()
+          return
+        )
+        .remove()
+      .end()
+      .find("iframe[data-tabid=\"#{tabId}\"]")
+        .trigger("tab_removed")
       .remove()
     return
+
+  ###*
+  @method getRecentClosed
+  @return {Array}
+  ###
+  getRecentClosed: ->
+    @_recentClosed
+
+  ###*
+  @method restoreClosed
+  @param {String} tabId
+  @return {String|null} tabId
+  ###
+  restoreClosed: (tabId) ->
+    for tab, key in @_recentClosed when tab.tabId is tabId
+      @_recentClosed.splice(key, 1)
+      return @add(tab.url, title: tab.title)
+    null

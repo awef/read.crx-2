@@ -240,4 +240,64 @@ describe "UI.Tab", ->
       expect(onTabSelected.calls.length).toBe(1)
       return
     return
+
+  describe "::getRecentClosed", ->
+    it "最近閉じたタブの一覧を返す", ->
+      url1 = getDummyURL()
+      url2 = getDummyURL()
+      url3 = getDummyURL()
+
+      id1 = tab.add(url1)
+      id2 = tab.add(url2)
+      id3 = tab.add(url3)
+
+      tab.remove(id1)
+      tab.remove(id3)
+      tab.remove(id2)
+
+      expect(tab.getRecentClosed()).toEqual([
+        {tabId: id1, url: url1, title: url1}
+        {tabId: id3, url: url3, title: url3}
+        {tabId: id2, url: url2, title: url2}
+      ])
+      return
+
+    it "タブの一覧は十個まで保持する", ->
+      for [0...15]
+        tab.remove(tab.add(getDummyURL()))
+
+      expect(tab.getRecentClosed().length).toBe(10)
+      return
+    return
+
+  describe "::restoreClosed", ->
+    it "指定されたタブを復元し、最近閉じたタブリストから削除する", ->
+      url1 = getDummyURL()
+      url2 = getDummyURL()
+      url3 = getDummyURL()
+
+      id1 = tab.add(url1)
+      id2 = tab.add(url2)
+      id3 = tab.add(url3)
+
+      tab.remove(id1)
+      tab.remove(id3)
+      tab.remove(id2)
+
+      id = tab.restoreClosed(id3)
+
+      expect(tab.getRecentClosed()).toEqual([
+        {tabId: id1, url: url1, title: url1}
+        {tabId: id2, url: url2, title: url2}
+      ])
+
+      expect(tab.getAll()).toEqual([
+        {tabId: id, url: url3, title: url3, selected: true}
+      ])
+      return
+
+    it "リストに存在しないタブを復元しようとした場合、nullを返す", ->
+      expect(tab.restoreClosed("test")).toBe(null)
+      return
+    return
   return
