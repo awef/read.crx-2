@@ -223,7 +223,7 @@ class UI.Tab
   @return {Array}
   ###
   getRecentClosed: ->
-    @_recentClosed
+    app.deep_copy(@_recentClosed)
 
   ###*
   @method restoreClosed

@@ -286,6 +286,20 @@ describe "UI.Tab", ->
         {tabId: id3, url: url2, title: url2}
       ])
       return
+
+    it "ディープコピーしたデータを返す", ->
+      tab.remove(id1 = tab.add(url1 = getDummyURL()))
+      tab.remove(id2 = tab.add(url2 = getDummyURL()))
+      tab.remove(id3 = tab.add(url3 = getDummyURL()))
+
+      tab.getRecentClosed().reverse()
+
+      expect(tab.getRecentClosed()).toEqual([
+        {tabId: id1, url: url1, title: url1}
+        {tabId: id2, url: url2, title: url2}
+        {tabId: id3, url: url3, title: url3}
+      ])
+      return
     return
 
   describe "::restoreClosed", ->
