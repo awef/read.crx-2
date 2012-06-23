@@ -268,6 +268,24 @@ describe "UI.Tab", ->
 
       expect(tab.getRecentClosed().length).toBe(10)
       return
+
+    it "同一のURLのタブの履歴は最新の物のみ残す", ->
+      url1 = getDummyURL()
+      url2 = getDummyURL()
+
+      id1 = tab.add(url1)
+      id2 = tab.add(url1)
+      id3 = tab.add(url2)
+
+      tab.remove(id1)
+      tab.remove(id2)
+      tab.remove(id3)
+
+      expect(tab.getRecentClosed()).toEqual([
+        {tabId: id2, url: url1, title: url1}
+        {tabId: id3, url: url2, title: url2}
+      ])
+      return
     return
 
   describe "::restoreClosed", ->

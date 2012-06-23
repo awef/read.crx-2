@@ -191,9 +191,15 @@ class UI.Tab
     $(@element)
       .find("li[data-tabid=\"#{tabId}\"]")
         .each(->
+          tabsrc = @getAttribute("data-tabsrc")
+
+          for tmp, key in tab._recentClosed when tmp.url is tabsrc
+            tab._recentClosed.splice(key, 1)
+            break
+
           tab._recentClosed.push({
             tabId: @getAttribute("data-tabid")
-            url: @getAttribute("data-tabsrc")
+            url: tabsrc
             title: @title
           })
 
