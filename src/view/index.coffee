@@ -413,37 +413,54 @@ app.main = ->
     e.preventDefault()
 
     $source = $(@)
-    $source_tab = $source.closest(".tab")
-    source_tab_id = $source.attr("data-tabid")
+    sourceTabId = $source.attr("data-tabid")
+    tab = $source.closest(".tab").data("tab")
 
     $menu = $("#template > .tab_contextmenu").clone()
+
+    getLatestRestorableTabID = ->
+      tabURLList = (a.url for a in tab.getAll())
+      list = tab.getRecentClosed()
+      list.reverse()
+      for tmpTab in list
+        if not (tmpTab.url in tabURLList)
+          return tmpTab.tabId
+      null
+
+    if not getLatestRestorableTabID()
+      $menu.find(".restore").remove()
+
     $menu.one "click", "li", ->
       $this = $(@)
 
+      #閉じたタブを開く
+      if $this.is(".restore")
+        if tmp = getLatestRestorableTabID()
+          tab.restoreClosed(tmp)
       #再読み込み
-      if $this.is(".reload")
-        $view.find("iframe[data-tabid=\"#{source_tab_id}\"]")[0]
+      else if $this.is(".reload")
+        $view.find("iframe[data-tabid=\"#{sourceTabId}\"]")[0]
           .contentWindow.postMessage(
             JSON.stringify(type: "request_reload")
             location.origin
           )
       #タブを閉じる
       else if $this.is(".close")
-        $source_tab.data("tab").remove(source_tab_id)
+        tab.remove(sourceTabId)
       #タブを全て閉じる
       else if $this.is(".close_all")
         $source.siblings().andSelf().each ->
-          $source_tab.data("tab").remove($(@).attr("data-tabid"))
+          tab.remove($(@).attr("data-tabid"))
           return
       #他のタブを全て閉じる
       else if $this.is(".close_all_other")
         $source.siblings().each ->
-          $source_tab.data("tab").remove($(@).attr("data-tabid"))
+          tab.remove($(@).attr("data-tabid"))
           return
       #右側のタブを全て閉じる
       else if $this.is(".close_right")
         $source.nextAll().each ->
-          $source_tab.data("tab").remove($(@).attr("data-tabid"))
+          tab.remove($(@).attr("data-tabid"))
           return
       $menu.remove()
       return
