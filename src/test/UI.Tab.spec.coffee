@@ -25,6 +25,15 @@ describe "UI.Tab", ->
     return
 
   describe "::add", ->
+    it "タブを追加する", ->
+      id = tab.add(url = getDummyURL())
+
+      expect(div.querySelectorAll("[data-tabid=\"#{id}\"]").length).toBe(2)
+      expect(div.querySelectorAll("li[data-tabid=\"#{id}\"]").length).toBe(1)
+      expect(div.querySelectorAll("iframe[data-tabid=\"#{id}\"]").length).toBe(1)
+      expect(tab.getAll()).toEqual([{tabId: id, url, title: url, selected: true}])
+      return
+
     it "既存のタブが無い時、追加されたタブを必ず選択する", ->
       url = getDummyURL()
 
@@ -100,6 +109,13 @@ describe "UI.Tab", ->
     return
 
   describe "::remove", ->
+    it "タブを削除する", ->
+      tab.remove(tab.add(getDummyURL()))
+
+      expect(div.querySelectorAll("li, iframe").length).toBe(0)
+      expect(tab.getAll().length).toBe(0)
+      return
+
     it "タブ削除時、iframeにtab_removedイベントを送出する", ->
       url = getDummyURL()
 
