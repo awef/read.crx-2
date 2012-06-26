@@ -789,10 +789,10 @@ app.view_thread._read_state_manager = ($view) ->
         scan_and_save()
         return
 
-      .on "view_unload", ->
-        clearInterval(scroll_watcher)
-        window.removeEventListener("beforeunload", on_beforeunload)
-        #ロード中に閉じられた場合、スキャンは行わない
-        return if $view.hasClass("loading")
-        scan_and_save()
-        return
+    window.addEventListener "view_unload", ->
+      clearInterval(scroll_watcher)
+      window.removeEventListener("beforeunload", on_beforeunload)
+      #ロード中に閉じられた場合、スキャンは行わない
+      return if $view.hasClass("loading")
+      scan_and_save()
+      return
