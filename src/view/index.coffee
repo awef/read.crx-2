@@ -409,14 +409,18 @@ app.main = ->
       return
 
   #タブコンテキストメニュー
-  $view.find(".tab_tabbar").on "contextmenu", "li", (e) ->
+  $view.find(".tab_tabbar").on "contextmenu", (e) ->
     e.preventDefault()
 
-    $source = $(@)
-    sourceTabId = $source.attr("data-tabid")
-    tab = $source.closest(".tab").data("tab")
-
+    $source = $(e.target).closest(".tab_tabbar, li")
     $menu = $("#template > .tab_contextmenu").clone()
+
+    if $source.is("li")
+      sourceTabId = $source.attr("data-tabid")
+    else
+      $menu.children().not(".restore").remove()
+
+    tab = $source.closest(".tab").data("tab")
 
     getLatestRestorableTabID = ->
       tabURLList = (a.url for a in tab.getAll())
@@ -429,6 +433,9 @@ app.main = ->
 
     if not getLatestRestorableTabID()
       $menu.find(".restore").remove()
+
+    if $menu.children().length is 0
+      return
 
     $menu.one "click", "li", ->
       $this = $(@)
