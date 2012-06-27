@@ -34,7 +34,7 @@ do ($ = jQuery) ->
           attribute_data_id = null
           article_class = []
 
-          if /(?:\u3000\u3000\u3000\u3000\u3000|\u3000\u0020|[^>]\u0020\u3000)(?!<br>|$)/i.test(res.message)
+          if /(?:\u3000{5}|\u3000\u0020|[^>]\u0020\u3000)(?!<br>|$)/i.test(res.message)
             article_class.push("aa")
 
           item_html = "<header>"
