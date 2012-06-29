@@ -49,6 +49,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
 
   $content = $view.find(".content")
   $content.thread("init", url: view_url)
+  $view.data("lazyload", new UI.LazyLoad($view.find(".content")[0]))
   $view.data("id_index", $content.thread("id_index"))
   $view.data("rep_index", $content.thread("rep_index"))
 
@@ -71,9 +72,9 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
     return if $popup.children().length is 0
     $popup.find("article").removeClass("last read received")
     #ポップアップ内のサムネイルの遅延ロードを解除
-    $popup.find("img[data-href]").each ->
-      @src = @getAttribute("data-href")
-      @removeAttribute("data-href")
+    $popup.find("img[data-src]").each ->
+      @src = @getAttribute("data-src")
+      @removeAttribute("data-src")
       return
     $.popup($view, $popup, e.clientX, e.clientY, that)
 
@@ -558,7 +559,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
     return
 
   #サムネイルロード時の縦位置調整
-  $view.on "lazy_load_complete", ".thumbnail > a > img", ->
+  $view.on "lazyload-load", ".thumbnail > a > img", ->
     a = @parentNode
     container = a.parentNode
     a.style["top"] = "#{(container.offsetHeight - a.offsetHeight) / 2}px"
@@ -618,7 +619,7 @@ app.view_thread._draw = ($view, force_update) ->
 
         thumb_img = document.createElement("img")
         thumb_img.src = "/img/loading.svg"
-        thumb_img.setAttribute("data-href", thumb_path)
+        thumb_img.setAttribute("data-src", thumb_path)
         thumb_link.appendChild(thumb_img)
 
         imgs.push(thumb_img)
@@ -662,7 +663,7 @@ app.view_thread._draw = ($view, force_update) ->
           if /\.(?:png|jpe?g|gif|bmp|webp)(?:[\?#].*)?$/i.test(a.href)
             fn_add_thumbnail(a, a.href)
 
-      $(imgs).lazy_load(container: ".content")
+      $view.data("lazyload").scan()
 
     $view.trigger("view_loaded")
 
