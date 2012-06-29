@@ -604,7 +604,6 @@ app.view_thread._draw = ($view, force_update) ->
 
     #サムネイル追加処理
     do ->
-      imgs = []
       fn_add_thumbnail = (source_a, thumb_path) ->
         source_a.classList.add("has_thumbnail")
 
@@ -621,8 +620,6 @@ app.view_thread._draw = ($view, force_update) ->
         thumb_img.src = "/img/loading.svg"
         thumb_img.setAttribute("data-src", thumb_path)
         thumb_link.appendChild(thumb_img)
-
-        imgs.push(thumb_img)
 
         sib = source_a
         while true
