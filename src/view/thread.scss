@@ -101,6 +101,11 @@ header {
   @include ascii_art;
 }
 
+.beicon[src="/img/loading.svg"] {
+  width: 32px;
+  height: 32px;
+}
+
 .thumbnail {
   $container_height: 100px;
   position: relative;

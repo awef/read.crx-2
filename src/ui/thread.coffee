@@ -90,7 +90,7 @@ do ($ = jQuery) ->
               #Beアイコン埋め込み表示
               .replace ///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///, ($0, $1) =>
                 if app.url.tsld(@url) is "2ch.net"
-                  """<img class="beicon" src="http://#{$1}" /><br />"""
+                  """<img class="beicon" src="/img/loading.svg" data-src="http://#{$1}" /><br />"""
                 else
                   $0
               #アンカーリンク

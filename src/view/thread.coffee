@@ -660,7 +660,7 @@ app.view_thread._draw = ($view, force_update) ->
           if /\.(?:png|jpe?g|gif|bmp|webp)(?:[\?#].*)?$/i.test(a.href)
             fn_add_thumbnail(a, a.href)
 
-      $view.data("lazyload").scan()
+    $view.data("lazyload").scan()
 
     $view.trigger("view_loaded")
 

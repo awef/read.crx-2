@@ -333,7 +333,7 @@ test "2chのスレッドではレス冒頭のsssp://リンクを埋め込み表�
     test
   """
   @example1_1_dom.querySelector(".message").innerHTML = """
-    <img class="beicon" src="http://img.2ch.net/ico/u_utyuu.gif" /><br />
+    <img class="beicon" src="/img/loading.svg" data-src="http://img.2ch.net/ico/u_utyuu.gif" /><br />
     test
   """
   $container = $("<div>").thread("init", url: @example1_url).thread("add_item", @example1_1_data)
