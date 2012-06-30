@@ -207,5 +207,24 @@ describe "UI.LazyLoad", ->
         expect(onLazyloadLoad.calls.length).toBe(1)
         return
       return
+
+    it "元画像の属性を移植する（data-src属性以外）", ->
+      div.appendChild(img1 = getDummyIMG())
+      img1.id = "f62106a4"
+      img1.className = "icon"
+      img1.setAttribute("data-test", "12345")
+
+      lazyLoad._load(img1)
+
+      waitsFor -> img1.parentNode isnt div
+
+      runs ->
+        img2 = div.querySelector("img")
+        expect(img2.id).toBe(img1.id)
+        expect(img2.className).toBe(img1.className)
+        expect(img2.getAttribute("data-test")).toBe("12345")
+        expect(img2.getAttribute("data-src")).toBe(null)
+        return
+      return
     return
   return

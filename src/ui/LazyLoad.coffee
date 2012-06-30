@@ -53,15 +53,18 @@ class UI.LazyLoad
   @param {Element} img
   ###
   _load: (img) ->
-    $img = $(img)
-    $("<img>")
-      .one "load error", (e) ->
-        $img.replaceWith(@)
-        if e.type is "load"
-          $(@).trigger("lazyload-load").hide().fadeIn()
-        return
-      .attr("src", $img.attr("data-src"))
-    $img.removeAttr("data-src")
+    newIMG = document.createElement("img")
+    for attr in img.attributes when attr.name isnt "data-src"
+      newIMG.setAttribute(attr.name, attr.value)
+
+    $(newIMG).one "load error", (e) ->
+      $(img).replaceWith(@)
+      if e.type is "load"
+        $(@).trigger("lazyload-load").hide().fadeIn()
+      return
+
+    newIMG.src = img.getAttribute("data-src")
+    img.removeAttribute("data-src")
     return
 
   ###*
