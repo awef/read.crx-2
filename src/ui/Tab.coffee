@@ -7,6 +7,8 @@ window.UI ?= {}
 @param {Element} container
 ###
 class UI.Tab
+  "use strict"
+
   ###*
   @property _idCount
   @static

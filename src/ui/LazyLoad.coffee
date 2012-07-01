@@ -7,6 +7,8 @@ window.UI ?= {}
 @param {Element} container
 ###
 class UI.LazyLoad
+  "use strict"
+
   @UPDATE_INTERVAL: 200
 
   constructor: (@container) ->
