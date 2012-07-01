@@ -44,13 +44,16 @@ header {
   color: hsl(0, 0%, 0%);
   > pre {
     @include ascii_art;
-    margin: 5px;
+    margin: 0;
+    padding: 5px;
+    width: 100%;
+    height: 100%;
     overflow: auto;
   }
   > .close_preview {
     @include button;
     position: absolute;
-    right: 5px;
+    right: 10px;
     top: 5px;
   }
 }
