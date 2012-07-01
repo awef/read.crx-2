@@ -1,3 +1,18 @@
+do ->
+  return if /windows/i.test(navigator.userAgent)
+  if "textar_font" of localStorage
+    $ ->
+      style = document.createElement("style")
+      style.textContent = """
+        @font-face {
+          font-family: "Textar";
+          src: url(#{localStorage.textar_font});
+        }
+      """
+      document.head.appendChild(style)
+      return
+  return
+
 app.boot "/write/write.html", ->
   arg = app.url.parse_query(location.href)
   arg.url = app.url.fix(arg.url)
