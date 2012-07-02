@@ -36,7 +36,6 @@ do ->
     return
   return
 
-
 app.view_thread = {}
 
 app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolver, History) ->
@@ -48,10 +47,9 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
   $view.attr("data-url", view_url)
 
   $content = $view.find(".content")
-  $content.thread("init", url: view_url)
+  threadContent = new UI.ThreadContent(view_url, $content[0])
+  $view.data("threadContent", threadContent)
   $view.data("lazyload", new UI.LazyLoad($view.find(".content")[0]))
-  $view.data("id_index", $content.thread("id_index"))
-  $view.data("rep_index", $content.thread("rep_index"))
 
   app.view_module.view($view)
   app.view_module.bookmark_button($view)
@@ -121,7 +119,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
 
       $last = $content.find(".last")
       if $last.length is 1
-        $content.thread("scroll_to", +$last.find(".num").text(), false)
+        threadContent.scrollTo(+$last.find(".num").text())
 
       #スクロールされなかった場合も余所の処理を走らすためにscrollを発火
       unless on_scroll
@@ -131,7 +129,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       $view.on "read_state_attached", ->
         $tmp = $content.children(".last.received + article")
         return if $tmp.length isnt 1
-        $content.thread("scroll_to", +$tmp.find(".num").text(), true, -100)
+        threadContent.scrollTo(+$tmp.find(".num").text(), true, -100)
         return
 
     app.view_thread._draw($view)
@@ -194,7 +192,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
           app.clipboardWrite(selectedText)
 
       else if $this.hasClass("jump_to_this")
-        $content.thread("scroll_to", +$res.find(".num").text(), true)
+        threadHode.scrollTo(+$res.find(".num").text(), true)
 
       else if $this.hasClass("res_to_this")
         write(message: ">>#{$res.find(".num").text()}\n")
@@ -246,7 +244,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       tmp = app.util.parse_anchor(@innerHTML)
       target_res_num = tmp.segments[0]?[0]
       if target_res_num?
-        $content.thread("scroll_to", target_res_num, true)
+        threadContent.scrollTo(target_res_num, true)
       return
 
     #通常リンク
@@ -329,7 +327,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
 
         frag = document.createDocumentFragment()
         res_num = +$(@).closest("article").find(".num").text()
-        for target_res_num in $view.data("rep_index")[res_num]
+        for target_res_num in $view.data("threadContent").repIndex[res_num]
           frag.appendChild(tmp[target_res_num - 1].cloneNode(true))
 
         $popup = $("<div>").append(frag)
@@ -374,7 +372,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         res_num = $view.find(selector).index() + 1
 
         if typeof res_num is "number"
-          $content.thread("scroll_to", res_num, true)
+          threadContent.scrollTo(res_num, true)
         else
           app.log("warn", "[view_thread] .jump_panel: ターゲットが存在しません")
       return
@@ -600,7 +598,7 @@ app.view_thread._draw = ($view, force_update) ->
 
     document.title = thread.title
 
-    $(content).thread("add_item", thread.res.slice(content.children.length))
+    $view.data("threadContent").addItem(thread.res.slice(content.children.length))
 
     #サムネイル追加処理
     do ->
@@ -724,7 +722,7 @@ app.view_thread._read_state_manager = ($view) ->
       #onbeforeunload内で呼び出された時に、この値が0になる場合が有る
       return if received is 0
 
-      last = $content.thread("get_read")
+      last = $view.data("threadContent").getRead()
 
       if read_state.received isnt received
         read_state.received = received
