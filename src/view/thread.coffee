@@ -304,19 +304,19 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       return
 
     #IDポップアップ
-    .delegate ".id.link, .id.freq, .anchor_id", app.config.get("popup_trigger"), (e) ->
+    .on app.config.get("popup_trigger"), ".id.link, .id.freq, .anchor_id", (e) ->
       e.preventDefault()
 
       popup_helper @, e, =>
-        id_text = @textContent
+        id = @textContent
           .replace(/^id:/i, "ID:")
           .replace(/\(\d+\)$/, "")
           .replace(/\u25cf$/, "") #末尾●除去
 
         $popup = $("<div>")
-        $content.children("article[data-id=\"#{id_text}\"]")
-          .clone()
-            .appendTo($popup)
+        if threadContent.idIndex[id]
+          for resNum in threadContent.idIndex[id]
+            $popup.append($content[0].childNodes[resNum - 1].cloneNode(true))
         $popup
       return
 
