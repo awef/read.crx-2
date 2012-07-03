@@ -125,7 +125,7 @@ describe "UI.Tab", ->
       tab.add(url)
       tab.remove(tab.getSelected().tabId)
 
-      expect(onTabRemoved.calls.length).toBe(1)
+      expect(onTabRemoved.callCount).toBe(1)
       return
 
     it "アクティブなタブの削除時、右側のタブを選択する", ->
@@ -237,7 +237,7 @@ describe "UI.Tab", ->
       tabId = tab.add(url1)
       tab.update(tabId, url: url2)
 
-      expect(onTabURLUpdated.calls.length).toBe(1)
+      expect(onTabURLUpdated.callCount).toBe(1)
       return
 
     it "タブ選択時、iframeにtab_selectedイベントを送出する", ->
@@ -253,7 +253,7 @@ describe "UI.Tab", ->
       tab1id = tab.getAll().filter((a) -> a.url is url1)[0].tabId
       tab.update(tab1id, selected: true)
 
-      expect(onTabSelected.calls.length).toBe(1)
+      expect(onTabSelected.callCount).toBe(1)
       return
     return
 

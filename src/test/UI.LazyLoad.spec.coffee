@@ -36,7 +36,7 @@ describe "UI.LazyLoad", ->
 
     lazyLoad = new UI.LazyLoad(document.createElement("div"))
 
-    expect(UI.LazyLoad::scan.calls.length).toBe(1)
+    expect(UI.LazyLoad::scan.callCount).toBe(1)
     return
 
   describe "::update", ->
@@ -64,7 +64,7 @@ describe "UI.LazyLoad", ->
 
       lazyLoad.scan()
 
-      expect(lazyLoad.update.calls.length).toBe(1)
+      expect(lazyLoad.update.callCount).toBe(1)
 
       waitsFor -> lazyLoad._load.wasCalled
 
@@ -166,8 +166,8 @@ describe "UI.LazyLoad", ->
       div.appendChild(img)
       lazyLoad.scan()
 
-      expect(lazyLoad.update.calls.length).toBe(1)
-      expect(lazyLoad._watch.calls.length).toBe(1)
+      expect(lazyLoad.update.callCount).toBe(1)
+      expect(lazyLoad._watch.callCount).toBe(1)
       return
 
     it "遅延ロード対象が無い場合は監視を停止する", ->
@@ -175,7 +175,7 @@ describe "UI.LazyLoad", ->
 
       lazyLoad.scan()
 
-      expect(lazyLoad._unwatch.calls.length).toBe(1)
+      expect(lazyLoad._unwatch.callCount).toBe(1)
       return
     return
 
@@ -204,7 +204,7 @@ describe "UI.LazyLoad", ->
       waitsFor -> onLazyloadLoad.wasCalled
 
       runs ->
-        expect(onLazyloadLoad.calls.length).toBe(1)
+        expect(onLazyloadLoad.callCount).toBe(1)
         return
       return
 
