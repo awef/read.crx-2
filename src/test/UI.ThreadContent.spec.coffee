@@ -353,5 +353,197 @@ describe "UI.ThreadContent", ->
 
       hogehoge()
       return
+
+    it "thumbnail_supportedがonの時、対応サイトのサムネイル埋め込みを行う", ->
+      spyOn(app.config, "get").andCallFake (key) ->
+        if key is "thumbnail_supported"
+          "on"
+        else
+          app.config.get.originalValue.call(@, key)
+
+      example.a.data1.message = """
+        http://www.youtube.com/watch?v=BlpKiZI_iL8<br>
+        http://youtu.be/BlpKiZI_iL8<br>
+        http://www.nicovideo.jp/watch/sm4362091
+      """.replace(/\n/g, "")
+      example.a.dom1.querySelector(".message").innerHTML = """
+        <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank" rel="noreferrer" class="has_thumbnail">
+          http://www.youtube.com/watch?v=BlpKiZI_iL8
+        </a>
+        <br>
+        <div class="thumbnail">
+          <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank" rel="noreferrer">
+            <img src="/img/loading.svg" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+          </a>
+        </div>
+        <br>
+        <a href="http://youtu.be/BlpKiZI_iL8" target="_blank" rel="noreferrer" class="has_thumbnail">
+          http://youtu.be/BlpKiZI_iL8
+        </a>
+        <br>
+        <div class="thumbnail">
+          <a href="http://youtu.be/BlpKiZI_iL8" target="_blank" rel="noreferrer">
+            <img src="/img/loading.svg" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+          </a>
+        </div>
+        <br>
+        <a href="http://www.nicovideo.jp/watch/sm4362091" target="_blank" rel="noreferrer" class="has_thumbnail">
+          http://www.nicovideo.jp/watch/sm4362091
+        </a>
+        <br>
+        <div class="thumbnail">
+          <a href="http://www.nicovideo.jp/watch/sm4362091" target="_blank" rel="noreferrer">
+            <img src="/img/loading.svg" data-src="http://tn-skr4.smilevideo.jp/smile?i=4362091" />
+          </a>
+        </div>
+      """.replace(/(?:\n|\u0020{2})/g, "")
+
+      hogehoge()
+      return
+
+    it "thumbnail_supportedがon以外の時、対応サイトのサムネイル埋め込みを行わない", ->
+      spyOn(app.config, "get").andCallFake (key) ->
+        if key is "thumbnail_supported"
+          "dummy"
+        else
+          app.config.get.originalValue.call(@, key)
+
+      example.a.data1.message = """
+        http://www.youtube.com/watch?v=BlpKiZI_iL8<br>
+        http://youtu.be/BlpKiZI_iL8<br>
+        http://www.nicovideo.jp/watch/sm4362091
+      """.replace(/\n/g, "")
+      example.a.dom1.querySelector(".message").innerHTML = """
+        <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank" rel="noreferrer">
+          http://www.youtube.com/watch?v=BlpKiZI_iL8
+        </a>
+        <br>
+        <a href="http://youtu.be/BlpKiZI_iL8" target="_blank" rel="noreferrer">
+          http://youtu.be/BlpKiZI_iL8
+        </a>
+        <br>
+        <a href="http://www.nicovideo.jp/watch/sm4362091" target="_blank" rel="noreferrer">
+          http://www.nicovideo.jp/watch/sm4362091
+        </a>
+      """.replace(/(?:\n|\u0020{2})/g, "")
+
+      hogehoge()
+      return
+
+    it "thumbnail_extがonの時リンク先のURLをサムネイルとして埋め込む", ->
+      spyOn(app.config, "get").andCallFake (key) ->
+        if key is "thumbnail_ext"
+          "on"
+        else
+          app.config.get.originalValue.call(@, key)
+
+      example.a.data1.message = """
+        http://example.com/example.bmp
+        http://example.com/example.gif
+        http://example.com/example.jpg
+        http://example.com/example.jpeg
+        http://example.com/example.png
+        http://example.com/example.webp
+      """.replace(/\n/g, "<br>")
+
+      fn = (ext) ->
+        """
+        <a href="http://example.com/example.#{ext}" target="_blank" rel="noreferrer" class="has_thumbnail">
+          http://example.com/example.#{ext}
+        </a>
+        <br>
+        <div class="thumbnail">
+          <a href="http://example.com/example.#{ext}" target="_blank" rel="noreferrer">
+            <img src="/img/loading.svg" data-src="http://example.com/example.#{ext}" />
+          </a>
+        </div>
+        """.replace(/(?:\n|\u0020{2})/g, "")
+
+      example.a.dom1.querySelector(".message").innerHTML = fn("bmp")
+      example.a.dom1.querySelector(".message").innerHTML += "<br>" + fn("gif")
+      example.a.dom1.querySelector(".message").innerHTML += "<br>" + fn("jpg")
+      example.a.dom1.querySelector(".message").innerHTML += "<br>" + fn("jpeg")
+      example.a.dom1.querySelector(".message").innerHTML += "<br>" + fn("png")
+      example.a.dom1.querySelector(".message").innerHTML += "<br>" + fn("webp")
+
+      hogehoge()
+      return
+
+    it "thumbnail_extがon以外の時リンク先のURLをサムネイルとして埋め込まない", ->
+      spyOn(app.config, "get").andCallFake (key) ->
+        if key is "thumbnail_ext"
+          "dummy"
+        else
+          app.config.get.originalValue.call(@, key)
+
+      example.a.data1.message = """
+        http://example.com/example.bmp
+        http://example.com/example.gif
+        http://example.com/example.jpg
+        http://example.com/example.jpeg
+        http://example.com/example.png
+        http://example.com/example.webp
+      """.replace(/\n/g, "<br>")
+
+      fn = (ext) ->
+        """
+        <a href="http://example.com/example.#{ext}" target="_blank" rel="noreferrer">
+          http://example.com/example.#{ext}
+        </a>
+        """.replace(/(?:\n|\u0020{2})/g, "")
+
+      example.a.dom1.querySelector(".message").innerHTML = fn("bmp")
+      example.a.dom1.querySelector(".message").innerHTML += "<br>" + fn("gif")
+      example.a.dom1.querySelector(".message").innerHTML += "<br>" + fn("jpg")
+      example.a.dom1.querySelector(".message").innerHTML += "<br>" + fn("jpeg")
+      example.a.dom1.querySelector(".message").innerHTML += "<br>" + fn("png")
+      example.a.dom1.querySelector(".message").innerHTML += "<br>" + fn("webp")
+
+      hogehoge()
+      return
+
+    it "一行の中に複数のURLが記述された場合、サムネイルも一行で表示する", ->
+      spyOn(app.config, "get").andCallFake (key) ->
+        if key in ["thumbnail_supported", "thumbnail_ext"]
+          "on"
+        else
+          app.config.get.originalValue.call(@, key)
+
+      example.a.data1.message = """
+        http://youtu.be/BlpKiZI_iL8
+        http://example.com/example.bmp
+        http://example.com/example.gif
+      """.replace(/\n/g, " ")
+
+      example.a.dom1.querySelector(".message").innerHTML = """
+        <a href="http://youtu.be/BlpKiZI_iL8" target="_blank" rel="noreferrer" class="has_thumbnail">
+          http://youtu.be/BlpKiZI_iL8
+        </a> 
+        <a href="http://example.com/example.bmp" target="_blank" rel="noreferrer" class="has_thumbnail">
+          http://example.com/example.bmp
+        </a> 
+        <a href="http://example.com/example.gif" target="_blank" rel="noreferrer" class="has_thumbnail">
+          http://example.com/example.gif
+        </a>
+        <br>
+        <div class="thumbnail">
+          <a href="http://youtu.be/BlpKiZI_iL8" target="_blank" rel="noreferrer">
+            <img src="/img/loading.svg" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+          </a>
+        </div>
+        <div class="thumbnail">
+          <a href="http://example.com/example.bmp" target="_blank" rel="noreferrer">
+            <img src="/img/loading.svg" data-src="http://example.com/example.bmp" />
+          </a>
+        </div>
+        <div class="thumbnail">
+          <a href="http://example.com/example.gif" target="_blank" rel="noreferrer">
+            <img src="/img/loading.svg" data-src="http://example.com/example.gif" />
+          </a>
+        </div>
+      """.replace(/(?:\n|\u0020{2})/g, "")
+
+      hogehoge()
+      return
     return
   return

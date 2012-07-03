@@ -600,64 +600,6 @@ app.view_thread._draw = ($view, force_update) ->
 
     $view.data("threadContent").addItem(thread.res.slice(content.children.length))
 
-    #サムネイル追加処理
-    do ->
-      fn_add_thumbnail = (source_a, thumb_path) ->
-        source_a.classList.add("has_thumbnail")
-
-        thumb = document.createElement("div")
-        thumb.className = "thumbnail"
-
-        thumb_link = document.createElement("a")
-        thumb_link.href = app.safe_href(source_a.href)
-        thumb_link.target = "_blank"
-        thumb_link.rel = "noreferrer"
-        thumb.appendChild(thumb_link)
-
-        thumb_img = document.createElement("img")
-        thumb_img.src = "/img/loading.svg"
-        thumb_img.setAttribute("data-src", thumb_path)
-        thumb_link.appendChild(thumb_img)
-
-        sib = source_a
-        while true
-          pre = sib
-          sib = pre.nextSibling
-          if sib is null or sib.nodeName is "BR"
-            if sib?.nextSibling?.classList?.contains("thumbnail")
-              continue
-            if not pre.classList?.contains("thumbnail")
-              source_a.parentNode.insertBefore(document.createElement("br"), sib)
-            source_a.parentNode.insertBefore(thumb, sib)
-            break
-        null
-
-      config_thumbnail_supported =
-        app.config.get("thumbnail_supported") is "on"
-      config_thumbnail_ext =
-        app.config.get("thumbnail_ext") is "on"
-
-      for a in content.querySelectorAll(".message > a:not(.thumbnail):not(.has_thumbnail)")
-        #サムネイル表示(対応サイト)
-        if config_thumbnail_supported
-          #YouTube
-          if res = /// ^http://
-              (?:www\.youtube\.com/watch\?v=|youtu\.be/)
-              ([\w\-]+).*
-            ///.exec(a.href)
-            fn_add_thumbnail(a, "http://img.youtube.com/vi/#{res[1]}/default.jpg")
-          #ニコニコ動画
-          else if res = /// ^http://(?:www\.nicovideo\.jp/watch/|nico\.ms/)
-              (?:sm|nm)(\d+) ///.exec(a.href)
-            tmp = "http://tn-skr#{parseInt(res[1], 10) % 4 + 1}.smilevideo.jp"
-            tmp += "/smile?i=#{res[1]}"
-            fn_add_thumbnail(a, tmp)
-
-        #サムネイル表示(画像っぽいURL)
-        if config_thumbnail_ext
-          if /\.(?:png|jpe?g|gif|bmp|webp)(?:[\?#].*)?$/i.test(a.href)
-            fn_add_thumbnail(a, a.href)
-
     $view.data("lazyload").scan()
 
     $view.trigger("view_loaded")

@@ -214,4 +214,60 @@ class UI.ThreadContent
           if newFlg
             res.getElementsByClassName("other")[0].appendChild(elm)
       return
+
+    #サムネイル追加処理
+    do =>
+      addThumbnail = (sourceA, thumbnailPath) ->
+        sourceA.classList.add("has_thumbnail")
+
+        thumbnail = document.createElement("div")
+        thumbnail.className = "thumbnail"
+
+        thumbnailLink = document.createElement("a")
+        thumbnailLink.href = app.safe_href(sourceA.href)
+        thumbnailLink.target = "_blank"
+        thumbnailLink.rel = "noreferrer"
+        thumbnail.appendChild(thumbnailLink)
+
+        thumbnailImg = document.createElement("img")
+        thumbnailImg.src = "/img/loading.svg"
+        thumbnailImg.setAttribute("data-src", thumbnailPath)
+        thumbnailLink.appendChild(thumbnailImg)
+
+        sib = sourceA
+        while true
+          pre = sib
+          sib = pre.nextSibling
+          if sib is null or sib.nodeName is "BR"
+            if sib?.nextSibling?.classList?.contains("thumbnail")
+              continue
+            if not pre.classList?.contains("thumbnail")
+              sourceA.parentNode.insertBefore(document.createElement("br"), sib)
+            sourceA.parentNode.insertBefore(thumbnail, sib)
+            break
+        null
+
+      configThumbnailSupported = app.config.get("thumbnail_supported") is "on"
+      configThumbnailExt = app.config.get("thumbnail_ext") is "on"
+
+      for a in @container.querySelectorAll(".message > a:not(.thumbnail):not(.has_thumbnail)")
+        #サムネイル表示(対応サイト)
+        if configThumbnailSupported
+          #YouTube
+          if res = /// ^http://
+              (?:www\.youtube\.com/watch\?v=|youtu\.be/)
+              ([\w\-]+).*
+            ///.exec(a.href)
+            addThumbnail(a, "http://img.youtube.com/vi/#{res[1]}/default.jpg")
+          #ニコニコ動画
+          else if res = /// ^http://(?:www\.nicovideo\.jp/watch/|nico\.ms/)
+              (?:sm|nm)(\d+) ///.exec(a.href)
+            tmp = "http://tn-skr#{parseInt(res[1], 10) % 4 + 1}.smilevideo.jp"
+            tmp += "/smile?i=#{res[1]}"
+            addThumbnail(a, tmp)
+
+        #サムネイル表示(画像っぽいURL)
+        if configThumbnailExt
+          if /\.(?:png|jpe?g|gif|bmp|webp)(?:[\?#].*)?$/i.test(a.href)
+            addThumbnail(a, a.href)
     return
