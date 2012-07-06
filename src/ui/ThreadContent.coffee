@@ -135,7 +135,7 @@ class UI.ThreadContent
             .replace(/<(?!(?:br|hr|\/?b)>).*?(?:>|$)/ig, "")
             #URLリンク
             .replace(/(h)?(ttps?:\/\/(?:[a-hj-zA-HJ-Z\d_\-.!~*'();\/?:@=+$,%#]|\&(?!(?:#(\d+)|#x([\dA-Fa-f]+)|([\da-zA-Z]+));)|[iI](?![dD]:)+)+)/g,
-              '<a href="h$2" target="_blank" rel="noreferrer">$1$2</a>')
+              '<a href="h$2" target="_blank">$1$2</a>')
             #Beアイコン埋め込み表示
             .replace ///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///, ($0, $1) =>
               if app.url.tsld(@url) is "2ch.net"
@@ -226,7 +226,6 @@ class UI.ThreadContent
         thumbnailLink = document.createElement("a")
         thumbnailLink.href = app.safe_href(sourceA.href)
         thumbnailLink.target = "_blank"
-        thumbnailLink.rel = "noreferrer"
         thumbnail.appendChild(thumbnailLink)
 
         thumbnailImg = document.createElement("img")

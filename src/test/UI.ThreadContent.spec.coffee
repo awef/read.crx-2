@@ -187,7 +187,7 @@ describe "UI.ThreadContent", ->
     it "本文中のURLをA要素に置換する", ->
       example.a.data1.message = "test http://goo.gl/e test"
       example.a.dom1.querySelector(".message").innerHTML = """
-        test <a href="http://goo.gl/e" target="_blank" rel="noreferrer">http://goo.gl/e</a> test
+        test <a href="http://goo.gl/e" target="_blank">http://goo.gl/e</a> test
       """
 
       hogehoge()
@@ -196,7 +196,7 @@ describe "UI.ThreadContent", ->
     it "URLは空白文字以外と隣接していても認識する", ->
       example.a.data1.message = "テストhttp://goo.gl/eテスト"
       example.a.dom1.querySelector(".message").innerHTML = """
-        テスト<a href="http://goo.gl/e" target="_blank" rel="noreferrer">http://goo.gl/e</a>テスト
+        テスト<a href="http://goo.gl/e" target="_blank">http://goo.gl/e</a>テスト
       """
 
       hogehoge()
@@ -229,9 +229,9 @@ describe "UI.ThreadContent", ->
         http://goo.gl/e&gt;2 &gt;3http://goo.gl/e &gt;4http://goo.gl/e&gt;5
       """
       example.a.dom1.querySelector(".message").innerHTML = """
-        <a href="http://goo.gl/e" target="_blank" rel="noreferrer">http://goo.gl/e</a><a href="javascript:undefined;" class="anchor">&gt;2</a> 
-        <a href="javascript:undefined;" class="anchor">&gt;3</a><a href="http://goo.gl/e" target="_blank" rel="noreferrer">http://goo.gl/e</a> 
-        <a href="javascript:undefined;" class="anchor">&gt;4</a><a href="http://goo.gl/e" target="_blank" rel="noreferrer">http://goo.gl/e</a><a href="javascript:undefined;" class="anchor">&gt;5</a>
+        <a href="http://goo.gl/e" target="_blank">http://goo.gl/e</a><a href="javascript:undefined;" class="anchor">&gt;2</a> 
+        <a href="javascript:undefined;" class="anchor">&gt;3</a><a href="http://goo.gl/e" target="_blank">http://goo.gl/e</a> 
+        <a href="javascript:undefined;" class="anchor">&gt;4</a><a href="http://goo.gl/e" target="_blank">http://goo.gl/e</a><a href="javascript:undefined;" class="anchor">&gt;5</a>
       """.replace(/\n/g, "")
 
       hogehoge(null, {2: [1], 3: [1], 4: [1], 5: [1]})
@@ -270,10 +270,10 @@ describe "UI.ThreadContent", ->
         ID:iTGL5FKUhttp://goo.gl/eID:iTGL5FKU
       """
       example.a.dom1.querySelector(".message").innerHTML = """
-        <a href="http://goo.gl/e" target="_blank" rel="noreferrer">http://goo.gl/e</a><a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a> 
-        <a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a><a href="http://goo.gl/e" target="_blank" rel="noreferrer">http://goo.gl/e</a> 
-        <a href="http://goo.gl/e" target="_blank" rel="noreferrer">http://goo.gl/e</a><a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a><a href="http://goo.gl/e" target="_blank" rel="noreferrer">http://goo.gl/e</a> 
-        <a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a><a href="http://goo.gl/e" target="_blank" rel="noreferrer">http://goo.gl/e</a><a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a>
+        <a href="http://goo.gl/e" target="_blank">http://goo.gl/e</a><a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a> 
+        <a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a><a href="http://goo.gl/e" target="_blank">http://goo.gl/e</a> 
+        <a href="http://goo.gl/e" target="_blank">http://goo.gl/e</a><a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a><a href="http://goo.gl/e" target="_blank">http://goo.gl/e</a> 
+        <a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a><a href="http://goo.gl/e" target="_blank">http://goo.gl/e</a><a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a>
       """
 
       hogehoge()
@@ -367,32 +367,32 @@ describe "UI.ThreadContent", ->
         http://www.nicovideo.jp/watch/sm4362091
       """.replace(/\n/g, "")
       example.a.dom1.querySelector(".message").innerHTML = """
-        <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank" rel="noreferrer" class="has_thumbnail">
+        <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank" class="has_thumbnail">
           http://www.youtube.com/watch?v=BlpKiZI_iL8
         </a>
         <br>
         <div class="thumbnail">
-          <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank" rel="noreferrer">
+          <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank">
             <img src="/img/loading.svg" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
           </a>
         </div>
         <br>
-        <a href="http://youtu.be/BlpKiZI_iL8" target="_blank" rel="noreferrer" class="has_thumbnail">
+        <a href="http://youtu.be/BlpKiZI_iL8" target="_blank" class="has_thumbnail">
           http://youtu.be/BlpKiZI_iL8
         </a>
         <br>
         <div class="thumbnail">
-          <a href="http://youtu.be/BlpKiZI_iL8" target="_blank" rel="noreferrer">
+          <a href="http://youtu.be/BlpKiZI_iL8" target="_blank">
             <img src="/img/loading.svg" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
           </a>
         </div>
         <br>
-        <a href="http://www.nicovideo.jp/watch/sm4362091" target="_blank" rel="noreferrer" class="has_thumbnail">
+        <a href="http://www.nicovideo.jp/watch/sm4362091" target="_blank" class="has_thumbnail">
           http://www.nicovideo.jp/watch/sm4362091
         </a>
         <br>
         <div class="thumbnail">
-          <a href="http://www.nicovideo.jp/watch/sm4362091" target="_blank" rel="noreferrer">
+          <a href="http://www.nicovideo.jp/watch/sm4362091" target="_blank">
             <img src="/img/loading.svg" data-src="http://tn-skr4.smilevideo.jp/smile?i=4362091" />
           </a>
         </div>
@@ -414,15 +414,15 @@ describe "UI.ThreadContent", ->
         http://www.nicovideo.jp/watch/sm4362091
       """.replace(/\n/g, "")
       example.a.dom1.querySelector(".message").innerHTML = """
-        <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank" rel="noreferrer">
+        <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank">
           http://www.youtube.com/watch?v=BlpKiZI_iL8
         </a>
         <br>
-        <a href="http://youtu.be/BlpKiZI_iL8" target="_blank" rel="noreferrer">
+        <a href="http://youtu.be/BlpKiZI_iL8" target="_blank">
           http://youtu.be/BlpKiZI_iL8
         </a>
         <br>
-        <a href="http://www.nicovideo.jp/watch/sm4362091" target="_blank" rel="noreferrer">
+        <a href="http://www.nicovideo.jp/watch/sm4362091" target="_blank">
           http://www.nicovideo.jp/watch/sm4362091
         </a>
       """.replace(/(?:\n|\u0020{2})/g, "")
@@ -448,12 +448,12 @@ describe "UI.ThreadContent", ->
 
       fn = (ext) ->
         """
-        <a href="http://example.com/example.#{ext}" target="_blank" rel="noreferrer" class="has_thumbnail">
+        <a href="http://example.com/example.#{ext}" target="_blank" class="has_thumbnail">
           http://example.com/example.#{ext}
         </a>
         <br>
         <div class="thumbnail">
-          <a href="http://example.com/example.#{ext}" target="_blank" rel="noreferrer">
+          <a href="http://example.com/example.#{ext}" target="_blank">
             <img src="/img/loading.svg" data-src="http://example.com/example.#{ext}" />
           </a>
         </div>
@@ -487,7 +487,7 @@ describe "UI.ThreadContent", ->
 
       fn = (ext) ->
         """
-        <a href="http://example.com/example.#{ext}" target="_blank" rel="noreferrer">
+        <a href="http://example.com/example.#{ext}" target="_blank">
           http://example.com/example.#{ext}
         </a>
         """.replace(/(?:\n|\u0020{2})/g, "")
@@ -516,28 +516,28 @@ describe "UI.ThreadContent", ->
       """.replace(/\n/g, " ")
 
       example.a.dom1.querySelector(".message").innerHTML = """
-        <a href="http://youtu.be/BlpKiZI_iL8" target="_blank" rel="noreferrer" class="has_thumbnail">
+        <a href="http://youtu.be/BlpKiZI_iL8" target="_blank" class="has_thumbnail">
           http://youtu.be/BlpKiZI_iL8
         </a> 
-        <a href="http://example.com/example.bmp" target="_blank" rel="noreferrer" class="has_thumbnail">
+        <a href="http://example.com/example.bmp" target="_blank" class="has_thumbnail">
           http://example.com/example.bmp
         </a> 
-        <a href="http://example.com/example.gif" target="_blank" rel="noreferrer" class="has_thumbnail">
+        <a href="http://example.com/example.gif" target="_blank" class="has_thumbnail">
           http://example.com/example.gif
         </a>
         <br>
         <div class="thumbnail">
-          <a href="http://youtu.be/BlpKiZI_iL8" target="_blank" rel="noreferrer">
+          <a href="http://youtu.be/BlpKiZI_iL8" target="_blank">
             <img src="/img/loading.svg" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
           </a>
         </div>
         <div class="thumbnail">
-          <a href="http://example.com/example.bmp" target="_blank" rel="noreferrer">
+          <a href="http://example.com/example.bmp" target="_blank">
             <img src="/img/loading.svg" data-src="http://example.com/example.bmp" />
           </a>
         </div>
         <div class="thumbnail">
-          <a href="http://example.com/example.gif" target="_blank" rel="noreferrer">
+          <a href="http://example.com/example.gif" target="_blank">
             <img src="/img/loading.svg" data-src="http://example.com/example.gif" />
           </a>
         </div>
