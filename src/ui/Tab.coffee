@@ -34,7 +34,7 @@ class UI.Tab
     $(@element)
       .addClass("tab")
       .append(
-        $("<div>", class: "tab_tabbar")
+        $("<ul>", class: "tab_tabbar")
         $("<div>", class: "tab_container")
       )
       .on "mousewheel", ".tab_tabbar", (e) ->

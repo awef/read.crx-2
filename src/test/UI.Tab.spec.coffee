@@ -16,7 +16,7 @@ describe "UI.Tab", ->
   it "new時に必要な要素を生成する", ->
     tmp = """
     <div class="tab">
-      <div class="tab_tabbar"></div>
+      <ul class="tab_tabbar"></ul>
       <div class="tab_container"></div>
     </div>
     """.replace(/\u0020{2}|\n/g, "")
