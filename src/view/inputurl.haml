@@ -2,6 +2,7 @@
 %html.view.view_inputurl(data-app-version="#{MANIFEST["version"]}")
   %head
     %meta(charset="utf-8")
+    %meta(name="referrer" content="never")
     %meta(http-equiv="X-Frame-Options" content="SAMEORIGIN")
     %title URLを指定して開く
     %link(rel="stylesheet" href="/ui.css?v=#{MANIFEST["version"]}")
@@ -14,6 +15,6 @@
   %body
     .container
       %form
-        %input(type="url" name="url" placeholder="ここにURLを入力して下さい" autofocus)
+        %input(name="url" placeholder="ここにURLを入力して下さい" autofocus)
         %input(type="submit" value="開く")
       .notice

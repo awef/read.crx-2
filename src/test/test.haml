@@ -2,16 +2,22 @@
 %html
   %head
     %meta(charset="utf-8")
+    %meta(name="referrer" content="never")
     %title read.crx 2 Unit Test
-    %link(rel="stylesheet" type="text/css" href="/test/qunit/qunit.css")
     %style
       :sass
         .fail > ol
           :display block !important
     /lib
+    %link(rel="stylesheet" type="text/css" href="/test/qunit/qunit.css")
     %script(src="/test/qunit/qunit.js")
     %script(src="/test/qunit/qunit-step.js")
     %script(src="/test/qunit/qunit-measure.js")
+
+    %link(rel="stylesheet" href="jasmine/jasmine.css")
+    %script(src="jasmine/jasmine.js")
+    %script(src="jasmine/jasmine-html.js")
+
     %script(src="/lib/jquery/jquery.min.js")
     %script(src="/test/jquery.mockjax.js")
     /read.crx
@@ -21,6 +27,9 @@
     %script(src="/view/thread.js")
     /Test
     %script(src="/test/test.js")
+    %script(src="/test/spec.js")
+    /exe
+    %script(src="jasmine-exec.js")
   %body
     %h1#qunit-header read.crx 2 Unit Test
     %h2#qunit-banner

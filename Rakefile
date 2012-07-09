@@ -47,9 +47,10 @@ task :test, :filter do |t, args|
 
   url = "chrome-extension://#{debug_id}/test/test.html"
   if args[:filter]
-    url += "?filter=#{CGI.escape(args[:filter])}"
+    tmp = CGI.escape(args[:filter])
+    url += "?filter=#{tmp}&spec=#{tmp}"
   end
-  sh "google-chrome #{url}"
+  sh "google-chrome '#{url}'"
 end
 
 def debug_id
@@ -208,19 +209,35 @@ task :zombie => ["debug/zombie.html", "debug/zombie.js"]
 lambda {
   task :build_test => [
     "debug/test",
+    "debug/test/jasmine",
+    "debug/test/jasmine/jasmine.js",
+    "debug/test/jasmine/jasmine-html.js",
+    "debug/test/jasmine/jasmine.css",
+
     "debug/test/qunit",
     "debug/test/qunit/qunit.js",
     "debug/test/qunit/qunit.css",
     "debug/test/qunit/qunit-step.js",
     "debug/test/qunit/qunit-measure.js",
+
     "debug/test/jquery.mockjax.js",
+
     "debug/test/test.html",
+    "debug/test/jasmine-exec.js",
     "debug/test/test.js",
+    "debug/test/spec.js",
     "debug/test/message_test.html",
     "debug/test/message_test.js"
   ]
 
   directory "debug/test"
+
+  directory "debug/test/jasmine"
+  file_copy "debug/test/jasmine/jasmine.js", "lib/jasmine/lib/jasmine-core/jasmine.js"
+  file_copy "debug/test/jasmine/jasmine-html.js", "lib/jasmine/lib/jasmine-core/jasmine-html.js"
+  file_copy "debug/test/jasmine/jasmine.css", "lib/jasmine/lib/jasmine-core/jasmine.css"
+
+  file_coffee "debug/test/spec.js", FileList["src/test/*.spec.coffee"]
 
   directory "debug/test/qunit"
   file_copy "debug/test/qunit/qunit.js", "lib/qunit/qunit/qunit.js"

@@ -49,10 +49,6 @@ app.view_module.view = ($view) ->
       app.message.send("open", {url, new_tab, background, title})
       return
 
-  #unloadイベント → view_unloadイベント
-  window.addEventListener "unload", ->
-    $view.trigger("view_unload")
-
   window.addEventListener "message", (e) ->
     if e.origin is location.origin
       message = JSON.parse(e.data)
@@ -156,14 +152,19 @@ app.view_module.sort_item_selector = ($view) ->
   return
 
 app.view_module.tool_menu = ($view) ->
-  # 項目クリック時にメニューを隠す
-  $view.find(".button_tool > ul").on "click", ->
-    app.defer =>
-      $(@).css("display", "none")
-      app.defer =>
-        $(@).css("display", "")
+  #メニューの表示/非表示制御
+  $view.find(".button_tool").on "click", ->
+    if $(@).find("ul").toggle().is(":visible")
+      app.defer ->
+        $view.one "click contextmenu", (e) ->
+          if not $(e.target).is(".button_tool")
+            $view.find(".button_tool > ul").hide()
+          return
         return
-      return
+    return
+
+  $(window).on "blur", ->
+    $view.find(".button_tool > ul").hide()
     return
 
   # Chromeで直接開く

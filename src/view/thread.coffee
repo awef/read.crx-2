@@ -36,7 +36,6 @@ do ->
     return
   return
 
-
 app.view_thread = {}
 
 app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolver, History) ->
@@ -48,9 +47,9 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
   $view.attr("data-url", view_url)
 
   $content = $view.find(".content")
-  $content.thread("init", url: view_url)
-  $view.data("id_index", $content.thread("id_index"))
-  $view.data("rep_index", $content.thread("rep_index"))
+  threadContent = new UI.ThreadContent(view_url, $content[0])
+  $view.data("threadContent", threadContent)
+  $view.data("lazyload", new UI.LazyLoad($view.find(".content")[0]))
 
   app.view_module.view($view)
   app.view_module.bookmark_button($view)
@@ -69,9 +68,9 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
     return if $popup.children().length is 0
     $popup.find("article").removeClass("last read received")
     #ポップアップ内のサムネイルの遅延ロードを解除
-    $popup.find("img[data-href]").each ->
-      @src = @getAttribute("data-href")
-      @removeAttribute("data-href")
+    $popup.find("img[data-src]").each ->
+      @src = @getAttribute("data-src")
+      @removeAttribute("data-src")
       return
     $.popup($view, $popup, e.clientX, e.clientY, that)
 
@@ -118,7 +117,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
 
       $last = $content.find(".last")
       if $last.length is 1
-        $content.thread("scroll_to", +$last.find(".num").text(), false)
+        threadContent.scrollTo(+$last.find(".num").text())
 
       #スクロールされなかった場合も余所の処理を走らすためにscrollを発火
       unless on_scroll
@@ -128,7 +127,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       $view.on "read_state_attached", ->
         $tmp = $content.children(".last.received + article")
         return if $tmp.length isnt 1
-        $content.thread("scroll_to", +$tmp.find(".num").text(), true, -100)
+        threadContent.scrollTo(+$tmp.find(".num").text(), true, -100)
         return
 
     app.view_thread._draw($view)
@@ -160,6 +159,9 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       $article = $(@).parent()
       $menu = $("#template > .res_menu").clone().hide().appendTo($article)
 
+      if getSelection().toString().length is 0
+        $menu.find(".copy_selection").remove()
+
       if $article.is(".aa")
         $menu.find(".toggle_aa_mode").text("AA表示モードを解除")
       else
@@ -182,8 +184,13 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       $this = $(@)
       $res = $this.closest("article")
 
-      if $this.hasClass("jump_to_this")
-        $content.thread("scroll_to", +$res.find(".num").text(), true)
+      if $this.hasClass("copy_selection")
+        selectedText = getSelection().toString()
+        if selectedText.length > 0
+          app.clipboardWrite(selectedText)
+
+      else if $this.hasClass("jump_to_this")
+        threadHode.scrollTo(+$res.find(".num").text(), true)
 
       else if $this.hasClass("res_to_this")
         write(message: ">>#{$res.find(".num").text()}\n")
@@ -235,7 +242,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       tmp = app.util.parse_anchor(@innerHTML)
       target_res_num = tmp.segments[0]?[0]
       if target_res_num?
-        $content.thread("scroll_to", target_res_num, true)
+        threadContent.scrollTo(target_res_num, true)
       return
 
     #通常リンク
@@ -295,19 +302,19 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       return
 
     #IDポップアップ
-    .delegate ".id.link, .id.freq, .anchor_id", app.config.get("popup_trigger"), (e) ->
+    .on app.config.get("popup_trigger"), ".id.link, .id.freq, .anchor_id", (e) ->
       e.preventDefault()
 
       popup_helper @, e, =>
-        id_text = @textContent
+        id = @textContent
           .replace(/^id:/i, "ID:")
           .replace(/\(\d+\)$/, "")
           .replace(/\u25cf$/, "") #末尾●除去
 
         $popup = $("<div>")
-        $content.children("article[data-id=\"#{id_text}\"]")
-          .clone()
-            .appendTo($popup)
+        if threadContent.idIndex[id]
+          for resNum in threadContent.idIndex[id]
+            $popup.append($content[0].childNodes[resNum - 1].cloneNode(true))
         $popup
       return
 
@@ -318,7 +325,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
 
         frag = document.createDocumentFragment()
         res_num = +$(@).closest("article").find(".num").text()
-        for target_res_num in $view.data("rep_index")[res_num]
+        for target_res_num in $view.data("threadContent").repIndex[res_num]
           frag.appendChild(tmp[target_res_num - 1].cloneNode(true))
 
         $popup = $("<div>").append(frag)
@@ -363,7 +370,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         res_num = $view.find(selector).index() + 1
 
         if typeof res_num is "number"
-          $content.thread("scroll_to", res_num, true)
+          threadContent.scrollTo(res_num, true)
         else
           app.log("warn", "[view_thread] .jump_panel: ターゲットが存在しません")
       return
@@ -548,7 +555,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
     return
 
   #サムネイルロード時の縦位置調整
-  $view.on "lazy_load_complete", ".thumbnail > a > img", ->
+  $view.on "lazyload-load", ".thumbnail > a > img", ->
     a = @parentNode
     container = a.parentNode
     a.style["top"] = "#{(container.offsetHeight - a.offsetHeight) / 2}px"
@@ -589,70 +596,9 @@ app.view_thread._draw = ($view, force_update) ->
 
     document.title = thread.title
 
-    $(content).thread("add_item", thread.res.slice(content.children.length))
+    $view.data("threadContent").addItem(thread.res.slice(content.children.length))
 
-    #サムネイル追加処理
-    do ->
-      imgs = []
-      fn_add_thumbnail = (source_a, thumb_path) ->
-        source_a.classList.add("has_thumbnail")
-
-        thumb = document.createElement("div")
-        thumb.className = "thumbnail"
-
-        thumb_link = document.createElement("a")
-        thumb_link.href = app.safe_href(source_a.href)
-        thumb_link.target = "_blank"
-        thumb_link.rel = "noreferrer"
-        thumb.appendChild(thumb_link)
-
-        thumb_img = document.createElement("img")
-        thumb_img.src = "/img/loading.svg"
-        thumb_img.setAttribute("data-href", thumb_path)
-        thumb_link.appendChild(thumb_img)
-
-        imgs.push(thumb_img)
-
-        sib = source_a
-        while true
-          pre = sib
-          sib = pre.nextSibling
-          if sib is null or sib.nodeName is "BR"
-            if sib?.nextSibling?.classList?.contains("thumbnail")
-              continue
-            if not pre.classList?.contains("thumbnail")
-              source_a.parentNode.insertBefore(document.createElement("br"), sib)
-            source_a.parentNode.insertBefore(thumb, sib)
-            break
-        null
-
-      config_thumbnail_supported =
-        app.config.get("thumbnail_supported") is "on"
-      config_thumbnail_ext =
-        app.config.get("thumbnail_ext") is "on"
-
-      for a in content.querySelectorAll(".message > a:not(.thumbnail):not(.has_thumbnail)")
-        #サムネイル表示(対応サイト)
-        if config_thumbnail_supported
-          #YouTube
-          if res = /// ^http://
-              (?:www\.youtube\.com/watch\?v=|youtu\.be/)
-              ([\w\-]+).*
-            ///.exec(a.href)
-            fn_add_thumbnail(a, "http://img.youtube.com/vi/#{res[1]}/default.jpg")
-          #ニコニコ動画
-          else if res = /// ^http://(?:www\.nicovideo\.jp/watch/|nico\.ms/)
-              (?:sm|nm)(\d+) ///.exec(a.href)
-            tmp = "http://tn-skr#{parseInt(res[1], 10) % 4 + 1}.smilevideo.jp"
-            tmp += "/smile?i=#{res[1]}"
-            fn_add_thumbnail(a, tmp)
-
-        #サムネイル表示(画像っぽいURL)
-        if config_thumbnail_ext
-          if /\.(?:png|jpe?g|gif|bmp|webp)(?:[\?#].*)?$/i.test(a.href)
-            fn_add_thumbnail(a, a.href)
-
-      $(imgs).lazy_load(container: ".content")
+    $view.data("lazyload").scan()
 
     $view.trigger("view_loaded")
 
@@ -716,7 +662,7 @@ app.view_thread._read_state_manager = ($view) ->
       #onbeforeunload内で呼び出された時に、この値が0になる場合が有る
       return if received is 0
 
-      last = $content.thread("get_read")
+      last = $view.data("threadContent").getRead()
 
       if read_state.received isnt received
         read_state.received = received
@@ -779,10 +725,10 @@ app.view_thread._read_state_manager = ($view) ->
         scan_and_save()
         return
 
-      .on "view_unload", ->
-        clearInterval(scroll_watcher)
-        window.removeEventListener("beforeunload", on_beforeunload)
-        #ロード中に閉じられた場合、スキャンは行わない
-        return if $view.hasClass("loading")
-        scan_and_save()
-        return
+    window.addEventListener "view_unload", ->
+      clearInterval(scroll_watcher)
+      window.removeEventListener("beforeunload", on_beforeunload)
+      #ロード中に閉じられた場合、スキャンは行わない
+      return if $view.hasClass("loading")
+      scan_and_save()
+      return
