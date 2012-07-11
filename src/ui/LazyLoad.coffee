@@ -37,7 +37,7 @@ class UI.LazyLoad
     ###
     @_updateInterval = null
 
-    @container.addEventListener("scroll", @_onScroll.bind(@))
+    $(@container).on("scroll", @_onScroll.bind(@))
     @scan()
     return
 
