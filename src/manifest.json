@@ -1,6 +1,6 @@
 {
   "name" : "read.crx 2",
-  "version" : "0.63",
+  "version" : "0.64",
   "description" : "2chブラウザ",
   "manifest_version": 2,
   "minimum_chrome_version" : "19",

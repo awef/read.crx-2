@@ -190,7 +190,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
           app.clipboardWrite(selectedText)
 
       else if $this.hasClass("jump_to_this")
-        threadHode.scrollTo(+$res.find(".num").text(), true)
+        threadContent.scrollTo(+$res.find(".num").text(), true)
 
       else if $this.hasClass("res_to_this")
         write(message: ">>#{$res.find(".num").text()}\n")
