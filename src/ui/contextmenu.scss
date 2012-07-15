@@ -3,17 +3,37 @@
   margin: 0;
   padding: 0;
   list-style-type: none;
-  background: hsl(0, 0%, 100%);
-  color: hsl(0, 0%, 10%);
   font-size: 14px;
   z-index: $z-index_contextmenu;
   -webkit-user-select: none;
   > li {
     cursor: pointer;
     padding: 5px 10px;
-    &:hover {
-      background: hsl(0, 0%, 50%);
-      color: hsl(0, 0%, 100%);
+  }
+}
+
+@mixin contextmenu-theme($color, $background-color, $hover-background-color) {
+  .contextmenu_menu {
+    color: $color;
+    background-color: $background-color;
+    > li:hover {
+      background-color: $hover-background-color;
     }
   }
+}
+
+.view.theme_default {
+  @include contextmenu-theme(
+    $color: #333,
+    $background-color: #fff,
+    $hover-background-color: hsl(210, 50%, 95%)
+  );
+}
+
+.view.theme_dark {
+  @include contextmenu-theme(
+    $color: #eee,
+    $background-color: #444,
+    $hover-background-color: hsl(30, 100%, 40%)
+  );
 }
