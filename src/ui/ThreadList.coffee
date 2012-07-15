@@ -1,0 +1,334 @@
+window.UI ?= {}
+
+###*
+@namespace UI
+@class ThreadList
+@constructor
+@param {Element} table
+@param {Object} option
+  @param {Boolean} [option.bookmark=false]
+  @param {Boolean} [option.title=false]
+  @param {Boolean} [option.boardTitle=false]
+  @param {Boolean} [option.res=false]
+  @param {Boolean} [option.unread=false]
+  @param {Boolean} [option.heat=false]
+  @param {Boolean} [option.createdDate=false]
+  @param {Boolean} [option.viewedDate=false]
+  @param {Boolean} [option.bookmarkAddRm=false]
+  @param {Element} [option.searchbox]
+###
+class UI.ThreadList
+  "use Strict"
+
+  constructor: (@table, option) ->
+    ###*
+    @property _flg
+    @type Object
+    @private
+    ###
+    @_flg =
+      bookmark: false
+      title: false
+      boardTitle: false
+      res: false
+      unread: false
+      heat: false
+      createdDate: false
+      viewedDate: false
+
+      bookmarkAddRm: !!option.bookmarkAddRm
+      searchbox: undefined
+
+    keyToLabel =
+      bookmark: "★"
+      title: "タイトル"
+      boardTitle: "板名"
+      res: "レス数"
+      unread: "未読数"
+      heat: "勢い"
+      createdDate: "作成日時"
+      viewedDate: "閲覧日時"
+
+    table = @table
+    $table = $(table)
+    $thead = $("<thead>").appendTo($table)
+    $table.append("<tbody>")
+    $tr = $("<tr>").appendTo($thead)
+
+    #項目のツールチップ表示
+    $table
+      .on "mouseenter", "td", ->
+        app.defer =>
+          @title = @textContent
+          return
+        return
+      .on "mouseleave", "td", ->
+        @removeAttribute("title")
+        return
+
+    for key in Object.keys(keyToLabel) when key in option.th
+      $("<th>",
+        class: key.replace(/([A-Z])/g, ($0, $1) -> "_" + $1.toLowerCase()),
+        text: keyToLabel[key]
+      ).appendTo($tr)
+      @_flg[key] = true
+
+    selector =
+      bookmark: "td:nth-child(#{$table.find("th.bookmark").index() + 1})"
+      title: "td:nth-child(#{$table.find("th.title").index() + 1})"
+      res: "td:nth-child(#{$table.find("th.res").index() + 1})"
+      unread: "td:nth-child(#{$table.find("th.unread").index() + 1})"
+
+    #ブックマーク更新時処理
+    app.message.add_listener "bookmark_updated", (msg) =>
+      return if msg.bookmark.type isnt "thread"
+
+      if msg.type is "expired"
+        $tr = $table.find("tr[data-href=\"#{msg.bookmark.url}\"]")
+        if msg.bookmark.expired
+          $tr.addClass("expired")
+        else
+          $tr.removeClass("expired")
+
+      if @_flg.bookmark
+        if msg.type is "added"
+          $tr = $table.find("tr[data-href=\"#{msg.bookmark.url}\"]")
+          $tr.find(selector.bookmark).text("★")
+        else if msg.type is "removed"
+          $tr = $table.find("tr[data-href=\"#{msg.bookmark.url}\"]")
+          $tr.find(selector.bookmark).text("")
+
+      if @_flg.bookmarkAddRm
+        if msg.type is "added"
+          @addItem(
+            title: msg.bookmark.title
+            url: msg.bookmark.url
+            resCount: msg.bookmark.res_count or 0
+            readState: msg.bookmark.read_state or {url: msg.bookmark.url, read: 0, received: 0, last: 0}
+            createdAt: /\/(\d+)\/$/.exec(msg.bookmark.url)[1] * 1000
+          )
+        else if msg.type is "removed"
+          $table.find("tr[data-href=\"#{msg.bookmark.url}\"]").remove()
+
+      if @_flg.res and msg.type is "res_count"
+        tr = table.querySelector("tr[data-href=\"#{msg.bookmark.url}\"]")
+        if tr
+          td = tr.querySelector(selector.res)
+          old_res_count = +td.textContent
+          td.textContent = msg.bookmark.res_count
+          if @_flg.unread
+            td = tr.querySelector(selector.unread)
+            old_unread = +td.textContent
+            unread = old_unread + (msg.bookmark.res_count - old_res_count)
+            td.textContent = unread or ""
+            if unread > 0
+              tr.classList.add("updated")
+            else
+              tr.classList.remove("updated")
+
+      if @_flg.title and msg.type is "title"
+        $tr = $table.find("tr[data-href=\"#{msg.bookmark.url}\"]")
+        $tr.find(selector.title).text(msg.bookmark.title)
+      return
+
+    #未読数更新
+    if @_flg.unread
+      app.message.add_listener "read_state_updated", (msg) ->
+        tr = table.querySelector("tr[data-href=\"#{msg.read_state.url}\"]")
+        if tr
+          res = tr.querySelector(selector.res)
+          unread = tr.querySelector(selector.unread)
+          unreadCount = Math.max(+res.textContent - msg.read_state.read, 0)
+          unread.textContent = unreadCount or ""
+          if unreadCount > 0
+            tr.classList.add("updated")
+          else
+            tr.classList.remove("updated")
+        return
+
+    #リスト内検索
+    if typeof option.searchbox is "object"
+      title_index = $table.find("th.title").index()
+      $searchbox = $(option.searchbox)
+
+      $searchbox
+        .closest(".view")
+          .on "request_reload", ->
+            $(option.searchbox).val("").triggerHandler("input")
+            return
+        .end()
+        .on "input", ->
+          if @value isnt ""
+            $table.table_search("search", {
+              query: @value, target_col: title_index})
+            hitCount = $table.attr("data-table_search_hit_count")
+            $(@).siblings(".hit_count").text(hitCount + "hit").show()
+          else
+            $table.table_search("clear")
+            $(@).siblings(".hit_count").text("").hide()
+          return
+        .on "keyup", (e) ->
+          if e.which is 27 #Esc
+            @value = ""
+            $(@).triggerHandler("input")
+          return
+
+    #コンテキストメニュー
+    if @_flg.bookmark or @_flg.bookmarkAddRm
+      do ->
+        onClick= ->
+          $this = $(@)
+          $tr = $($this.parent().data("contextmenu_source"))
+
+          threadURL = $tr.attr("data-href")
+          threadTitle = $tr.find(selector.title).text()
+          threadRes = $tr.find(selector.res).text()
+
+          if $this.hasClass("add_bookmark")
+            app.bookmark.add(threadURL, threadTitle, threadRes)
+          else if $this.hasClass("del_bookmark")
+            app.bookmark.remove(threadURL)
+
+          $this.parent().remove()
+          return
+
+        $table
+          .on "contextmenu", "tbody > tr", (e) ->
+            if e.type is "contextmenu"
+              e.preventDefault()
+
+            app.defer =>
+              $menu = $("#template > .thread_list_contextmenu")
+                .clone()
+                  .data("contextmenu_source", @)
+                  .appendTo($table.closest(".view"))
+
+              url = @getAttribute("data-href")
+              if app.bookmark.get(@getAttribute("data-href"))
+                $menu.find(".add_bookmark").remove()
+              else
+                $menu.find(".del_bookmark").remove()
+
+              $menu.one("click", "li", onClick)
+
+              $.contextmenu($menu, e.clientX, e.clientY)
+              return
+            return
+          return
+    return
+
+  ###*
+  @method _calcHeat
+  @static
+  @private
+  @param {Number} now
+  @param {Number} created
+  @param {Number} resCount
+  @return {String}
+  ###
+  @_calcHeat: (now, created, resCount) ->
+    if created > now
+      return "0.0"
+    elapsed = Math.max((now - created) / 1000, 1) / (24 * 60 * 60)
+    (resCount / elapsed).toFixed(1)
+
+  ###*
+  @method _dateToString
+  @static
+  @private
+  @param {Date}
+  @return {String}
+  ###
+  @_dateToString: do ->
+    fn = (a) -> (if a < 10 then "0" else "") + a
+    (date) ->
+      date.getFullYear() +
+      "/" + fn(date.getMonth() + 1) +
+      "/" + fn(date.getDate()) +
+      " " + fn(date.getHours()) +
+      ":" + fn(date.getMinutes())
+
+  ###*
+  @method addItem
+  @param {Object|Array}
+  ###
+  addItem: (arg) ->
+    unless Array.isArray(arg) then arg = [arg]
+
+    tbody = @table.querySelector("tbody")
+    now = Date.now()
+
+    html = ""
+
+    for item in arg
+      trClassName = "open_in_rcrx"
+      if item.expired
+        trClassName += " expired"
+
+      tmpHTML = " data-href=\"#{app.escape_html(item.url)}\""
+      tmpHTML += " data-title=\"#{app.escape_html(item.title)}\""
+
+      if item.thread_number?
+        tmpHTML += " data-thread_number=\"#{app.escape_html(""+item.thread_number)}\""
+
+      tmpHTML += ">"
+
+      #ブックマーク状況
+      if @_flg.bookmark
+        tmpHTML += "<td>"
+        if app.bookmark.get(item.url)
+          tmpHTML += "★"
+        tmpHTML += "</td>"
+
+      #タイトル
+      if @_flg.title
+        tmpHTML += "<td>#{app.escape_html(item.title)}</td>"
+
+      #板名
+      if @_flg.boardTitle
+        tmpHTML += "<td>#{app.escape_html(item.board_title)}</td>"
+
+      #レス数
+      if @_flg.res
+        tmpHTML += "<td>"
+        if item.res_count > 0
+          tmpHTML += app.escape_html(""+item.res_count)
+        tmpHTML += "</td>"
+
+      #未読数
+      if @_flg.unread
+        tmpHTML += "<td>"
+        if item.read_state and item.res_count > item.read_state.read
+          trClassName += " updated"
+          tmpHTML += app.escape_html(""+(item.res_count - item.read_state.read))
+        tmpHTML += "</td>"
+
+      #勢い
+      if @_flg.heat
+        tmpHTML += "<td>"
+        tmpHTML += app.escape_html(ThreadList._calcHeat(now, item.created_at, item.res_count))
+        tmpHTML += "</td>"
+
+      #作成日時
+      if @_flg.createdDate
+        tmpHTML += "<td>"
+        tmpHTML += app.escape_html(ThreadList._dateToString(new Date(item.created_at)))
+        tmpHTML += "</td>"
+
+      #閲覧日時
+      if @_flg.viewedDate
+        tmpHTML += "<td>"
+        tmpHTML += app.escape_html(ThreadList._dateToString(new Date(item.date)))
+        tmpHTML += "</td>"
+
+      html += "<tr class=\"#{trClassName}\"" + tmpHTML + "</tr>"
+
+    tbody.insertAdjacentHTML("BeforeEnd", html)
+    return
+
+  ###*
+  @method empty
+  ###
+  empty: ->
+    $(@table).find("tbody").empty()
+    return

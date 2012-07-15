@@ -8,10 +8,10 @@ app.boot "/view/board.html", ["board_title_solver", "history"], (BoardTitleSolve
   $view.attr("data-url", url)
 
   $table = $("<table>")
-  $table.thread_list("create",
-    th: ["bookmark", "title", "res", "unread", "heat", "created_date"]
-    searchbox: $view.find(".searchbox")
-  )
+  threadList = new UI.ThreadList($table[0], {
+    th: ["bookmark", "title", "res", "unread", "heat", "createdDate"]
+    searchbox: $view.find(".searchbox")[0]
+  })
   $table.table_sort()
   $table.find("th.res, th.unread, th.heat").attr("data-table_sort_type", "num")
   $table.appendTo(".content")
@@ -77,8 +77,8 @@ app.boot "/view/board.html", ["board_title_solver", "history"], (BoardTitleSolve
         for read_state, key in array_of_read_state
           read_state_index[read_state.url] = key
 
-        $table.thread_list("empty")
-        $table.thread_list "add_item",
+        threadList.empty()
+        threadList.addItem(
           for thread, thread_number in board
             title: thread.title
             url: thread.url
@@ -86,6 +86,7 @@ app.boot "/view/board.html", ["board_title_solver", "history"], (BoardTitleSolve
             created_at: thread.created_at
             read_state: array_of_read_state[read_state_index[thread.url]]
             thread_number: thread_number
+        )
 
         $view.find("table").table_sort("update")
         return

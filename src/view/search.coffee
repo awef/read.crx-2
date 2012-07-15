@@ -24,10 +24,10 @@ app.boot "/view/search.html", ["euc_jp_escape", "thread_search", "history"], (eu
     return
 
   $table = $("<table>")
-  $table.thread_list("create",
-    th: ["bookmark", "title", "board_title", "res", "heat", "created_date"]
-    searchbox: $view.find(".searchbox")
-  )
+  threadList = new UI.ThreadList($table[0], {
+    th: ["bookmark", "title", "board_title", "res", "heat", "createdDate"]
+    searchbox: $view.find(".searchbox")[0]
+  })
   $table.prependTo(".content")
 
   thread_search = new ThreadSearch(query)
@@ -42,7 +42,7 @@ app.boot "/view/search.html", ["euc_jp_escape", "thread_search", "history"], (eu
       .done (result) ->
         $message_bar.removeClass("error").empty()
 
-        $table.thread_list("add_item", result)
+        threadList.addItem(result)
 
         $view.find(".more").text("更に読み込む")
 
@@ -63,7 +63,7 @@ app.boot "/view/search.html", ["euc_jp_escape", "thread_search", "history"], (eu
 
   $button_reload.on "click", ->
     return if $button_reload.hasClass("disabled")
-    $table.thread_list("empty")
+    threadList.empty()
     thread_search = new ThreadSearch(query)
     load()
     return

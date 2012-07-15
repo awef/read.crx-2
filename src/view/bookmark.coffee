@@ -2,10 +2,10 @@ app.boot "/view/bookmark.html", ->
   $view = $(document.documentElement)
 
   $table = $("<table>")
-  $table.thread_list("create", {
-    th: ["title", "res", "unread", "heat", "created_date"]
-    bookmark_add_rm: true
-    searchbox: $view.find(".searchbox")
+  threadList = new UI.ThreadList($table[0], {
+    th: ["title", "res", "unread", "heat", "createdDate"]
+    bookmarkAddRm: true
+    searchbox: $view.find(".searchbox")[0]
   })
   $table.appendTo(".content")
   $table.find("th.res, th.unread, th.heat").attr("data-table_sort_type", "num")
@@ -101,7 +101,7 @@ app.boot "/view/bookmark.html", ->
     fn()
     return
 
-  $table.thread_list "add_item",
+  threadList.addItem(
     for a in app.bookmark.get_all() when a.type is "thread"
       title: a.title
       url: a.url
@@ -109,6 +109,7 @@ app.boot "/view/bookmark.html", ->
       read_state: a.read_state or {url: a.url, read: 0, received: 0, last: 0}
       created_at: /\/(\d+)\/$/.exec(a.url)[1] * 1000
       expired: a.expired
+  )
 
   app.message.send("request_update_read_state", {})
   $table.table_sort("update")
