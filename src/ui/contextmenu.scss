@@ -1,10 +1,10 @@
 .contextmenu_menu {
-  @include drop_shadow;
+  @include drop-shadow;
   margin: 0;
   padding: 0;
   list-style-type: none;
   font-size: 14px;
-  z-index: $z-index_contextmenu;
+  z-index: $z-index-contextmenu;
   -webkit-user-select: none;
   > li {
     cursor: pointer;

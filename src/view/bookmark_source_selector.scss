@@ -9,7 +9,7 @@ html {
 }
 
 body {
-  @include drop_shadow;
+  @include drop-shadow;
   font-size: 14px;
   width: 500px;
   margin: 20px auto;

@@ -1,7 +1,7 @@
 @import "../common.scss";
 
 @include common;
-@include common_view_style_1;
+@include tab-content;
 
 html {
   overflow: auto;
@@ -25,7 +25,7 @@ input {
 }
 
 input:first-child {
-  @include input_text;
+  @include input-text;
   -webkit-box-flex: 1;
   margin-right: 10px;
 }

@@ -7,7 +7,7 @@
   background-color: rgba(0, 0, 0, 0.5);
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  z-index: $z-index_dialog;
+  z-index: $z-index-dialog;
 }
 
 .dialog_spacer {
@@ -15,7 +15,7 @@
 }
 
 .dialog_body {
-  @include drop_shadow;
+  @include drop-shadow;
   padding: 5px;
   background-color: #eeeeee;
   color: #111111;

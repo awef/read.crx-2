@@ -43,7 +43,7 @@ header {
   background-color: hsl(0, 0%, 100%);
   color: hsl(0, 0%, 0%);
   > pre {
-    @include ascii_art;
+    @include ascii-art;
     margin: 0;
     padding: 5px;
     width: 100%;
@@ -70,7 +70,7 @@ input[type="submit"] {
 }
 
 textarea, input:not([type="submit"]) {
-  @include input_text;
+  @include input-text;
 }
 
 textarea {

@@ -1,12 +1,12 @@
-$z-index_tab_content: 0;
-$z-index_selected_tab_content: 1;
-$z-index_tabbed_view_nav_bar: 2;
-$z-index_popup: 3;
-$z-index_tabbed_view_overlay: 4;
-$z-index_contextmenu: 5;
-$z-index_dialog: 6;
-$z-index_modal: 7;
-$z-index_notification: 8;
+$z-index-tab-content: 0;
+$z-index-selected-tab-content: 1;
+$z-index-tabbed-view-nav-bar: 2;
+$z-index-popup: 3;
+$z-index-tabbed-view-overlay: 4;
+$z-index-contextmenu: 5;
+$z-index-dialog: 6;
+$z-index-modal: 7;
+$z-index-notification: 8;
 
 @mixin common {
   button, input, select, textarea {
@@ -37,7 +37,7 @@ $z-index_notification: 8;
   }
 }
 
-@mixin ascii_art {
+@mixin ascii-art {
   font: {
     size: 16px;
     family: "MS PGothic", "IPAMonaPGothic", "Konatu", "Monapo", "Textar";
@@ -45,7 +45,7 @@ $z-index_notification: 8;
   line-height: 18px;
 }
 
-@mixin drop_shadow {
+@mixin drop-shadow {
   box-shadow: 0 1px 4px rgba(black, 0.6);
 }
 
@@ -71,7 +71,7 @@ $z-index_notification: 8;
   }
 }
 
-@mixin input_text {
+@mixin input-text {
   border: 1px solid #ccc;
   border-radius: 2px;
   padding: 4px;
@@ -82,7 +82,7 @@ $z-index_notification: 8;
   }
 }
 
-@mixin common_view_style_1 {
+@mixin tab-content {
   @media (max-width: 650px) {
     .sort_item_selector {
       display: inline-block !important;
@@ -112,7 +112,7 @@ $z-index_notification: 8;
   }
   .nav_bar {
     border-bottom: 2px solid hsla(0, 0%, 0%, 0.2);
-    z-index: $z-index_tabbed_view_nav_bar;
+    z-index: $z-index-tabbed-view-nav-bar;
     position: relative;
     > label, > .button {
       float: left;
@@ -233,7 +233,7 @@ $z-index_notification: 8;
     outline: none;
   }
   .loading_overlay {
-    z-index: $z-index_tabbed_view_overlay;
+    z-index: $z-index-tabbed-view-overlay;
     position: absolute;
     left: 0;
     top: 0;
@@ -263,36 +263,36 @@ $z-index_notification: 8;
   }
 
   .view.theme_default {
-    @include common_view_style_1_theme(
-      $nav_bar_background_color: #fff,
-      $nav_bar_color: #333,
-      $nav_bar_item_border_color: #ccc,
-      $message_bar_info_background_color: #eef,
-      $message_bar_info_border_color: #ccd,
-      $message_bar_error_background_color: #ecc,
-      $message_bar_error_border_color: #ebb,
-      $icon_color: "333",
-      $active_icon_color: "007fff",
-      $search_icon_color: "777",
+    @include tab-content-theme(
+      $nav-bar-background-color: #fff,
+      $nav-bar-color: #333,
+      $nav-bar-item-border-color: #ccc,
+      $message-bar-info-background-color: #eef,
+      $message-bar-info-border-color: #ccd,
+      $message-bar-error-background-color: #ecc,
+      $message-bar-error-border-color: #ebb,
+      $icon-color: "333",
+      $active-icon-color: "007fff",
+      $search-icon-color: "777",
       $color: #111,
-      $tool_menu_hover_background: hsl(210, 50%, 95%)
+      $tool-menu-hover-background: hsl(210, 50%, 95%)
     );
   }
 
   .view.theme_dark {
-    @include common_view_style_1_theme(
-      $nav_bar_background_color: #444,
-      $nav_bar_color: #eee,
-      $nav_bar_item_border_color: #999,
-      $message_bar_info_background_color: #345,
-      $message_bar_info_border_color: #345,
-      $message_bar_error_background_color: #933,
-      $message_bar_error_border_color: #933,
-      $icon_color: "ddd",
-      $active_icon_color: "f93",
-      $search_icon_color: "aaa",
+    @include tab-content-theme(
+      $nav-bar-background-color: #444,
+      $nav-bar-color: #eee,
+      $nav-bar-item-border-color: #999,
+      $message-bar-info-background-color: #345,
+      $message-bar-info-border-color: #345,
+      $message-bar-error-background-color: #933,
+      $message-bar-error-border-color: #933,
+      $icon-color: "ddd",
+      $active-icon-color: "f93",
+      $search-icon-color: "aaa",
       $color: #eee,
-      $tool_menu_hover_background: hsl(30, 100%, 40%)
+      $tool-menu-hover-background: hsl(30, 100%, 40%)
     );
 
     .message_bar > {
@@ -303,50 +303,50 @@ $z-index_notification: 8;
   }
 }
 
-@mixin common_view_style_1_theme (
-  $nav_bar_background_color,
-  $nav_bar_color,
-  $nav_bar_item_border_color,
-  $message_bar_info_background_color,
-  $message_bar_info_border_color,
-  $message_bar_error_background_color,
-  $message_bar_error_border_color,
-  $icon_color,
-  $active_icon_color,
-  $search_icon_color,
+@mixin tab-content-theme (
+  $nav-bar-background-color,
+  $nav-bar-color,
+  $nav-bar-item-border-color,
+  $message-bar-info-background-color,
+  $message-bar-info-border-color,
+  $message-bar-error-background-color,
+  $message-bar-error-border-color,
+  $icon-color,
+  $active-icon-color,
+  $search-icon-color,
   $color,
-  $tool_menu_hover_background
+  $tool-menu-hover-background
 ) {
   .nav_bar {
-    background-color: $nav_bar_background_color;
-    color: $nav_bar_color;
+    background-color: $nav-bar-background-color;
+    color: $nav-bar-color;
     > .button:not(.disabled):hover, > label > input, > .sort_item_selector {
-      border-color: $nav_bar_item_border_color;
+      border-color: $nav-bar-item-border-color;
     }
     > label > input {
-      background: url(/img/search2_19x19_#{$search_icon_color}.png) no-repeat;
+      background: url(/img/search2_19x19_#{$search-icon-color}.png) no-repeat;
       color: $color;
     }
     > .button {
       &.button_bookmark {
-        background-image: url(/img/star_19x19_#{$icon_color}.png);
+        background-image: url(/img/star_19x19_#{$icon-color}.png);
         &.bookmarked {
-          background-image: url(/img/star_19x19_#{$active_icon_color}.png);
+          background-image: url(/img/star_19x19_#{$active-icon-color}.png);
         }
       }
       &.button_reload {
-        background-image: url(/img/reload_19x19_#{$icon_color}.png);
+        background-image: url(/img/reload_19x19_#{$icon-color}.png);
       }
       &.button_write {
-        background-image: url(/img/pencil_19x19_#{$icon_color}.png);
+        background-image: url(/img/pencil_19x19_#{$icon-color}.png);
       }
       &.button_tool {
-        background-image: url(/img/spanner_19x19_#{$icon_color}.png);
+        background-image: url(/img/spanner_19x19_#{$icon-color}.png);
         > ul {
-          background-color: $nav_bar_background_color;
-          border-color: $nav_bar_item_border_color;
+          background-color: $nav-bar-background-color;
+          border-color: $nav-bar-item-border-color;
           > li:hover {
-            background: $tool_menu_hover_background;
+            background: $tool-menu-hover-background;
           }
         }
       }
@@ -354,17 +354,17 @@ $z-index_notification: 8;
   }
   .message_bar {
     &.info {
-      background-color: $message_bar_info_border_color;
-      border-color: $message_bar_info_border_color;
+      background-color: $message-bar-info-border-color;
+      border-color: $message-bar-info-border-color;
     }
     &.error {
-      background-color: $message_bar_error_background_color;
-      border-color: $message_bar_error_border_color;
+      background-color: $message-bar-error-background-color;
+      border-color: $message-bar-error-border-color;
     }
   }
 }
 
-@mixin content_table {
+@mixin content-table {
   table {
     width: 100%;
     table-layout: fixed;
@@ -423,45 +423,45 @@ $z-index_notification: 8;
   }
 
   .view.theme_default {
-    @include content_table_theme(
-      $background_color: #fafafa,
+    @include content-table-theme(
+      $background-color: #fafafa,
       $color: #000,
-      $cell_border_color: #ddd,
-      $cell_hover_background_color: #e8e8e8,
-      $empty_message_color: #444
+      $cell-border-color: #ddd,
+      $cell-hover-background-color: #e8e8e8,
+      $empty-message-color: #444
     );
   }
 
   .view.theme_dark {
-    @include content_table_theme(
-      $background_color: #333,
+    @include content-table-theme(
+      $background-color: #333,
       $color: #eee,
-      $cell_border_color: #666,
-      $cell_hover_background_color: #222,
-      $empty_message_color: #ddd
+      $cell-border-color: #666,
+      $cell-hover-background-color: #222,
+      $empty-message-color: #ddd
     );
   }
 }
 
-@mixin content_table_theme(
-  $background_color,
+@mixin content-table-theme(
+  $background-color,
   $color,
-  $cell_border_color,
-  $cell_hover_background_color,
-  $empty_message_color
+  $cell-border-color,
+  $cell-hover-background-color,
+  $empty-message-color
 ) {
-  background-color: $background_color;
+  background-color: $background-color;
   color: $color;
 
   th, tr {
-    border-color: $cell_border_color;
+    border-color: $cell-border-color;
   }
 
   .table_sort th:hover, tbody > tr:hover {
-    background-color: $cell_hover_background_color;
+    background-color: $cell-hover-background-color;
   }
 
   tbody:after {
-    color: $empty_message_color;
+    color: $empty-message-color;
   }
 }

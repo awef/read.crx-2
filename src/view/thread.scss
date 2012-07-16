@@ -1,7 +1,7 @@
 @import "../common.scss";
 
 @include common;
-@include common_view_style_1;
+@include tab-content;
 
 @mixin view_thread_res_info {
   border-top: 1px solid silver;
@@ -98,7 +98,7 @@ header {
 }
 
 .aa > .message {
-  @include ascii_art;
+  @include ascii-art;
 }
 
 .beicon[src="/img/loading.svg"] {
@@ -107,22 +107,22 @@ header {
 }
 
 .thumbnail {
-  $container_height: 100px;
+  $container-height: 100px;
   position: relative;
   display: inline-block;
   margin: 10px;
-  height: $container_height;
+  height: $container-height;
   > a {
-    $a_padding: 3px;
+    $a-padding: 3px;
     position: relative;
     display: block;
     background-color: white;
-    padding: $a_padding;
+    padding: $a-padding;
     box-shadow: 0 1px 3px 0px rgba(black, 0.4);
     > img {
       display: block;
       max-width: 150px;
-      max-height: $container_height - $a_padding * 2;
+      max-height: $container-height - $a-padding * 2;
       &[src="/img/loading.svg"] {
         width: 50px;
         height: 50px;
@@ -133,7 +133,7 @@ header {
 
 .popup {
   position: fixed;
-  z-index: $z-index_popup;
+  z-index: $z-index-popup;
   max-width: 500px;
   max-height: 300px;
   overflow: auto;
@@ -161,7 +161,7 @@ header {
 }
 
 .jump_panel {
-  @include drop_shadow;
+  @include drop-shadow;
   $radius: 2px;
   position: absolute;
   right: 20px;
@@ -231,7 +231,7 @@ header {
 }
 
 .next_thread_list {
-  @include drop_shadow;
+  @include drop-shadow;
   background-color: hsla(0, 0%, 0%, 0.85);
   color: hsl(0, 0%, 100%);
 
@@ -298,132 +298,132 @@ header {
 }
 
 @mixin view_thread_theme (
-  $background_color,
+  $background-color,
   $color,
-  $res_header_color,
-  $res_name_color,
-  $res_name_ob_color,
-  $link_color,
-  $freq_color,
-  $anchor_color,
-  $anchor_visited_color,
-  $anchor_disabled_color,
-  $one_color,
-  $no_hit_message_color,
-  $jump_panel_color,
-  $jump_panel_background_color,
-  $thread_footer_button_background_color,
-  $thread_footer_button_color,
-  $thread_res_info_color
+  $res-header-color,
+  $res-name-color,
+  $res-name-ob-color,
+  $link-color,
+  $freq-color,
+  $anchor-color,
+  $anchor-visited-color,
+  $anchor-disabled-color,
+  $one-color,
+  $no-hit-message-color,
+  $jump-panel-color,
+  $jump-panel-background-color,
+  $thread-footer-button-background-color,
+  $thread-footer-button-color,
+  $thread-res-info-color
 ) {
   & {
-    background-color: $background_color;
+    background-color: $background-color;
     color: $color;
   }
 
   header {
-    color: $res_header_color;
+    color: $res-header-color;
   }
 
   a {
-    color: $anchor_color;
+    color: $anchor-color;
     &:visited {
-      color: $anchor_visited_color;
+      color: $anchor-visited-color;
     }
   }
 
   .name {
-    color: $res_name_color;
+    color: $res-name-color;
   }
 
   .ob {
-    color: $res_name_ob_color;
+    color: $res-name-ob-color;
   }
 
   .link {
-    color: $link_color;
+    color: $link-color;
   }
 
   .freq {
-    color: $freq_color;
+    color: $freq-color;
   }
 
   .anchor.disabled {
-    color: $anchor_disabled_color;
+    color: $anchor-disabled-color;
   }
 
   .popup:not(.popup_linkinfo) {
-    background-color: $background_color;
+    background-color: $background-color;
   }
 
   .one:not(:first-child) .name:before {
-    color: $one_color;
+    color: $one-color;
   }
 
   .last, .read, .received {
     &:not(:last-child):after {
-      color: $thread_res_info_color;
+      color: $thread-res-info-color;
     }
   }
 
   .content[data-res_search_hit_count="0"]:after {
-    color: $no_hit_message_color;
+    color: $no-hit-message-color;
   }
 
   .jump_panel {
-    border-color: $jump_panel_color;
-    color: $jump_panel_color;
+    border-color: $jump-panel-color;
+    color: $jump-panel-color;
     > li {
-      background-color: $jump_panel_background_color;
+      background-color: $jump-panel-background-color;
     }
   }
 
   .next_unread, .next_unread:visited, .search_next_thread {
-    background-color: $thread_footer_button_background_color;
-    color: $thread_footer_button_color;
+    background-color: $thread-footer-button-background-color;
+    color: $thread-footer-button-color;
   }
 }
 
 .view.theme_default {
   @include view_thread_theme (
-    $background_color: #fafafa,
+    $background-color: #fafafa,
     $color: #000,
-    $res_header_color: #222,
-    $res_name_color: #008000,
-    $res_name_ob_color: #036,
-    $link_color: #00a,
-    $freq_color: #a00,
-    $anchor_color: #00e,
-    $anchor_visited_color: #551A8B,
-    $anchor_disabled_color: #666,
-    $one_color: #a40000,
-    $no_hit_message_color: #444,
-    $jump_panel_background_color: rgba(#000, 0.8),
-    $jump_panel_color: #fff,
-    $thread_footer_button_background_color: #eee,
-    $thread_footer_button_color: #222,
-    $thread_res_info_color: #666
+    $res-header-color: #222,
+    $res-name-color: #008000,
+    $res-name-ob-color: #036,
+    $link-color: #00a,
+    $freq-color: #a00,
+    $anchor-color: #00e,
+    $anchor-visited-color: #551A8B,
+    $anchor-disabled-color: #666,
+    $one-color: #a40000,
+    $no-hit-message-color: #444,
+    $jump-panel-background-color: rgba(#000, 0.8),
+    $jump-panel-color: #fff,
+    $thread-footer-button-background-color: #eee,
+    $thread-footer-button-color: #222,
+    $thread-res-info-color: #666
   );
 }
 
 .view.theme_dark {
   @include view_thread_theme(
-    $background_color: #333,
+    $background-color: #333,
     $color: #eee,
-    $res_header_color: #ddd,
-    $res_name_color: #9d9,
-    $res_name_ob_color: #69d,
-    $link_color: #69d,
-    $freq_color: #d99,
-    $anchor_color: #6af,
-    $anchor_visited_color: #99f,
-    $anchor_disabled_color: #999,
-    $one_color: #fe6,
-    $no_hit_message_color: #ddd,
-    $jump_panel_background_color: rgba(#333, 0.8),
-    $jump_panel_color: #ccc,
-    $thread_footer_button_background_color: #333,
-    $thread_footer_button_color: #ddd,
-    $thread_res_info_color: silver
+    $res-header-color: #ddd,
+    $res-name-color: #9d9,
+    $res-name-ob-color: #69d,
+    $link-color: #69d,
+    $freq-color: #d99,
+    $anchor-color: #6af,
+    $anchor-visited-color: #99f,
+    $anchor-disabled-color: #999,
+    $one-color: #fe6,
+    $no-hit-message-color: #ddd,
+    $jump-panel-background-color: rgba(#333, 0.8),
+    $jump-panel-color: #ccc,
+    $thread-footer-button-background-color: #333,
+    $thread-footer-button-color: #ddd,
+    $thread-res-info-color: silver
   );
 }
