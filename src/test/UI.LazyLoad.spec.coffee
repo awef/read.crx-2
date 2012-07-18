@@ -194,6 +194,14 @@ describe "UI.LazyLoad", ->
         return
       return
 
+    it "ロード中はloading.svgを表示する", ->
+      div.appendChild(img = getDummyIMG())
+      src = img.getAttribute("data-src")
+
+      lazyLoad._load(img)
+      expect(img.getAttribute("src")).toBe("/img/loading.svg")
+      return
+
     it "ロード成功時にimg要素にlazyload-loadイベントを送出する", ->
       div.appendChild(img = getDummyIMG())
       onLazyloadLoad= jasmine.createSpy("onLazyloadLoad")

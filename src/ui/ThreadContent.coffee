@@ -139,7 +139,7 @@ class UI.ThreadContent
             #Beアイコン埋め込み表示
             .replace ///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///, ($0, $1) =>
               if app.url.tsld(@url) is "2ch.net"
-                """<img class="beicon" src="/img/loading.svg" data-src="http://#{$1}" /><br />"""
+                """<img class="beicon" src="/img/dummy_1x1.png" data-src="http://#{$1}" /><br />"""
               else
                 $0
             #アンカーリンク
@@ -229,7 +229,7 @@ class UI.ThreadContent
         thumbnail.appendChild(thumbnailLink)
 
         thumbnailImg = document.createElement("img")
-        thumbnailImg.src = "/img/loading.svg"
+        thumbnailImg.src = "/img/dummy_1x1.png"
         thumbnailImg.setAttribute("data-src", thumbnailPath)
         thumbnailLink.appendChild(thumbnailImg)
 
