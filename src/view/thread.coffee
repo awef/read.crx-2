@@ -161,8 +161,10 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       $article = $(@).parent()
       $menu = $("#template > .res_menu").clone().hide().appendTo($article)
 
-      if getSelection().toString().length is 0
-        $menu.find(".copy_selection").remove()
+      app.defer ->
+        if getSelection().toString().length is 0
+          $menu.find(".copy_selection").remove()
+        return
 
       if $article.is(".aa")
         $menu.find(".toggle_aa_mode").text("AA表示モードを解除")
