@@ -103,9 +103,9 @@ class UI.ThreadList
           @addItem(
             title: msg.bookmark.title
             url: msg.bookmark.url
-            resCount: msg.bookmark.res_count or 0
-            readState: msg.bookmark.read_state or {url: msg.bookmark.url, read: 0, received: 0, last: 0}
-            createdAt: /\/(\d+)\/$/.exec(msg.bookmark.url)[1] * 1000
+            res_count: msg.bookmark.res_count or 0
+            read_state: msg.bookmark.read_state or null
+            created_at: /\/(\d+)\/$/.exec(msg.bookmark.url)[1] * 1000
           )
         else if msg.type is "removed"
           $table.find("tr[data-href=\"#{msg.bookmark.url}\"]").remove()

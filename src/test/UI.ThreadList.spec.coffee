@@ -128,16 +128,25 @@ describe "UI.ThreadList", ->
 
     expect(table.querySelector("tr[data-href=\"#{dummyURL0}\"]")).toBeNull()
 
+    spyOn(threadList, "addItem").andCallThrough()
+
     app.message.send("bookmark_updated", {
       type: "added"
       bookmark: dummyBookmark
     })
 
     waitsFor ->
-      table.querySelector("tr[data-href=\"#{dummyURL0}\"]") isnt null
+      threadList.addItem.wasCalled
 
     runs ->
-      expect(table.querySelector("tr[data-href=\"#{dummyURL0}\"]")).not.toBeNull()
+      expect(threadList.addItem.callCount).toBe(1)
+      expect(threadList.addItem.mostRecentCall.args).toEqual([{
+        url: dummyURL0
+        title: "dummy0"
+        res_count: 10
+        read_state: null
+        created_at: 1234567890000
+      }])
       return
 
     runs ->
