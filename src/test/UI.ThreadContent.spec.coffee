@@ -363,6 +363,7 @@ describe "UI.ThreadContent", ->
 
       example.a.data1.message = """
         http://www.youtube.com/watch?v=BlpKiZI_iL8<br>
+        http://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8<br>
         http://youtu.be/BlpKiZI_iL8<br>
         http://www.nicovideo.jp/watch/sm4362091
       """.replace(/\n/g, "")
@@ -373,6 +374,16 @@ describe "UI.ThreadContent", ->
         <br>
         <div class="thumbnail">
           <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank">
+            <img src="/img/dummy_1x1.png" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+          </a>
+        </div>
+        <br>
+        <a href="http://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8" target="_blank" class="has_thumbnail">
+          http://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8
+        </a>
+        <br>
+        <div class="thumbnail">
+          <a href="http://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8" target="_blank">
             <img src="/img/dummy_1x1.png" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
           </a>
         </div>

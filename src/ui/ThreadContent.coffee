@@ -254,7 +254,7 @@ class UI.ThreadContent
         if configThumbnailSupported
           #YouTube
           if res = /// ^http://
-              (?:www\.youtube\.com/watch\?v=|youtu\.be/)
+              (?:www\.youtube\.com/watch\?(?:.+&)?v=|youtu\.be/)
               ([\w\-]+).*
             ///.exec(a.href)
             addThumbnail(a, "http://img.youtube.com/vi/#{res[1]}/default.jpg")
