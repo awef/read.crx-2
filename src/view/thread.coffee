@@ -138,15 +138,13 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
 
   $view
     #名前欄が数字だった場合のポップアップ
-    .delegate ".name", "mouseenter", ->
-      if /^\d+$/.test(this.textContent)
-        if not this.classList.contains("name_num")
-          this.classList.add("name_num")
-      return
+    .on "click", ".name_num", (e) ->
+      popup_helper @, e, =>
+        tmp = /^\s*([\d\uff10-\uff19]+)\s*$/.exec(@textContent)
+        tmp = tmp[1].replace /[\uff10-\uff19]/, ($0) ->
+          String.fromCharCode($0.charCodeAt(0) - 0xfee0)
 
-    .delegate ".name_num", "click", (e) ->
-      popup_helper this, e, =>
-        res = $content[0].children[+this.textContent - 1]
+        res = $content[0].children[+tmp - 1]
         $("<div>").append($(res).clone())
       return
 

@@ -92,12 +92,15 @@ class UI.ThreadContent
         articleHtml += """<span class="num">#{resNum}</span>"""
 
         #.name
+        articleHtml += """<span class="name"""
+        if /^\s*([\d\uff10-\uff19]+)\s*$/.test(res.name)
+          articleHtml += " name_num"
         tmp = (
           res.name
             .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")
             .replace(/<\/b>(.*?)<b>/g, """<span class="ob">$1</span>""")
         )
-        articleHtml += """<span class="name">#{tmp}</span>"""
+        articleHtml += """">#{tmp}</span>"""
 
         #.mail
         tmp = res.mail.replace(/<.*?(?:>|$)/g, "")
