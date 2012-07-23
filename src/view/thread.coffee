@@ -171,6 +171,9 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       else
         $menu.find(".toggle_aa_mode").text("AA表示モードに変更")
 
+      unless $article.attr("data-id")?
+        $menu.find(".copy_id").remove()
+
       unless app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"]
         $menu.find(".res_to_this, .res_to_this2").remove()
 
@@ -192,6 +195,9 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         selectedText = getSelection().toString()
         if selectedText.length > 0
           app.clipboardWrite(selectedText)
+
+      else if $this.hasClass("copy_id")
+        app.clipboardWrite($res.attr("data-id"))
 
       else if $this.hasClass("jump_to_this")
         threadContent.scrollTo(+$res.find(".num").text(), true)
