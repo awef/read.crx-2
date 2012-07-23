@@ -365,7 +365,8 @@ describe "UI.ThreadContent", ->
         http://www.youtube.com/watch?v=BlpKiZI_iL8<br>
         http://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8<br>
         http://youtu.be/BlpKiZI_iL8<br>
-        http://www.nicovideo.jp/watch/sm4362091
+        http://www.nicovideo.jp/watch/sm4362091<br>
+        http://nico.ms/sm4362091
       """.replace(/\n/g, "")
       example.a.dom1.querySelector(".message").innerHTML = """
         <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank" class="has_thumbnail">
@@ -404,6 +405,16 @@ describe "UI.ThreadContent", ->
         <br>
         <div class="thumbnail">
           <a href="http://www.nicovideo.jp/watch/sm4362091" target="_blank">
+            <img src="/img/dummy_1x1.png" data-src="http://tn-skr4.smilevideo.jp/smile?i=4362091" />
+          </a>
+        </div>
+        <br>
+        <a href="http://nico.ms/sm4362091" target="_blank" class="has_thumbnail">
+          http://nico.ms/sm4362091
+        </a>
+        <br>
+        <div class="thumbnail">
+          <a href="http://nico.ms/sm4362091" target="_blank">
             <img src="/img/dummy_1x1.png" data-src="http://tn-skr4.smilevideo.jp/smile?i=4362091" />
           </a>
         </div>
