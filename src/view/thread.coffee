@@ -236,7 +236,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         else
           $("<div>", {
               text: @getAttribute("data-disabled_reason")
-              class: "anchor_popup_disabled_message"
+              class: "popup_disabled"
             })
             .appendTo($popup)
         $popup
@@ -319,8 +319,15 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
           .replace(/\(\d+\)$/, "")
           .replace(/\u25cf$/, "") #末尾●除去
 
-        $popup = $("<div>")
-        if threadContent.idIndex[id]
+        $popup = $("<div>", class: "popup_id")
+        $article = $(@).closest("article")
+        if $article.parent().is(".popup_id") and $article.attr("data-id") is id
+          $("<div>", {
+              text: "現在ポップアップしているIDです"
+              class: "popup_disabled"
+            })
+            .appendTo($popup)
+        else if threadContent.idIndex[id]
           for resNum in threadContent.idIndex[id]
             $popup.append($content[0].childNodes[resNum - 1].cloneNode(true))
         $popup
