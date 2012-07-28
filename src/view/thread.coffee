@@ -330,6 +330,12 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         else if threadContent.idIndex[id]
           for resNum in threadContent.idIndex[id]
             $popup.append($content[0].childNodes[resNum - 1].cloneNode(true))
+        else
+          $("<div>", {
+              text: "対象のレスが見つかりません"
+              class: "popup_disabled"
+            })
+            .appendTo($popup)
         $popup
       return
 
