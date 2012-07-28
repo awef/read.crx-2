@@ -239,6 +239,12 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
               class: "popup_disabled"
             })
             .appendTo($popup)
+        if $popup.children().length is 0
+          $("<div>", {
+              text: "対象のレスが見つかりません"
+              class: "popup_disabled"
+            })
+            .appendTo($popup)
         $popup
       return
 
