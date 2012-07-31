@@ -53,7 +53,7 @@ describe "UI.ThreadContent", ->
         $("<article>", class: "one", "data-id": "ID:iTGL5FKU").append(
           $("<header>").append(
             $("<span>", class: "num", text: "2")
-            $("<span>", class: "name", text: "774")
+            $("<span>", class: "name name_num", text: "774")
             $("<span>", class: "mail", text: "")
             $("<span>", class: "other").append(
               document.createTextNode("2010/05/14(木) 15:51:14 ")
@@ -162,6 +162,28 @@ describe "UI.ThreadContent", ->
       example.a.dom1.querySelector(".name").innerHTML = """
         <span class="ob">名無しの報告 </span><span class="ob">(北海道)</span>
       """
+
+      hogehoge()
+      return
+
+    it "名前欄が数値だった場合、.nameに.name_numを付与する", ->
+      example.a.data1.name = "123"
+      example.a.dom1.querySelector(".name").textContent = "123"
+      example.a.dom1.querySelector(".name").classList.add("name_num")
+
+      hogehoge()
+
+      # 前後の空白も許容する
+      example.a.data1.name = "   123　 "
+      example.a.dom1.querySelector(".name").textContent = "   123　 "
+      example.a.dom1.querySelector(".name").classList.add("name_num")
+
+      hogehoge()
+
+      # 全角文字列も許容する
+      example.a.data1.name = "1２３"
+      example.a.dom1.querySelector(".name").textContent = "1２３"
+      example.a.dom1.querySelector(".name").classList.add("name_num")
 
       hogehoge()
       return
@@ -334,7 +356,7 @@ describe "UI.ThreadContent", ->
         test
       """
       example.a.dom1.querySelector(".message").innerHTML = """
-        <img class="beicon" src="/img/loading.svg" data-src="http://img.2ch.net/ico/u_utyuu.gif" /><br />
+        <img class="beicon" src="/img/dummy_1x1.png" data-src="http://img.2ch.net/ico/u_utyuu.gif" /><br />
         test
       """
 
@@ -363,8 +385,10 @@ describe "UI.ThreadContent", ->
 
       example.a.data1.message = """
         http://www.youtube.com/watch?v=BlpKiZI_iL8<br>
+        http://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8<br>
         http://youtu.be/BlpKiZI_iL8<br>
-        http://www.nicovideo.jp/watch/sm4362091
+        http://www.nicovideo.jp/watch/sm4362091<br>
+        http://nico.ms/sm4362091
       """.replace(/\n/g, "")
       example.a.dom1.querySelector(".message").innerHTML = """
         <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank" class="has_thumbnail">
@@ -373,7 +397,17 @@ describe "UI.ThreadContent", ->
         <br>
         <div class="thumbnail">
           <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank">
-            <img src="/img/loading.svg" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+            <img src="/img/dummy_1x1.png" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+          </a>
+        </div>
+        <br>
+        <a href="http://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8" target="_blank" class="has_thumbnail">
+          http://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8
+        </a>
+        <br>
+        <div class="thumbnail">
+          <a href="http://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8" target="_blank">
+            <img src="/img/dummy_1x1.png" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
           </a>
         </div>
         <br>
@@ -383,7 +417,7 @@ describe "UI.ThreadContent", ->
         <br>
         <div class="thumbnail">
           <a href="http://youtu.be/BlpKiZI_iL8" target="_blank">
-            <img src="/img/loading.svg" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+            <img src="/img/dummy_1x1.png" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
           </a>
         </div>
         <br>
@@ -393,7 +427,17 @@ describe "UI.ThreadContent", ->
         <br>
         <div class="thumbnail">
           <a href="http://www.nicovideo.jp/watch/sm4362091" target="_blank">
-            <img src="/img/loading.svg" data-src="http://tn-skr4.smilevideo.jp/smile?i=4362091" />
+            <img src="/img/dummy_1x1.png" data-src="http://tn-skr4.smilevideo.jp/smile?i=4362091" />
+          </a>
+        </div>
+        <br>
+        <a href="http://nico.ms/sm4362091" target="_blank" class="has_thumbnail">
+          http://nico.ms/sm4362091
+        </a>
+        <br>
+        <div class="thumbnail">
+          <a href="http://nico.ms/sm4362091" target="_blank">
+            <img src="/img/dummy_1x1.png" data-src="http://tn-skr4.smilevideo.jp/smile?i=4362091" />
           </a>
         </div>
       """.replace(/(?:\n|\u0020{2})/g, "")
@@ -454,7 +498,7 @@ describe "UI.ThreadContent", ->
         <br>
         <div class="thumbnail">
           <a href="http://example.com/example.#{ext}" target="_blank">
-            <img src="/img/loading.svg" data-src="http://example.com/example.#{ext}" />
+            <img src="/img/dummy_1x1.png" data-src="http://example.com/example.#{ext}" />
           </a>
         </div>
         """.replace(/(?:\n|\u0020{2})/g, "")
@@ -528,17 +572,17 @@ describe "UI.ThreadContent", ->
         <br>
         <div class="thumbnail">
           <a href="http://youtu.be/BlpKiZI_iL8" target="_blank">
-            <img src="/img/loading.svg" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+            <img src="/img/dummy_1x1.png" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
           </a>
         </div>
         <div class="thumbnail">
           <a href="http://example.com/example.bmp" target="_blank">
-            <img src="/img/loading.svg" data-src="http://example.com/example.bmp" />
+            <img src="/img/dummy_1x1.png" data-src="http://example.com/example.bmp" />
           </a>
         </div>
         <div class="thumbnail">
           <a href="http://example.com/example.gif" target="_blank">
-            <img src="/img/loading.svg" data-src="http://example.com/example.gif" />
+            <img src="/img/dummy_1x1.png" data-src="http://example.com/example.gif" />
           </a>
         </div>
       """.replace(/(?:\n|\u0020{2})/g, "")

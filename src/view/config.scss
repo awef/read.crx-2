@@ -1,7 +1,7 @@
 @import "../common.scss";
 
 @include common;
-@include common_view_style_1;
+@include tab-content;
 
 html {
   font-size: 13px;
@@ -65,7 +65,7 @@ label {
 }
 
 input[type="text"], textarea {
-  @include input_text;
+  @include input-text;
 }
 
 section button {

@@ -136,15 +136,13 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
 
   $view
     #名前欄が数字だった場合のポップアップ
-    .delegate ".name", "mouseenter", ->
-      if /^\d+$/.test(this.textContent)
-        if not this.classList.contains("name_num")
-          this.classList.add("name_num")
-      return
+    .on "click", ".name_num", (e) ->
+      popup_helper @, e, =>
+        tmp = /^\s*([\d\uff10-\uff19]+)\s*$/.exec(@textContent)
+        tmp = tmp[1].replace /[\uff10-\uff19]/, ($0) ->
+          String.fromCharCode($0.charCodeAt(0) - 0xfee0)
 
-    .delegate ".name_num", "click", (e) ->
-      popup_helper this, e, =>
-        res = $content[0].children[+this.textContent - 1]
+        res = $content[0].children[+tmp - 1]
         $("<div>").append($(res).clone())
       return
 
@@ -159,13 +157,18 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
       $article = $(@).parent()
       $menu = $("#template > .res_menu").clone().hide().appendTo($article)
 
-      if getSelection().toString().length is 0
-        $menu.find(".copy_selection").remove()
+      app.defer ->
+        if getSelection().toString().length is 0
+          $menu.find(".copy_selection").remove()
+        return
 
       if $article.is(".aa")
         $menu.find(".toggle_aa_mode").text("AA表示モードを解除")
       else
         $menu.find(".toggle_aa_mode").text("AA表示モードに変更")
+
+      unless $article.attr("data-id")?
+        $menu.find(".copy_id").remove()
 
       unless app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"]
         $menu.find(".res_to_this, .res_to_this2").remove()
@@ -188,6 +191,9 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         selectedText = getSelection().toString()
         if selectedText.length > 0
           app.clipboardWrite(selectedText)
+
+      else if $this.hasClass("copy_id")
+        app.clipboardWrite($res.attr("data-id"))
 
       else if $this.hasClass("jump_to_this")
         threadContent.scrollTo(+$res.find(".num").text(), true)
@@ -228,7 +234,13 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         else
           $("<div>", {
               text: @getAttribute("data-disabled_reason")
-              class: "anchor_popup_disabled_message"
+              class: "popup_disabled"
+            })
+            .appendTo($popup)
+        if $popup.children().length is 0
+          $("<div>", {
+              text: "対象のレスが見つかりません"
+              class: "popup_disabled"
             })
             .appendTo($popup)
         $popup
@@ -311,10 +323,23 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
           .replace(/\(\d+\)$/, "")
           .replace(/\u25cf$/, "") #末尾●除去
 
-        $popup = $("<div>")
-        if threadContent.idIndex[id]
+        $popup = $("<div>", class: "popup_id")
+        $article = $(@).closest("article")
+        if $article.parent().is(".popup_id") and $article.attr("data-id") is id
+          $("<div>", {
+              text: "現在ポップアップしているIDです"
+              class: "popup_disabled"
+            })
+            .appendTo($popup)
+        else if threadContent.idIndex[id]
           for resNum in threadContent.idIndex[id]
             $popup.append($content[0].childNodes[resNum - 1].cloneNode(true))
+        else
+          $("<div>", {
+              text: "対象のレスが見つかりません"
+              class: "popup_disabled"
+            })
+            .appendTo($popup)
         $popup
       return
 

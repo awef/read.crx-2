@@ -113,7 +113,7 @@ iframe {
 
 #modal {
   > iframe {
-    z-index: $z-index_modal;
+    z-index: $z-index-modal;
     position: fixed;
     left: 0;
     top: 0;
@@ -127,9 +127,9 @@ iframe {
   left: 50px;
   top: 10px;
   right: 50px;
-  z-index: $z-index_notification;
+  z-index: $z-index-notification;
   > div {
-    @include drop_shadow;
+    @include drop-shadow;
     background-image: -webkit-linear-gradient(transparent, rgba(black, 0.25));
     border-radius: 5px;
     color: #eeeeee;

@@ -1,8 +1,8 @@
 @import "../common.scss";
 
 @include common;
-@include common_view_style_1;
-@include content_table;
+@include tab-content;
+@include content-table;
 
 @media (max-width: 500px) {
   th.viewed_date {

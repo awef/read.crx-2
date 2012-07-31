@@ -92,12 +92,15 @@ class UI.ThreadContent
         articleHtml += """<span class="num">#{resNum}</span>"""
 
         #.name
+        articleHtml += """<span class="name"""
+        if /^\s*([\d\uff10-\uff19]+)\s*$/.test(res.name)
+          articleHtml += " name_num"
         tmp = (
           res.name
             .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")
             .replace(/<\/b>(.*?)<b>/g, """<span class="ob">$1</span>""")
         )
-        articleHtml += """<span class="name">#{tmp}</span>"""
+        articleHtml += """">#{tmp}</span>"""
 
         #.mail
         tmp = res.mail.replace(/<.*?(?:>|$)/g, "")
@@ -139,7 +142,7 @@ class UI.ThreadContent
             #Beアイコン埋め込み表示
             .replace ///^\s*sssp://(img\.2ch\.net/ico/[\w\-_]+\.gif)\s*<br>///, ($0, $1) =>
               if app.url.tsld(@url) is "2ch.net"
-                """<img class="beicon" src="/img/loading.svg" data-src="http://#{$1}" /><br />"""
+                """<img class="beicon" src="/img/dummy_1x1.png" data-src="http://#{$1}" /><br />"""
               else
                 $0
             #アンカーリンク
@@ -229,7 +232,7 @@ class UI.ThreadContent
         thumbnail.appendChild(thumbnailLink)
 
         thumbnailImg = document.createElement("img")
-        thumbnailImg.src = "/img/loading.svg"
+        thumbnailImg.src = "/img/dummy_1x1.png"
         thumbnailImg.setAttribute("data-src", thumbnailPath)
         thumbnailLink.appendChild(thumbnailImg)
 
@@ -254,7 +257,7 @@ class UI.ThreadContent
         if configThumbnailSupported
           #YouTube
           if res = /// ^http://
-              (?:www\.youtube\.com/watch\?v=|youtu\.be/)
+              (?:www\.youtube\.com/watch\?(?:.+&)?v=|youtu\.be/)
               ([\w\-]+).*
             ///.exec(a.href)
             addThumbnail(a, "http://img.youtube.com/vi/#{res[1]}/default.jpg")

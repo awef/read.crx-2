@@ -47,7 +47,7 @@ task :test, :filter do |t, args|
 
   url = "chrome-extension://#{debug_id}/test/test.html"
   if args[:filter]
-    tmp = CGI.escape(args[:filter])
+    tmp = CGI.escape(args[:filter]).gsub("\+", "%20")
     url += "?filter=#{tmp}&spec=#{tmp}"
   end
   sh "google-chrome '#{url}'"

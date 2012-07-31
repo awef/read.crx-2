@@ -67,6 +67,7 @@ class UI.LazyLoad
 
     newIMG.src = img.getAttribute("data-src")
     img.removeAttribute("data-src")
+    img.src = "/img/loading.svg"
     return
 
   ###*

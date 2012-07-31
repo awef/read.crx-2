@@ -4,9 +4,9 @@ app.boot "/view/history.html", ["history"], (History) ->
   app.view_module.view($view)
 
   $table = $("<table>")
-  $table.thread_list("create", {
-    th: ["title", "viewed_date"]
-    searchbox: $view.find(".searchbox")
+  threadList = new UI.ThreadList($table[0], {
+    th: ["title", "viewedDate"]
+    searchbox: $view.find(".searchbox")[0]
   })
   $table.appendTo(".content")
 
@@ -17,8 +17,8 @@ app.boot "/view/history.html", ["history"], (History) ->
     $view.addClass("loading")
 
     History.get(undefined, 500).done (data) ->
-      $table.thread_list("empty")
-      $table.thread_list("add_item", data)
+      threadList.empty()
+      threadList.addItem(data)
       $view.removeClass("loading")
       $view.trigger("view_loaded")
       $view.find(".button_reload").addClass("disabled")
