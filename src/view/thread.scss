@@ -69,9 +69,11 @@ header {
   }
 }
 
-.one:not(:first-child) > header > .name:before {
-  content: "(>>1)";
-  margin-right: 1ex;
+.one:not(:first-child), .popup > .one {
+  > header > .name::before {
+    content: "(>>1)";
+    margin-right: 1ex;
+  }
 }
 
 .mail {
@@ -356,8 +358,10 @@ header {
     background-color: $background-color;
   }
 
-  .one:not(:first-child) .name:before {
-    color: $one-color;
+  .one:not(:first-child), .popup > .one {
+    > header > .name::before {
+      color: $one-color;
+    }
   }
 
   .last, .read, .received {
