@@ -25,7 +25,7 @@ app.boot "/view/search.html", ["euc_jp_escape", "thread_search", "history"], (eu
 
   $table = $("<table>")
   threadList = new UI.ThreadList($table[0], {
-    th: ["bookmark", "title", "board_title", "res", "heat", "createdDate"]
+    th: ["bookmark", "title", "boardTitle", "res", "heat", "createdDate"]
     searchbox: $view.find(".searchbox")[0]
   })
   $table.prependTo(".content")
