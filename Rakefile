@@ -17,13 +17,13 @@ task :default => [
 ]
 
 task :clean do
-  sh "rm -f ./read.crx_2.zip"
-  sh "rm -rf debug"
+  rm_f "./read.crx_2.zip"
+  rm_rf "debug"
   #jQuery
   cd "lib/jquery" do
     sh "git checkout -f"
     sh "git clean -fd"
-    sh "rm -rf dist"
+    rm_rf "dist"
   end
   cd "lib/jquery-mockjax" do
     sh "git checkout -f"
@@ -98,7 +98,7 @@ end
 
 def file_copy(target, src)
   file target => src do
-    sh "cp #{src} #{target}"
+    cp src, target
   end
 end
 
@@ -320,7 +320,7 @@ lambda {
   ] do
     cd "lib/jquery" do
       sh "git checkout -f"
-      sh "rm -rf dist"
+      rm_rf "dist"
       sh "git apply ../jquery_license.patch"
       sh "git apply ../jquery_delegate_middle_click.patch"
       sh "env PATH=$PATH:node_modules/.bin/ grunt custom:-deprecated"
