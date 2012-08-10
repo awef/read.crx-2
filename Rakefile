@@ -42,8 +42,7 @@ task :pack do
   Rake::Task[:clean].invoke
   Rake::Task[:default].invoke
   Rake::Task[:test].invoke
-
-  sh "clamscan -ir debug"
+  Rake::Task[:scan].invoke
 
   rm_rf "_packtmp"
   cp_r "debug", "_packtmp"
@@ -66,6 +65,10 @@ task :test, :filter do |t, args|
     url += "?filter=#{tmp}&spec=#{tmp}"
   end
   sh "google-chrome '#{url}'"
+end
+
+task :scan do
+  sh "clamscan -ir debug"
 end
 
 def debug_id
