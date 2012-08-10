@@ -22,7 +22,8 @@ task :clean do
   #jQuery
   cd "lib/jquery" do
     sh "git checkout -f"
-    sh "make clean"
+    sh "git clean -fd"
+    sh "rm -rf dist"
   end
   cd "lib/jquery-mockjax" do
     sh "git checkout -f"
@@ -312,19 +313,18 @@ lambda {
   ]
 
   directory "debug/lib/jquery"
-  file_copy "debug/lib/jquery/jquery.min.js", "lib/jquery/dist/jquery.min.js"
-  file "lib/jquery/dist/jquery.min.js" => [
+
+  file "debug/lib/jquery/jquery.min.js" => [
     "lib/jquery_license.patch",
-    "lib/jquery_csp.patch",
-    "lib/jquery_delegate_middle_click.patch",
-    "lib/jquery/version.txt"
+    "lib/jquery_delegate_middle_click.patch"
   ] do
     cd "lib/jquery" do
       sh "git checkout -f"
+      sh "rm -rf dist"
       sh "git apply ../jquery_license.patch"
-      sh "git apply ../jquery_csp.patch"
       sh "git apply ../jquery_delegate_middle_click.patch"
-      sh "make min"
+      sh "env PATH=$PATH:node_modules/.bin/ grunt custom:-deprecated"
+      cp "dist/jquery.min.js", "../../debug/lib/jquery/"
     end
   end
 }.call()
