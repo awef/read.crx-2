@@ -1,13 +1,13 @@
-diff --git a/build/post-compile.js b/build/post-compile.js
-index afcebf2..a407e57 100644
---- a/build/post-compile.js
-+++ b/build/post-compile.js
-@@ -6,7 +6,7 @@ var print = require( "sys" ).print,
- 	version = fs.readFileSync( "version.txt", "utf8" ),
- 	// License Template
- 	license = "/*! jQuery v@VERSION jquery.com | jquery.org/license */";
--
-+	license += "\n/* このファイルは、オリジナルのjQueryをread.crx用にawefがカスタマイズした物です。 */";
- 
- // Previously done in sed but reimplemented here due to portability issues
- src = src.replace( /^(\s*\*\/)(.+)/m, "$1\n$2" ) + ";";
+diff --git a/grunt.js b/grunt.js
+index 61b7b4e..3bfbffe 100644
+--- a/grunt.js
++++ b/grunt.js
+@@ -39,7 +39,7 @@ module.exports = function( grunt ) {
+ 		pkg: "<json:package.json>",
+ 		dst: readOptionalJSON("dist/.destination.json"),
+ 		meta: {
+-			banner: "/*! jQuery v@<%= pkg.version %> jquery.com | jquery.org/license */"
++			banner: "/*! jQuery v@<%= pkg.version %> jquery.com | jquery.org/license */\n/* このファイルは、jQueryをread.crx 2用にawefがカスタマイズした物です。 */"
+ 		},
+ 		compare_size: {
+ 			files: distpaths

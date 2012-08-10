@@ -1,8 +1,8 @@
 diff --git a/src/event.js b/src/event.js
-index 621464f..0ef5dee 100644
+index 2a2ea24..0f6f7cd 100644
 --- a/src/event.js
 +++ b/src/event.js
-@@ -405,8 +405,7 @@ jQuery.event = {
+@@ -379,8 +379,7 @@ jQuery.event = {
  		}
  
  		// Determine handlers that should run if there are delegated events
