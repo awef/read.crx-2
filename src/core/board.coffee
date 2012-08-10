@@ -57,13 +57,13 @@ class app.Board
           complete: ($xhr) ->
             if $xhr.status is 200
               d.resolve($xhr)
-            else if cache_get_promise.isResolved() and $xhr.status is 304
+            else if cache_get_promise.state() is "resolved" and $xhr.status is 304
               d.resolve($xhr)
             else
               d.reject($xhr)
             return
 
-        if cache_get_promise.isResolved
+        if cache_get_promise.state() is "resolved"
           if cache.last_modified?
             ajax_data.headers["If-Modified-Since"] =
               new Date(cache.last_modified).toUTCString()
@@ -78,11 +78,11 @@ class app.Board
       $.Deferred (d) =>
         if $xhr?.status is 200
           thread_list = Board.parse(@url, $xhr.responseText)
-        else if cache_get_promise.isResolved()
+        else if cache_get_promise.state() is "resolved"
           thread_list = Board.parse(@url, cache.data)
 
         if thread_list?
-          if $xhr?.status is 200 or $xhr?.status is 304 or (not $xhr? and cache_get_promise.isResolved())
+          if $xhr?.status is 200 or $xhr?.status is 304 or (not $xhr? and cache_get_promise.state() is "resolved")
             d.resolve($xhr, thread_list)
           else
             d.reject($xhr, thread_list)
@@ -111,13 +111,13 @@ class app.Board
             </a>)
             """
           .always =>
-            if cache_get_promise.isResolved() and thread_list?
+            if cache_get_promise.state() is "resolved" and thread_list?
               @message += "キャシュに残っていたデータを表示します。"
 
             if thread_list
               @thread = thread_list
       else
-        if cache_get_promise.isResolved() and thread_list?
+        if cache_get_promise.state() is "resolved" and thread_list?
           @message += "キャシュに残っていたデータを表示します。"
 
         if thread_list?
@@ -146,7 +146,7 @@ class app.Board
           app.bookmark.update_res_count(thread.url, thread.res_count)
         null
 
-      else if cache_get_promise.isResolved() and $xhr?.status is 304
+      else if cache_get_promise.state() is "resolved" and $xhr?.status is 304
         cache.last_updated = Date.now()
         cache.put()
       return

@@ -213,13 +213,13 @@ do ->
 
   cache.full_scan()
     .done ->
-      unless app.bookmark._deferred_first_scan.isResolved() or
-          app.bookmark._deferred_first_scan.isRejected()
+      if app.bookmark._deferred_first_scan.state() is "pending"
         app.bookmark._deferred_first_scan.resolve()
+      return
     .fail ->
-      unless app.bookmark._deferred_first_scan.isResolved() or
-          app.bookmark._deferred_first_scan.isRejected()
+      if app.bookmark._deferred_first_scan.state() is "pending"
         app.bookmark._deferred_first_scan.reject()
+      return
 
   # read.crxが実際にブックマークの取得/操作等を行うための関数群
 

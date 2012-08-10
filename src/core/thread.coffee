@@ -147,7 +147,7 @@ app.module "thread", ["jquery", "cache", "board"], ($, Cache, Board, callback) -
         $.Deferred (deferred) ->
           tmp_xhr_path = xhr_path
           if app.url.tsld(url) in ["livedoor.jp", "machi.to"]
-            if promise_cache_get.isResolved()
+            if promise_cache_get.state() is "resolved"
               delta_flg = true
               tmp_xhr_path += (+cache.res_length + 1) + "-"
 
@@ -161,12 +161,12 @@ app.module "thread", ["jquery", "cache", "board"], ($, Cache, Board, callback) -
             complete: ($xhr) ->
               if $xhr.status is 200
                 deferred.resolve($xhr)
-              else if promise_cache_get.isResolved() and $xhr.status is 304
+              else if promise_cache_get.state() is "resolved" and $xhr.status is 304
                 deferred.resolve($xhr)
               else
                 deferred.reject($xhr)
 
-          if promise_cache_get.isResolved()
+          if promise_cache_get.state() is "resolved"
             if cache.last_modified?
               ajax_data.headers["If-Modified-Since"] = new Date(cache.last_modified).toUTCString()
             if cache.etag?
@@ -186,11 +186,11 @@ app.module "thread", ["jquery", "cache", "board"], ($, Cache, Board, callback) -
               thread = Thread.parse(@url, $xhr.responseText)
           #2ch系BBSのdat落ち
           else if guess_res.bbs_type is "2ch" and $xhr?.status is 203
-            if promise_cache_get.isResolved()
+            if promise_cache_get.state() is "resolved"
               thread = Thread.parse(@url, cache.data)
             else
               thread = Thread.parse(@url, $xhr.responseText)
-          else if promise_cache_get.isResolved()
+          else if promise_cache_get.state() is "resolved"
             thread = Thread.parse(@url, cache.data)
 
           #パース成功
@@ -200,7 +200,7 @@ app.module "thread", ["jquery", "cache", "board"], ($, Cache, Board, callback) -
                 #通信成功（更新なし）
                 $xhr?.status is 304 or
                 #キャッシュが期限内だった場合
-                (not $xhr and promise_cache_get.isResolved())
+                (not $xhr and promise_cache_get.state() is "resolved")
               deferred.resolve($xhr, thread)
             #2ch系BBSのdat落ち
             else if guess_res.bbs_type is "2ch" and $xhr?.status is 203
@@ -270,14 +270,14 @@ app.module "thread", ["jquery", "cache", "board"], ($, Cache, Board, callback) -
                 @message += "スレッドの読み込みに失敗しました。"
               return
             .always =>
-              if promise_cache_get.isResolved() and thread
+              if promise_cache_get.state() is "resolved" and thread
                 @message += "キャッシュに残っていたデータを表示します。"
               res_deferred.reject()
               return
         else
           @message += "スレッドの読み込みに失敗しました。"
 
-          if promise_cache_get.isResolved() and thread
+          if promise_cache_get.state() is "resolved" and thread
             @message += "キャッシュに残っていたデータを表示します。"
 
           res_deferred.reject()
@@ -309,7 +309,7 @@ app.module "thread", ["jquery", "cache", "board"], ($, Cache, Board, callback) -
           cache.put().done => @_cache_put.notify("done")
 
         #304だった場合はアップデート時刻のみ更新
-        else if promise_cache_get.isResolved() and $xhr?.status is 304
+        else if promise_cache_get.state() is "resolved" and $xhr?.status is 304
           cache.last_updated = Date.now()
           cache.put().done => @_cache_put.notify("done")
 
