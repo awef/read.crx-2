@@ -31,7 +31,7 @@ task :clean do
 end
 
 task :doc do
-  sh "yuidoc -q --server 4001"
+  sh "node_modules/.bin/yuidoc -q --server 4001"
 end
 
 task :pack do
@@ -90,7 +90,7 @@ def coffee(src, output)
     src = src.join(" ")
   end
 
-  sh "coffee -cbj #{output} #{src}"
+  sh "node_modules/.bin/coffee -cbj #{output} #{src}"
 end
 
 def file_coffee(target, src)
