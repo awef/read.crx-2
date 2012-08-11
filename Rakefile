@@ -324,9 +324,10 @@ lambda {
     cd "lib/jquery" do
       sh "git checkout -f"
       rm_rf "dist"
+      rm_f "src/selector.js"
       sh "git apply ../jquery_license.patch"
       sh "git apply ../jquery_delegate_middle_click.patch"
-      sh "env PATH=$PATH:node_modules/.bin/ grunt custom:-deprecated"
+      sh "env PATH=$PATH:node_modules/.bin/ grunt submodules selector build:*:*:-deprecated lint min"
       cp "dist/jquery.min.js", "../../debug/lib/jquery/"
     end
   end
