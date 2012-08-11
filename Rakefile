@@ -78,11 +78,11 @@ def debug_id
 end
 
 def haml(src, output)
-  sh "haml -r ./haml_requirement.rb -q #{src} #{output}"
+  sh "bundle exec haml -r ./haml_requirement.rb -q #{src} #{output}"
 end
 
 def scss(src, output)
-  sh "scss --style compressed #{src} #{output}"
+  sh "bundle exec scss --style compressed #{src} #{output}"
 end
 
 def coffee(src, output)
