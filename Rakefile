@@ -19,15 +19,8 @@ task :default => [
 task :clean do
   rm_f "./read.crx_2.zip"
   rm_rf "debug"
-  #jQuery
-  cd "lib/jquery" do
-    sh "git checkout -f"
-    sh "git clean -fd"
-    rm_rf "dist"
-  end
-  cd "lib/jquery-mockjax" do
-    sh "git checkout -f"
-  end
+  Rake::Task[:clean_jquery].invoke
+  Rake::Task[:clean_jquery_mockjax].invoke
 end
 
 task :doc do
@@ -69,6 +62,19 @@ end
 
 task :scan do
   sh "clamscan -ir debug"
+end
+
+task :clean_jquery do
+  cd "lib/jquery" do
+    sh "git checkout -f"
+    sh "git clean -fdx -e node_modules/"
+  end
+end
+
+task :clean_jquery_mockjax do
+  cd "lib/jquery-mockjax" do
+    sh "git checkout -f"
+  end
 end
 
 def debug_id
@@ -298,8 +304,8 @@ lambda {
     "lib/jquery-mockjax/jquery.mockjax.js",
     "lib/jquery-mockjax_cancelable_etag.patch"
   ] do
+    Rake::Task[:clean_jquery_mockjax].invoke
     cd "lib/jquery-mockjax" do
-      sh "git checkout -f"
       sh "git apply ../jquery-mockjax_cancelable_etag.patch"
     end
     cp "lib/jquery-mockjax/jquery.mockjax.js", "debug/test/jquery.mockjax.js"
@@ -321,10 +327,8 @@ lambda {
     "lib/jquery_license.patch",
     "lib/jquery_delegate_middle_click.patch"
   ] do
+    Rake::Task[:clean_jquery].invoke
     cd "lib/jquery" do
-      sh "git checkout -f"
-      rm_rf "dist"
-      rm_f "src/selector.js"
       sh "git apply ../jquery_license.patch"
       sh "git apply ../jquery_delegate_middle_click.patch"
       sh "env PATH=$PATH:node_modules/.bin/ grunt submodules selector build:*:*:-deprecated lint min"
