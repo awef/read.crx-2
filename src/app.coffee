@@ -42,6 +42,80 @@ app.assert_arg = (name, rule, arg) ->
       return true
   false
 
+###*
+@class Callbacks
+@namespace app
+@constructor
+@param {Object} [config]
+  @param {Boolean} [config.persistent=false]
+###
+class app.Callbacks
+  constructor: (config = {}) ->
+    ###*
+    @property _config
+    @private
+    @type Object
+    ###
+    @_config = config
+
+    ###*
+    @property _callbackStore
+    @private
+    @type Array
+    ###
+    @_callbackStore = []
+
+    ###*
+    @property _latestCallArg
+    @private
+    @type null | Array
+    ###
+    @_latestCallArg = null
+    return
+
+  ###*
+  @method add
+  @param {Function} callback
+  ###
+  add: (callback) ->
+    @_callbackStore.push(callback)
+
+    if not @_config.persistent and @_latestCallArg?
+      callback.apply(null, app.deep_copy(@_latestCallArg))
+    return
+
+  ###*
+  @method remove
+  @param {Function} callback
+  ###
+  remove: (callback) ->
+    index = @_callbackStore.indexOf(callback)
+    if index isnt -1
+      @_callbackStore.splice(index, 1)
+    else
+      app.log("error",
+        "app.Callbacks: 存在しないコールバックを削除しようとしました。")
+    return
+
+  ###*
+  @method call
+  @param [arguments]*
+  ###
+  call: ->
+    arg = Array::slice.call(arguments)
+
+    if not @_config.persistent and @_latestCallArg?
+      app.log("error",
+        "app.Callbacks: persistentでないCallbacksが複数回callされました。")
+    else
+      @_latestCallArg = app.deep_copy(arg)
+
+      tmpCallbackStore = @_callbackStore.slice()
+
+      for callback in tmpCallbackStore when callback in @_callbackStore
+        callback.apply(null, app.deep_copy(arg))
+    return
+
 app.message = do ->
   listener_store = {}
 
