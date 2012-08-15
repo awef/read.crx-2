@@ -117,14 +117,12 @@ class app.Callbacks
     return
 
 app.message = do ->
-  listener_store = {}
+  listenerStore = {}
 
   fire = (type, message) ->
     message = app.deep_copy(message)
     app.defer ->
-      if type of listener_store
-        for listener in listener_store[type]
-          listener?(app.deep_copy(message))
+      listenerStore[type]?.call(message)
     return
 
   window.addEventListener "message", (e) ->
@@ -164,15 +162,13 @@ app.message = do ->
       return
 
     add_listener: (type, listener) ->
-      listener_store[type] or= []
-      listener_store[type].push(listener)
+      if not listenerStore[type]?
+        listenerStore[type] = new app.Callbacks(persistent: true)
+      listenerStore[type].add(listener)
       return
 
     remove_listener: (type, listener) ->
-      for val, key in listener_store[type]
-        if val is listener
-          listener_store[type].splice(key, 1)
-          break
+      listenerStore[type]?.remove(listener)
       return
   }
 
