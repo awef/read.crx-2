@@ -61,7 +61,7 @@ class app.Callbacks
     ###*
     @property _callbackStore
     @private
-    @type Array
+    @type Array | null
     ###
     @_callbackStore = []
 
@@ -78,10 +78,10 @@ class app.Callbacks
   @param {Function} callback
   ###
   add: (callback) ->
-    @_callbackStore.push(callback)
-
     if not @_config.persistent and @_latestCallArg?
       callback.apply(null, app.deep_copy(@_latestCallArg))
+    else
+      @_callbackStore.push(callback)
     return
 
   ###*
@@ -114,6 +114,9 @@ class app.Callbacks
 
       for callback in tmpCallbackStore when callback in @_callbackStore
         callback.apply(null, app.deep_copy(arg))
+
+      if not @_config.persistent
+        @_callbackStore = null
     return
 
 app.message = do ->
