@@ -55,7 +55,7 @@ app.bookmark.bookmark_to_url = (bookmark) ->
   param = app.url.build_param(data)
   bookmark.url + if param then "##{param}" else ""
 
-do ->
+app.config.ready ->
   source_id = app.config.get("bookmark_id")
 
   cache = {

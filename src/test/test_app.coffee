@@ -112,15 +112,6 @@ asyncTest "send後にメッセージが編集されても反映しない", 1, ->
   message.a++
   return
 
-module("app.config")
-
-test "文字列を保存/取得できる", ->
-  strictEqual(app.config.get("__test"), undefined)
-  app.config.set("__test", "12345")
-  strictEqual(app.config.get("__test"), "12345")
-  app.config.del("__test")
-  strictEqual(app.config.get("__test"), undefined)
-
 module("app.safe_href")
 
 test "与えられた文字列がhttp, https以外のURLだった場合、ダミー文字列を返す", 7, ->

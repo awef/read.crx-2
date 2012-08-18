@@ -175,30 +175,133 @@ app.message = do ->
       return
   }
 
-app.config =
-  set: (key, val) ->
-    localStorage["config_#{key}"] = val
-    app.message.send("config_updated", {key, val})
+###*
+@namespace app
+@class Config
+@constructor
+###
+class app.Config
+  constructor: ->
+    ###*
+    @property _cache
+    @private
+    @type Object | null
+    ###
+    @_cache = {}
+
+    ###*
+    @method ready
+    @param {Function}
+    ###
+    ready = new app.Callbacks()
+    @ready = ready.add.bind(ready)
+
+    # localStorageからの移行処理
+    do =>
+      found = {}
+      for index in [0...localStorage.length]
+        key = localStorage.key(index)
+        if /^config_/.test(key)
+          val = localStorage.getItem(key)
+          @_cache[key] = val
+          found[key] = val
+
+      chrome.storage.local.set(found)
+
+      for key in Object.keys(found)
+        localStorage.removeItem(key)
+      return
+
+    chrome.storage.local.get null, (res) =>
+      if @_cache isnt null
+        for key, val of res when /^config_/.test(key) and typeof val in ["string", "number"]
+          @_cache[key] = val
+        ready.call()
+      return
+
+    @_onChanged = ((change, area) =>
+      if area is "local"
+        for key, info of change when /^config_/.test(key)
+          if typeof info.newValue is "string"
+            @_cache[key] = info.newValue
+            app.message.send("config_updated", {
+              key: key.slice(7)
+              val: info.newValue
+            })
+          else
+            delete @_cache[key]
+      return
+    ).bind(@)
+
+    chrome.storage.onChanged.addListener(@_onChanged)
     return
+
+  ###*
+  @property _default
+  @static
+  @private
+  @type Object
+  ###
+  @_default:
+    thumbnail_supported: "on"
+    always_new_tab: "on"
+    layout: "pane-3"
+    default_name: ""
+    default_mail: ""
+    popup_trigger: "click"
+    theme_id: "default"
+    user_css: ""
+
+  ###*
+  @method get
+  @param {String} key
+  @return {String|undefined} val
+  ###
   get: (key) ->
-    def =
-      thumbnail_supported: "on"
-      always_new_tab: "on"
-      layout: "pane-3"
-      default_name: ""
-      default_mail: ""
-      popup_trigger: "click"
-      theme_id: "default"
-      user_css: ""
-    if localStorage["config_#{key}"]?
-      localStorage["config_#{key}"]
-    else if def[key]?
-      def[key]
+    if @_cache["config_#{key}"]?
+      @_cache["config_#{key}"]
+    else if Config._default[key]?
+      Config._default[key]
     else
       undefined
-  del: (key) ->
-    delete localStorage["config_#{key}"]
+
+  ###*
+  @method set
+  @param {String} key
+  @param {String} val
+  ###
+  set: (key, val) ->
+    if typeof key isnt "string" or not (typeof val in ["string", "number"])
+      app.log("error", "app.Config::setに不適切な値が渡されました", arguments)
+      return
+
+    tmp = {}
+    tmp["config_#{key}"] = val
+    chrome.storage.local.set(tmp)
     return
+
+  ###*
+  @method del
+  @param {String} key
+  ###
+  del: (key) ->
+    if typeof key isnt "string"
+      app.log("error", "app.Config::delにstring以外の値が渡されました", arguments)
+      return
+
+    chrome.storage.local.remove("config_#{key}")
+    return
+
+  ###*
+  @method destroy
+  ###
+  destroy: ->
+    @_cache = null
+    chrome.storage.onChanged.removeListener(@_onChanged)
+    return
+
+if not frameElement?
+  app.config = new app.Config()
 
 app.escape_html = (str) ->
   str
@@ -273,12 +376,14 @@ app.boot = (path, [requirements]..., fn) ->
     if app.manifest.version isnt html_version
       location.reload(true)
     else
-      if requirements?
-        $ ->
-          app.module(null, requirements, fn)
+      $ ->
+        app.config.ready ->
+          if requirements?
+            app.module(null, requirements, fn)
+          else
+            fn()
           return
-      else
-        $(fn)
+        return
   return
 
 app.clipboardWrite = (str) ->

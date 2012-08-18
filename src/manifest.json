@@ -13,6 +13,7 @@
     "bookmarks",
     "cookies",
     "tabs",
+    "storage",
     "unlimitedStorage",
     "notifications",
     "webRequest",
