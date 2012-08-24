@@ -17,139 +17,140 @@
     %header
       %button.button_close 閉じる
 
-    %section
-      %h2 バージョン情報
-      %div
-        .version
-          .version_text
-          %button.version_copy(type="button") コピー
-        .notation
-          %a(href="http://idawef.com/read.crx-2/changelog.html" target="_blank") 更新履歴
+    #main
+      %section
+        %h2 バージョン情報
+        %div
+          .version
+            .version_text
+            %button.version_copy(type="button") コピー
+          .notation
+            %a(href="http://idawef.com/read.crx-2/changelog.html" target="_blank") 更新履歴
 
-    %section
-      %h2 レイアウト
-      %div
-        %label
-          %input.direct(name="layout" type="radio" value="pane-3" checked)
-          3ペイン
-        %label
-          %input.direct(name="layout" type="radio" value="pane-3h")
-          3ペイン（横一列）
-        %label
-          %input.direct(name="layout" type="radio" value="pane-2")
-          2ペイン
+      %section
+        %h2 レイアウト
+        %div
+          %label
+            %input.direct(name="layout" type="radio" value="pane-3" checked)
+            3ペイン
+          %label
+            %input.direct(name="layout" type="radio" value="pane-3h")
+            3ペイン（横一列）
+          %label
+            %input.direct(name="layout" type="radio" value="pane-2")
+            2ペイン
 
-    %section
-      %h2 背景色
-      %div
-        %label
-          %input.direct(name="theme_id" type="radio" value="default" checked)
-          白
-        %label
-          %input.direct(name="theme_id" type="radio" value="dark")
-          黒
+      %section
+        %h2 背景色
+        %div
+          %label
+            %input.direct(name="theme_id" type="radio" value="default" checked)
+            白
+          %label
+            %input.direct(name="theme_id" type="radio" value="dark")
+            黒
 
-    %section
-      %h2 タブ
-      %div
-        %label
-          %input.direct(type="checkbox" name="always_new_tab") 常に新しいタブで開く
+      %section
+        %h2 タブ
+        %div
+          %label
+            %input.direct(type="checkbox" name="always_new_tab") 常に新しいタブで開く
 
-    %section
-      %h2 サムネイル表示
-      %div
-        %label
-          %input.direct(type="checkbox" name="thumbnail_supported")
-          YouTube/ニコニコ動画のサムネイルを表示する
-        %br
-        %label
-          %input.direct(type="checkbox" name="thumbnail_ext")
-          末尾が画像ファイルの拡張子で終わるURLのサムネイルを表示する
+      %section
+        %h2 サムネイル表示
+        %div
+          %label
+            %input.direct(type="checkbox" name="thumbnail_supported")
+            YouTube/ニコニコ動画のサムネイルを表示する
+          %br
+          %label
+            %input.direct(type="checkbox" name="thumbnail_ext")
+            末尾が画像ファイルの拡張子で終わるURLのサムネイルを表示する
 
-    %section
-      %h2 ID/参照ポップアップの表示方法
-      %div
-        %label
-          %input.direct(name="popup_trigger" type="radio" value="click" checked)
-          クリック
-        %br
-        %label
-          %input.direct(name="popup_trigger" type="radio" value="mouseenter")
-          マウスを重ねる
+      %section
+        %h2 ID/参照ポップアップの表示方法
+        %div
+          %label
+            %input.direct(name="popup_trigger" type="radio" value="click" checked)
+            クリック
+          %br
+          %label
+            %input.direct(name="popup_trigger" type="radio" value="mouseenter")
+            マウスを重ねる
 
-    %section
-      %h2 書き込み
-      %div
-        %table
-          %tbody
-            %tr
-              %td
-                デフォルトの名前
-              %td
-                %input.direct(type="text" name="default_name")
-            %tr
-              %td
-                デフォルトのメールアドレス
-              %td
-                %input.direct(type="text" name="default_mail")
+      %section
+        %h2 書き込み
+        %div
+          %table
+            %tbody
+              %tr
+                %td
+                  デフォルトの名前
+                %td
+                  %input.direct(type="text" name="default_name")
+              %tr
+                %td
+                  デフォルトのメールアドレス
+                %td
+                  %input.direct(type="text" name="default_mail")
 
-    %section
-      %h2 p2連携
-      %div
-        %label
-          %input.direct(type="checkbox" name="p2_write")
-          公式p2経由で書き込む
-        %table
-          %tbody
-            %tr
-              %td
-                公式p2のサーバー
-              %td
-                %input.direct(type="text" name="p2_server" placeholder="w1.p2.2ch.net" pattern="w\\d\\.p2\\.2ch\\.net")
+      %section
+        %h2 p2連携
+        %div
+          %label
+            %input.direct(type="checkbox" name="p2_write")
+            公式p2経由で書き込む
+          %table
+            %tbody
+              %tr
+                %td
+                  公式p2のサーバー
+                %td
+                  %input.direct(type="text" name="p2_server" placeholder="w1.p2.2ch.net" pattern="w\\d\\.p2\\.2ch\\.net")
 
-    %section
-      %h2 忍法帖
-      %div
-        %ul.ninja_cookie_info
-        .ninja_cookie_empty_message 忍法帳Cookieがありません
+      %section
+        %h2 忍法帖
+        %div
+          %ul.ninja_cookie_info
+          .ninja_cookie_empty_message 忍法帳Cookieがありません
 
-    %section
-      %h2 データ
-      %div
-        .history
-          閲覧履歴:
-          %span.history_status
-          %button.history_clear(type="button") 削除
-        .cache
-          キャッシュ:
-          %span.cache_status
-          %button.cache_clear(type="button") 削除
+      %section
+        %h2 データ
+        %div
+          .history
+            閲覧履歴:
+            %span.history_status
+            %button.history_clear(type="button") 削除
+          .cache
+            キャッシュ:
+            %span.cache_status
+            %button.cache_clear(type="button") 削除
 
-    %section
-      %h2 その他
-      %div
-        %button.bookmark_source_change ブックマークのフォルダを変更する
+      %section
+        %h2 その他
+        %div
+          %button.bookmark_source_change ブックマークのフォルダを変更する
 
-        %br
+          %br
 
-        %button.import_bookmark 初代read.crxからのブックマークのインポート
-        %span.import_bookmark_status
+          %button.import_bookmark 初代read.crxからのブックマークのインポート
+          %span.import_bookmark_status
 
-        %br
+          %br
 
-        %button.bbsmenu_reload(type="button") 板一覧の更新
-        %span.bbsmenu_reload_status
+          %button.bbsmenu_reload(type="button") 板一覧の更新
+          %span.bbsmenu_reload_status
 
-    %section
-      %h2 上級者向け機能
-      %div
-        %p 上級者向け機能です。何が起きるのかを十分に理解して使用して下さい。
-        %label.label_textarea
-          ユーザーCSS(
-          %a(href="http://idawef.com/read.crx-2/user-css.html" target="_blank") 詳細
-          )
-          %textarea.direct(name="user_css")
-        %br
-        %label
-          %input.theme_none(type="checkbox")
-          テーマなし
+      %section
+        %h2 上級者向け機能
+        %div
+          %p 上級者向け機能です。何が起きるのかを十分に理解して使用して下さい。
+          %label.label_textarea
+            ユーザーCSS(
+            %a(href="http://idawef.com/read.crx-2/user-css.html" target="_blank") 詳細
+            )
+            %textarea.direct(name="user_css")
+          %br
+          %label
+            %input.theme_none(type="checkbox")
+            テーマなし

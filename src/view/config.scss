@@ -5,59 +5,63 @@
 
 html {
   font-size: 13px;
-  box-sizing: border-box;
-  overflow: auto;
-  padding: 30px 10px 0 10px;
-  background-color: #f5f5f5;
+  background-color: #fff;
+}
+
+body {
+  position: relative;
 }
 
 header {
-  box-shadow: 0 2px 8px #333333;
-  background-image: -webkit-linear-gradient(#666666, #222222);
-  position: fixed;
-  left: 0;
+  position: absolute;
   top: 0;
+  left: 0;
   width: 100%;
-  padding-left: 5px;
+
+  box-shadow: 0 2px 8px #333;
+  background-image: -webkit-linear-gradient(#666, #222);
   button {
     background-color: transparent;
-    color: white;
-    border: 1px solid #bbbbbb {
-      radius: 2px;
-    };
+    color: #fff;
+    border: 1px solid #bbb;
+    border-radius: 2px;
+    margin-left: 5px;
     padding: 5px;
     cursor: pointer;
     &:hover {
-      border-color: #aaaaaa;
+      border-color: #aaa;
     }
   }
 }
 
+#main {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  overflow: auto;
+}
+
 section {
+  padding: 1rem;
+
   display: -webkit-box;
-  padding: 15px 5px;
-  border-top: 1px solid #dddddd;
-  border-top: 1px solid #cccccc;
-  div {
+  > div {
     -webkit-box-flex: 1;
+  }
+  &:not(:first-child) {
+    border-top: 1px dashed hsl(0, 0%, 80%);
   }
 }
 
 h2 {
-  font-size: 14px;
-  color: #252525;
-  margin: 0;
-  width: 130px;
-}
-
-h3 {
-  font-size: 14px;
-  color: #252525;
-  margin: 10px 0;
-}
-
-h2 + h3 {
-  margin-top: 5px;
+  font-size: 1.125rem;
+  font-weight: normal;
+  margin: 0 1rem 0 0;
+  text-align: right;
+  width: 10rem;
 }
 
 label {
@@ -73,18 +77,21 @@ section button {
 }
 
 .notation {
-  font-size: 14px;
   text-align: right;
 }
 
 .version {
-  font-size: 12px;
-  margin: 5px;
-  padding: 5px;
+  font-size: 0.9rem;
+  margin: 0.5rem;
+  padding: 0.5rem;
   border-radius: 3px;
   border: 1px solid #aaaaaa;
 
   display: -webkit-box;
+}
+
+.version_text {
+  -webkit-box-flex: 1;
 }
 
 .version_copy {
@@ -123,7 +130,7 @@ section button {
 }
 
 input[type="text"]:invalid {
-  background-color: #ffcccc;
+  background-color: #fcc;
 }
 
 .label_textarea, .label_textarea > a {
