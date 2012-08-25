@@ -19,13 +19,12 @@ describe "UI.LazyLoad", ->
     div = document.createElement("div")
     div.style.width = "100px"
     div.style.height = "100px"
-    document.body.appendChild(div)
+    document.querySelector("#jasmine-fixture").appendChild(div)
     lazyLoad = new UI.LazyLoad(div)
     return
 
   afterEach ->
     lazyLoad._unwatch()
-    div.parentNode?.removeChild(div)
 
     UI.LazyLoad.UPDATE_INTERVAL = UI.LazyLoad.__UPDATE_INTERVAL
     delete UI.LazyLoad.__UPDATE_INTERVAL
