@@ -3,7 +3,7 @@
   <g transform="rotate(-40, 50, 50)">
     <path
       d="M0 35, l-5 0, l0 -35, c-15 0 -15 -25 -2.5 -25, l0 10, l7.5 5, l7.5 -5, l0 -10, c10 0 10 25 -2.5 25, l0 35 z"
-      fill="hsl(0, 0%, 20%)"
+      fill="#333"
       transform="translate(50, 50) scale(1.25, 1.25)"
       />
   </g>
