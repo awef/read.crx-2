@@ -1,5 +1,5 @@
 diff --git a/src/event.js b/src/event.js
-index 2a2ea24..0f6f7cd 100644
+index 902b2b5..4dedfdb 100644
 --- a/src/event.js
 +++ b/src/event.js
 @@ -379,8 +379,7 @@ jQuery.event = {
@@ -10,5 +10,5 @@ index 2a2ea24..0f6f7cd 100644
 -		if ( delegateCount && !(event.button && event.type === "click") ) {
 +		if ( delegateCount ) {
  
- 			// Pregenerate a single jQuery object for reuse with .is()
- 			jqcur = jQuery(this);
+ 			for ( cur = event.target; cur != this; cur = cur.parentNode || this ) {
+ 

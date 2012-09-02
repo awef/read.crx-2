@@ -17,7 +17,7 @@ do ($ = jQuery) ->
 
     if not refresh
       $this
-        .on "click", ".accordion > :header", ->
+        .on "click", "> :header", ->
           $(@)
             .toggleClass("accordion_open")
             .next()
