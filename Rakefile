@@ -126,17 +126,17 @@ end
 rule ".png" => "src/image/svg/%{_\\d+x\\d+(?:_[a-fA-F0-9]+)?(?:_r\\-?\\d+)?$,}n.svg" do |t|
   /_(\d+)x(\d+)(?:_([a-fA-F0-9]*))?(?:_r(\-?\d+))?\.png$/ =~ t.name
 
-  command = "convert -background transparent -resize #{$1}x#{$2}"
+  command = "convert -background transparent"
 
   if $3
-    command += " -fuzz '50%' -fill '##{$3}' -opaque '#333'"
+    command += " -fill '##{$3}' -opaque '#333'"
   end
 
   if $4
     command += " -rotate '#{$4}'"
   end
 
-  command += " #{t.prerequisites[0]} #{t.name}"
+  command += " -resize #{$1}x#{$2} #{t.prerequisites[0]} #{t.name}"
 
   sh command
 end
