@@ -334,6 +334,12 @@ $z-index-notification: 8;
           background-image: url(/img/star_19x19_#{$active-icon-color}.png);
         }
       }
+      &.button_back {
+        background-image: url(/img/arrow_19x19_#{$icon-color}_r-90.png);
+      }
+      &.button_forward {
+        background-image: url(/img/arrow_19x19_#{$icon-color}_r90.png);
+      }
       &.button_reload {
         background-image: url(/img/reload_19x19_#{$icon-color}.png);
       }
