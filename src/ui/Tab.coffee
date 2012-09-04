@@ -28,6 +28,7 @@ class UI.Tab
 
   constructor: (@element) ->
     @_recentClosed = []
+    @_historyStore = {}
 
     tab = @
 
@@ -68,6 +69,45 @@ class UI.Tab
       .on "click", ".tab_tabbar img", ->
         tab.remove(@parentNode.getAttribute("data-tabid"))
         return
+
+    window.addEventListener "message", (e) =>
+      return if e.origin isnt location.origin
+
+      message = JSON.parse(e.data)
+
+      return unless message.type in [
+          "requestTabHistory"
+          "requestTabBack"
+          "requestTabForward"
+        ]
+
+      return unless @element.contains(e.source.frameElement)
+
+      tabId = e.source.frameElement.getAttribute("data-tabid")
+      history = @_historyStore[tabId]
+
+      if message.type is "requestTabHistory"
+        message = JSON.stringify({type: "responseTabHistory", history})
+        e.source.postMessage(message, e.origin)
+
+      else if message.type is "requestTabBack"
+        if history.current > 0
+          history.current--
+          @update(tabId, {
+            title: history.stack[history.current].title
+            url: history.stack[history.current].url
+            _internal: true
+          })
+
+      else if message.type is "requestTabForward"
+        if history.current < history.stack.length - 1
+          history.current++
+          @update(tabId, {
+            title: history.stack[history.current].title
+            url: history.stack[history.current].url
+            _internal: true
+          })
+      return
     return
 
   ###*
@@ -114,6 +154,11 @@ class UI.Tab
 
     tabId = Tab._id()
 
+    @_historyStore[tabId] = {
+      current: 0
+      stack: [{url, title: url}]
+    }
+
     #既存のタブが一つも無い場合、強制的にselectedオン
     if not @element.querySelector(".tab_tabbar > li")
       param.selected = true
@@ -144,9 +189,16 @@ class UI.Tab
     @param {String} [param.url]
     @param {String} [param.title]
     @param {Boolean} [param.selected]
+    @param {Boolean} [param._internal]
   ###
   update: (tabId, param) ->
     if typeof param.url is "string"
+      unless param._internal
+        history = @_historyStore[tabId]
+        history.stack.splice(history.current + 1)
+        history.stack.push(url: param.url, title: param.url)
+        history.current++
+
       $(@element)
         .find("li[data-tabid=\"#{tabId}\"]")
           .attr("data-tabsrc", param.url)
@@ -156,6 +208,9 @@ class UI.Tab
           .trigger("tab_urlupdated")
 
     if typeof param.title is "string"
+      tmp = @_historyStore[tabId]
+      tmp.stack[tmp.current].title = param.title
+
       $(@element)
         .find("li[data-tabid=\"#{tabId}\"]")
           .attr("title", param.title)
@@ -206,7 +261,8 @@ class UI.Tab
           })
 
           if tab._recentClosed.length > 50
-            tab._recentClosed.shift()
+            tmp = tab._recentClosed.shift()
+            delete tab._historyStore[tmp.tabId]
 
           if @classList.contains("tab_selected")
             if next = @nextElementSibling or @previousElementSibling

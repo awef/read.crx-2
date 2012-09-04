@@ -87,6 +87,31 @@ app.view_module.view = ($view) ->
           $view.trigger("request_reload")
         return
 
+  # 戻る/進むボタン管理
+  parent.postMessage(JSON.stringify(type: "requestTabHistory"), location.origin)
+
+  window.addEventListener "message", (e) ->
+    if e.origin is location.origin
+      message = JSON.parse(e.data)
+      if message.type is "responseTabHistory"
+        if message.history.current > 0
+          $view.find(".button_back").removeClass("disabled")
+
+        if message.history.current < message.history.stack.length - 1
+          $view.find(".button_forward").removeClass("disabled")
+    return
+
+  $view.find(".button_back, .button_forward").on "click", ->
+    $this = $(@)
+
+    return if $this.is(".disabled")
+
+    tmp = if $this.is(".button_back") then "Back" else "Forward"
+    parent.postMessage(JSON.stringify(type: "requestTab#{tmp}"), location.origin)
+    return
+
+  return
+
 app.view_module.bookmark_button = ($view) ->
   url = $view.attr("data-url")
   $button = $view.find(".button_bookmark")
