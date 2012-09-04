@@ -1,3 +1,20 @@
+do ->
+  if frameElement
+    modules = [
+      "board"
+      "bookmark"
+      "config"
+      "module"
+      "ninja"
+      "read_state"
+      "url"
+      "util"
+    ]
+
+    for module in modules
+      app[module] = parent.app[module]
+  return
+
 app.view_module = {}
 
 app.view_module.view = ($view) ->

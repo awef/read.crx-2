@@ -207,7 +207,6 @@ lambda {
 
   view = [
     "debug/view",
-    "debug/view/app_proxy.js",
     "debug/view/module.js"
   ]
 
