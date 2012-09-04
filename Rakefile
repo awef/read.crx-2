@@ -158,6 +158,8 @@ lambda {
     "debug/img/dummy_1x1.png",
     "debug/img/loading.svg",
 
+    "debug/img/arrow_19x19_333_r90.png",
+    "debug/img/arrow_19x19_333_r-90.png",
     "debug/img/search2_19x19_777.png",
     "debug/img/star_19x19_333.png",
     "debug/img/star_19x19_007fff.png",
@@ -165,6 +167,8 @@ lambda {
     "debug/img/pencil_19x19_333.png",
     "debug/img/spanner_19x19_333.png",
 
+    "debug/img/arrow_19x19_ddd_r90.png",
+    "debug/img/arrow_19x19_ddd_r-90.png",
     "debug/img/search2_19x19_aaa.png",
     "debug/img/star_19x19_ddd.png",
     "debug/img/star_19x19_f93.png",
