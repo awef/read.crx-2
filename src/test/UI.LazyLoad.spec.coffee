@@ -61,9 +61,18 @@ describe "UI.LazyLoad", ->
       spyOn(lazyLoad, "update").andCallThrough()
       spyOn(lazyLoad, "_load").andCallThrough()
 
-      lazyLoad.scan()
+      waitsFor ->
+        (
+          img1.offsetWidth isnt 0 and
+          img2.offsetWidth isnt 0 and
+          img3.offsetWidth isnt 0
+        )
 
-      expect(lazyLoad.update.callCount).toBe(1)
+      runs ->
+        lazyLoad.scan()
+
+        expect(lazyLoad.update.callCount).toBe(1)
+        return
 
       waitsFor -> lazyLoad._load.wasCalled
 
@@ -86,7 +95,16 @@ describe "UI.LazyLoad", ->
       spyOn(lazyLoad, "update").andCallThrough()
       spyOn(lazyLoad, "_load").andCallThrough()
 
-      lazyLoad.scan()
+      waitsFor ->
+        (
+          img1.offsetWidth isnt 0 and
+          img2.offsetWidth isnt 0 and
+          img3.offsetWidth isnt 0
+        )
+
+      runs ->
+        lazyLoad.scan()
+        return
 
       waitsFor -> lazyLoad._load.wasCalled
 
