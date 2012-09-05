@@ -221,7 +221,7 @@ describe "UI.LazyLoad", ->
 
     it "ロード成功時にimg要素にlazyload-loadイベントを送出する", ->
       div.appendChild(img = getDummyIMG())
-      onLazyloadLoad= jasmine.createSpy("onLazyloadLoad")
+      onLazyloadLoad = jasmine.createSpy("onLazyloadLoad")
       $(div).on("lazyload-load", onLazyloadLoad)
 
       lazyLoad._load(img)
