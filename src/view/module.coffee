@@ -5,7 +5,7 @@ do ->
       "bookmark"
       "config"
       "module"
-      "ninja"
+      "Ninja"
       "read_state"
       "url"
       "util"

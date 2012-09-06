@@ -1,39 +1,42 @@
-app.ninja = {}
+###*
+@namespace app
+@class Ninja
+@static
+###
+class app.Ninja
+  @_siteInfo =
+    "2ch":
+      siteId: "2ch"
+      siteName: "2ちゃんねる"
+      cookieInfo: {url: "http://www.2ch.net/", name: "HAP"}
 
-app.ninja._site_info =
-  "2ch":
-    site_id: "2ch"
-    site_name: "2ちゃんねる"
-    cookie_info: {url: "http://www.2ch.net/", name: "HAP"}
+  ###*
+  @method getCookie
+  @static
+  @param {Function} callback
+  ###
+  @getCookie: (callback) ->
+    site = @_siteInfo["2ch"]
 
-#  "bbspink":
-#    site_id: "bbspink"
-#    site_name: "BBSPINK"
-#    cookie_info: {url: "http://www.bbspink.com/", name: "HAP"}
+    chrome.cookies.get site.cookieInfo, (res) ->
+      data = []
+      if res
+        data.push({site, value: res.value})
+      callback(data)
+      return
+    return
 
-app.ninja.get_cookie = ->
-  data = []
-  promises = []
-
-  for site_id, site of app.ninja._site_info
-    ((site) ->
-      promises.push $.Deferred((deferred) ->
-        chrome.cookies.get site.cookie_info, (res) ->
-          if res
-            data.push({site, value: res.value})
-          deferred.resolve()
-      ).promise()
-    )(site)
-
-  $.when.apply(this, promises)
-    .pipe ->
-      $.Deferred().resolve(data)
-
-app.ninja.delete_cookie = (site_id) ->
-  $.Deferred (deferred) ->
-    chrome.cookies.remove app.ninja._site_info[site_id].cookie_info, ->
-      deferred.resolve()
-  .promise()
+  ###*
+  @method deleteCookie
+  @static
+  @param {String} siteId
+  @param {Function} [callback]
+  ###
+  @deleteCookie: (siteId, callback) ->
+    chrome.cookies.remove @_siteInfo[siteId].cookieInfo, ->
+      callback?()
+      return
+    return
 
 ###
 app.ninja.get_info_stored = ->

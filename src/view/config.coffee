@@ -58,10 +58,10 @@ app.boot "/view/config.html", ["cache", "bbsmenu", "history"], (Cache, BBSMenu, 
 
         for info in res
           li = document.createElement("li")
-          li.setAttribute("data-site_id", info.site.site_id)
+          li.setAttribute("data-site_id", info.site.siteId)
 
           div = document.createElement("div")
-          div.textContent = "#{info.site.site_name} : #{info.value}"
+          div.textContent = "#{info.site.siteName} : #{info.value}"
           li.appendChild(div)
 
           button = document.createElement("button")
@@ -74,8 +74,9 @@ app.boot "/view/config.html", ["cache", "bbsmenu", "history"], (Cache, BBSMenu, 
 
         $ul.append(frag)
 
-    app.ninja.get_cookie().done (res) ->
+    app.Ninja.getCookie (res) ->
       fn(res, $view.find(".ninja_cookie_info"))
+      return
 
     $view.delegate ".del_ninja_cookie", "click", ->
       $this = $(@)
@@ -90,14 +91,15 @@ app.boot "/view/config.html", ["cache", "bbsmenu", "history"], (Cache, BBSMenu, 
               .attr("disabled", true)
               .text("削除中")
             site_id = $this.parent().attr("data-site_id")
-            app.ninja.delete_cookie(site_id)
-              .done ->
-                $this.parent().fadeOut ->
-                  $this = $(@)
-                  $parent = $this.parent()
-                  $this.remove()
-                  if $parent.children().length is 0
-                    $parent.remove()
+            app.Ninja.deleteCookie site_id, ->
+              $this.parent().fadeOut ->
+                $this = $(@)
+                $parent = $this.parent()
+                $this.remove()
+                if $parent.children().length is 0
+                  $parent.remove()
+                return
+              return
 
   #板覧更新ボタン
   $view.find(".bbsmenu_reload").on "click", ->
