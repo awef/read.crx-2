@@ -209,6 +209,7 @@ app.main = ->
   #openメッセージ受信部
   app.message.add_listener "open", (message) ->
     get_iframe_info = (url) ->
+      url = app.url.fix(url)
       guess_result = app.url.guess_type(url)
       if url is "config"
         src: "/view/config.html"
@@ -232,10 +233,10 @@ app.main = ->
         url: "search:#{res[1]}"
       else if guess_result.type is "board"
         src: "/view/board.html?#{app.url.build_param(q: url)}"
-        url: app.url.fix(url)
+        url: url
       else if guess_result.type is "thread"
         src: "/view/thread.html?#{app.url.build_param(q: url)}"
-        url: app.url.fix(url)
+        url: url
       else
         null
 
