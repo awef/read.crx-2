@@ -94,6 +94,48 @@ app.view_setup_resizer = ->
       return
 
 app.main = ->
+  urlToIframeInfo = (url) ->
+    url = app.url.fix(url)
+    guessResult = app.url.guess_type(url)
+    if url is "config"
+      src: "/view/config.html"
+      url: "config"
+      modal: true
+    else if url is "history"
+      src: "/view/history.html"
+      url: "history"
+    else if url is "bookmark"
+      src: "/view/bookmark.html"
+      url: "bookmark"
+    else if url is "inputurl"
+      src: "/view/inputurl.html"
+      url: "inputurl"
+    else if url is "bookmark_source_selector"
+      src: "/view/bookmark_source_selector.html"
+      url: "bookmark_source_selector"
+      modal: true
+    else if res = /^search:(.+)$/.exec(url)
+      src: "/view/search.html?#{app.url.build_param(query: res[1])}"
+      url: url
+    else if guessResult.type is "board"
+      src: "/view/board.html?#{app.url.build_param(q: url)}"
+      url: url
+    else if guessResult.type is "thread"
+      src: "/view/thread.html?#{app.url.build_param(q: url)}"
+      url: url
+    else
+      null
+
+  iframeSrcToUrl = (src) ->
+    if res = ///^/view/(\w+)\.html$///.exec(src)
+      res[1]
+    else if res = ///^/view/search\.html(\?.+)$///.exec(src)
+      app.url.parse_query(res[1]).query
+    else if res = ///^/view/(?:thread|board)\.html(\?.+)$///.exec(src)
+      app.url.parse_query(res[1]).q
+    else
+      null
+
   $view = $(document.documentElement)
 
   app.view_module.view($view)
@@ -145,6 +187,10 @@ app.main = ->
   $("#tab_b").data("tab", tabB)
   $(".tab .tab_tabbar").sortable()
   app.view_setup_resizer()
+
+  $view.on "tab_urlupdated", "iframe", ->
+    @setAttribute("data-url", iframeSrcToUrl(@getAttribute("src")))
+    return
 
   app.message.add_listener "config_updated", (message) ->
     if message.key is "layout"
@@ -208,39 +254,7 @@ app.main = ->
 
   #openメッセージ受信部
   app.message.add_listener "open", (message) ->
-    get_iframe_info = (url) ->
-      url = app.url.fix(url)
-      guess_result = app.url.guess_type(url)
-      if url is "config"
-        src: "/view/config.html"
-        url: "config"
-        modal: true
-      else if url is "history"
-        src: "/view/history.html"
-        url: "history"
-      else if url is "bookmark"
-        src: "/view/bookmark.html"
-        url: "bookmark"
-      else if url is "inputurl"
-        src: "/view/inputurl.html"
-        url: "inputurl"
-      else if url is "bookmark_source_selector"
-        src: "/view/bookmark_source_selector.html"
-        url: "bookmark_source_selector"
-        modal: true
-      else if res = /^search:(.+)$/.exec(url)
-        src: "/view/search.html?#{app.url.build_param(query: res[1])}"
-        url: "search:#{res[1]}"
-      else if guess_result.type is "board"
-        src: "/view/board.html?#{app.url.build_param(q: url)}"
-        url: url
-      else if guess_result.type is "thread"
-        src: "/view/thread.html?#{app.url.build_param(q: url)}"
-        url: url
-      else
-        null
-
-    iframe_info = get_iframe_info(message.url)
+    iframe_info = urlToIframeInfo(message.url)
     return unless iframe_info
 
     if iframe_info.modal
