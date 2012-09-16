@@ -357,7 +357,7 @@ app.main = ->
       return
 
   $(document.documentElement)
-    .on "tab_removed tab_urlupdated", "iframe", ->
+    .on "tab_removed tab_beforeurlupdate", "iframe", ->
       @contentWindow.___e = @contentDocument.createEvent("Event")
       @contentWindow.___e.initEvent("view_unload", true, true)
       @contentWindow.dispatchEvent(@contentWindow.___e)
