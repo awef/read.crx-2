@@ -22,7 +22,7 @@ app.boot "/view/index.html", ->
               chrome.tabs.sendRequest(tab.id, {type: "open", query})
             chrome.tabs.remove(current_tab.id)
             return
-      history.pushState(null, null, "/view/index.html")
+      history.replaceState(null, null, "/view/index.html")
       app.main()
       if query
         app.message.send("open", url: query, new_tab: true)
