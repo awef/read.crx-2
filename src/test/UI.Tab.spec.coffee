@@ -337,6 +337,22 @@ describe "UI.Tab", ->
       expect(iframe.src).toBe(url2)
       return
 
+    it "タブのURL変更前、iframeにtab_beforeurlupdateイベントを送出する", ->
+      url1 = getDummyURL()
+      url2 = getDummyURL()
+
+      onTabBeforeURLUpdate = jasmine.createSpy("onTabBeforeURLUpdate")
+      onTabBeforeURLUpdate.andCallFake ->
+        expect(@src).toBe(url1)
+        return
+      $(div).one("tab_beforeurlupdate", "iframe", onTabBeforeURLUpdate)
+
+      tabId = tab.add(url1)
+      tab.update(tabId, url: url2)
+
+      expect(onTabBeforeURLUpdate.callCount).toBe(1)
+      return
+
     it "タブのURL変更後、iframeにtab_urlupdatedイベントを送出する", ->
       url1 = getDummyURL()
       url2 = getDummyURL()
