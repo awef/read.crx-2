@@ -50,6 +50,8 @@ app.assert_arg = (name, rule, arg) ->
   @param {Boolean} [config.persistent=false]
 ###
 class app.Callbacks
+  "use strict"
+
   constructor: (config = {}) ->
     ###*
     @property _config
@@ -181,6 +183,8 @@ app.message = do ->
 @constructor
 ###
 class app.Config
+  "use strict"
+
   constructor: ->
     ###*
     @property _cache
