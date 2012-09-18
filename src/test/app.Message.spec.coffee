@@ -117,4 +117,67 @@ describe "app.Message", ->
       expect(tmp, frameList)
       return
     return
+
+  describe "ターゲットが指定された場合", ->
+    it "指定されたWindowにのみメッセージを伝播させる", ->
+      iframe0 = document.createElement("iframe")
+      iframe0.src = "message_test.html?targetWindowTest"
+      document.querySelector("#jasmine-fixture").appendChild(iframe0)
+
+      iframe1 = document.createElement("iframe")
+      iframe1.src = "message_test.html?targetWindowTest"
+      document.querySelector("#jasmine-fixture").appendChild(iframe1)
+
+      listener0 = jasmine.createSpy("listener")
+      message.addListener("targetWindowTest-ready", listener0)
+
+      listener1 = jasmine.createSpy("listener")
+      message.addListener("targetWindowTest-pong", listener1)
+
+      timeout = false
+
+      waitsFor ->
+        listener0.callCount is 2
+
+      runs ->
+        app.message.send("targetWindowTest-ping", "test", iframe0.contentWindow)
+
+        setTimeout((-> timeout = true; return), 500)
+        return
+
+      waitsFor ->
+        timeout
+
+      runs ->
+        expect(listener1.callCount).toBe(1)
+        return
+      return
+
+    it "自Windowにさえイベントを伝播させない", ->
+      iframe = document.createElement("iframe")
+      iframe.src = "/view/empty.html"
+      document.querySelector("#jasmine-fixture").appendChild(iframe)
+
+      listener = jasmine.createSpy("listener")
+      message.addListener(testId, listener)
+
+      timeout = false
+
+      waitsFor ->
+        iframe.contentWindow?
+
+      runs ->
+        message.send(testId, "message", iframe.contentWindow)
+
+        setTimeout((-> timeout = true; return), 500)
+        return
+
+      waitsFor ->
+        timeout
+
+      runs ->
+        expect(listener).not.toHaveBeenCalled()
+        return
+      return
+    return
   return

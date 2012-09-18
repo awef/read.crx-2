@@ -139,17 +139,18 @@ class app.Message
 
       return if data.type isnt "app.message"
 
-      # parentから伝わってきた場合はiframeにも伝える
-      if e.source is parent
-        for iframe in document.getElementsByTagName("iframe")
-          iframe.contentWindow.postMessage(e.data, location.origin)
-      # iframeから伝わってきた場合は、parentと他のiframeにも伝える
-      else
-        if parent isnt window
-          parent.postMessage(e.data, location.origin)
-        for iframe in document.getElementsByTagName("iframe")
-          continue if iframe.contentWindow is e.source
-          iframe.contentWindow.postMessage(e.data, location.origin)
+      if data.propagation isnt false
+        # parentから伝わってきた場合はiframeにも伝える
+        if e.source is parent
+          for iframe in document.getElementsByTagName("iframe")
+            iframe.contentWindow.postMessage(e.data, location.origin)
+        # iframeから伝わってきた場合は、parentと他のiframeにも伝える
+        else
+          if parent isnt window
+            parent.postMessage(e.data, location.origin)
+          for iframe in document.getElementsByTagName("iframe")
+            continue if iframe.contentWindow is e.source
+            iframe.contentWindow.postMessage(e.data, location.origin)
 
       @_fire(data.message_type, data.message)
       return
@@ -172,18 +173,23 @@ class app.Message
   @method send
   @param {String} type
   @param message
+  @param {Window} [targetWindow]
   ###
-  send: (type, message) ->
+  send: (type, message, targetWindow) ->
     json = JSON.stringify
       type: "app.message"
       message_type: type
       message: message
-    if parent isnt window
-      parent.postMessage(json, location.origin)
-    for iframe in document.getElementsByTagName("iframe")
-      iframe.contentWindow.postMessage(json, location.origin)
+      propagation: not targetWindow?
 
-    @_fire(type, message)
+    if targetWindow?
+      targetWindow.postMessage(json, location.origin)
+    else
+      if parent isnt window
+        parent.postMessage(json, location.origin)
+      for iframe in document.getElementsByTagName("iframe")
+        iframe.contentWindow.postMessage(json, location.origin)
+      @_fire(type, message)
     return
 
   ###*

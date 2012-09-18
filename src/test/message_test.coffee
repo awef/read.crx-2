@@ -31,3 +31,11 @@ window.addEventListener "load", ->
     setTimeout ->
       app.message.send("message_test_ping", {})
     , 300
+
+  if frame_id is "targetWindowTest"
+    app.message.addListener "targetWindowTest-ping", ->
+      app.message.send("targetWindowTest-pong", "test", parent)
+      return
+
+    app.message.send("targetWindowTest-ready", "test", parent)
+  return
