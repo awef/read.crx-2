@@ -1,13 +1,13 @@
 diff --git a/grunt.js b/grunt.js
-index 61b7b4e..3bfbffe 100644
+index a2db873..f1d8134 100644
 --- a/grunt.js
 +++ b/grunt.js
 @@ -39,7 +39,7 @@ module.exports = function( grunt ) {
  		pkg: "<json:package.json>",
  		dst: readOptionalJSON("dist/.destination.json"),
  		meta: {
--			banner: "/*! jQuery v@<%= pkg.version %> jquery.com | jquery.org/license */"
-+			banner: "/*! jQuery v@<%= pkg.version %> jquery.com | jquery.org/license */\n/* このファイルは、jQueryをread.crx 2用にawefがカスタマイズした物です。 */"
+-			banner: "/*! jQuery v<%= pkg.version %> jquery.com | jquery.org/license */"
++			banner: "/*! jQuery v<%= pkg.version %> jquery.com | jquery.org/license */\n/* このファイルは、jQueryをread.crx 2用にawefがカスタマイズした物です。 */"
  		},
  		compare_size: {
  			files: distpaths
