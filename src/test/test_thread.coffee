@@ -278,7 +278,7 @@ module "Thread::get",
             deepEqual(thread.res, config.thread_expected.res)
             strictEqual(thread.message, null)
 
-          thread._cache_put.progress (status) =>
+          thread._cachePut.progress (status) =>
             QUnit.step(4)
             strictEqual(status, "done", "cache.put()")
             cache = new Cache(config.dat_url)
@@ -347,7 +347,7 @@ module "Thread::get",
             return
 
           run = false
-          thread._cache_put.progress (status) ->
+          thread._cachePut.progress (status) ->
             return if run
             run = true
 
@@ -408,7 +408,7 @@ module "Thread::get",
             return
 
           run = 0
-          thread._cache_put.progress (status) ->
+          thread._cachePut.progress (status) ->
             return if ++run isnt 2 #直前のnotifyの分まで呼ばれてしまうので、その対策
 
             QUnit.step(11)
@@ -473,7 +473,7 @@ module "Thread::get",
             return
 
           run = 0
-          thread._cache_put.progress (status) ->
+          thread._cachePut.progress (status) ->
             return if ++run isnt 2 #直前のnotifyの分まで呼ばれてしまうので、その対策
 
             QUnit.step(17)
@@ -520,7 +520,7 @@ module "Thread::get",
             start()
             return
 
-          thread._cache_put.progress (status) =>
+          thread._cachePut.progress (status) =>
             QUnit.step(4)
             strictEqual(status, "unexecuted", "cache.put()")
             cache = new Cache(config.dat_url)
@@ -611,7 +611,7 @@ asyncTest "2chの存在しないスレを取得しようとした場合", 10, ->
         start()
         return
 
-      thread._cache_put.progress (status) =>
+      thread._cachePut.progress (status) =>
         QUnit.step(3)
         strictEqual(status, "unexecuted", "cache.put()")
         cache = new Cache(dat_url)
