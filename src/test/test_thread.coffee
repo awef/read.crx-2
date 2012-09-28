@@ -266,12 +266,12 @@ module "Thread::get",
           QUnit.step(2)
           return
 
-      app.module null, ["thread", "cache"], (Thread, Cache) =>
+      app.module null, ["cache"], (Cache) =>
         new Cache(config.dat_url).delete().done =>
           QUnit.step(1)
           before = Date.now()
 
-          thread = new Thread(config.url)
+          thread = new app.Thread(config.url)
           thread.get().done =>
             QUnit.step(3)
             strictEqual(thread.title, config.thread_expected.title)
@@ -298,7 +298,7 @@ module "Thread::get",
 
     #正常取得 -> 更新なし -> 更新有り
     @test_update = (config) ->
-      app.module null, ["thread", "cache"], (Thread, Cache) ->
+      app.module null, ["cache"], (Cache) ->
         dummy =
           etag: null
           last_modified: null
@@ -307,7 +307,7 @@ module "Thread::get",
             @last_modified = (new Date()).toUTCString()
             return
 
-        thread = new Thread(config.url)
+        thread = new app.Thread(config.url)
         before_1st_get = null
         before_2nd_get = null
         before_3rd_get = null
@@ -507,11 +507,11 @@ module "Thread::get",
           QUnit.step(2)
           return
 
-      app.module null, ["thread", "cache"], (Thread, Cache) =>
+      app.module null, ["cache"], (Cache) =>
         new Cache(config.dat_url).delete().done =>
           QUnit.step(1)
 
-          thread = new Thread(config.url)
+          thread = new app.Thread(config.url)
           thread.get().fail =>
             QUnit.step(3)
             strictEqual(thread.title, null, "thread.title")
@@ -598,11 +598,11 @@ asyncTest "2chの存在しないスレを取得しようとした場合", 10, ->
       QUnit.step(5)
       return
 
-  app.module null, ["thread", "cache"], (Thread, Cache) =>
+  app.module null, ["cache"], (Cache) =>
     new Cache(dat_url).delete().done =>
       QUnit.step(1)
 
-      thread = new Thread("http://__mockjax.2ch.net/test/read.cgi/dummy/404/")
+      thread = new app.Thread("http://__mockjax.2ch.net/test/read.cgi/dummy/404/")
       thread.get().fail =>
         QUnit.step(6)
         strictEqual(thread.title, null)
@@ -726,7 +726,7 @@ asyncTest "BBSPINKのスレをパース出来る", 15, ->
 
 module "Thread.parse"
 
-asyncTest "[2ch]全ての行が破損データだった場合、nullを返す", 1, ->
+test "[2ch]全ての行が破損データだった場合、nullを返す", 1, ->
   #2chで一部のスレを開いた時、302 -> 200で404.htmlが返される挙動になる事への対策
   html = """
   <html>
@@ -736,8 +736,5 @@ asyncTest "[2ch]全ての行が破損データだった場合、nullを返す", 
     </body>
   </html>
   """
-  app.module null, ["thread"], (Thread) ->
-    strictEqual(Thread.parse("http://hibari.2ch.net/test/read.cgi/pc/123/", html), null)
-    start()
-    return
+  strictEqual(app.Thread.parse("http://hibari.2ch.net/test/read.cgi/pc/123/", html), null)
   return

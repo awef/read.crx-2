@@ -386,7 +386,3 @@ class app.Thread
         other: regRes[4] + if regRes[7] then " ID:" + regRes[7] else ""
 
     if thread.res.length > 0 then thread else null
-
-app.module "thread", null, (callback) ->
-  callback(app.Thread)
-  return
