@@ -646,7 +646,6 @@ app.view_thread._draw = ($view, force_update) ->
       $view.removeClass("loading")
       setTimeout((-> $reload_button.removeClass("disabled")), 1000 * 5)
       return
-    return
 
   deferred.promise()
 
