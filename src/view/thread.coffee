@@ -528,7 +528,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         return
 
     update_thread_footer = ->
-      if scroll_left is 0
+      if scroll_left <= 1
         next_unread.show()
         search_next_thread.show()
       else
