@@ -1,6 +1,7 @@
 do ->
   if frameElement
     modules = [
+      "Thread"
       "board"
       "bookmark"
       "config"

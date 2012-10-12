@@ -631,23 +631,21 @@ app.view_thread._draw = ($view, force_update) ->
 
     deferred.resolve()
 
-  app.module null, ["thread"], (Thread) ->
-    thread = new Thread($view.attr("data-url"))
-    thread.get(force_update)
-      .progress ->
-        fn(thread, false)
-        return
-      .done ->
-        fn(thread, false)
-        return
-      .fail ->
-        fn(thread, true)
-        return
-      .always ->
-        $view.removeClass("loading")
-        setTimeout((-> $reload_button.removeClass("disabled")), 1000 * 5)
-        return
-    return
+  thread = new app.Thread($view.attr("data-url"))
+  thread.get(force_update)
+    .progress ->
+      fn(thread, false)
+      return
+    .done ->
+      fn(thread, false)
+      return
+    .fail ->
+      fn(thread, true)
+      return
+    .always ->
+      $view.removeClass("loading")
+      setTimeout((-> $reload_button.removeClass("disabled")), 1000 * 5)
+      return
 
   deferred.promise()
 
