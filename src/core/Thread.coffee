@@ -10,7 +10,6 @@ class app.Thread
     @title = null
     @res = null
     @message = null
-    @_cachePut = $.Deferred()
     return
 
   get: (forceUpdate) ->
@@ -21,7 +20,7 @@ class app.Thread
     xhrPath = xhrInfo.path
     xhrCharset = xhrInfo.charset
 
-    getCachedInfo = $.Deferred (d) ->
+    getCachedInfo = $.Deferred (d) =>
       if app.url.tsld(@url) in ["livedoor.jp", "machi.to"]
         app.Board.get_cached_res_count(@url)
           .done (res) ->
@@ -62,70 +61,67 @@ class app.Thread
             deltaFlg = true
             xhrPath += (+cache.res_length + 1) + "-"
 
-        ajaxData =
-          url: xhrPath
-          cache: false
-          dataType: "text"
-          headers: {}
+        request = new app.HTTP.Request("GET", xhrPath, {
+          preventCache: true
+          timeout: 30 * 1000
           mimeType: "text/plain; charset=#{xhrCharset}"
-          timeout: 1000 * 30
-          complete: ($xhr) ->
-            if $xhr.status is 200
-              d.resolve($xhr)
-            else if promiseCacheGet.state() is "resolved" and $xhr.status is 304
-              d.resolve($xhr)
-            else
-              d.reject($xhr)
+        })
 
         if promiseCacheGet.state() is "resolved"
           if cache.last_modified?
-            ajaxData.headers["If-Modified-Since"] =
+            request.headers["If-Modified-Since"] =
               new Date(cache.last_modified).toUTCString()
           if cache.etag?
-            ajaxData.headers["If-None-Match"] = cache.etag
+            request.headers["If-None-Match"] = cache.etag
 
-        $.ajax(ajaxData)
+        request.send (response) ->
+          if response.status is 200
+            d.resolve(response)
+          else if promiseCacheGet.state() is "resolved" and response.status is 304
+            d.resolve(response)
+          else
+            d.reject(response)
 
     #パース
-    .pipe((fn = ($xhr) =>
+    .pipe((fn = (response) =>
       $.Deferred (d) =>
         guessRes = app.url.guess_type(@url)
 
-        if $xhr?.status is 200
+        if response?.status is 200
           if deltaFlg
-            thread = Thread.parse(@url, cache.data + $xhr.responseText)
+            thread = Thread.parse(@url, cache.data + response.body)
           else
-            thread = Thread.parse(@url, $xhr.responseText)
+            thread = Thread.parse(@url, response.body)
         #2ch系BBSのdat落ち
-        else if guessRes.bbs_type is "2ch" and $xhr?.status is 203
+        else if guessRes.bbs_type is "2ch" and response?.status is 203
           if promiseCacheGet.state() is "resolved"
             thread = Thread.parse(@url, cache.data)
           else
-            thread = Thread.parse(@url, $xhr.responseText)
+            thread = Thread.parse(@url, response.body)
         else if promiseCacheGet.state() is "resolved"
           thread = Thread.parse(@url, cache.data)
 
         #パース成功
         if thread
           #通信成功
-          if $xhr?.status is 200 or
+          if response?.status is 200 or
               #通信成功（更新なし）
-              $xhr?.status is 304 or
+              response?.status is 304 or
               #キャッシュが期限内だった場合
-              (not $xhr and promiseCacheGet.state() is "resolved")
-            d.resolve($xhr, thread)
+              (not response and promiseCacheGet.state() is "resolved")
+            d.resolve(response, thread)
           #2ch系BBSのdat落ち
-          else if guessRes.bbs_type is "2ch" and $xhr?.status is 203
-            d.reject($xhr, thread)
+          else if guessRes.bbs_type is "2ch" and response?.status is 203
+            d.reject(response, thread)
           else
-            d.reject($xhr, thread)
+            d.reject(response, thread)
         #パース失敗
         else
-          d.reject($xhr)
+          d.reject(response)
     ), fn)
 
     #したらば/まちBBS最新レス削除対策
-    .pipe ($xhr, thread) ->
+    .pipe (response, thread) ->
       $.Deferred (d) ->
         getCachedInfo
           .done (cachedInfo) ->
@@ -135,29 +131,29 @@ class app.Thread
                 mail: "あぼーん"
                 message: "あぼーん"
                 other: "あぼーん"
-            d.resolve($xhr, thread)
+            d.resolve(response, thread)
             return
           .fail ->
-            d.resolve($xhr, thread)
+            d.resolve(response, thread)
             return
         return
 
     #コールバック
-    .always ($xhr, thread) =>
+    .always (response, thread) =>
       if thread
         @title = thread.title
         @res = thread.res
       return
 
-    .done ($xhr, thread) =>
+    .done (response, thread) =>
       resDeferred.resolve()
       return
 
-    .fail ($xhr, thread) =>
+    .fail (response, thread) =>
       @message = ""
 
       #2chでrejectされてる場合は移転を疑う
-      if app.url.tsld(@url) is "2ch.net" and $xhr
+      if app.url.tsld(@url) is "2ch.net" and response
         app.util.ch_server_move_detect(app.url.thread_to_board(@url))
           #移転検出時
           .done (newBoardURL) =>
@@ -176,7 +172,7 @@ class app.Thread
             return
           #移転検出出来なかった場合
           .fail =>
-            if $xhr?.status is 203
+            if response?.status is 203
               @message += "dat落ちしたスレッドです。"
             else
               @message += "スレッドの読み込みに失敗しました。"
@@ -196,49 +192,45 @@ class app.Thread
       return
 
     #キャッシュ更新部
-    .done ($xhr, thread) =>
+    .done (response, thread) =>
       #通信に成功した場合
-      if $xhr?.status is 200
+      if response?.status is 200
         cache.last_updated = Date.now()
         cache.res_length = thread.res.length
 
         if deltaFlg
-          cache.data += $xhr.responseText
+          cache.data += response.body
         else
-          cache.data = $xhr.responseText
+          cache.data = response.body
 
         lastModified = new Date(
-          $xhr.getResponseHeader("Last-Modified") or "dummy"
+          response.headers["Last-Modified"] or "dummy"
         ).getTime()
 
         if not isNaN(lastModified)
           cache.last_modified = lastModified
 
-        etag = $xhr.getResponseHeader("ETag")
+        etag = response.headers["ETag"]
         if etag
           cache.etag = etag
 
-        cache.put().done => @_cachePut.notify("done"); return
+        cache.put()
 
       #304だった場合はアップデート時刻のみ更新
-      else if promiseCacheGet.state() is "resolved" and $xhr?.status is 304
+      else if promiseCacheGet.state() is "resolved" and response?.status is 304
         cache.last_updated = Date.now()
-        cache.put().done => @_cachePut.notify("done"); return
-      return
-
-    .fail =>
-      @_cachePut.notify("unexecuted")
+        cache.put()
       return
 
     #ブックマーク更新部
-    .always ($xhr, thread) =>
+    .always (response, thread) =>
       if thread?
         app.bookmark.update_res_count(@url, thread.res.length)
       return
 
     #dat落ち検出
-    .fail ($xhr, thread) =>
-      if $xhr?.status is 203
+    .fail (response, thread) =>
+      if response?.status is 203
         app.bookmark.update_expired(@url, true)
       return
 
