@@ -567,23 +567,38 @@ describe "app.Thread", ->
 
   describe "実例テスト: スレッド取得（初回, 成功）", ->
     it "2ch", ->
-      test200(new app.Thread(data.ch.url), data: data.ch)
+      promise = test200(new app.Thread(data.ch.url), data: data.ch)
+
+      waitsFor ->
+        promise.state() is "resolved"
       return
 
     it "2ch（破損）", ->
-      test200(new app.Thread(data.chBroken.url), data: data.chBroken)
+      promise = test200(new app.Thread(data.chBroken.url), data: data.chBroken)
+
+      waitsFor ->
+        promise.state() is "resolved"
       return
 
     it "したらば", ->
-      test200(new app.Thread(data.jbbs.url), data: data.jbbs)
+      promise = test200(new app.Thread(data.jbbs.url), data: data.jbbs)
+
+      waitsFor ->
+        promise.state() is "resolved"
       return
 
     it "まちBBS", ->
-      test200(new app.Thread(data.machi.url), data: data.machi)
+      promise = test200(new app.Thread(data.machi.url), data: data.machi)
+
+      waitsFor ->
+        promise.state() is "resolved"
       return
 
     it "BBSPINK", ->
-      test200(new app.Thread(data.pink.url), data: data.pink)
+      promise = test200(new app.Thread(data.pink.url), data: data.pink)
+
+      waitsFor ->
+        promise.state() is "resolved"
       return
     return
 
@@ -634,46 +649,94 @@ describe "app.Thread", ->
 
     it "したらば", ->
       thread = new app.Thread(data.jbbs404.url)
-      testNotFoundType200(thread, data: data.jbbs404)
+      promise = testNotFoundType200(thread, data: data.jbbs404)
+
+      waitsFor ->
+        promise.state() is "resolved"
       return
 
     it "まちBBS", ->
       thread = new app.Thread(data.machi404.url)
-      testNotFoundType200(thread, data: data.machi404)
+      promise = testNotFoundType200(thread, data: data.machi404)
+
+      waitsFor ->
+        promise.state() is "resolved"
       return
     return
 
   describe "実例テスト: スレッド取得（キャッシュ有り、更新無し時）", ->
     it "2ch", ->
       thread = new app.Thread(data.ch.url)
-      test304(thread, statusCode: 304, data: data.ch, data2: data.chUpdated)
+      promise = test304(thread, {
+        statusCode: 304
+        data: data.ch
+        data2: data.chUpdated
+      })
+
+      waitsFor ->
+        promise.state() is "resolved"
       return
 
     it "したらば", ->
       thread = new app.Thread(data.jbbs.url)
-      test304(thread, statusCode: 200, data: data.jbbs, data2: data.jbbsDelta)
+      promise = test304(thread, {
+        statusCode: 200
+        data: data.jbbs
+        data2: data.jbbsDelta
+      })
+
+      waitsFor ->
+        promise.state() is "resolved"
       return
 
     it "まちBBS", ->
       thread = new app.Thread(data.machi.url)
-      test304(thread, statusCode: 304, data: data.machi, data2: data.machiDelta)
+      promise = test304(thread, {
+        statusCode: 304
+        data: data.machi
+        data2: data.machiDelta
+      })
+
+      waitsFor ->
+        promise.state() is "resolved"
       return
     return
 
   describe "実例テスト: スレッド取得（キャッシュ有り、更新時）", ->
     it "2ch", ->
       thread = new app.Thread(data.ch.url)
-      testUpdated(thread, delta: false, data: data.ch, data2: data.chUpdated)
+      promise = testUpdated(thread, {
+        delta: false
+        data: data.ch
+        data2: data.chUpdated
+      })
+
+      waitsFor ->
+        promise.state() is "resolved"
       return
 
     it "したらば", ->
       thread = new app.Thread(data.jbbs.url)
-      testUpdated(thread, delta: true, data: data.jbbs, data2: data.jbbsDelta)
+      promise = testUpdated(thread, {
+        delta: true
+        data: data.jbbs
+        data2: data.jbbsDelta
+      })
+
+      waitsFor ->
+        promise.state() is "resolved"
       return
 
     it "まちBBS", ->
       thread = new app.Thread(data.machi.url)
-      testUpdated(thread, delta: true, data: data.machi, data2: data.machiDelta)
+      promise = testUpdated(thread, {
+        delta: true
+        data: data.machi
+        data2: data.machiDelta
+      })
+
+      waitsFor ->
+        promise.state() is "resolved"
       return
     return
 
