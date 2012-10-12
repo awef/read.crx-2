@@ -1,4 +1,6 @@
 describe "app.Thread", ->
+  "use strict"
+
   cache = null
   cacheGetDeferred = null
   cachePutDeferred = null
