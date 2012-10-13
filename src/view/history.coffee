@@ -1,4 +1,4 @@
-app.boot "/view/history.html", ["history"], (History) ->
+app.boot "/view/history.html", ->
   $view = $(document.documentElement)
 
   app.view_module.view($view)
@@ -16,7 +16,7 @@ app.boot "/view/history.html", ["history"], (History) ->
 
     $view.addClass("loading")
 
-    History.get(undefined, 500).done (data) ->
+    app.History.get(undefined, 500).done (data) ->
       threadList.empty()
       threadList.addItem(data)
       $view.removeClass("loading")

@@ -136,7 +136,3 @@ class app.History
       return
     )
     .promise()
-
-app.module "history", [], (callback) ->
-  callback(app.History)
-  return

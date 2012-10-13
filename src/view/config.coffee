@@ -1,4 +1,4 @@
-app.boot "/view/config.html", ["cache", "bbsmenu", "history"], (Cache, BBSMenu, History) ->
+app.boot "/view/config.html", ["cache", "bbsmenu"], (Cache, BBSMenu) ->
   $view = $(document.documentElement)
 
   app.view_module.view($view)
@@ -138,7 +138,7 @@ app.boot "/view/config.html", ["cache", "bbsmenu", "history"], (Cache, BBSMenu, 
     $status = $view.find(".history_status")
 
     #履歴件数表示
-    History.count().done (count) ->
+    app.History.count().done (count) ->
       $status.text("#{count}件")
       return
 
@@ -147,7 +147,7 @@ app.boot "/view/config.html", ["cache", "bbsmenu", "history"], (Cache, BBSMenu, 
       $clear_button.remove()
       $status.text("削除中")
 
-      $.when(History.clear(), app.read_state.clear())
+      $.when(app.History.clear(), app.read_state.clear())
         .done ->
           $status.text("削除完了")
           parent.$("iframe[src=\"/view/history.html\"]").each ->
