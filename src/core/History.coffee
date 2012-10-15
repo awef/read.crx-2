@@ -117,6 +117,9 @@ class app.History
   @return {Promise}
   ###
   @clear = (offset) ->
+    if offset? and app.assert_arg("History.clear", ["number"], arguments)
+      return $.Deferred().reject().promise()
+
     @_openDB().pipe((db) -> $.Deferred (d) ->
       db.transaction(
         (transaction) ->

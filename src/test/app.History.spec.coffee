@@ -157,11 +157,11 @@ describe "app.History", ->
     expect(app.History.get("test", null).state()).toBe("rejected")
     expect(app.History.get(null, "test").state()).toBe("rejected")
     expect(app.History.get("test", "test").state()).toBe("rejected")
+    expect(app.History.clear("test").state()).toBe("rejected")
     return
 
   it "SQLインジェクションを引き起こす文字列も問題無く格納出来る", ->
-    # app.history.getは数値以外の引数を無視するので省略
-    # app.history.clearは引数を取らないので省略
+    # get/clearは数値以外の引数を無視するので省略
 
     date = Date.now()
     data1 = [
