@@ -38,7 +38,7 @@ do ->
 
 app.view_thread = {}
 
-app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolver, History) ->
+app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
   view_url = app.url.parse_query(location.href).q
   return alert("不正な引数です") unless view_url
   view_url = app.url.fix(view_url)
@@ -132,9 +132,9 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         threadContent.scrollTo(+$tmp.find(".num").text(), true, -100)
         return
 
-    app.view_thread._draw($view)
-      .always ->
-        History.add(view_url, document.title, opened_at)
+    app.view_thread._draw($view).always ->
+      app.History.add(view_url, document.title, opened_at)
+      return
 
   $view
     #名前欄が数字だった場合のポップアップ
@@ -528,7 +528,7 @@ app.boot "/view/thread.html", ["board_title_solver", "history"], (BoardTitleSolv
         return
 
     update_thread_footer = ->
-      if scroll_left is 0
+      if scroll_left <= 1
         next_unread.show()
         search_next_thread.show()
       else
@@ -631,23 +631,21 @@ app.view_thread._draw = ($view, force_update) ->
 
     deferred.resolve()
 
-  app.module null, ["thread"], (Thread) ->
-    thread = new Thread($view.attr("data-url"))
-    thread.get(force_update)
-      .progress ->
-        fn(thread, false)
-        return
-      .done ->
-        fn(thread, false)
-        return
-      .fail ->
-        fn(thread, true)
-        return
-      .always ->
-        $view.removeClass("loading")
-        setTimeout((-> $reload_button.removeClass("disabled")), 1000 * 5)
-        return
-    return
+  thread = new app.Thread($view.attr("data-url"))
+  thread.get(force_update)
+    .progress ->
+      fn(thread, false)
+      return
+    .done ->
+      fn(thread, false)
+      return
+    .fail ->
+      fn(thread, true)
+      return
+    .always ->
+      $view.removeClass("loading")
+      setTimeout((-> $reload_button.removeClass("disabled")), 1000 * 5)
+      return
 
   deferred.promise()
 

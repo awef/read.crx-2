@@ -144,7 +144,6 @@ class app.Board
 
         for thread in thread_list
           app.bookmark.update_res_count(thread.url, thread.res_count)
-        null
 
       else if cache_get_promise.state() is "resolved" and $xhr?.status is 304
         cache.last_updated = Date.now()

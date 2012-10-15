@@ -1,6 +1,8 @@
 do ->
   if frameElement
     modules = [
+      "History"
+      "Thread"
       "board"
       "bookmark"
       "config"
@@ -116,6 +118,9 @@ app.view_module.view = ($view) ->
 
         if message.history.current < message.history.stack.length - 1
           $view.find(".button_forward").removeClass("disabled")
+
+        if message.history.stack.length is 1 and app.config.get("always_new_tab") is "on"
+          $view.find(".button_back, .button_forward").remove()
     return
 
   $view.find(".button_back, .button_forward").on "click", ->

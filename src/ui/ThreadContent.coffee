@@ -53,7 +53,7 @@ class UI.ThreadContent
 
   ###*
   @method getRead
-  @retun {Number} 現在読んでいると推測されるレスの番号
+  @return {Number} 現在読んでいると推測されるレスの番号
   ###
   getRead: ->
     containerBottom = @container.scrollTop + @container.clientHeight

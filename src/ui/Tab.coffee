@@ -204,6 +204,7 @@ class UI.Tab
           .attr("data-tabsrc", param.url)
         .end()
         .find("iframe[data-tabid=\"#{tabId}\"]")
+          .trigger("tab_beforeurlupdate")
           .attr("src", param.url)
           .trigger("tab_urlupdated")
 

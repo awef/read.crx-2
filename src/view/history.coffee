@@ -1,7 +1,8 @@
-app.boot "/view/history.html", ["history"], (History) ->
+app.boot "/view/history.html", ->
   $view = $(document.documentElement)
 
   app.view_module.view($view)
+  app.view_module.tool_menu($view)
 
   $table = $("<table>")
   threadList = new UI.ThreadList($table[0], {
@@ -16,7 +17,7 @@ app.boot "/view/history.html", ["history"], (History) ->
 
     $view.addClass("loading")
 
-    History.get(undefined, 500).done (data) ->
+    app.History.get(undefined, 500).done (data) ->
       threadList.empty()
       threadList.addItem(data)
       $view.removeClass("loading")
@@ -31,4 +32,15 @@ app.boot "/view/history.html", ["history"], (History) ->
 
   $view.on("request_reload", load)
   load()
+
+  $view.find(".button_history_clear").on "click", ->
+    $.dialog("confirm", {
+      message: "履歴を削除しますか？"
+      label_ok: "はい"
+      label_no: "いいえ"
+    }).done (res) ->
+      if res
+        app.History.clear().done(load)
+      return
+    return
   return

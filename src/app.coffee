@@ -50,6 +50,8 @@ app.assert_arg = (name, rule, arg) ->
   @param {Boolean} [config.persistent=false]
 ###
 class app.Callbacks
+  "use strict"
+
   constructor: (config = {}) ->
     ###*
     @property _config
@@ -119,61 +121,100 @@ class app.Callbacks
         @_callbackStore = null
     return
 
-app.message = do ->
-  listenerStore = {}
+###*
+@namespace app
+@class Message
+@constructor
+###
+class app.Message
+  "use strict"
 
-  fire = (type, message) ->
+  constructor: ->
+    @_listenerStore = {}
+
+    window.addEventListener "message", (e) =>
+      return if e.origin isnt location.origin
+
+      data = JSON.parse(e.data)
+
+      return if data.type isnt "app.message"
+
+      if data.propagation isnt false
+        # parentから伝わってきた場合はiframeにも伝える
+        if e.source is parent
+          for iframe in document.getElementsByTagName("iframe")
+            iframe.contentWindow.postMessage(e.data, location.origin)
+        # iframeから伝わってきた場合は、parentと他のiframeにも伝える
+        else
+          if parent isnt window
+            parent.postMessage(e.data, location.origin)
+          for iframe in document.getElementsByTagName("iframe")
+            continue if iframe.contentWindow is e.source
+            iframe.contentWindow.postMessage(e.data, location.origin)
+
+      @_fire(data.message_type, data.message)
+      return
+    return
+
+  ###*
+  @method _fire
+  @private
+  @param {String} type
+  @param message
+  ###
+  _fire: (type, message) ->
     message = app.deep_copy(message)
-    app.defer ->
-      listenerStore[type]?.call(message)
+    app.defer =>
+      @_listenerStore[type]?.call(message)
+      return
     return
 
-  window.addEventListener "message", (e) ->
-    return if e.origin isnt location.origin
+  ###*
+  @method send
+  @param {String} type
+  @param message
+  @param {Window} [targetWindow]
+  ###
+  send: (type, message, targetWindow) ->
+    json = JSON.stringify
+      type: "app.message"
+      message_type: type
+      message: message
+      propagation: not targetWindow?
 
-    data = JSON.parse(e.data)
-
-    return if data.type isnt "app.message"
-
-    #parentから伝わってきた場合はiframeにも伝える
-    if e.source is parent
-      for iframe in document.getElementsByTagName("iframe")
-        iframe.contentWindow.postMessage(e.data, location.origin)
-    #iframeから伝わってきた場合は、parentと他のiframeにも伝える
+    if targetWindow?
+      targetWindow.postMessage(json, location.origin)
     else
-      if parent isnt window
-        parent.postMessage(e.data, location.origin)
-      for iframe in document.getElementsByTagName("iframe")
-        continue if iframe.contentWindow is e.source
-        iframe.contentWindow.postMessage(e.data, location.origin)
-
-    fire(data.message_type, data.message)
-    return
-
-  {
-    send: (type, message) ->
-      json = JSON.stringify
-        type: "app.message"
-        message_type: type
-        message: message
       if parent isnt window
         parent.postMessage(json, location.origin)
       for iframe in document.getElementsByTagName("iframe")
         iframe.contentWindow.postMessage(json, location.origin)
+      @_fire(type, message)
+    return
 
-      fire(type, message)
-      return
+  ###*
+  @method addListener
+  @param {String} type
+  @param {Function} listener
+  ###
+  addListener: (type, listener) ->
+    if not @_listenerStore[type]?
+      @_listenerStore[type] = new app.Callbacks(persistent: true)
+    @_listenerStore[type].add(listener)
+    return
 
-    add_listener: (type, listener) ->
-      if not listenerStore[type]?
-        listenerStore[type] = new app.Callbacks(persistent: true)
-      listenerStore[type].add(listener)
-      return
+  ###*
+  @method removeListener
+  @param {String} type
+  @param {Function} listener
+  ###
+  removeListener: (type, listener) ->
+    @_listenerStore[type]?.remove(listener)
+    return
 
-    remove_listener: (type, listener) ->
-      listenerStore[type]?.remove(listener)
-      return
-  }
+app.message = new app.Message()
+app.message.add_listener = app.message.addListener
+app.message.remove_listener = app.message.removeListener
 
 ###*
 @namespace app
@@ -181,6 +222,8 @@ app.message = do ->
 @constructor
 ###
 class app.Config
+  "use strict"
+
   constructor: ->
     ###*
     @property _cache
