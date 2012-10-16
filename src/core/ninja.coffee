@@ -10,7 +10,8 @@ class app.Ninja
     "2ch":
       siteId: "2ch"
       siteName: "2ちゃんねる"
-      cookieInfo: {url: "http://www.2ch.net/", name: "HAP"}
+      getCookieInfo: {url: "http://www.2ch.net/", name: "HAP"}
+      setCookieInfo: {url: "http://www.2ch.net/", domain: "2ch.net", name: "HAP"}
 
   ###*
   @method getCookie
@@ -20,7 +21,7 @@ class app.Ninja
   @getCookie: (callback) ->
     site = @_siteInfo["2ch"]
 
-    chrome.cookies.get site.cookieInfo, (res) ->
+    chrome.cookies.get site.getCookieInfo, (res) ->
       data = []
       if res
         data.push({site, value: res.value})
@@ -35,47 +36,61 @@ class app.Ninja
   @param {Function} [callback]
   ###
   @deleteCookie: (siteId, callback) ->
-    chrome.cookies.remove @_siteInfo[siteId].cookieInfo, ->
+    chrome.cookies.remove @_siteInfo[siteId].getCookieInfo, ->
       callback?()
       return
     return
 
-###
-app.ninja.get_info_stored = ->
-  data = []
-  for site_id, site of app.ninja._site_info
-    tmp = app.config.get("ninja_store_#{site_id}")
-    if tmp
-      data.push({site, value: JSON.parse(tmp).value})
+  ###*
+  @method getBackup
+  @static
+  @param {Function} callback
+  ###
+  @getBackup: (callback) ->
+    res = []
 
-  $.Deferred().resolve(data).promise()
+    for siteId, site of @_siteInfo
+      if value = app.config.get("ninja_backup_#{siteId}")
+        res.push(site: app.deep_copy(site), value: value)
 
-app.ninja.store_cookie = (site_id) ->
-  $.Deferred (deferred) ->
-    chrome.cookies.get app.ninja._site_info[site_id].cookie_info, (cookie) ->
-      if cookie
-        app.config.set("ninja_store_#{site_id}", JSON.stringify(cookie))
-        deferred.resolve()
-      else
-        deferred.reject()
-  .promise()
+    callback(res)
+    return
 
-app.ninja.restore_cookie = (site_id) ->
-  $.Deferred (deferred) ->
-    tmp = app.config.get("ninja_store_#{site_id}")
-    if tmp
-      backup = JSON.parse(tmp)
-      backup.url = app.ninja._site_info[site_id].cookie_info.url
-      delete backup.hostOnly
-      delete backup.session
-      chrome.cookies.set backup, ->
-        deferred.resolve()
+  ###*
+  @method backup
+  @static
+  @param {String} siteId
+  ###
+  @backup: (siteId) ->
+    @getCookie (res) ->
+      for entry in res when entry.site.siteId is siteId
+        app.config.set("ninja_backup_#{siteId}", entry.value)
+        break
+      return
+    return
+
+  ###*
+  @method restore
+  @static
+  @param {String} siteId
+  @param {function} [callback]
+  ###
+  @restore: (siteId, callback) ->
+    if value = app.config.get("ninja_backup_#{siteId}")
+      info = app.deep_copy(@_siteInfo[siteId].setCookieInfo)
+      info.value = value
+      chrome.cookies.set info, ->
+        callback?()
+        return
     else
-      deferred.reject()
-  .promise()
+      app.log("error", "app.Ninja.restore: バックアップが存在しません。")
+    return
 
-app.ninja.delete_stored_cookie = (site_id) ->
-  app.config.del("ninja_store_#{site_id}")
-
-  $.Deferred().resolve().promise()
-###
+  ###*
+  @method deleteBackup
+  @static
+  @param {String} siteId
+  ###
+  @deleteBackup: (siteId) ->
+    app.config.del("ninja_backup_#{siteId}")
+    return
