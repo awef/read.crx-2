@@ -50,56 +50,76 @@ app.boot "/view/config.html", ["cache", "bbsmenu"], (Cache, BBSMenu) ->
 
   #忍法帖関連機能
   do ->
-    fn = (res, $ul) ->
-      if res.length is 0
-        $ul.remove()
-      else
-        frag = document.createDocumentFragment()
+    $ninjaInfo = $view.find(".ninja_info")
 
-        for info in res
-          li = document.createElement("li")
-          li.setAttribute("data-site_id", info.site.siteId)
+    updateNinjaInfo = ->
+      app.Ninja.getCookie (cookies) ->
+        $ninjaInfo.empty()
 
-          div = document.createElement("div")
-          div.textContent = "#{info.site.siteName} : #{info.value}"
-          li.appendChild(div)
+        backup = app.Ninja.getBackup()
 
-          button = document.createElement("button")
-          button.type = "button"
-          button.textContent = "削除"
-          button.className = "del_ninja_cookie"
-          li.appendChild(button)
+        data = {}
 
-          frag.appendChild(li)
+        for item in cookies
+          data[item.site.siteId] =
+            site: item.site
+            hasCookie: true
+            hasBackup: false
 
-        $ul.append(frag)
+        for item in backup
+          if data[item.site.siteId]?
+            data[item.site.siteId].hasBackup = true
+          else
+            data[item.site.siteId] =
+              site: item.site
+              hasCookie: false
+              hasBackup: true
 
-    app.Ninja.getCookie (res) ->
-      fn(res, $view.find(".ninja_cookie_info"))
+        for siteId, item of data
+          $div = $("#template > .ninja_item").clone()
+
+          $div.attr("data-siteid", item.site.siteId)
+          $div.find(".site_name").text(item.site.siteName)
+
+          if item.hasCookie
+            $div.addClass("ninja_item_cookie_found")
+
+          if item.hasBackup
+            $div.addClass("ninja_item_backup_available")
+
+          $div.appendTo($ninjaInfo)
+        return
       return
 
-    $view.delegate ".del_ninja_cookie", "click", ->
-      $this = $(@)
-      $.dialog("confirm",
-          message: "本当に削除しますか？",
-          label_ok: "はい",
-          label_no: "いいえ"
-        )
-        .done (result) ->
-          if result
-            $this
-              .attr("disabled", true)
-              .text("削除中")
-            site_id = $this.parent().attr("data-site_id")
-            app.Ninja.deleteCookie site_id, ->
-              $this.parent().fadeOut ->
-                $this = $(@)
-                $parent = $this.parent()
-                $this.remove()
-                if $parent.children().length is 0
-                  $parent.remove()
-                return
-              return
+    updateNinjaInfo()
+
+    # 「Cookieを削除」ボタン
+    $ninjaInfo.on "click", ".ninja_item_cookie_found > button", ->
+      siteId = $(@).closest(".ninja_item").attr("data-siteid")
+      app.Ninja.deleteCookie(siteId, updateNinjaInfo)
+      return
+
+    # 「バックアップから復元」ボタン
+    $ninjaInfo.on "click", ".ninja_item_cookie_notfound > button", ->
+      siteId = $(@).closest(".ninja_item").attr("data-siteid")
+      app.Ninja.restore(siteId, updateNinjaInfo)
+      return
+
+    # 「バックアップを削除」ボタン
+    $ninjaInfo.on "click", ".ninja_item_backup_available > button", ->
+      siteId = $(@).closest(".ninja_item").attr("data-siteid")
+
+      $.dialog("confirm", {
+        message: "本当に削除しますか？"
+        label_ok: "はい"
+        label_no: "いいえ"
+      }).done (result) ->
+        if result
+          app.Ninja.deleteBackup(siteId)
+          updateNinjaInfo()
+        return
+      return
+    return
 
   #板覧更新ボタン
   $view.find(".bbsmenu_reload").on "click", ->
