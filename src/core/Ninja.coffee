@@ -44,17 +44,16 @@ class app.Ninja
   ###*
   @method getBackup
   @static
-  @param {Function} callback
+  @return {Array} result
   ###
-  @getBackup: (callback) ->
+  @getBackup: ->
     res = []
 
     for siteId, site of @_siteInfo
       if value = app.config.get("ninja_backup_#{siteId}")
         res.push(site: app.deep_copy(site), value: value)
 
-    callback(res)
-    return
+    res
 
   ###*
   @method backup
