@@ -93,3 +93,13 @@ class app.Ninja
   @deleteBackup: (siteId) ->
     app.config.del("ninja_backup_#{siteId}")
     return
+
+  # 2ch忍法帳自動バックアップ処理
+  app.defer ->
+    app.Ninja.backup("2ch")
+
+    chrome.cookies.onChanged.addListener (info) ->
+      if not info.removed and info.cookie.domain is ".2ch.net" and info.cookie.name is "HAP"
+        app.Ninja.backup("2ch")
+      return
+    return
