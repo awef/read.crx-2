@@ -142,6 +142,8 @@ app.main = ->
 
   document.title = app.manifest.name
 
+  app.Ninja.enableAutoBackup()
+
   app.message.add_listener "notify", (message) ->
     text = message.message
     html = message.html

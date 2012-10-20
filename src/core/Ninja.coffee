@@ -94,8 +94,11 @@ class app.Ninja
     app.config.del("ninja_backup_#{siteId}")
     return
 
-  # 2ch忍法帳自動バックアップ処理
-  app.defer ->
+  ###*
+  @method enableAutoBackup
+  @static
+  ###
+  @enableAutoBackup: ->
     app.Ninja.backup("2ch")
 
     chrome.cookies.onChanged.addListener (info) ->
