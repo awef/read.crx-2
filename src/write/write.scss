@@ -29,9 +29,6 @@ header {
     font-size: 18px;
     margin: 0;
   }
-  > button {
-    @include button;
-  }
 }
 
 .preview {
@@ -51,7 +48,6 @@ header {
     overflow: auto;
   }
   > .close_preview {
-    @include button;
     position: absolute;
     right: 10px;
     top: 5px;
@@ -65,7 +61,7 @@ form {
   -webkit-box-orient: vertical;
 }
 
-input[type="submit"] {
+input[type="submit"], button {
   @include button;
 }
 
