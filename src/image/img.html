@@ -131,22 +131,6 @@ window.addEventListener('load', function() {
         });
   });
 
-  //虫眼鏡2
-  add(function(paper, container) {
-    paper
-      .set(
-          paper.circle(45, 45, 20),
-          paper.path('M60,60 L80,80')
-        )
-      .attr({
-          stroke: '#777',
-          'stroke-width': 10,
-          'stroke-linecap': 'round',
-          fill: null
-        })
-      .scale(0.75);
-  });
-
   //↑
   add(function(paper, container) {
     paper
