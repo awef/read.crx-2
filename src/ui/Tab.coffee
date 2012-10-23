@@ -38,37 +38,38 @@ class UI.Tab
         $("<ul>", class: "tab_tabbar")
         $("<div>", class: "tab_container")
       )
-      .on "mousewheel", ".tab_tabbar", (e) ->
-        e.preventDefault()
+      .find(".tab_tabbar")
+        .on "mousewheel", (e) ->
+          e.preventDefault()
 
-        if e.originalEvent.wheelDelta > 0
-          tmp = "previousSibling"
-        else
-          tmp = "nextSibling"
+          if e.originalEvent.wheelDelta > 0
+            tmp = "previousSibling"
+          else
+            tmp = "nextSibling"
 
-        next = tab.element.querySelector("li.tab_selected")?[tmp]
+          next = tab.element.querySelector("li.tab_selected")?[tmp]
 
-        if next
-          tab.update(next.getAttribute("data-tabid"), selected: true)
-        return
+          if next
+            tab.update(next.getAttribute("data-tabid"), selected: true)
+          return
 
-      .on "mousedown", ".tab_tabbar > li", (e) ->
-        return if e.which is 3
-        return if e.target.nodeName is "IMG"
+        .on "mousedown", "li", (e) ->
+          return if e.which is 3
+          return if e.target.nodeName is "IMG"
 
-        if e.which is 2
-          tab.remove(@getAttribute("data-tabid"))
-        else
-          tab.update(@getAttribute("data-tabid"), selected: true)
-        return
+          if e.which is 2
+            tab.remove(@getAttribute("data-tabid"))
+          else
+            tab.update(@getAttribute("data-tabid"), selected: true)
+          return
 
-      .on "mousedown", ".tab_tabbar img", (e) ->
-        e.preventDefault()
-        return
+        .on "mousedown", "img", (e) ->
+          e.preventDefault()
+          return
 
-      .on "click", ".tab_tabbar img", ->
-        tab.remove(@parentNode.getAttribute("data-tabid"))
-        return
+        .on "click", "img", ->
+          tab.remove(@parentNode.getAttribute("data-tabid"))
+          return
 
     window.addEventListener "message", (e) =>
       return if e.origin isnt location.origin
