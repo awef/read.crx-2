@@ -204,21 +204,27 @@ app.main = ->
       #2->3
       if message.val is "pane-3" or message.val is "pane-3h"
         for tmp in tabA.getAll()
-          if app.url.guess_type(tmp.url).type is "thread"
+          iframe = document.querySelector("iframe[data-tabid=\"#{tmp.tabId}\"]")
+          tmpURL = iframe.getAttribute("data-url")
+
+          if app.url.guess_type(tmpURL).type is "thread"
             app.message.send "open", {
                 new_tab: true
                 lazy: true
-                url: tmp.url
-                title: tmp.titl
+                url: tmpURL
+                title: tmp.title
               }
             tabA.remove(tmp.tabId)
       #3->2
       if message.val is "pane-2"
         for tmp in tabB.getAll()
+          iframe = document.querySelector("iframe[data-tabid=\"#{tmp.tabId}\"]")
+          tmpURL = iframe.getAttribute("data-url")
+
           app.message.send "open", {
               new_tab: true
               lazy: true
-              url: tmp.url
+              url: tmpURL
               title: tmp.title
             }
           tabB.remove(tmp.tabId)
