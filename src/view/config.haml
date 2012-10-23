@@ -110,8 +110,7 @@
       %section
         %h2 忍法帖
         %div
-          %ul.ninja_cookie_info
-          .ninja_cookie_empty_message 忍法帳Cookieがありません
+          .ninja_info
 
       %section
         %h2 データ
@@ -153,3 +152,22 @@
           %label
             %input.theme_none(type="checkbox")
             テーマなし
+    #template(hidden)
+      .ninja_item
+        %span.site_name
+
+        %div
+          Cookie:
+          %span.ninja_item_cookie_found
+            あり
+            %button Cookieを削除
+          %span.ninja_item_cookie_notfound
+            無し
+            %button バックアップから復元
+
+        %div
+          バックアップ:
+          %span.ninja_item_backup_available
+            あり
+            %button バックアップを削除
+          %span.ninja_item_backup_unavailable 無し

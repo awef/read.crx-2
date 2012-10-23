@@ -253,6 +253,7 @@ lambda {
 
   file_coffee "debug/write/write.js", [
     "src/core/url.coffee",
+    "src/core/Ninja.coffee",
     "src/write/write.coffee"
   ]
 

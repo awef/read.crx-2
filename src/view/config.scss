@@ -56,7 +56,7 @@ section {
   }
 }
 
-h2 {
+section > h2 {
   font-size: 1.125rem;
   font-weight: normal;
   margin: 0 1rem 0 0;
@@ -98,26 +98,26 @@ section button {
   display: block;
 }
 
-.ninja_cookie_info {
-  list-style-type: none;
-  margin: 5px;
-  padding: 5px;
-  border-radius: 3px;
-  border: 1px solid #aaaaaa;
-  font-size: 12px;
-  li {
-    display: -webkit-box;
-    > div {
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      -webkit-box-flex: 1;
-    }
-  }
+.ninja_info:empty::after {
+  content: "忍法帳データが有りません。";
 }
 
-.ninja_cookie_info + .ninja_cookie_empty_message {
-  display: none;
+.ninja_item {
+  > div {
+    display: inline-block;
+  }
+
+  > .site_name {
+    display: none; //現状2ch以外の忍法帳に対応していないため
+  }
+
+  &:not(.ninja_item_cookie_found) .ninja_item_cookie_found,
+  &.ninja_item_cookie_found .ninja_item_cookie_notfound,
+  &:not(.ninja_item_backup_available) .ninja_item_backup_available,
+  &:not(.ninja_item_backup_available) .ninja_item_cookie_notfound button,
+  &.ninja_item_backup_available .ninja_item_backup_unavailable {
+    display: none;
+  }
 }
 
 .bbsmenu_reload_status {

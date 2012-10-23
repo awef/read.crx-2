@@ -212,4 +212,30 @@ app.boot "/write/write.html", ->
     write_timer.wake()
 
     $view.find(".notice").text("書き込み中")
+
+  # 忍法帳関連処理
+  do ->
+    return if app.url.tsld(arg.url) isnt "2ch.net"
+
+    app.Ninja.getCookie (cookies) ->
+      backup = app.Ninja.getBackup()
+
+      availableCookie = cookies.some((info) -> info.site.siteId is "2ch")
+      availableBackup = backup.some((info) -> info.site.siteId is "2ch")
+
+      if (not availableCookie) and availableBackup
+        $view.find(".notice").html("""
+          忍法帳クッキーが存在しませんが、バックアップが利用可能です。
+          <button class="ninja_restore">バックアップから復元</button>
+        """)
+      return
+
+    $view.on "click", ".ninja_restore", (e) ->
+      e.preventDefault()
+      $view.find(".notice").text("復元中です。")
+      app.Ninja.restore "2ch", ->
+        $view.find(".notice").text("忍法帳クッキーの復元が完了しました。")
+        return
+      return
+    return
   return
