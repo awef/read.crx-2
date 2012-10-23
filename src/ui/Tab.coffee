@@ -108,6 +108,61 @@ class UI.Tab
             _internal: true
           })
       return
+
+    # タブのソート処理
+    do =>
+      startPageX = null
+      $target = null
+
+      $overlay = $("<div>", css: {
+        position: "fixed"
+        top: 0
+        right: 0
+        bottom: 0
+        left: 0
+        "z-index": 999
+        curosr: "-webkit-grabbing"
+      })
+        .on "contextmenu", (e) ->
+          e.preventDefault()
+          return
+
+        .on "mousemove", (e) ->
+          if not startPageX?
+            startPageX = e.pageX
+
+          movementX = e.pageX - startPageX
+
+          if $target.next().length is 1 and movementX > $target.next().width() / 2
+            startPageX += $target.next().width()
+            movementX = e.pageX - startPageX
+            $target.before($target.next())
+          else if $target.prev().length is 1 and movementX < -$target.prev().width() / 2
+            startPageX -= $target.prev().width()
+            movementX = e.pageX - startPageX
+            $target.after($target.prev())
+
+          $target.css("left", movementX)
+          return
+
+        .on "mouseup mouseout", ->
+          # detachするとmouseoutも発火するので二重に呼ばれる
+          startPageX = null
+          $target?.css(left: 0, "z-index": "auto")
+          $target = null
+          $(@).detach()
+          return
+
+      $(@element).find(".tab_tabbar")
+        .on "mousedown", "li", (e) ->
+          if e.which isnt 1 then return
+          if e.target.nodeName is "IMG" then return
+
+          $target = $(@)
+          $target.css("z-index", 998)
+          $overlay.appendTo(document.body)
+          return
+      return
     return
 
   ###*
