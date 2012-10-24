@@ -187,6 +187,7 @@ app.main = ->
   $("#tab_a").data("tab", tabA)
   tabB = new UI.Tab(document.querySelector("#tab_b"))
   $("#tab_b").data("tab", tabB)
+  $(".tab .tab_tabbar").sortable()
   app.view_setup_resizer()
 
   $view.on "tab_urlupdated", "iframe", ->
