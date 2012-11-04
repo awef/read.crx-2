@@ -1,5 +1,6 @@
 app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
   $view = $(document.documentElement)
+  accordion = new UI.Accordion(document.body)
 
   board_to_li = (board) ->
     li = document.createElement("li")
@@ -41,12 +42,10 @@ app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
         if bookmark.type is "board"
           frag.appendChild(bookmark_to_li(bookmark))
 
-      $view
-        .find("ul:first-of-type")
-          .append(frag)
-        .end()
-        .find("body")
-          .accordion()
+      $view.find("ul:first-of-type").append(frag)
+      accordion.update()
+      accordion.open($view[0].querySelector("h3"), 0)
+      return
 
     #ブックマーク更新時処理
     app.message.add_listener "bookmark_updated", (message) ->
@@ -93,10 +92,9 @@ app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
               ul.appendChild(board_to_li(board))
             frag.appendChild(ul)
 
-        $view
-          .find("body")
-            .append(frag)
-            .accordion()
+        $view.find("body").append(frag)
+        accordion.update()
+        accordion.open($view[0].querySelector("h3"), 0)
         $view.removeClass("loading")
         return
       return
