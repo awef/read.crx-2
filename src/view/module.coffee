@@ -81,12 +81,93 @@ app.view_module.view = ($view) ->
       else if message.type is "tab_selected"
         $view.trigger("tab_selected")
 
-  #更新系のキーが押された場合の処理
-  $(window)
-    .bind "keydown", (e)->
-      if e.which is 116 or (e.ctrlKey and e.which is 82) #F5 or Ctrl+R
+  # キーボード操作関連
+  $view
+    .on "keydown", (e)->
+      # F5 or Ctrl+R
+      if e.which is 116 or (e.ctrlKey and e.which is 82)
         e.preventDefault()
-        $view.trigger("request_reload")
+        command = "r"
+
+      # : (基本的に入力欄では発動しないが、空白の入力欄に入力された場合のみ例外)
+      else if e.which is 186
+        if (
+          not (e.target.nodeName in ["INPUT", "TEXTAREA"]) or
+          e.target.value is ""
+        )
+          e.preventDefault()
+          $("<input>", class: "command").appendTo($view).focus()
+
+      # 入力欄内では発動しない系
+      else if not (e.target.nodeName in ["INPUT", "TEXTAREA"])
+        switch (e.which)
+          # Enter
+          when 13 then command = "enter"
+          # left, h
+          when 37, 72
+            e.preventDefault()
+            command = "left"
+          # right, l
+          when 39, 76
+            e.preventDefault()
+            command = "right"
+          # up, k
+          when 38, 75
+            e.preventDefault()
+            command = "up"
+          # down, j
+          when 40, 74
+            e.preventDefault()
+            command = "down"
+          # r
+          when 82
+            # Shift+r
+            if e.shiftKey
+              command = "r"
+          # w
+          when 87
+            # Shift+w
+            if e.shiftKey
+              command = "q"
+          # /
+          when 191
+            # ?
+            if e.shiftKey
+              command = "help"
+            # /
+            else
+              e.preventDefault()
+              $(".searchbox, form.search > input[type=\"text\"]").focus()
+
+      # コマンド入力欄操作
+      else if e.target.classList.contains("command")
+        # Enter
+        if e.which is 13
+          command = e.target.value.replace(/[\s]/g, "")
+          $(e.target).remove()
+        # Esc
+        else if e.which is 27
+          $(e.target).remove()
+
+      # 数値
+      if command and /^\d+$/.test(command)
+        if $view.is(".view_thread")
+          $view.data("threadContent").scrollTo(+command)
+          $view.data("threadContent").select(+command)
+
+      switch command
+        when "up"
+          if $view.hasClass("view_thread")
+            $view.data("threadContent").selectPrev()
+        when "down"
+          if $view.hasClass("view_thread")
+            $view.data("threadContent").selectNext()
+        when "r"
+          $view.trigger("request_reload")
+        when "q"
+          parent.postMessage(
+            JSON.stringify(type: "request_killme"), location.origin)
+      return
 
   $view
     #mousedown通知

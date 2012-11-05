@@ -65,6 +65,96 @@ class UI.ThreadContent
     read
 
   ###*
+  @method getSelected
+  @return {Number|null}
+  ###
+  getSelected: ->
+    tmp = @container.querySelector("article.selected")
+    if tmp
+      +tmp.querySelector(".num").textContent
+    else
+      null
+
+  ###*
+  @method select
+  @param {Number} resNum
+  ###
+  select: (resNum) ->
+    @container.querySelector("article.selected")?.classList.remove("selected")
+    @container.children[resNum - 1]?.classList.add("selected")
+    return
+
+  ###*
+  @method selectNext
+  ###
+  selectNext: ->
+    current = @getSelected()
+    target = @container.children[current - 1]
+    if not current or (
+      # 現在選択されているレスが表示範囲外だった場合、それを無視する
+      target.offsetTop + target.offsetHeight < @container.scrollTop or
+      @container.scrollTop + @container.offsetHeight < target.offsetTop
+    )
+      current = @getRead()
+      @select(current)
+      target = @container.children[current - 1]
+
+    if (
+      @container.scrollTop + @container.offsetHeight >=
+      target.offsetTop + target.offsetHeight
+    ) and target.nextElementSibling
+      target = target.nextElementSibling
+      @select(current + 1)
+
+    if (
+      @container.scrollTop + @container.offsetHeight <
+      target.offsetTop + target.offsetHeight
+    )
+      if target.offsetHeight >= @container.offsetHeight
+        @container.scrollTop += @container.offsetHeight * 0.5
+      else
+        @container.scrollTop = (
+          target.offsetTop -
+          @container.offsetHeight +
+          target.offsetHeight +
+          10
+        )
+    else if not target.nextElementSibling
+      @container.scrollTop += @container.offsetHeight * 0.5
+    return
+
+  ###*
+  @method selectPrev
+  ###
+  selectPrev: ->
+    current = @getSelected()
+    target = @container.children[current - 1]
+    if not current or (
+      # 現在選択されているレスが表示範囲外だった場合、それを無視する
+      target.offsetTop + target.offsetHeight < @container.scrollTop or
+      @container.scrollTop + @container.offsetHeight < target.offsetTop
+    )
+      current = @getRead()
+      @select(current)
+      target = @container.children[current - 1]
+
+    if (
+      @container.scrollTop <= target.offsetTop and
+      target.previousElementSibling
+    )
+      target = target.previousElementSibling
+      @select(current - 1)
+
+    if @container.scrollTop > target.offsetTop
+      if target.offsetHeight >= @container.offsetHeight
+        @container.scrollTop -= @container.offsetHeight * 0.5
+      else
+        @container.scrollTop = target.offsetTop - 10
+    else if not target.previousElementSibling
+      @container.scrollTop -= @container.offsetHeight * 0.5
+    return
+
+  ###*
   @method addItem
   @param {Object | Array}
   ###
