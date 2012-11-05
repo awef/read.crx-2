@@ -159,14 +159,30 @@ app.view_module.view = ($view) ->
         when "up"
           if $view.hasClass("view_thread")
             $view.data("threadContent").selectPrev()
+          else if $view.hasClass("view_sidemenu")
+            $view.data("accordion").selectPrev()
         when "down"
           if $view.hasClass("view_thread")
             $view.data("threadContent").selectNext()
+          else if $view.hasClass("view_sidemenu")
+            $view.data("accordion").selectNext()
+        when "left"
+          if $view.hasClass("view_sidemenu")
+            $a = $view.find("li > a.selected")
+            if $a.length is 1
+              $view.data("accordion").select($a.closest("ul").prev()[0])
+        when "right"
+          if $view.hasClass("view_sidemenu")
+            $a = $view.find("h3.selected + ul a")
+            if $a.length > 0
+              $view.data("accordion").select($a[0])
         when "r"
           $view.trigger("request_reload")
         when "q"
           parent.postMessage(
             JSON.stringify(type: "request_killme"), location.origin)
+        when "enter"
+          $view.find(".selected").trigger("click")
       return
 
   $view
