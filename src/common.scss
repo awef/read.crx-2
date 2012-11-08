@@ -14,7 +14,7 @@ $z-index-notification: 8;
   }
 
   :focus .selected {
-    box-shadow: 0 0 0 2px hsl(0, 0%, 50%) inset;
+    outline: 2px hsl(0, 0%, 50%) solid;
   }
 
   .command {
