@@ -96,7 +96,10 @@ app.view_module.view = ($view) ->
           e.target.value is ""
         )
           e.preventDefault()
-          $("<input>", class: "command").appendTo($view).focus()
+          $("<input>", class: "command")
+            .data("lastActiveElement", document.activeElement)
+            .appendTo($view)
+            .focus()
 
       # 入力欄内では発動しない系
       else if not (e.target.nodeName in ["INPUT", "TEXTAREA"])
@@ -144,9 +147,11 @@ app.view_module.view = ($view) ->
         # Enter
         if e.which is 13
           command = e.target.value.replace(/[\s]/g, "")
+          $(e.target).data("lastActiveElement")?.focus()
           $(e.target).remove()
         # Esc
         else if e.which is 27
+          $(e.target).data("lastActiveElement")?.focus()
           $(e.target).remove()
 
       # 数値
