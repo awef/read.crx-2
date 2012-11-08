@@ -1,3 +1,70 @@
+app.view ?= {}
+
+###*
+@namespace app.view
+@class Index
+@constructor
+@param {Element} element
+###
+class app.view.Index
+  constructor: (@element) ->
+    @$element = $(@element)
+    index = @
+
+    @$element
+      #iframe以外の部分がクリックされた時にフォーカスをiframe内に戻す
+      .on "click", =>
+        target = index.element.querySelector(".tab_content.tab_focused")
+        target or= index.element.querySelector("#left_pane")
+        index.focus(target)
+        return
+
+      #タブの内容がクリックされた時にフォーカスを移動
+      .on "view_mousedown", ".tab_content:not(.tab_focused)", ->
+        index.focus(@)
+        return
+
+      #タブが選択された時にフォーカスを移動
+      .on "tab_selected", ".tab_content", ->
+        index.focus(@)
+        return
+
+      #フォーカスしているタブが削除された時にフォーカスを移動
+      .on "tab_removed", ".tab_content", ->
+        app.defer ->
+          $tmp = $(".tab:has(.tab_selected):first")
+          if $tmp.length is 1
+            index.focus($tmp.find(".tab_selected.tab_content")[0])
+          else
+            #フォーカス対象のタブが無い場合、板一覧にフォーカスする
+            index.focus(index.element.querySelector("#left_pane"))
+          return
+        return
+
+      #フォーカスしているコンテンツが再描画された場合、フォーカスを合わせ直す
+      .on "view_loaded", ".tab_content.tab_focused", ->
+        index.focus(@)
+        return
+    return
+
+  ###*
+  @method focus
+  @param {Element} iframe
+  ###
+  focus: (iframe) ->
+    $iframe = $(iframe)
+
+    if not $iframe.hasClass("tab_focused")
+      @$element.find(".tab_focused").removeClass("tab_focused")
+
+      if $iframe.hasClass("tab_content")
+        $iframe.closest(".tab").find(".tab_selected").addClass("tab_focused")
+
+    app.defer ->
+      $iframe.contents().find(".content").focus()
+      return
+    return
+
 app.boot "/view/index.html", ->
   arg = app.url.parse_query(location.href)
   query = arg.q
@@ -137,6 +204,7 @@ app.main = ->
       null
 
   $view = $(document.documentElement)
+  new app.view.Index($view[0])
 
   app.view_module.view($view)
 
@@ -363,14 +431,6 @@ app.main = ->
 
     return
 
-  $view
-    .bind "request_reload", ->
-      iframe = document.querySelector("iframe.tab_focused")
-      if iframe
-        iframe.contentWindow.postMessage(
-          JSON.stringify(type: "request_reload"), location.origin
-        )
-
   $(window)
     #データ保存等の後片付けを行なってくれるzombie.html起動
     .bind "unload", ->
@@ -389,51 +449,6 @@ app.main = ->
     .delegate "iframe.tab_content", "tab_selected", ->
       tmp = JSON.stringify(type: "tab_selected")
       @contentWindow.postMessage(tmp, location.origin)
-      return
-
-    #タブの内容がクリックされた時にフォーカスを移動
-    .delegate ".tab_content:not(.tab_focused)", "view_mousedown", ->
-      $(".tab_focused").removeClass("tab_focused")
-      $(@)
-        .closest(".tab")
-          .find(".tab_selected")
-            .addClass("tab_focused")
-            .filter(".tab_content")
-              .contents()
-                .find(".content")
-                  .focus()
-      return
-
-    #タブが選択された時にフォーカスを移動
-    .delegate ".tab_content", "tab_selected", ->
-      $iframe = $(@)
-      $(".tab_focused").removeClass("tab_focused")
-      $iframe.closest(".tab").find(".tab_selected").addClass("tab_focused")
-      #クリックでタブを選択した時にフォーカスが移らなくなるため、deferで飛ばす
-      app.defer =>
-        $iframe.contents().find(".content").focus()
-      return
-
-    #フォーカスしているタブが削除された時にフォーカスを移動
-    .on "tab_removed", ".tab_content", ->
-      app.defer ->
-        $tmp = $(".tab:has(.tab_selected):first")
-        if $tmp.length is 1
-          $tmp
-            .find(".tab_selected")
-              .addClass("tab_focused")
-              .filter(".tab_content")
-                .contents()
-                  .find(".content")
-                    .focus()
-        else
-          $("#left_pane").contents().find("[tabindex]").focus()
-        return
-      return
-
-    #フォーカスしているタブ内のコンテンツが再描画された場合、フォーカスを合わせ直す
-    .delegate ".tab_content.tab_focused", "view_loaded", ->
-      $(@).contents().find(".content").focus()
       return
 
   #タブコンテキストメニュー
