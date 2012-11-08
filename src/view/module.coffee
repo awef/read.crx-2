@@ -103,20 +103,20 @@ app.view_module.view = ($view) ->
         switch (e.which)
           # Enter
           when 13 then command = "enter"
-          # left, h
-          when 37, 72
+          # h
+          when 72
             e.preventDefault()
             command = "left"
-          # right, l
-          when 39, 76
+          # l
+          when 76
             e.preventDefault()
             command = "right"
-          # up, k
-          when 38, 75
+          # k
+          when 75
             e.preventDefault()
             command = "up"
-          # down, j
-          when 40, 74
+          # j
+          when 74
             e.preventDefault()
             command = "down"
           # r
