@@ -415,15 +415,20 @@ app.main = ->
       return
 
     #フォーカスしているタブが削除された時にフォーカスを移動
-    .delegate ".tab_content", "tab_removed", ->
+    .on "tab_removed", ".tab_content", ->
       app.defer ->
-        $(".tab:has(.tab_selected):first")
-          .find(".tab_selected")
-            .addClass("tab_focused")
-            .filter(".tab_content")
-              .contents()
-                .find(".content")
-                  .focus()
+        $tmp = $(".tab:has(.tab_selected):first")
+        if $tmp.length is 1
+          $tmp
+            .find(".tab_selected")
+              .addClass("tab_focused")
+              .filter(".tab_content")
+                .contents()
+                  .find(".content")
+                    .focus()
+        else
+          $("#left_pane").contents().find("[tabindex]").focus()
+        return
       return
 
     #フォーカスしているタブ内のコンテンツが再描画された場合、フォーカスを合わせ直す
