@@ -5,6 +5,7 @@ window.UI ?= {}
 @class Tab
 @constructor
 @param {Element} container
+@requires UI.VirtualNotch
 ###
 class UI.Tab
   "use strict"
@@ -39,7 +40,7 @@ class UI.Tab
         $("<div>", class: "tab_container")
       )
       .find(".tab_tabbar")
-        .on "mousewheel", (e) ->
+        .on "notchedmousewheel", (e) ->
           e.preventDefault()
 
           if e.originalEvent.wheelDelta > 0
@@ -70,6 +71,8 @@ class UI.Tab
         .on "click", "img", ->
           tab.remove(@parentNode.getAttribute("data-tabid"))
           return
+
+    new UI.VirtualNotch(@element.querySelector(".tab_tabbar"))
 
     window.addEventListener "message", (e) =>
       return if e.origin isnt location.origin
