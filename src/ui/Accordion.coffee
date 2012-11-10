@@ -5,6 +5,7 @@ window.UI ?= {}
 @class Accordion
 @constructor
 @param {Element} element
+@requires jQuery
 ###
 class UI.Accordion
   constructor: (@element) ->

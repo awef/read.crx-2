@@ -5,6 +5,7 @@ window.UI ?= {}
 @class TableSorter
 @constructor
 @param {Element} table
+@requires jQuery
 ###
 class UI.TableSorter
   "use strict"

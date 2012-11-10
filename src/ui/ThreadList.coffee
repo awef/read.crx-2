@@ -16,6 +16,7 @@ window.UI ?= {}
   @param {Boolean} [option.viewedDate=false]
   @param {Boolean} [option.bookmarkAddRm=false]
   @param {Element} [option.searchbox]
+@requires jQuery
 ###
 class UI.ThreadList
   "use Strict"

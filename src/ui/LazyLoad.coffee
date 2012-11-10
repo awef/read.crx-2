@@ -5,6 +5,7 @@ window.UI ?= {}
 @class LazyLoad
 @constructor
 @param {Element} container
+@requires jQuery
 ###
 class UI.LazyLoad
   "use strict"

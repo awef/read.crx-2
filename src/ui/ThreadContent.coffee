@@ -6,6 +6,7 @@ window.UI ?= {}
 @constructor
 @param {String} URL
 @param {Element} container
+@requires jQuery
 ###
 class UI.ThreadContent
   constructor: (@url, @container) ->

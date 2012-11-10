@@ -5,6 +5,7 @@ window.UI ?= {}
 @class Tab
 @constructor
 @param {Element} container
+@requires jQuery
 @requires UI.VirtualNotch
 ###
 class UI.Tab
