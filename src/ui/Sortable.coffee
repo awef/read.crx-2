@@ -44,14 +44,27 @@ class UI.Sortable
           targetCenter.x > tmp.offsetLeft + tmp.offsetWidth or
           targetCenter.y > tmp.offsetTop + tmp.offsetHeight
         )
-          cacheX = target.offsetLeft
-          cacheY = target.offsetTop
-          if target.compareDocumentPosition(tmp) is 4
+          if (
+            target.compareDocumentPosition(tmp) is 4 and
+            (
+              targetCenter.x > tmp.offsetLeft + tmp.offsetWidth / 2 or
+              targetCenter.y > tmp.offsetTop + tmp.offsetHeight / 2
+            )
+          )
+            cacheX = target.offsetLeft
+            cacheY = target.offsetTop
             tmp.insertAdjacentElement("afterend", target)
-          else
+            start.x += target.offsetLeft - cacheX
+            start.y += target.offsetTop - cacheY
+          else if (
+            targetCenter.x < tmp.offsetLeft + tmp.offsetWidth / 2 or
+            targetCenter.y < tmp.offsetTop + tmp.offsetHeight / 2
+          )
+            cacheX = target.offsetLeft
+            cacheY = target.offsetTop
             tmp.insertAdjacentElement("beforebegin", target)
-          start.x += target.offsetLeft - cacheX
-          start.y += target.offsetTop - cacheY
+            start.x += target.offsetLeft - cacheX
+            start.y += target.offsetTop - cacheY
           break
         tmp = tmp.nextElementSibling
 
