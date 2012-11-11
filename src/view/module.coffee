@@ -89,6 +89,15 @@ app.view_module.view = ($view) ->
         e.preventDefault()
         command = "r"
 
+      # Esc (空白の入力欄に入力された場合)
+      else if (
+        e.which is 27 and
+        e.target.nodeName in ["INPUT", "TEXTAREA"] and
+        e.target.value is "" and
+        not e.target.classList.contains("command")
+      )
+        $view.find(".content").focus()
+
       # : (基本的に入力欄では発動しないが、空白の入力欄に入力された場合のみ例外)
       else if e.which is 186
         if (
