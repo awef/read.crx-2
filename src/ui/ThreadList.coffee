@@ -333,3 +333,63 @@ class UI.ThreadList
   empty: ->
     $(@table).find("tbody").empty()
     return
+
+  ###*
+  @method getSelected
+  @return {Element|null}
+  ###
+  getSelected: ->
+    @table.querySelector("tr.selected")
+
+  ###*
+  @method select
+  @param {Element} tr
+  ###
+  select: (tr) ->
+    @clearSelect()
+    tr.classList.add("selected")
+    tr.scrollIntoViewIfNeeded()
+    return
+
+  ###*
+  @method selectNext
+  ###
+  selectNext: ->
+    selected = @getSelected()
+
+    if selected
+      next = selected.nextElementSibling
+    else
+      next = @table.querySelector("tbody > tr")
+
+    while next and next.offsetHeight is 0
+      next = next.nextElementSibling
+
+    if next
+      @select(next)
+    return
+
+  ###*
+  @method selectPrev
+  ###
+  selectPrev: ->
+    selected = @getSelected()
+
+    if selected
+      prev = selected.previousElementSibling
+    else
+      prev = @table.querySelector("tbody > tr")
+
+    while prev and prev.offsetHeight is 0
+      prev = prev.previousElementSibling
+
+    if prev
+      @select(prev)
+    return
+
+  ###*
+  @method clearSelect
+  ###
+  clearSelect: ->
+    @getSelected()?.classList.remove("selected")
+    return

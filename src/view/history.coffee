@@ -9,6 +9,7 @@ app.boot "/view/history.html", ->
     th: ["title", "viewedDate"]
     searchbox: $view.find(".searchbox")[0]
   })
+  $view.data("threadList", threadList)
   $table.appendTo(".content")
 
   load = ->

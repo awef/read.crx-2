@@ -13,6 +13,21 @@ $z-index-notification: 8;
     font-family: inherit;
   }
 
+  :focus .selected {
+    outline: 2px hsl(0, 0%, 50%) solid;
+  }
+
+  .command {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    background-color: inherit;
+    color: inherit;
+    border: 1px solid hsl(0, 0%, 50%);
+  }
+
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;

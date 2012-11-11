@@ -1,6 +1,7 @@
 app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
   $view = $(document.documentElement)
-  accordion = new UI.Accordion(document.body)
+  accordion = new UI.SelectableAccordion(document.body)
+  $view.data("accordion", accordion)
 
   board_to_li = (board) ->
     li = document.createElement("li")

@@ -81,12 +81,145 @@ app.view_module.view = ($view) ->
       else if message.type is "tab_selected"
         $view.trigger("tab_selected")
 
-  #更新系のキーが押された場合の処理
-  $(window)
-    .bind "keydown", (e)->
-      if e.which is 116 or (e.ctrlKey and e.which is 82) #F5 or Ctrl+R
+  # キーボード操作関連
+  $view
+    .on "keydown", (e)->
+      # F5 or Ctrl+R
+      if e.which is 116 or (e.ctrlKey and e.which is 82)
         e.preventDefault()
-        $view.trigger("request_reload")
+        command = "r"
+
+      # Esc (空白の入力欄に入力された場合)
+      else if (
+        e.which is 27 and
+        e.target.nodeName in ["INPUT", "TEXTAREA"] and
+        e.target.value is "" and
+        not e.target.classList.contains("command")
+      )
+        $view.find(".content").focus()
+
+      # : (基本的に入力欄では発動しないが、空白の入力欄に入力された場合のみ例外)
+      else if (
+        e.which is 186 and
+        (
+          not (e.target.nodeName in ["INPUT", "TEXTAREA"]) or
+          e.target.value is ""
+        )
+      )
+        e.preventDefault()
+        $("<input>", class: "command")
+          .data("lastActiveElement", document.activeElement)
+          .appendTo($view)
+          .focus()
+
+      # 入力欄内では発動しない系
+      else if not (e.target.nodeName in ["INPUT", "TEXTAREA"])
+        switch (e.which)
+          # Enter
+          when 13 then command = "enter"
+          # h
+          when 72
+            e.preventDefault()
+            if e.shiftKey
+              command = "focusLeftFrame"
+            else
+              command = "left"
+          # l
+          when 76
+            e.preventDefault()
+            if e.shiftKey
+              command = "focusRightFrame"
+            else
+              command = "right"
+          # k
+          when 75
+            e.preventDefault()
+            if e.shiftKey
+              command = "focusUpFrame"
+            else
+              command = "up"
+          # j
+          when 74
+            e.preventDefault()
+            if e.shiftKey
+              command = "focusDownFrame"
+            else
+              command = "down"
+          # r
+          when 82
+            # Shift+r
+            if e.shiftKey
+              command = "r"
+          # w
+          when 87
+            # Shift+w
+            if e.shiftKey
+              command = "q"
+          # /
+          when 191
+            # ?
+            if e.shiftKey
+              command = "help"
+            # /
+            else
+              e.preventDefault()
+              $(".searchbox, form.search > input[type=\"text\"]").focus()
+
+      # コマンド入力欄操作
+      else if e.target.classList.contains("command")
+        # Enter
+        if e.which is 13
+          command = e.target.value.replace(/[\s]/g, "")
+          $(e.target).data("lastActiveElement")?.focus()
+          $(e.target).remove()
+        # Esc
+        else if e.which is 27
+          $(e.target).data("lastActiveElement")?.focus()
+          $(e.target).remove()
+
+      # 数値
+      if command and /^\d+$/.test(command)
+        if $view.is(".view_thread")
+          $view.data("threadContent").scrollTo(+command)
+          $view.data("threadContent").select(+command)
+
+      switch command
+        when "up"
+          if $view.hasClass("view_thread")
+            $view.data("threadContent").selectPrev()
+          else if $view.hasClass("view_sidemenu")
+            $view.data("accordion").selectPrev()
+          else if $view.data("threadList")
+            $view.data("threadList").selectPrev()
+        when "down"
+          if $view.hasClass("view_thread")
+            $view.data("threadContent").selectNext()
+          else if $view.hasClass("view_sidemenu")
+            $view.data("accordion").selectNext()
+          else if $view.data("threadList")
+            $view.data("threadList").selectNext()
+        when "left"
+          if $view.hasClass("view_sidemenu")
+            $a = $view.find("li > a.selected")
+            if $a.length is 1
+              $view.data("accordion").select($a.closest("ul").prev()[0])
+        when "right"
+          if $view.hasClass("view_sidemenu")
+            $a = $view.find("h3.selected + ul a")
+            if $a.length > 0
+              $view.data("accordion").select($a[0])
+        when "focusUpFrame", "focusDownFrame", "focusLeftFrame", "focusRightFrame"
+          app.message.send("requestFocusMove", {command}, parent)
+        when "r"
+          $view.trigger("request_reload")
+        when "q"
+          parent.postMessage(
+            JSON.stringify(type: "request_killme"), location.origin)
+        when "enter"
+          $view.find(".selected").trigger("click")
+        when "help"
+          open("https://github.com/awef/read.crx-2/wiki/Keyboard-Shortcuts")
+      return
 
   $view
     #mousedown通知
