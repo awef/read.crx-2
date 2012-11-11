@@ -217,6 +217,8 @@ app.view_module.view = ($view) ->
             JSON.stringify(type: "request_killme"), location.origin)
         when "enter"
           $view.find(".selected").trigger("click")
+        when "help"
+          open("https://github.com/awef/read.crx-2/wiki/Keyboard-Shortcuts")
       return
 
   $view
