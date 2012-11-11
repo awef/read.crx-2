@@ -189,14 +189,14 @@ app.view_module.view = ($view) ->
             $view.data("threadContent").selectPrev()
           else if $view.hasClass("view_sidemenu")
             $view.data("accordion").selectPrev()
-          else if $view.is(".view_bookmark, .view_board, .view_history")
+          else if $view.data("threadList")
             $view.data("threadList").selectPrev()
         when "down"
           if $view.hasClass("view_thread")
             $view.data("threadContent").selectNext()
           else if $view.hasClass("view_sidemenu")
             $view.data("accordion").selectNext()
-          else if $view.is(".view_bookmark, .view_board, .view_history")
+          else if $view.data("threadList")
             $view.data("threadList").selectNext()
         when "left"
           if $view.hasClass("view_sidemenu")

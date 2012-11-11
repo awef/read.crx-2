@@ -28,6 +28,7 @@ app.boot "/view/search.html", ["euc_jp_escape", "thread_search"], (euc_jp_escape
     th: ["bookmark", "title", "boardTitle", "res", "heat", "createdDate"]
     searchbox: $view.find(".searchbox")[0]
   })
+  $view.data("threadList", threadList)
   $table.prependTo(".content")
 
   thread_search = new ThreadSearch(query)
