@@ -66,22 +66,22 @@ class UI.ThreadContent
 
   ###*
   @method getSelected
-  @return {Number|null}
+  @return {Element|null}
   ###
   getSelected: ->
-    tmp = @container.querySelector("article.selected")
-    if tmp
-      +tmp.querySelector(".num").textContent
-    else
-      null
+    @container.querySelector("article.selected")
 
   ###*
   @method select
-  @param {Number} resNum
+  @param {Element | Number} target
   ###
-  select: (resNum) ->
+  select: (target) ->
     @container.querySelector("article.selected")?.classList.remove("selected")
-    @container.children[resNum - 1]?.classList.add("selected")
+
+    if typeof target is "number"
+      @container.children[target - 1]?.classList.add("selected")
+    else
+      target.classList.add("selected")
     return
 
   ###*
@@ -89,22 +89,36 @@ class UI.ThreadContent
   ###
   selectNext: ->
     current = @getSelected()
-    target = @container.children[current - 1]
-    if not current or (
-      # 現在選択されているレスが表示範囲外だった場合、それを無視する
-      target.offsetTop + target.offsetHeight < @container.scrollTop or
-      @container.scrollTop + @container.offsetHeight < target.offsetTop
-    )
-      current = @getRead()
-      @select(current)
-      target = @container.children[current - 1]
 
     if (
-      @container.scrollTop + @container.offsetHeight >=
-      target.offsetTop + target.offsetHeight
-    ) and target.nextElementSibling
+      not current or
+      (
+        # 現在選択されているレスが表示範囲外だった場合、それを無視する
+        current.offsetTop + current.offsetHeight < @container.scrollTop or
+        @container.scrollTop + @container.offsetHeight < current.offsetTop
+      )
+    )
+      current = @container.children[@getRead() - 1]
+      @select(current)
+
+    target = current
+
+    if (
+      (
+        target.offsetTop + target.offsetHeight <=
+        @container.scrollTop + @container.offsetHeight
+      ) and
+      target.nextElementSibling
+    )
       target = target.nextElementSibling
-      @select(current + 1)
+
+      while target and target.offsetHeight is 0
+        target = target.nextElementSibling
+
+      if not target
+        return
+
+      @select(target)
 
     if (
       @container.scrollTop + @container.offsetHeight <
@@ -128,22 +142,33 @@ class UI.ThreadContent
   ###
   selectPrev: ->
     current = @getSelected()
-    target = @container.children[current - 1]
-    if not current or (
-      # 現在選択されているレスが表示範囲外だった場合、それを無視する
-      target.offsetTop + target.offsetHeight < @container.scrollTop or
-      @container.scrollTop + @container.offsetHeight < target.offsetTop
+
+    if (
+      not current or
+      (
+        # 現在選択されているレスが表示範囲外だった場合、それを無視する
+        current.offsetTop + current.offsetHeight < @container.scrollTop or
+        @container.scrollTop + @container.offsetHeight < current.offsetTop
+      )
     )
-      current = @getRead()
+      current = @container.children[@getRead() - 1]
       @select(current)
-      target = @container.children[current - 1]
+
+    target = current
 
     if (
       @container.scrollTop <= target.offsetTop and
       target.previousElementSibling
     )
       target = target.previousElementSibling
-      @select(current - 1)
+
+      while target and target.offsetHeight is 0
+        target = target.previousElementSibling
+
+      if not target
+        return
+
+      @select(target)
 
     if @container.scrollTop > target.offsetTop
       if target.offsetHeight >= @container.offsetHeight
