@@ -63,6 +63,11 @@ class UI.ThreadContent
       if res.offsetTop > containerBottom
         read = key - 1
         break
+
+    # >>1の底辺が表示領域外にはみ出していた場合対策
+    if read is 0
+      read = 1
+
     read
 
   ###*
