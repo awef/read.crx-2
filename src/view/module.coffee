@@ -109,19 +109,31 @@ app.view_module.view = ($view) ->
           # h
           when 72
             e.preventDefault()
-            command = "left"
+            if e.shiftKey
+              command = "focusLeftFrame"
+            else
+              command = "left"
           # l
           when 76
             e.preventDefault()
-            command = "right"
+            if e.shiftKey
+              command = "focusRightFrame"
+            else
+              command = "right"
           # k
           when 75
             e.preventDefault()
-            command = "up"
+            if e.shiftKey
+              command = "focusUpFrame"
+            else
+              command = "up"
           # j
           when 74
             e.preventDefault()
-            command = "down"
+            if e.shiftKey
+              command = "focusDownFrame"
+            else
+              command = "down"
           # r
           when 82
             # Shift+r
@@ -185,6 +197,8 @@ app.view_module.view = ($view) ->
             $a = $view.find("h3.selected + ul a")
             if $a.length > 0
               $view.data("accordion").select($a[0])
+        when "focusUpFrame", "focusDownFrame", "focusLeftFrame", "focusRightFrame"
+          app.message.send("requestFocusMove", {command}, parent)
         when "r"
           $view.trigger("request_reload")
         when "q"

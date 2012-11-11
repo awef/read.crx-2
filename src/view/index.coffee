@@ -45,6 +45,18 @@ class app.view.Index
       .on "view_loaded", ".tab_content.tab_focused", ->
         index.focus(@)
         return
+
+    app.message.addListener "requestFocusMove", (message) =>
+      switch message.command
+        when "focusUpFrame"
+          @focusUp()
+        when "focusDownFrame"
+          @focusDown()
+        when "focusLeftFrame"
+          @focusLeft()
+        when "focusRightFrame"
+          @focusRight()
+      return
     return
 
   ###*
@@ -63,6 +75,80 @@ class app.view.Index
     app.defer ->
       $iframe.contents().find(".content").focus()
       return
+    return
+
+  ###*
+  @method focusLeft
+  ###
+  focusLeft: ->
+    if tabId = @$element.find(".tab_focused").attr("data-tabid")
+      $li = @$element.find("li[data-tabid=\"#{tabId}\"]").prev()
+      if $li.length is 1
+        $li.closest(".tab").data("tab").update(
+          $li.attr("data-tabid"), selected: true)
+        return
+
+    if (
+      @$element.find("#body").hasClass("pane-3h") and
+      @$element.find(".tab_focused").closest(".tab").is("#tab_b")
+    )
+      iframe = @$element.find("#tab_a iframe.tab_selected")[0]
+    else
+      iframe = @$element.find("#left_pane")[0]
+
+    if iframe
+      @focus(iframe)
+    return
+
+  ###*
+  @method focusRight
+  ###
+  focusRight: ->
+    if tabId = @$element.find(".tab_focused").attr("data-tabid")
+      $li = @$element.find("li[data-tabid=\"#{tabId}\"]").next()
+      if $li.length is 1
+        $li.closest(".tab").data("tab").update(
+          $li.attr("data-tabid"), selected: true)
+        return
+
+    if (
+      @$element.find("#body").hasClass("pane-3h") and
+      @$element.find(".tab_focused").closest(".tab").is("#tab_a")
+    )
+      iframe = @$element.find("#tab_b iframe.tab_selected")[0]
+    else if (@$element.find(".tab_focused").length is 0)
+      iframe = @$element.find("#tab_a iframe.tab_selected, #tab_b iframe.tab_selected")[0]
+
+    if iframe
+      @focus(iframe)
+    return
+
+  ###*
+  @method focusUp
+  ###
+  focusUp: ->
+    if (
+      @$element.find("#body").hasClass("pane-3") and
+      @$element.find(".tab_focused").closest(".tab").is("#tab_b")
+    )
+      iframe = @$element.find("#tab_a iframe.tab_selected")[0]
+
+    if iframe
+      @focus(iframe)
+    return
+
+  ###*
+  @method focusDown
+  ###
+  focusDown: ->
+    if (
+      @$element.find("#body").hasClass("pane-3") and
+      @$element.find(".tab_focused").closest(".tab").is("#tab_a")
+    )
+      iframe = @$element.find("#tab_b iframe.tab_selected")[0]
+
+    if iframe
+      @focus(iframe)
     return
 
 app.boot "/view/index.html", ->
