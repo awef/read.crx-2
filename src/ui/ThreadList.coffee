@@ -355,12 +355,17 @@ class UI.ThreadList
   ###
   selectNext: ->
     selected = @getSelected()
-    next = selected?.nextElementSibling
 
-    if next?
+    if selected
+      next = selected.nextElementSibling
+    else
+      next = @table.querySelector("tbody > tr")
+
+    while next and next.offsetHeight is 0
+      next = next.nextElementSibling
+
+    if next
       @select(next)
-    else if not selected?
-      @select(@table.querySelector("tbody > tr"))
     return
 
   ###*
@@ -368,12 +373,17 @@ class UI.ThreadList
   ###
   selectPrev: ->
     selected = @getSelected()
-    prev = selected?.previousElementSibling
 
-    if prev?
+    if selected
+      prev = selected.previousElementSibling
+    else
+      prev = @table.querySelector("tbody > tr")
+
+    while prev and prev.offsetHeight is 0
+      prev = prev.previousElementSibling
+
+    if prev
       @select(prev)
-    else if not selected?
-      @select(@table.querySelector("tbody > tr"))
     return
 
   ###*
