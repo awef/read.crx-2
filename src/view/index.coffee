@@ -14,13 +14,13 @@ class app.view.Index
     @$element
       #iframe以外の部分がクリックされた時にフォーカスをiframe内に戻す
       .on "click", =>
-        target = index.element.querySelector(".tab_content.tab_focused")
+        target = index.element.querySelector(".tab_content.iframe_focused")
         target or= index.element.querySelector("#left_pane")
         index.focus(target)
         return
 
-      #タブの内容がクリックされた時にフォーカスを移動
-      .on "view_mousedown", ".tab_content:not(.tab_focused)", ->
+      #iframeがクリックされた時にフォーカスを移動
+      .on "view_mousedown", "iframe:not(.iframe_focused)", ->
         index.focus(@)
         return
 
@@ -42,7 +42,7 @@ class app.view.Index
         return
 
       #フォーカスしているコンテンツが再描画された場合、フォーカスを合わせ直す
-      .on "view_loaded", ".tab_content.tab_focused", ->
+      .on "view_loaded", ".tab_content.iframe_focused", ->
         index.focus(@)
         return
 
@@ -66,11 +66,9 @@ class app.view.Index
   focus: (iframe) ->
     $iframe = $(iframe)
 
-    if not $iframe.hasClass("tab_focused")
-      @$element.find(".tab_focused").removeClass("tab_focused")
-
-      if $iframe.hasClass("tab_content")
-        $iframe.closest(".tab").find(".tab_selected").addClass("tab_focused")
+    if not $iframe.hasClass("iframe_focused")
+      @$element.find(".iframe_focused").removeClass("iframe_focused")
+      $iframe.addClass("iframe_focused")
 
     app.defer ->
       $iframe.contents().find(".content").focus()
@@ -81,7 +79,7 @@ class app.view.Index
   @method focusLeft
   ###
   focusLeft: ->
-    if tabId = @$element.find(".tab_focused").attr("data-tabid")
+    if tabId = @$element.find(".iframe_focused").attr("data-tabid")
       $li = @$element.find("li[data-tabid=\"#{tabId}\"]").prev()
       if $li.length is 1
         $li.closest(".tab").data("tab").update(
@@ -90,7 +88,7 @@ class app.view.Index
 
     if (
       @$element.find("#body").hasClass("pane-3h") and
-      @$element.find(".tab_focused").closest(".tab").is("#tab_b")
+      @$element.find(".iframe_focused").closest(".tab").is("#tab_b")
     )
       iframe = @$element.find("#tab_a iframe.tab_selected")[0]
     else
@@ -104,7 +102,7 @@ class app.view.Index
   @method focusRight
   ###
   focusRight: ->
-    if tabId = @$element.find(".tab_focused").attr("data-tabid")
+    if tabId = @$element.find(".iframe_focused").attr("data-tabid")
       $li = @$element.find("li[data-tabid=\"#{tabId}\"]").next()
       if $li.length is 1
         $li.closest(".tab").data("tab").update(
@@ -113,11 +111,11 @@ class app.view.Index
 
     if (
       @$element.find("#body").hasClass("pane-3h") and
-      @$element.find(".tab_focused").closest(".tab").is("#tab_a")
+      @$element.find(".iframe_focused").is("#left_pane, #tab_a iframe")
     )
-      iframe = @$element.find("#tab_b iframe.tab_selected")[0]
-    else if (@$element.find(".tab_focused").length is 0)
-      iframe = @$element.find("#tab_a iframe.tab_selected, #tab_b iframe.tab_selected")[0]
+      iframe = @$element.find("#tab_a iframe.tab_selected:not(.iframe_focused), #tab_b iframe.tab_selected:not(.iframe_focused)")[0]
+    else
+      iframe = @$element.find("#tab_a iframe.tab_selected:not(.iframe_focused)")[0]
 
     if iframe
       @focus(iframe)
@@ -129,7 +127,7 @@ class app.view.Index
   focusUp: ->
     if (
       @$element.find("#body").hasClass("pane-3") and
-      @$element.find(".tab_focused").closest(".tab").is("#tab_b")
+      @$element.find(".iframe_focused").closest(".tab").is("#tab_b")
     )
       iframe = @$element.find("#tab_a iframe.tab_selected")[0]
 
@@ -143,7 +141,7 @@ class app.view.Index
   focusDown: ->
     if (
       @$element.find("#body").hasClass("pane-3") and
-      @$element.find(".tab_focused").closest(".tab").is("#tab_a")
+      @$element.find(".iframe_focused").closest(".tab").is("#tab_a")
     )
       iframe = @$element.find("#tab_b iframe.tab_selected")[0]
 
