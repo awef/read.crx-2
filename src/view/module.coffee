@@ -99,16 +99,18 @@ app.view_module.view = ($view) ->
         $view.find(".content").focus()
 
       # : (基本的に入力欄では発動しないが、空白の入力欄に入力された場合のみ例外)
-      else if e.which is 186
-        if (
+      else if (
+        e.which is 186 and
+        (
           not (e.target.nodeName in ["INPUT", "TEXTAREA"]) or
           e.target.value is ""
         )
-          e.preventDefault()
-          $("<input>", class: "command")
-            .data("lastActiveElement", document.activeElement)
-            .appendTo($view)
-            .focus()
+      )
+        e.preventDefault()
+        $("<input>", class: "command")
+          .data("lastActiveElement", document.activeElement)
+          .appendTo($view)
+          .focus()
 
       # 入力欄内では発動しない系
       else if not (e.target.nodeName in ["INPUT", "TEXTAREA"])
