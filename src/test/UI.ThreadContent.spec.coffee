@@ -215,6 +215,15 @@ describe "UI.ThreadContent", ->
       hogehoge()
       return
 
+    it "URL中に文字参照が入っていても許容する", ->
+      example.a.data1.message = "test http://goo.gl/e?1&amp;1 test"
+      example.a.dom1.querySelector(".message").innerHTML = """
+        test <a href="http://goo.gl/e?1&amp;1" target="_blank">http://goo.gl/e?1&amp;1</a> test
+      """
+
+      hogehoge()
+      return
+
     it "URLは空白文字以外と隣接していても認識する", ->
       example.a.data1.message = "テストhttp://goo.gl/eテスト"
       example.a.dom1.querySelector(".message").innerHTML = """
