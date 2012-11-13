@@ -29,16 +29,17 @@ class app.view.Index
         index.focus(@)
         return
 
-      #フォーカスしているタブが削除された時にフォーカスを移動
+      #.tab内の最後のタブが削除された時にフォーカスを移動
       .on "tab_removed", ".tab_content", ->
-        app.defer ->
-          $tmp = $(".tab:has(.tab_selected):first")
-          if $tmp.length is 1
-            index.focus($tmp.find(".tab_selected.tab_content")[0])
-          else
-            #フォーカス対象のタブが無い場合、板一覧にフォーカスする
-            index.focus(index.element.querySelector("#left_pane"))
-          return
+        if $(@).siblings(".tab_content").length is 0
+          app.defer ->
+            $tmp = $(".tab:has(.tab_selected):first")
+            if $tmp.length is 1
+              index.focus($tmp.find(".tab_selected.tab_content")[0])
+            else
+              #フォーカス対象のタブが無い場合、板一覧にフォーカスする
+              index.focus(index.element.querySelector("#left_pane"))
+            return
         return
 
       #フォーカスしているコンテンツが再描画された場合、フォーカスを合わせ直す
