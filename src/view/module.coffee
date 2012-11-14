@@ -84,11 +84,11 @@ app.view_module.view = ($view) ->
   # キーボード操作関連
   $view
     .on "keydown", (e)->
-      # F5 or Ctrl+R
-      if e.which is 116 or (e.ctrlKey and e.which is 82)
+      # F5 or Ctrl+r or ⌘+r
+      if e.which is 116 or (e.ctrlKey and e.which is 82) or (e.metaKey and e.which is 82)
         e.preventDefault()
         command = "r"
-      else if e.ctrlKey
+      else if e.ctrlKey or e.metaKey
         return
 
       # Esc (空白の入力欄に入力された場合)
