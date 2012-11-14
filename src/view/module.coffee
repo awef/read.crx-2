@@ -119,28 +119,24 @@ app.view_module.view = ($view) ->
           when 13 then command = "enter"
           # h
           when 72
-            e.preventDefault()
             if e.shiftKey
               command = "focusLeftFrame"
             else
               command = "left"
           # l
           when 76
-            e.preventDefault()
             if e.shiftKey
               command = "focusRightFrame"
             else
               command = "right"
           # k
           when 75
-            e.preventDefault()
             if e.shiftKey
               command = "focusUpFrame"
             else
               command = "up"
           # j
           when 74
-            e.preventDefault()
             if e.shiftKey
               command = "focusDownFrame"
             else
@@ -162,7 +158,6 @@ app.view_module.view = ($view) ->
               command = "help"
             # /
             else
-              e.preventDefault()
               $(".searchbox, form.search > input[type=\"text\"]").focus()
 
       # コマンド入力欄操作
