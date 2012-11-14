@@ -88,6 +88,8 @@ app.view_module.view = ($view) ->
       if e.which is 116 or (e.ctrlKey and e.which is 82)
         e.preventDefault()
         command = "r"
+      else if e.ctrlKey
+        return
 
       # Esc (空白の入力欄に入力された場合)
       else if (
