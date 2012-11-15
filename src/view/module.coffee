@@ -160,6 +160,7 @@ app.view_module.view = ($view) ->
               command = "help"
             # /
             else
+              e.preventDefault()
               $(".searchbox, form.search > input[type=\"text\"]").focus()
 
       # コマンド入力欄操作
