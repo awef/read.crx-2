@@ -13,14 +13,14 @@ task :default => [
   :zombie,
   :write,
   :build_test,
-  :jquery
+  "jquery:build"
 ]
 
 task :clean do
   rm_f "./read.crx_2.zip"
   rm_rf "debug"
-  Rake::Task[:clean_jquery].invoke
-  Rake::Task[:clean_jquery_mockjax].invoke
+  Rake::Task["jquery:clean"].invoke
+  Rake::Task["jquery_mockjax:clean"].invoke
 end
 
 task :doc do
@@ -62,19 +62,6 @@ end
 
 task :scan do
   sh "clamscan -ir debug"
-end
-
-task :clean_jquery do
-  cd "lib/jquery" do
-    sh "git checkout -f"
-    sh "git clean -fdx -e node_modules/"
-  end
-end
-
-task :clean_jquery_mockjax do
-  cd "lib/jquery-mockjax" do
-    sh "git checkout -f"
-  end
 end
 
 def debug_id
@@ -279,7 +266,7 @@ lambda {
     "debug/test/qunit/qunit-step.js",
     "debug/test/qunit/qunit-measure.js",
 
-    "debug/test/jquery.mockjax.js",
+    "jquery_mockjax:build",
 
     "debug/test/test.html",
     "debug/test/jasmine-exec.js",
@@ -304,26 +291,21 @@ lambda {
   file_copy "debug/test/qunit/qunit-step.js", "lib/qunit/addons/step/qunit-step.js"
   file_copy "debug/test/qunit/qunit-measure.js", "lib/qunit-measure/qunit-measure.js"
 
-  file "debug/test/jquery.mockjax.js" => [
-    "lib/jquery-mockjax/jquery.mockjax.js",
-    "lib/jquery-mockjax_cancelable_etag.patch"
-  ] do
-    Rake::Task[:clean_jquery_mockjax].invoke
-    cd "lib/jquery-mockjax" do
-      sh "git apply ../jquery-mockjax_cancelable_etag.patch"
-    end
-    cp "lib/jquery-mockjax/jquery.mockjax.js", "debug/test/jquery.mockjax.js"
-  end
-
   file_coffee "debug/test/test.js", FileList["src/test/test_*.coffee"]
 }.call()
 
-#jQuery
-lambda {
-  task :jquery => [
+namespace :jquery do
+  task :build => [
     "debug/lib/jquery",
     "debug/lib/jquery/jquery.min.js"
   ]
+
+  task :clean do
+    cd "lib/jquery" do
+      sh "git checkout -f"
+      sh "git clean -fdx -e node_modules/"
+    end
+  end
 
   directory "debug/lib/jquery"
 
@@ -331,7 +313,7 @@ lambda {
     "lib/jquery_license.patch",
     "lib/jquery_delegate_middle_click.patch"
   ] do
-    Rake::Task[:clean_jquery].invoke
+    Rake::Task["jquery:clean"].invoke
     cd "lib/jquery" do
       sh "git apply ../jquery_license.patch"
       sh "git apply ../jquery_delegate_middle_click.patch"
@@ -339,4 +321,25 @@ lambda {
       cp "dist/jquery.min.js", "../../debug/lib/jquery/"
     end
   end
-}.call()
+end
+
+namespace :jquery_mockjax do
+  task :build => ["debug/test/jquery.mockjax.js"]
+
+  task :clean do
+    cd "lib/jquery-mockjax" do
+      sh "git checkout -f"
+    end
+  end
+
+  file "debug/test/jquery.mockjax.js" => [
+    "lib/jquery-mockjax/jquery.mockjax.js",
+    "lib/jquery-mockjax_cancelable_etag.patch"
+  ] do
+    Rake::Task["jquery_mockjax:clean"].invoke
+    cd "lib/jquery-mockjax" do
+      sh "git apply ../jquery-mockjax_cancelable_etag.patch"
+    end
+    cp "lib/jquery-mockjax/jquery.mockjax.js", "debug/test/jquery.mockjax.js"
+  end
+end
