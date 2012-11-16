@@ -217,7 +217,7 @@ app.view_module.view = ($view) ->
         when "enter"
           $view.find(".selected").trigger("click")
         when "help"
-          open("https://github.com/awef/read.crx-2/wiki/Keyboard-Shortcuts")
+          app.message.send("showKeyboardHelp", null, parent)
       return
 
   $view

@@ -58,6 +58,10 @@ class app.view.Index
         when "focusRightFrame"
           @focusRight()
       return
+
+    app.message.addListener "showKeyboardHelp", =>
+      @showKeyboardHelp()
+      return
     return
 
   ###*
@@ -148,6 +152,28 @@ class app.view.Index
 
     if iframe
       @focus(iframe)
+    return
+
+  ###*
+  @method showKeyboardHelp
+  ###
+  showKeyboardHelp: ->
+    @$element
+      .find(".keyboard_help")
+        .one "click keydown", =>
+          @hideKeyboardHelp()
+          return
+        .fadeIn("fast")
+        .focus()
+    return
+
+  ###*
+  @method hideKeyboardHelp
+  ###
+  hideKeyboardHelp: ->
+    @$element.find(".keyboard_help").fadeOut("fast")
+    iframe = document.querySelector(".iframe_focused")
+    iframe?.contentDocument.querySelector(".content").focus()
     return
 
 app.boot "/view/index.html", ->

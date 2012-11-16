@@ -23,6 +23,51 @@
         #tab_resizer
         #tab_b
       #modal
+    .keyboard_help(tabindex="-1")
+      %header このヘルプを閉じるには、任意のキーを押して下さい。
+      %h2 キーボードショートカット一覧
+      %dl
+        %dt j
+        %dd 下にスクロール
+        %dt k
+        %dd 上にスクロール
+        %dt h
+        %dd カテゴリを閉じる（板一覧限定）
+        %dt l
+        %dd カテゴリを開く（板一覧限定）
+        %dt Shift+r
+        %dd 更新
+        %dt Shift+w
+        %dd タブを閉じる
+        %dt /
+        %dd 検索窓にジャンプ
+        %dt Esc
+        %dd 検索をクリア（検索窓中で入力した場合）
+        %dd 検索窓からフォーカスを外す（空白の検索窓中で入力した場合）
+        %dd コマンド入力欄を閉じる（コマンド入力欄中で入力した場合）
+        %dt Shift+h
+        %dd 左のタブを選択
+        %dt Shift+j
+        %dd 下のタブを選択
+        %dt Shift+k
+        %dd 上のタブを選択
+        %dt Shift+l
+        %dd 右のタブを選択
+        %dt ?
+        %dd キーボードショートカットのヘルプを開く
+        %dt :
+        %dd コマンド入力欄を開く
+      %h2 コマンド一覧
+      %p :で開いた入力欄に入力し、Enterキーを押すことで実行されます。
+      %dl
+        %dt help
+        %dd キーボードショートカットのヘルプを開く（?と同じ）
+        %dt q
+        %dd タブを閉じる（Shift+wと同じ）
+        %dt r
+        %dd 更新（Shift+rと同じ）
+        %dt 任意の数値
+        %dd 該当するレス番号の位置にジャンプする（スレッド表示内限定）
     #template(hidden)
       %ul.tab_contextmenu
         %li.restore 閉じたタブを開く

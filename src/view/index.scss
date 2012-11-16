@@ -161,3 +161,36 @@ iframe {
     }
   }
 }
+
+.keyboard_help {
+  display: none;
+  z-index: $z-index-modalhelp;
+  background: hsla(0, 0%, 0%, 0.9);
+  color: hsl(0, 0%, 80%);
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  overflow: auto;
+  padding: 1rem;
+
+  > header {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+  }
+
+  h2 {
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  dt {
+    height: 0;
+  }
+
+  dd {
+    margin-left: 7rem;
+  }
+}
