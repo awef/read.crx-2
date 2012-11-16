@@ -12,7 +12,7 @@ task :default => [
   :view,
   :zombie,
   :write,
-  :build_test,
+  "test:build",
   "jquery:build"
 ]
 
@@ -34,7 +34,7 @@ task :pack do
 
   Rake::Task[:clean].invoke
   Rake::Task[:default].invoke
-  Rake::Task[:test].invoke
+  Rake::Task["test:run"].invoke
   Rake::Task[:scan].invoke
 
   rm_rf "_packtmp"
@@ -47,17 +47,6 @@ task :pack do
   mv "_packtmp.crx", "read.crx_2.#{MANIFEST["version"]}.crx"
 
   rm_r "_packtmp"
-end
-
-task :test, :filter do |t, args|
-  require "cgi"
-
-  url = "chrome-extension://#{debug_id}/test/test.html"
-  if args[:filter]
-    tmp = CGI.escape(args[:filter]).gsub("\+", "%20")
-    url += "?filter=#{tmp}&spec=#{tmp}"
-  end
-  sh "google-chrome '#{url}'"
 end
 
 task :scan do
@@ -251,9 +240,8 @@ lambda {
   ]
 }.call()
 
-#Test
-lambda {
-  task :build_test => [
+namespace :test do
+  task :build => [
     "debug/test",
     "debug/test/jasmine",
     "debug/test/jasmine/jasmine.js",
@@ -276,6 +264,17 @@ lambda {
     "debug/test/message_test.js"
   ]
 
+  task :run, :filter do |t, args|
+    require "cgi"
+
+    url = "chrome-extension://#{debug_id}/test/test.html"
+    if args[:filter]
+      tmp = CGI.escape(args[:filter]).gsub("\+", "%20")
+      url += "?filter=#{tmp}&spec=#{tmp}"
+    end
+    sh "google-chrome '#{url}'"
+  end
+
   directory "debug/test"
 
   directory "debug/test/jasmine"
@@ -292,7 +291,7 @@ lambda {
   file_copy "debug/test/qunit/qunit-measure.js", "lib/qunit-measure/qunit-measure.js"
 
   file_coffee "debug/test/test.js", FileList["src/test/test_*.coffee"]
-}.call()
+end
 
 namespace :jquery do
   task :build => [
