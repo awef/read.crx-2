@@ -178,8 +178,9 @@ app.view_module.view = ($view) ->
       # 数値
       if command and /^\d+$/.test(command)
         if $view.is(".view_thread")
-          $view.data("threadContent").scrollTo(+command)
-          $view.data("threadContent").select(+command)
+          target = Math.min($view.find(".content > article").length, +command)
+          $view.data("threadContent").scrollTo(target)
+          $view.data("threadContent").select(target)
 
       switch command
         when "up"
