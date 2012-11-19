@@ -1,7 +1,7 @@
 app.boot "/view/inputurl.html", ->
-  $view = $(document.documentElement)
+  new app.view.TabContentView(document.documentElement)
 
-  app.view_module.view($view)
+  $view = $(document.documentElement)
 
   $view.find("form").bind "submit", (e) ->
     e.preventDefault()

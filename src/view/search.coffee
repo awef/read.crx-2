@@ -13,8 +13,7 @@ app.boot "/view/search.html", ["euc_jp_escape", "thread_search"], (euc_jp_escape
   $message_bar = $view.find(".message_bar")
   $button_reload = $view.find(".button_reload")
 
-  app.view_module.view($view)
-  app.view_module.tool_menu($view)
+  new app.view.TabContentView(document.documentElement)
 
   document.title = "検索:#{query}"
   app.History.add($view.attr("data-url"), document.title, opened_at)

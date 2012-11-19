@@ -1,7 +1,7 @@
 app.boot "/view/config.html", ["cache", "bbsmenu"], (Cache, BBSMenu) ->
-  $view = $(document.documentElement)
+  new app.view.IframeView(document.documentElement)
 
-  app.view_module.view($view)
+  $view = $(document.documentElement)
 
   #閉じるボタン
   $view.find(".button_close").bind "click", ->

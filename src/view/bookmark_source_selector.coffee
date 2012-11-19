@@ -1,7 +1,7 @@
 app.boot "/view/bookmark_source_selector.html", ->
-  $view = $(document.documentElement)
+  new app.view.IframeView(document.documentElement)
 
-  app.view_module.view($view)
+  $view = $(document.documentElement)
 
   $view
     .delegate ".node", "click", ->

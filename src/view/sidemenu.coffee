@@ -1,4 +1,6 @@
 app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
+  new app.view.PaneContentView(document.documentElement)
+
   $view = $(document.documentElement)
   accordion = new UI.SelectableAccordion(document.body)
   $view.data("accordion", accordion)
@@ -16,8 +18,6 @@ app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
     li = board_to_li(bookmark)
     li.classList.add("bookmark")
     li
-
-  app.view_module.view($view)
 
   #スレタイ検索ボックス
   $view

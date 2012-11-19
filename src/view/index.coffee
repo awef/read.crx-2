@@ -3,12 +3,16 @@ app.view ?= {}
 ###*
 @namespace app.view
 @class Index
+@extends app.view.View
 @constructor
 @param {Element} element
 ###
-class app.view.Index
-  constructor: (@element) ->
-    @$element = $(@element)
+class app.view.Index extends app.view.View
+  constructor: (element) ->
+    super(element)
+
+    @_insertUserCSS()
+
     index = @
 
     @$element
@@ -316,8 +320,6 @@ app.main = ->
 
   $view = $(document.documentElement)
   new app.view.Index($view[0])
-
-  app.view_module.view($view)
 
   document.title = app.manifest.name
 

@@ -13,9 +13,7 @@ app.boot "/view/bookmark.html", ->
   $table.find("th.unread").addClass("table_sort_desc")
   $table.table_sort()
 
-  app.view_module.view($view)
-  app.view_module.sort_item_selector($view)
-  app.view_module.tool_menu($view)
+  new app.view.TabContentView(document.documentElement)
 
   trUpdatedObserver = new WebKitMutationObserver (records) ->
     for record in records

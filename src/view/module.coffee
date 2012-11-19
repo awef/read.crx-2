@@ -17,73 +17,207 @@ do ->
       app[module] = parent.app[module]
   return
 
-app.view_module = {}
+app.view ?= {}
 
-app.view_module.view = ($view) ->
-  #テーマ適用
-  $view.addClass("theme_#{app.config.get("theme_id")}")
-  app.message.add_listener "config_updated", (message) ->
-    if message.key is "theme_id"
-      $view.removeClass("theme_default theme_dark theme_none")
-      $view.addClass("theme_#{message.val}")
+###*
+@namespace app.view
+@class View
+@constructor
+@param {Element} element
+@requires jQuery
+###
+class app.view.View
+  constructor: (@element) ->
+    @$element = $element = $(@element)
+
+    @_setupTheme()
+    @_setupOpenInRcrx()
     return
 
-  #ユーザーCSS挿入
-  do ->
-    if $view.is(".view_index, .view_sidemenu, .view_bookmark, .view_board, .view_history, .view_inputurl, .view_thread, .view_search")
-      style = document.createElement("style")
-      style.textContent = app.config.get("user_css")
-      document.head.appendChild(style)
+  ###*
+  @method _changeTheme
+  @private
+  @param {String} themeId
+  ###
+  _changeTheme: (themeId) ->
+    # テーマ適用
+    @$element.removeClass("theme_default theme_dark theme_none")
+    @$element.addClass("theme_#{themeId}")
     return
 
-  #title_updatedメッセージ送出処理
-  do ->
-    send_title_updated = ->
-      tmp =
-        type: "title_updated"
-        title: document.title
-      parent.postMessage(JSON.stringify(tmp), location.origin)
+  ###*
+  @method _setupTheme
+  @private
+  ###
+  _setupTheme: ->
+    # テーマ適用
+    @_changeTheme(app.config.get("theme_id"))
 
-    if document.title
-      send_title_updated()
-    $view
-      .find("title")
-        .bind("DOMSubtreeModified", send_title_updated)
+    # テーマ更新反映
+    app.message.addListener "config_updated", (message) =>
+      if message.key is "theme_id"
+        @_changeTheme(message.val)
+      return
+    return
 
-  #.open_in_rcrx
-  $view
-    #windowsのオートスクロール対策
-    .on "mousedown", ".open_in_rcrx", (e) ->
-      if e.which is 2
+  ###*
+  @method _insertUserCSS
+  @private
+  ###
+  _insertUserCSS: ->
+    style = document.createElement("style")
+    style.textContent = app.config.get("user_css")
+    document.head.appendChild(style)
+    return
+
+  ###*
+  @method _setupOpenInRcrx
+  @private
+  ###
+  _setupOpenInRcrx: ->
+    # .open_in_rcrxリンクの処理
+    @$element
+      # Windowsのオートスクロール対策
+      .on "mousedown", ".open_in_rcrx", (e) ->
+        if e.which is 2
+          e.preventDefault()
+        return
+
+      .on "click", ".open_in_rcrx", (e) ->
         e.preventDefault()
-      return
-    .on "click", ".open_in_rcrx", (e) ->
-      e.preventDefault()
-      url = @href or @getAttribute("data-href")
-      title = @getAttribute("data-title") or @textContent
-      how_to_open = app.util.get_how_to_open(e)
-      new_tab = app.config.get("always_new_tab") is "on"
-      new_tab or= how_to_open.new_tab or how_to_open.new_window
-      background = how_to_open.background
-      app.message.send("open", {url, new_tab, background, title})
-      return
+        url = @href or @getAttribute("data-href")
+        title = @getAttribute("data-title") or @textContent
+        howToOpen = app.util.get_how_to_open(e)
+        newTab = app.config.get("always_new_tab") is "on"
+        newTab or= howToOpen.new_tab or howToOpen.new_window
+        background = howToOpen.background
 
-  window.addEventListener "message", (e) ->
-    if e.origin is location.origin
-      message = JSON.parse(e.data)
-      #request_reload(postMessage) -> request_reload(event) 翻訳処理
-      if message.type is "request_reload"
-        if message.force_update is true
-          $view.trigger("request_reload", force_update: true)
-        else
-          $view.trigger("request_reload")
-      #tab_selected(postMessage) -> tab_selected(event) 翻訳処理
-      else if message.type is "tab_selected"
-        $view.trigger("tab_selected")
+        app.message.send("open", {url, new_tab: newTab, background, title})
+        return
+    return
 
-  # キーボード操作関連
-  $view
-    .on "keydown", (e)->
+###*
+@namespace app.view
+@class IframeView
+@extends app.view.View
+@constructor
+@param {Element} element
+###
+class app.view.IframeView extends app.view.View
+  constructor: (element) ->
+    super(element)
+
+    @_setupKeyboard()
+    @_setupCommandBox()
+    return
+
+  ###*
+  @method close
+  ###
+  close: ->
+    parent.postMessage(
+      JSON.stringify(type: "request_killme"),
+      location.origin
+    )
+    return
+
+  ###*
+  @method execCommand
+  @param {String} command
+  ###
+  execCommand: (command) ->
+    # 数値コマンド
+    if /^\d+$/.test(command)
+      if @$element.is(".view_thread")
+        target = Math.min(@$element.find(".content > article").length, +command)
+        @$element.data("threadContent").scrollTo(target)
+        @$element.data("threadContent").select(target)
+
+    switch command
+      when "up"
+        if @$element.hasClass("view_thread")
+          @$element.data("threadContent").selectPrev()
+        else if @$element.hasClass("view_sidemenu")
+          @$element.data("accordion").selectPrev()
+        else if @$element.data("threadList")
+          @$element.data("threadList").selectPrev()
+      when "down"
+        if @$element.hasClass("view_thread")
+          @$element.data("threadContent").selectNext()
+        else if @$element.hasClass("view_sidemenu")
+          @$element.data("accordion").selectNext()
+        else if @$element.data("threadList")
+          @$element.data("threadList").selectNext()
+      when "left"
+        if @$element.hasClass("view_sidemenu")
+          $a = @$element.find("li > a.selected")
+          if $a.length is 1
+            @$element.data("accordion").select($a.closest("ul").prev()[0])
+      when "right"
+        if @$element.hasClass("view_sidemenu")
+          $a = @$element.find("h3.selected + ul a")
+          if $a.length > 0
+            @$element.data("accordion").select($a[0])
+      when "focusUpFrame", "focusDownFrame", "focusLeftFrame", "focusRightFrame"
+        app.message.send("requestFocusMove", {command}, parent)
+      when "r"
+        @$element.trigger("request_reload")
+      when "q"
+        @close()
+      when "enter"
+        @$element.find(".selected").trigger("click")
+      when "help"
+        app.message.send("showKeyboardHelp", null, parent)
+    return
+
+  ###*
+  @method _setupCommandBox
+  ###
+  _setupCommandBox: ->
+    that = @
+
+    $("<input>", class: "command")
+      .on "keydown", (e) ->
+        # Enter
+        if e.which is 13
+          that.execCommand(e.target.value.replace(/[\s]/g, ""))
+          that._closeCommandBox()
+        # Esc
+        else if e.which is 27
+          that._closeCommandBox()
+        return
+      .hide()
+      .appendTo(@$element)
+    return
+
+  ###*
+  @method _openCommandBox
+  ###
+  _openCommandBox: ->
+    @$element
+      .find(".command")
+        .data("lastActiveElement", document.activeElement)
+        .show()
+        .focus()
+    return
+
+  ###*
+  @method _closeCommandBox
+  ###
+  _closeCommandBox: ->
+    @$element
+      .find(".command")
+        .val("")
+        .hide()
+        .data("lastActiveElement")?.focus()
+    return
+
+  ###*
+  @method _setupKeyboard
+  @private
+  ###
+  _setupKeyboard: ->
+    @$element.on "keydown", (e) =>
       # F5 or Ctrl+r or ⌘+r
       if e.which is 116 or (e.ctrlKey and e.which is 82) or (e.metaKey and e.which is 82)
         e.preventDefault()
@@ -98,7 +232,7 @@ app.view_module.view = ($view) ->
         e.target.value is "" and
         not e.target.classList.contains("command")
       )
-        $view.find(".content").focus()
+        @$element.find(".content").focus()
 
       # : (基本的に入力欄では発動しないが、空白の入力欄に入力された場合のみ例外)
       else if (
@@ -109,10 +243,7 @@ app.view_module.view = ($view) ->
         )
       )
         e.preventDefault()
-        $("<input>", class: "command")
-          .data("lastActiveElement", document.activeElement)
-          .appendTo($view)
-          .focus()
+        @_openCommandBox()
 
       # 入力欄内では発動しない系
       else if not (e.target.nodeName in ["INPUT", "TEXTAREA"])
@@ -163,147 +294,211 @@ app.view_module.view = ($view) ->
               e.preventDefault()
               $(".searchbox, form.search > input[type=\"text\"]").focus()
 
-      # コマンド入力欄操作
-      else if e.target.classList.contains("command")
-        # Enter
-        if e.which is 13
-          command = e.target.value.replace(/[\s]/g, "")
-          $(e.target).data("lastActiveElement")?.focus()
-          $(e.target).remove()
-        # Esc
-        else if e.which is 27
-          $(e.target).data("lastActiveElement")?.focus()
-          $(e.target).remove()
+      if command?
+        @execCommand(command)
+      return
+    return
 
-      # 数値
-      if command and /^\d+$/.test(command)
-        if $view.is(".view_thread")
-          target = Math.min($view.find(".content > article").length, +command)
-          $view.data("threadContent").scrollTo(target)
-          $view.data("threadContent").select(target)
+###*
+@namespace app.view
+@class PaneContentView
+@extends app.view.IframeView
+@constructor
+@param {Element} element
+###
+class app.view.PaneContentView extends app.view.IframeView
+  constructor: (element) ->
+    super(element)
+    $element = @$element
 
-      switch command
-        when "up"
-          if $view.hasClass("view_thread")
-            $view.data("threadContent").selectPrev()
-          else if $view.hasClass("view_sidemenu")
-            $view.data("accordion").selectPrev()
-          else if $view.data("threadList")
-            $view.data("threadList").selectPrev()
-        when "down"
-          if $view.hasClass("view_thread")
-            $view.data("threadContent").selectNext()
-          else if $view.hasClass("view_sidemenu")
-            $view.data("accordion").selectNext()
-          else if $view.data("threadList")
-            $view.data("threadList").selectNext()
-        when "left"
-          if $view.hasClass("view_sidemenu")
-            $a = $view.find("li > a.selected")
-            if $a.length is 1
-              $view.data("accordion").select($a.closest("ul").prev()[0])
-        when "right"
-          if $view.hasClass("view_sidemenu")
-            $a = $view.find("h3.selected + ul a")
-            if $a.length > 0
-              $view.data("accordion").select($a[0])
-        when "focusUpFrame", "focusDownFrame", "focusLeftFrame", "focusRightFrame"
-          app.message.send("requestFocusMove", {command}, parent)
-        when "r"
-          $view.trigger("request_reload")
-        when "q"
-          parent.postMessage(
-            JSON.stringify(type: "request_killme"), location.origin)
-        when "enter"
-          $view.find(".selected").trigger("click")
-        when "help"
-          app.message.send("showKeyboardHelp", null, parent)
+    @_setupEventConverter()
+    @_insertUserCSS()
+    return
+
+  ###*
+  @method _setupEventConverter
+  @private
+  ###
+  _setupEventConverter: ->
+    window.addEventListener "message", (e) =>
+      if e.origin is location.origin
+        message = JSON.parse(e.data)
+
+        # request_reload(postMessage) -> request_reload(event) 翻訳処理
+        if message.type is "request_reload"
+          if message.force_update is true
+            @$element.trigger("request_reload", force_update: true)
+          else
+            @$element.trigger("request_reload")
+
+        # tab_selected(postMessage) -> tab_selected(event) 翻訳処理
+        else if message.type is "tab_selected"
+          @$element.trigger("tab_selected")
       return
 
-  $view
-    #mousedown通知
-    .bind "mousedown", ->
-      tmp = JSON.stringify(type: "view_mousedown")
-      parent.postMessage(tmp, location.origin)
-
-    #view_loaded翻訳処理
-    .bind "view_loaded", ->
-      tmp = JSON.stringify(type: "view_loaded")
-      parent.postMessage(tmp, location.origin)
-
-    #view内リロードボタンの処理
-    .find(".button_reload")
-      .bind "click", ->
-        if not $(this).hasClass("disabled")
-          $view.trigger("request_reload")
+    @$element
+      # mousedown通知
+      .on "mousedown", ->
+        parent.postMessage(
+          JSON.stringify(type: "view_mousedown"),
+          location.origin
+        )
         return
 
-  # 戻る/進むボタン管理
-  parent.postMessage(JSON.stringify(type: "requestTabHistory"), location.origin)
-
-  window.addEventListener "message", (e) ->
-    if e.origin is location.origin
-      message = JSON.parse(e.data)
-      if message.type is "responseTabHistory"
-        if message.history.current > 0
-          $view.find(".button_back").removeClass("disabled")
-
-        if message.history.current < message.history.stack.length - 1
-          $view.find(".button_forward").removeClass("disabled")
-
-        if message.history.stack.length is 1 and app.config.get("always_new_tab") is "on"
-          $view.find(".button_back, .button_forward").remove()
+      # view_loaded翻訳処理
+      .on "view_loaded", ->
+        parent.postMessage(
+          JSON.stringify(type: "view_loaded"),
+          location.origin
+        )
+        return
     return
 
-  $view.find(".button_back, .button_forward").on "click", ->
-    $this = $(@)
+###*
+@namespace app.view
+@class TabContentView
+@extends app.view.PaneContentView
+@constructor
+@param {Element} element
+###
+class app.view.TabContentView extends app.view.PaneContentView
+  constructor: (element) ->
+    super(element)
 
-    return if $this.is(".disabled")
-
-    tmp = if $this.is(".button_back") then "Back" else "Forward"
-    parent.postMessage(JSON.stringify(type: "requestTab#{tmp}"), location.origin)
+    @_setupTitleReporter()
+    @_setupReloadButton()
+    @_setupNavButton()
+    @_setupBookmarkButton()
+    @_setupSortItemSelector()
+    @_setupToolMenu()
     return
 
-  return
+  ###*
+  @method _setupTitleReporter
+  @private
+  ###
+  _setupTitleReporter: ->
+    sendTitleUpdated = =>
+      parent.postMessage(
+        JSON.stringify(
+          type: "title_updated"
+          title: @$element.find("title").text()
+        ),
+        location.origin
+      )
+      return
 
-app.view_module.bookmark_button = ($view) ->
-  url = $view.attr("data-url")
-  $button = $view.find(".button_bookmark")
-  if ///^http://\w///.test(url)
-    if app.bookmark.get(url)
-      $button.addClass("bookmarked")
-    else
-      $button.removeClass("bookmarked")
+    if @$element.find("title").text()
+      sendTitleUpdated()
 
-    app.message.add_listener "bookmark_updated", (message) ->
-      if message.bookmark.url is url
-        if message.type is "added"
+    @$element.find("title").on("DOMSubtreeModified", sendTitleUpdated)
+    return
+
+  ###*
+  @method _setupReloadButton
+  @private
+  ###
+  _setupReloadButton: ->
+    that = @
+
+    # View内リロードボタン
+    @$element.find(".button_reload").on "click", ->
+      if not $(this).hasClass("disabled")
+        that.$element.trigger("request_reload")
+      return
+    return
+
+  ###*
+  @method _setupNavButton
+  @private
+  ###
+  _setupNavButton: ->
+    # 戻る/進むボタン管理
+    parent.postMessage(
+      JSON.stringify(type: "requestTabHistory"),
+      location.origin
+    )
+
+    window.addEventListener "message", (e) =>
+      if e.origin is location.origin
+        message = JSON.parse(e.data)
+        if message.type is "responseTabHistory"
+          if message.history.current > 0
+            @$element.find(".button_back").removeClass("disabled")
+
+          if message.history.current < message.history.stack.length - 1
+            @$element.find(".button_forward").removeClass("disabled")
+
+          if (
+            message.history.stack.length is 1 and
+            app.config.get("always_new_tab") is "on"
+          )
+            @$element.find(".button_back, .button_forward").remove()
+      return
+
+    @$element.find(".button_back, .button_forward").on "click", ->
+      $this = $(@)
+
+      if not $this.is(".disabled")
+        tmp = if $this.is(".button_back") then "Back" else "Forward"
+        parent.postMessage(
+          JSON.stringify(type: "requestTab#{tmp}"),
+          location.origin
+        )
+      return
+    return
+
+  ###*
+  @method _setupBookmarkButton
+  @private
+  ###
+  _setupBookmarkButton: ->
+    $button = @$element.find(".button_bookmark")
+
+    if $button.length is 1
+      url = @$element.attr("data-url")
+
+      if ///^http://\w///.test(url)
+        if app.bookmark.get(url)
           $button.addClass("bookmarked")
-        else if message.type is "removed"
+        else
           $button.removeClass("bookmarked")
 
-    $button.on "click", ->
-      if app.bookmark.get(url)
-        app.bookmark.remove(url)
+        app.message.addListener "bookmark_updated", (message) ->
+          if message.bookmark.url is url
+            if message.type is "added"
+              $button.addClass("bookmarked")
+            else if message.type is "removed"
+              $button.removeClass("bookmarked")
+          return
+
+        $button.on "click", =>
+          if app.bookmark.get(url)
+            app.bookmark.remove(url)
+          else
+            title = @$element.find("title").text() or url
+
+            if @$element.hasClass("view_thread")
+              resCount = @$element.find(".content").children().length
+
+            if resCount? and resCount > 0
+              app.bookmark.add(url, title, resCount)
+            else
+              app.bookmark.add(url, title)
+          return
       else
-        title = $view.find("title").text() or url
+        $button.remove()
+    return
 
-        if $view.hasClass("view_thread")
-          resCount = $view.find(".content").children().length
+  ###*
+  @method _setupSortItemSelector
+  @private
+  ###
+  _setupSortItemSelector: ->
+    $table = @$element.find(".table_sort")
+    $selector = @$element.find(".sort_item_selector")
 
-        if resCount? and resCount > 0
-          app.bookmark.add(url, title, resCount)
-        else
-          app.bookmark.add(url, title)
-      return
-  else
-    $button.remove()
-
-app.view_module.sort_item_selector = ($view) ->
-  $table = $(".table_sort")
-  $selector = $view.find(".sort_item_selector")
-  $table
-    .on "table_sort_updated", (e, ex) ->
+    $table.on "table_sort_updated", (e, ex) ->
       $selector
         .find("option")
           .filter(->
@@ -311,8 +506,8 @@ app.view_module.sort_item_selector = ($view) ->
           )
             .attr("selected", true)
       return
-  $selector
-    .on "change", ->
+
+    $selector.on "change", ->
       selected = @children[@selectedIndex]
       config = {}
 
@@ -328,52 +523,57 @@ app.view_module.sort_item_selector = ($view) ->
 
       $table.table_sort("update", config)
       return
-  return
+    return
 
-app.view_module.tool_menu = ($view) ->
-  #メニューの表示/非表示制御
-  $view.find(".button_tool").on "click", ->
-    if $(@).find("ul").toggle().is(":visible")
-      app.defer ->
-        $view.one "click contextmenu", (e) ->
-          if not $(e.target).is(".button_tool")
-            $view.find(".button_tool > ul").hide()
+  ###*
+  @method _setupToolMenu
+  @private
+  ###
+  _setupToolMenu: ->
+    that = @
+
+    #メニューの表示/非表示制御
+    @$element.find(".button_tool").on "click", ->
+      if $(@).find("ul").toggle().is(":visible")
+        app.defer ->
+          that.$element.one "click contextmenu", (e) ->
+            if not $(e.target).is(".button_tool")
+              that.$element.find(".button_tool > ul").hide()
+            return
           return
-        return
-    return
-
-  $(window).on "blur", ->
-    $view.find(".button_tool > ul").hide()
-    return
-
-  # Chromeで直接開く
-  do ->
-    url = $view.attr("data-url")
-
-    if url is "bookmark"
-      url = "chrome-extension://eemcgdkfndhakfknompkggombfjjjeno/"
-      url += "main.html##{app.config.get("bookmark_id")}"
-    else if /^search:/.test(url)
       return
-    else
-      url = app.safe_href(url)
 
-    $view.find(".button_link > a").attr("href", url)
+    $(window).on "blur", =>
+      @$element.find(".button_tool > ul").hide()
+      return
+
+    # Chromeで直接開く
+    do =>
+      url = @$element.attr("data-url")
+
+      if url is "bookmark"
+        url = "chrome-extension://eemcgdkfndhakfknompkggombfjjjeno/"
+        url += "main.html##{app.config.get("bookmark_id")}"
+      else if /^search:/.test(url)
+        return
+      else
+        url = app.safe_href(url)
+
+      @$element.find(".button_link > a").attr("href", url)
+      return
+
+    # タイトルをコピー
+    @$element.find(".button_copy_title").on "click", =>
+      app.clipboardWrite(@$element.find("title").text())
+      return
+
+    # URLをコピー
+    @$element.find(".button_copy_url").on "click", =>
+      app.clipboardWrite(@$element.attr("data-url"))
+      return
+
+    # タイトルとURLをコピー
+    @$element.find(".button_copy_title_and_url").on "click", =>
+      app.clipboardWrite(document.title + " " + @$element.attr("data-url"))
+      return
     return
-
-  # タイトルをコピー
-  $view.find(".button_copy_title").on "click", ->
-    app.clipboardWrite(document.title)
-    return
-
-  # URLをコピー
-  $view.find(".button_copy_url").on "click", ->
-    app.clipboardWrite($view.attr("data-url"))
-    return
-
-  # タイトルとURLをコピー
-  $view.find(".button_copy_title_and_url").on "click", ->
-    app.clipboardWrite(document.title + " " + $view.attr("data-url"))
-    return
-
-  return

@@ -41,10 +41,7 @@ app.boot "/view/board.html", ["board_title_solver"], (BoardTitleSolver) ->
           return
         return
 
-  app.view_module.view($view)
-  app.view_module.bookmark_button($view)
-  app.view_module.sort_item_selector($view)
-  app.view_module.tool_menu($view)
+  new app.view.TabContentView(document.documentElement)
 
   BoardTitleSolver.ask({url}).always (title) ->
     if title

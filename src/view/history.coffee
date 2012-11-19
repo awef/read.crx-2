@@ -1,8 +1,7 @@
 app.boot "/view/history.html", ->
   $view = $(document.documentElement)
 
-  app.view_module.view($view)
-  app.view_module.tool_menu($view)
+  new app.view.TabContentView(document.documentElement)
 
   $table = $("<table>")
   threadList = new UI.ThreadList($table[0], {

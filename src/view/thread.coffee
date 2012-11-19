@@ -51,9 +51,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
   $view.data("threadContent", threadContent)
   $view.data("lazyload", new UI.LazyLoad($view.find(".content")[0]))
 
-  app.view_module.view($view)
-  app.view_module.bookmark_button($view)
-  app.view_module.tool_menu($view)
+  new app.view.TabContentView(document.documentElement)
 
   write = (param) ->
     param or= {}
