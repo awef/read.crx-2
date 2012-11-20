@@ -24,8 +24,8 @@ class app.view.Index extends app.view.View
         return
 
       #iframeがクリックされた時にフォーカスを移動
-      .on "view_mousedown", "iframe:not(.iframe_focused)", ->
-        index.focus(@)
+      .on "request_focus", "iframe:not(.iframe_focused)", (e, ex) ->
+        index.focus(@, ex.focus)
         return
 
       #タブが選択された時にフォーカスを移動
@@ -71,17 +71,21 @@ class app.view.Index extends app.view.View
   ###*
   @method focus
   @param {Element} iframe
+  @param {Boolean} [focus=true]
+    trueだと実際にフォーカスを移動する処理が行われる。
   ###
-  focus: (iframe) ->
+  focus: (iframe, focus = true) ->
     $iframe = $(iframe)
 
     if not $iframe.hasClass("iframe_focused")
       @$element.find(".iframe_focused").removeClass("iframe_focused")
       $iframe.addClass("iframe_focused")
 
-    app.defer ->
-      $iframe.contents().find(".content").focus()
-      return
+    if focus
+      app.defer ->
+        iframe.contentDocument.activeElement.blur()
+        iframe.contentDocument.querySelector(".content").focus()
+        return
     return
 
   ###*
@@ -538,10 +542,9 @@ app.main = ->
       when "view_loaded"
         $iframe.trigger("view_loaded")
 
-      #view_mousedownの翻訳
-      when "view_mousedown"
-        $iframe.trigger("view_mousedown")
-
+      #request_focusの翻訳
+      when "request_focus"
+        $iframe.trigger("request_focus", message)
     return
 
   $(window)

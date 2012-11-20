@@ -337,12 +337,16 @@ class app.view.PaneContentView extends app.view.IframeView
       return
 
     @$element
-      # mousedown通知
-      .on "mousedown", ->
-        parent.postMessage(
-          JSON.stringify(type: "view_mousedown"),
-          location.origin
-        )
+      # request_focus送出処理
+      .on "mousedown", (e) ->
+        message =
+          type: "request_focus"
+          focus: true
+
+        if e.target.nodeName in ["INPUT", "TEXTAREA"]
+          message.focus = false
+
+        parent.postMessage(JSON.stringify(message), location.origin)
         return
 
       # view_loaded翻訳処理
