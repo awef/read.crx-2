@@ -28,7 +28,7 @@ app.view ?= {}
 ###
 class app.view.View
   constructor: (@element) ->
-    @$element = $element = $(@element)
+    @$element = $(@element)
 
     @_setupTheme()
     @_setupOpenInRcrx()
