@@ -83,8 +83,8 @@ class app.view.Index extends app.view.View
 
     if focus
       app.defer ->
-        iframe.contentDocument.activeElement.blur()
-        iframe.contentDocument.querySelector(".content").focus()
+        iframe.contentDocument.activeElement?.blur()
+        iframe.contentDocument.querySelector(".content")?.focus()
         return
     return
 
