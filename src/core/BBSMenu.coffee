@@ -23,7 +23,7 @@ class app.BBSMenu
   @return {Array}
   ###
   @parse: (html) ->
-    reg_category = ///<b>(.+?)</b>(?:.*\n<a\s.*?>.+?</a>)+///gi
+    reg_category = ///<b>(.+?)</b>(?:.*[\r\n]+<a\s.*?>.+?</a>)+///gi
     reg_board = ///<a\shref=(http://(?!info\.2ch\.net/)
       \w+\.(?:2ch\.net|machi\.to)/\w+/)(?:\s.*?)?>(.+?)</a>///gi
 
