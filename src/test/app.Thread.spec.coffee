@@ -880,7 +880,7 @@ describe "app.Thread", ->
       expect(app.Cache::put).toHaveBeenCalled()
       expect(cache.data).toBe(data.ch.dat)
       expect(cache.last_modified).toBeNull()
-      expect(cache.last_updated).toBeCloseTo(Date.now(), 1000)
+      expect(cache.last_updated).toBeGreaterThan(Date.now() - 1000)
       expect(cache.etag).toBeNull()
       expect(cache.res_length).toBe(data.ch.expected.res.length)
       expect(cache.dat_size).toBeNull()
