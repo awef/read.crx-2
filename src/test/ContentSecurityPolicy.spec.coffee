@@ -52,9 +52,8 @@ describe "Content Security Policy", ->
     a = document.createElement("a")
     a.href = "javascript:void(window.cspTest = true);"
     document.querySelector("#jasmine-fixture").appendChild(a)
-    e = document.createEvent("MouseEvents")
-    e.initMouseEvent("click")
-    a.dispatchEvent(e)
+
+    a.click()
 
     expect(window.___cspTest).toBeUndefined()
     return
@@ -63,9 +62,8 @@ describe "Content Security Policy", ->
     span = document.createElement("span")
     span.setAttribute("onclick", "window.cspTest = true;")
     document.querySelector("#jasmine-fixture").appendChild(span)
-    e = document.createEvent("MouseEvents")
-    e.initMouseEvent("click")
-    span.dispatchEvent(e)
+
+    span.click()
 
     expect(window.___cspTest).toBeUndefined()
     return
