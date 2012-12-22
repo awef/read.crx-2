@@ -164,11 +164,12 @@ describe "UI.ThreadList", ->
       return
     return
 
-  it "bookmark_updated(res_count)メッセージを受けてレス数/未読数表示を更新する", ->
-    threadList = new UI.ThreadList(table, th: ["res", "unread"])
+  it "bookmark_updated(res_count)メッセージを受けてレス数/未読数/勢い表示を更新する", ->
+    threadList = new UI.ThreadList(table, th: ["res", "unread", "heat"])
     threadList.addItem(url: dummyURL0, title: "dummy0")
     res = table.querySelector("td:first-child")
     unread = table.querySelector("td:nth-child(2)")
+    heat = table.querySelector("td:nth-child(3)")
 
     dummyBookmark =
       url: dummyURL0
@@ -181,6 +182,7 @@ describe "UI.ThreadList", ->
 
     expect(res.textContent).toBe("")
     expect(unread.textContent).toBe("")
+    expect(heat.textContent).toBe("NaN")
 
     app.message.send("bookmark_updated", {
       type: "res_count"
@@ -192,6 +194,8 @@ describe "UI.ThreadList", ->
     runs ->
       expect(res.textContent).toBe("10")
       expect(unread.textContent).toBe("10")
+      expect(heat.textContent)
+        .toBe(UI.ThreadList._calcHeat(Date.now(), 123456780, 10))
       return
     return
 

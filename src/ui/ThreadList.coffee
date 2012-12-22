@@ -79,6 +79,7 @@ class UI.ThreadList
       title: "td:nth-child(#{$table.find("th.title").index() + 1})"
       res: "td:nth-child(#{$table.find("th.res").index() + 1})"
       unread: "td:nth-child(#{$table.find("th.unread").index() + 1})"
+      heat: "td:nth-child(#{$table.find("th.heat").index() + 1})"
 
     #ブックマーク更新時処理
     app.message.add_listener "bookmark_updated", (msg) =>
@@ -126,6 +127,13 @@ class UI.ThreadList
               tr.classList.add("updated")
             else
               tr.classList.remove("updated")
+          if @_flg.heat
+            td = tr.querySelector(selector.heat)
+            td.textContent = ThreadList._calcHeat(
+              Date.now()
+              /\/(\d+)\/$/.exec(msg.bookmark.url)[1] * 1000
+              msg.bookmark.res_count
+            )
 
       if @_flg.title and msg.type is "title"
         $tr = $table.find("tr[data-href=\"#{msg.bookmark.url}\"]")
