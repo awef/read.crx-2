@@ -9,6 +9,7 @@ app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
     li = document.createElement("li")
     a = document.createElement("a")
     a.className = "open_in_rcrx"
+    a.title = board.title
     a.textContent = board.title
     a.href = app.safe_href(board.url)
     li.appendChild(a)
