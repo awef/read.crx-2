@@ -141,7 +141,7 @@ lambda {
     "debug/img/star_19x19_007fff.png",
     "debug/img/reload_19x19_333.png",
     "debug/img/pencil_19x19_333.png",
-    "debug/img/spanner_19x19_333.png",
+    "debug/img/menu_19x19_333.png",
 
     "debug/img/arrow_19x19_ddd_r90.png",
     "debug/img/arrow_19x19_ddd_r-90.png",
@@ -150,7 +150,7 @@ lambda {
     "debug/img/star_19x19_f93.png",
     "debug/img/reload_19x19_ddd.png",
     "debug/img/pencil_19x19_ddd.png",
-    "debug/img/spanner_19x19_ddd.png"
+    "debug/img/menu_19x19_ddd.png"
   ]
 
   directory "debug/img"
