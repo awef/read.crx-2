@@ -166,6 +166,10 @@ class app.view.IframeView extends app.view.View
         @close()
       when "enter"
         @$element.find(".selected").trigger("click")
+      when "shift+enter"
+        @$element.find(".selected").trigger(
+          $.Event("click", shiftKey: true, which: 1)
+        )
       when "help"
         app.message.send("showKeyboardHelp", null, parent)
     return
@@ -249,7 +253,11 @@ class app.view.IframeView extends app.view.View
       else if not (e.target.nodeName in ["INPUT", "TEXTAREA"])
         switch (e.which)
           # Enter
-          when 13 then command = "enter"
+          when 13
+            if e.shiftKey
+              command = "shift+enter"
+            else
+              command = "enter"
           # h
           when 72
             if e.shiftKey
