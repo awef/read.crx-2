@@ -75,6 +75,14 @@ def coffee(src, output)
   sh "node_modules/.bin/coffee -cbj #{output} #{src}"
 end
 
+def typescript(src, output)
+  if src.is_a? Array
+    src = src.join(" ")
+  end
+
+  sh "node_modules/.bin/tsc --target ES5 --out #{output} #{src}"
+end
+
 def file_coffee(target, src)
   file target => src do
     coffee(src, target)
@@ -84,6 +92,12 @@ end
 def file_copy(target, src)
   file target => src do
     cp src, target
+  end
+end
+
+def file_typescript(target, src)
+  file target => src do
+    typescript(src, target)
   end
 end
 
@@ -120,6 +134,8 @@ end
 directory "debug"
 
 file_copy "debug/manifest.json", "src/manifest.json"
+
+file_typescript "debug/app.js", "src/app.ts"
 
 file_coffee "debug/app_core.js", FileList["src/core/*.coffee"]
 
@@ -233,11 +249,15 @@ lambda {
     "src/write/write.coffee"
   ]
 
-  file_coffee "debug/write/cs_write.js", [
-    "src/app.coffee",
+  file "debug/write/cs_write.js", [
+    "debug/app.js",
     "src/core/url.coffee",
     "src/write/cs_write.coffee"
-  ]
+  ] do
+    coffee(["src/core/url.coffee", "src/write/cs_write.coffee"], "tmp.js")
+    sh "cat debug/app.js tmp.js > debug/write/cs_write.js"
+    rm "tmp.js"
+  end
 }.call()
 
 namespace :test do
