@@ -229,6 +229,10 @@ class app.view.IframeView extends app.view.View
       else if e.ctrlKey or e.metaKey
         return
 
+      # Windows版ChromeでのBackSpace誤爆対策
+      if e.which is 8 and not (e.target.nodeName in ["INPUT", "TEXTAREA"])
+        e.preventDefault()
+
       # Esc (空白の入力欄に入力された場合)
       else if (
         e.which is 27 and
