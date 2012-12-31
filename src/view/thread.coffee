@@ -222,7 +222,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
         $popup = $("<div>")
         if not @classList.contains("disabled")
           tmp = $content[0].children
-          for segment in app.util.parse_anchor(@innerHTML).segments
+          for segment in app.util.Anchor.parseAnchor(@innerHTML).segments
             now = segment[0] - 1
             end = segment[1] - 1
             while now <= end
@@ -251,7 +251,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
       e.preventDefault()
       return if @classList.contains("disabled")
 
-      tmp = app.util.parse_anchor(@innerHTML)
+      tmp = app.util.Anchor.parseAnchor(@innerHTML)
       target_res_num = tmp.segments[0]?[0]
       if target_res_num?
         threadContent.scrollTo(target_res_num, true)

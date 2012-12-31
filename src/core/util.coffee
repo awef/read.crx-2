@@ -1,33 +1,45 @@
 app.util = {}
 
-# #app.util.anchor_parse
-# 文字列中の全てのアンカーの情報をパースする
-app.util.parse_anchor = (str) ->
-  data =
-    target_count: 0
-    segments: []
+###*
+@namespace app.util
+@class Anchor
+スレッドフロートBBSで用いられる「アンカー」形式の文字列を扱う。
+###
+class app.util.Anchor
+  @reg =
+    ANCHOR: /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:[\-\u30fc][\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:[\-\u30fc][\d\uff10-\uff19]+)?)*/g
+    _FW_DASH: /\u30fc/g
+    _FW_NUMBER: /[\uff10-\uff19]/g
 
-  str = str.replace(/\u30fc/g, "-")
-  str = str.replace /[\uff10-\uff19]/g, ($0) ->
-    String.fromCharCode($0.charCodeAt(0) - 65248)
+  @parseAnchor: (str) ->
+    data =
+      targetCount: 0
+      segments: []
 
-  anchor_reg = /(?:&gt;|＞){1,2}\d+(?:\-\d+)?(?:\s*,\s*\d+(?:\-\d+)?)*/g
-  while anchor_res = anchor_reg.exec(str)
-    segment_reg = /(\d+)(?:-(\d+))?/g
-    while segment_res = segment_reg.exec(anchor_res[0])
-      continue if segment_res[1].length > 5 or segment_res[2]?.length > 5
-      continue if +segment_res[1] < 1
-      if segment_res[2]
-        continue if +segment_res[2] < +segment_res[1]
-        segrange_start = +segment_res[1]
-        segrange_end = +segment_res[2]
+    str = str.replace(Anchor.reg._FW_DASH, "-")
+    str = str.replace Anchor.reg._FW_NUMBER, ($0) ->
+      String.fromCharCode($0.charCodeAt(0) - 65248)
+
+    if not /^(?:&gt;|＞){1,2}([\d]+(?:-\d+)?(?:\s*,\s*\d+(?:-\d+)?)*)$/.test(str)
+      return data
+
+    segReg = /(\d+)(?:-(\d+))?/g
+    while segment = segReg.exec(str)
+      # 桁数の大きすぎる値は無視
+      continue if segment[1].length > 5 or segment[2]?.length > 5
+      # 1以下の値は無視
+      continue if +segment[1] < 1
+
+      if segment[2]
+        continue if +segment[2] < +segment[1]
+        segrangeStart = +segment[1]
+        segrangeEnd = +segment[2]
       else
-        segrange_start = segrange_end = +segment_res[1]
+        segrangeStart = segrangeEnd = +segment[1]
 
-      data.target_count += segrange_end - segrange_start + 1
-      data.segments.push([segrange_start, segrange_end])
-
-  data
+      data.targetCount += segrangeEnd - segrangeStart + 1
+      data.segments.push([segrangeStart, segrangeEnd])
+    data
 
 #2chの鯖移転検出関数
 #移転を検出した場合は移転先のURLをresolveに載せる

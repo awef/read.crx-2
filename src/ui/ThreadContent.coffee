@@ -267,13 +267,13 @@ class UI.ThreadContent
               else
                 $0
             #アンカーリンク
-            .replace /(?:&gt;|＞){1,2}[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:-[\d\uff10-\uff19]+)?)*/g, ($0) =>
-              anchor = app.util.parse_anchor($0)
+            .replace app.util.Anchor.reg.ANCHOR, ($0) =>
+              anchor = app.util.Anchor.parseAnchor($0)
 
-              if anchor.target_count >= 25
+              if anchor.targetCount >= 25
                 disabled = true
                 disabledReason = "指定されたレスの量が極端に多いため、ポップアップを表示しません"
-              else if anchor.target_count is 0
+              else if anchor.targetCount is 0
                 disabled = true
                 disabledReason = "指定されたレスが存在しません"
               else
