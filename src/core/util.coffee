@@ -20,7 +20,7 @@ class app.util.Anchor
     str = str.replace Anchor.reg._FW_NUMBER, ($0) ->
       String.fromCharCode($0.charCodeAt(0) - 65248)
 
-    if not /^(?:&gt;|＞){1,2}([\d]+(?:-\d+)?(?:\s*,\s*\d+(?:-\d+)?)*)$/.test(str)
+    if not /^(?:&gt;|＞){0,2}([\d]+(?:-\d+)?(?:\s*,\s*\d+(?:-\d+)?)*)$/.test(str)
       return data
 
     segReg = /(\d+)(?:-(\d+))?/g
