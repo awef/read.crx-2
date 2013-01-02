@@ -214,8 +214,8 @@ class UI.ThreadContent
 
         #.name
         articleHtml += """<span class="name"""
-        if /^\s*([\d\uff10-\uff19]+)\s*$/.test(res.name)
-          articleHtml += " name_num"
+        if /^\s*(?:&gt;|\uff1e){0,2}([\d\uff10-\uff19]+(?:[\-\u30fc][\d\uff10-\uff19]+)?(?:\s*,\s*[\d\uff10-\uff19]+(?:[\-\u30fc][\d\uff10-\uff19]+)?)*)\s*$/.test(res.name)
+          articleHtml += " name_anchor"
         tmp = (
           res.name
             .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")

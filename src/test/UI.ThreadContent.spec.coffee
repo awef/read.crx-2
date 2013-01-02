@@ -53,7 +53,7 @@ describe "UI.ThreadContent", ->
         $("<article>", class: "one", "data-id": "ID:iTGL5FKU").append(
           $("<header>").append(
             $("<span>", class: "num", text: "2")
-            $("<span>", class: "name name_num", text: "774")
+            $("<span>", class: "name name_anchor", text: "774")
             $("<span>", class: "mail", text: "")
             $("<span>", class: "other").append(
               document.createTextNode("2010/05/14(木) 15:51:14 ")
@@ -166,24 +166,36 @@ describe "UI.ThreadContent", ->
       hogehoge()
       return
 
-    it "名前欄が数値だった場合、.nameに.name_numを付与する", ->
+    it ".nameがレス番/アンカーとして解釈出来る場合、.name_anchorを付与する", ->
       example.a.data1.name = "123"
       example.a.dom1.querySelector(".name").textContent = "123"
-      example.a.dom1.querySelector(".name").classList.add("name_num")
+      example.a.dom1.querySelector(".name").classList.add("name_anchor")
+
+      hogehoge()
+
+      example.a.data1.name = "&gt;&gt;123"
+      example.a.dom1.querySelector(".name").textContent = ">>123"
+      example.a.dom1.querySelector(".name").classList.add("name_anchor")
+
+      hogehoge()
+
+      example.a.data1.name = "＞＞１２３ー１２５"
+      example.a.dom1.querySelector(".name").textContent = "＞＞１２３ー１２５"
+      example.a.dom1.querySelector(".name").classList.add("name_anchor")
 
       hogehoge()
 
       # 前後の空白も許容する
       example.a.data1.name = "   123　 "
       example.a.dom1.querySelector(".name").textContent = "   123　 "
-      example.a.dom1.querySelector(".name").classList.add("name_num")
+      example.a.dom1.querySelector(".name").classList.add("name_anchor")
 
       hogehoge()
 
       # 全角文字列も許容する
       example.a.data1.name = "1２３"
       example.a.dom1.querySelector(".name").textContent = "1２３"
-      example.a.dom1.querySelector(".name").classList.add("name_num")
+      example.a.dom1.querySelector(".name").classList.add("name_anchor")
 
       hogehoge()
       return

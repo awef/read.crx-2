@@ -135,20 +135,9 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
       return
 
   $view
-    #名前欄が数字だった場合のポップアップ
-    .on "click", ".name_num", (e) ->
-      popup_helper @, e, =>
-        tmp = /^\s*([\d\uff10-\uff19]+)\s*$/.exec(@textContent)
-        tmp = tmp[1].replace /[\uff10-\uff19]/, ($0) ->
-          String.fromCharCode($0.charCodeAt(0) - 0xfee0)
-
-        res = $content[0].children[+tmp - 1]
-        $("<div>").append($(res).clone())
-      return
-
     #レスメニュー表示
     .on "click contextmenu", "article > header", (e) ->
-      if $(e.target).is("a, .link, .freq, .name_num")
+      if $(e.target).is("a, .link, .freq, .name_anchor")
         return
 
       if e.type is "contextmenu"
@@ -216,33 +205,50 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
       $this.parent().remove()
       return
 
-    #アンカーポップアップ
-    .delegate ".anchor", "mouseenter", (e) ->
-      popup_helper this, e, =>
+    # アンカーポップアップ
+    .on "mouseenter", ".anchor, .name_anchor", (e) ->
+      if @classList.contains("anchor")
+        anchor = @innerHTML
+      else
+        anchor = @innerHTML.trim()
+
+      popup_helper @, e, =>
         $popup = $("<div>")
-        if not @classList.contains("disabled")
-          tmp = $content[0].children
-          for segment in app.util.Anchor.parseAnchor(@innerHTML).segments
-            now = segment[0] - 1
-            end = segment[1] - 1
-            while now <= end
-              if tmp[now]
-                $popup.append(tmp[now].cloneNode(true))
-              else
-                break
-              now++
-        else
+
+        if @classList.contains("disabled")
           $("<div>", {
               text: @getAttribute("data-disabled_reason")
               class: "popup_disabled"
             })
             .appendTo($popup)
+        else
+          anchorData = app.util.Anchor.parseAnchor(anchor)
+
+          if anchorData.targetCount >= 25
+            $("<div>", {
+                text: "指定されたレスの量が極端に多いため、ポップアップを表示しません"
+                class: "popup_disabled"
+              })
+              .appendTo($popup)
+          else if 0 < anchorData.targetCount
+            tmp = $content[0].children
+            for segment in anchorData.segments
+              now = segment[0] - 1
+              end = segment[1] - 1
+              while now <= end
+                if tmp[now]
+                  $popup.append(tmp[now].cloneNode(true))
+                else
+                  break
+                now++
+
         if $popup.children().length is 0
           $("<div>", {
               text: "対象のレスが見つかりません"
               class: "popup_disabled"
             })
             .appendTo($popup)
+
         $popup
       return
 
