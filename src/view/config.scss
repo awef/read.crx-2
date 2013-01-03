@@ -76,10 +76,6 @@ section button {
   @include button;
 }
 
-.notation {
-  text-align: right;
-}
-
 .version {
   font-size: 0.9rem;
   margin: 0.5rem;
@@ -96,6 +92,13 @@ section button {
 
 .version_copy {
   display: block;
+}
+
+.links {
+  padding: 0;
+  > li {
+    display: inline-block;
+  }
 }
 
 .ninja_info:empty::after {

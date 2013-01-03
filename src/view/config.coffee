@@ -48,6 +48,12 @@ app.boot "/view/config.html", ["cache", "bbsmenu"], (Cache, BBSMenu) ->
     app.clipboardWrite($(".version_text").text())
     return
 
+  $view.find(".keyboard_help").on "click", (e) ->
+    e.preventDefault()
+
+    app.message.send("showKeyboardHelp", null, parent)
+    return
+
   #忍法帖関連機能
   do ->
     $ninjaInfo = $view.find(".ninja_info")
