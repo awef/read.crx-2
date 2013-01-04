@@ -366,6 +366,52 @@ app.main = ->
         return
     app.config.set("last_version", app.manifest.version)
 
+  # ウィンドウサイズ関連処理
+  adjustWindowSize = new app.Callbacks()
+  do ->
+    resizeTo = (width, height, callback) ->
+      chrome.windows.getCurrent (win) ->
+        chrome.windows.update(win.id, {width, height}, callback)
+        return
+      return
+
+    saveWindowSize = ->
+      app.config.set("window_width", window.outerWidth.toString(10))
+      app.config.set("window_height", window.outerHeight.toString(10))
+      return
+
+    # 起動時にウィンドウサイズが極端に小さかった場合、前回終了時のサイズに復元
+    if window.outerWidth < 300 or window.outerHeight < 300
+      resizeTo(
+        +app.config.get("window_width")
+        +app.config.get("window_height")
+        ->
+          app.defer ->
+            adjustWindowSize.call()
+            return
+          return
+      )
+    else
+      adjustWindowSize.call()
+
+    # ウィンドウサイズの保存処理のセットアップ
+    saveWindowSize()
+
+    isResized = false
+    $(window).on "resize", ->
+      isResized = true
+      return
+
+    setInterval(
+      ->
+        if isResized
+          isResized = false
+          saveWindowSize()
+        return
+      1000
+    )
+    return
+
   #タブ・ペインセットアップ
   $("#body").addClass(app.config.get("layout"))
   tabA = new UI.Tab(document.querySelector("#tab_a"))
@@ -373,7 +419,7 @@ app.main = ->
   tabB = new UI.Tab(document.querySelector("#tab_b"))
   $("#tab_b").data("tab", tabB)
   $(".tab .tab_tabbar").sortable(exclude: "img")
-  app.view_setup_resizer()
+  adjustWindowSize.add(app.view_setup_resizer)
 
   $view.on "tab_urlupdated", "iframe", ->
     @setAttribute("data-url", iframeSrcToUrl(@getAttribute("src")))
