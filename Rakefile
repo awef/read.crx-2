@@ -83,6 +83,26 @@ def typescript(src, output)
   sh "node_modules/.bin/tsc --target ES5 --out #{output} #{src}"
 end
 
+def file_ct(target, src)
+  if !src.is_a? Array
+    src = [src]
+  end
+
+  file target => src do
+    coffeeSrc = src.clone
+    coffeeSrc.reject! {|a| (/\.coffee$/ =~ a) == nil }
+
+    tsSrc = src.clone
+    tsSrc.reject! {|a| (/\.ts$/ =~ a) == nil }
+
+    coffee(coffeeSrc, "___coffee.tmp.js")
+    typescript(tsSrc, "___ts.tmp.js")
+    sh "cat ___coffee.tmp.js ___ts.tmp.js > #{target}"
+    rm "___coffee.tmp.js"
+    rm "___ts.tmp.js"
+  end
+end
+
 def file_coffee(target, src)
   file target => src do
     coffee(src, target)
@@ -137,7 +157,7 @@ file_copy "debug/manifest.json", "src/manifest.json"
 
 file_typescript "debug/app.js", "src/app.ts"
 
-file_coffee "debug/app_core.js", FileList["src/core/*.coffee"]
+file_ct "debug/app_core.js", FileList["src/core/*.coffee", "src/core/*.ts"]
 
 #img
 lambda {
@@ -243,21 +263,17 @@ lambda {
     scss("src/write/write.scss", t.name)
   end
 
-  file_coffee "debug/write/write.js", [
-    "src/core/url.coffee",
+  file_ct "debug/write/write.js", [
+    "src/core/URL.ts",
     "src/core/Ninja.coffee",
     "src/write/write.coffee"
   ]
 
-  file "debug/write/cs_write.js", [
+  file_ct "debug/write/cs_write.js", [
     "debug/app.js",
-    "src/core/url.coffee",
+    "src/core/URL.ts",
     "src/write/cs_write.coffee"
-  ] do
-    coffee(["src/core/url.coffee", "src/write/cs_write.coffee"], "tmp.js")
-    sh "cat debug/app.js tmp.js > debug/write/cs_write.js"
-    rm "tmp.js"
-  end
+  ]
 }.call()
 
 namespace :test do
