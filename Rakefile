@@ -97,7 +97,7 @@ def file_ct(target, src)
 
     coffee(coffeeSrc, "___coffee.tmp.js")
     typescript(tsSrc, "___ts.tmp.js")
-    sh "cat ___coffee.tmp.js ___ts.tmp.js > #{target}"
+    sh "cat ___ts.tmp.js ___coffee.tmp.js > #{target}"
     rm "___coffee.tmp.js"
     rm "___ts.tmp.js"
   end
