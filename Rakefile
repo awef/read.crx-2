@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require "tmpdir"
+
 task :default => [
   "debug",
   "debug/manifest.json",
@@ -37,16 +39,15 @@ task :pack do
   Rake::Task["test:run"].invoke
   Rake::Task[:scan].invoke
 
-  rm_rf "_packtmp"
-  cp_r "debug", "_packtmp"
-  rm_r "_packtmp/test"
+  Dir.mktmpdir do |tmpdir|
+    cp_r "debug", "#{tmpdir}/debug"
+    rm_r "#{tmpdir}/debug/test"
 
-  puts "秘密鍵のパスを入力して下さい"
-  pem_path = STDIN.gets
-  sh "google-chrome --pack-extension=_packtmp --pack-extension-key=#{pem_path}"
-  mv "_packtmp.crx", "read.crx_2.#{MANIFEST["version"]}.crx"
-
-  rm_r "_packtmp"
+    puts "秘密鍵のパスを入力して下さい"
+    pem_path = STDIN.gets
+    sh "google-chrome --pack-extension=#{tmpdir}/debug --pack-extension-key=#{pem_path}"
+    mv "#{tmpdir}/debug.crx", "read.crx_2.#{MANIFEST["version"]}.crx"
+  end
 end
 
 task :scan do
@@ -89,17 +90,17 @@ def file_ct(target, src)
   end
 
   file target => src do
-    coffeeSrc = src.clone
-    coffeeSrc.reject! {|a| (/\.coffee$/ =~ a) == nil }
+    Dir.mktmpdir do |tmpdir|
+      coffeeSrc = src.clone
+      coffeeSrc.reject! {|a| (/\.coffee$/ =~ a) == nil }
 
-    tsSrc = src.clone
-    tsSrc.reject! {|a| (/\.ts$/ =~ a) == nil }
+      tsSrc = src.clone
+      tsSrc.reject! {|a| (/\.ts$/ =~ a) == nil }
 
-    coffee(coffeeSrc, "___coffee.tmp.js")
-    typescript(tsSrc, "___ts.tmp.js")
-    sh "cat ___ts.tmp.js ___coffee.tmp.js > #{target}"
-    rm "___coffee.tmp.js"
-    rm "___ts.tmp.js"
+      coffee(coffeeSrc, "#{tmpdir}/coffee.js")
+      typescript(tsSrc, "#{tmpdir}/ts.js")
+      sh "cat #{tmpdir}/ts.js #{tmpdir}/coffee.js > #{target}"
+    end
   end
 end
 
