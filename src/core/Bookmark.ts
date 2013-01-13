@@ -95,5 +95,110 @@ module app {
 
       return legacy;
     }
+
+    export class EntryList {
+      private cache: {[index:string]:Entry;} = {};
+      private boardURLIndex: {[index:string]:string[];} = {};
+
+      add (entry:Entry):void {
+        var boardURL:string;
+
+        if (!this.get(entry.url)) {
+          entry = app.deepCopy(entry);
+
+          this.cache[entry.url] = entry;
+
+          if (entry.type === "thread") {
+            boardURL = app.URL.threadToBoard(entry.url);
+            if (!this.boardURLIndex[boardURL]) {
+              this.boardURLIndex[boardURL] = [];
+            }
+            this.boardURLIndex[boardURL].push(entry.url);
+          }
+        }
+      }
+
+      update (entry:Entry):void {
+        if (this.get(entry.url)) {
+          entry = app.deepCopy(entry);
+
+          this.cache[entry.url] = entry;
+        }
+      }
+
+      del (url:string):void {
+        var tmp:number, boardURL:string;
+
+        url = app.URL.fix(url);
+
+        if (this.cache[url]) {
+          if (this.cache[url].type === "thread") {
+            boardURL = app.URL.threadToBoard(url);
+            if (this.boardURLIndex[boardURL]) {
+              tmp = this.boardURLIndex[boardURL].indexOf(url);
+              if (tmp !== -1) {
+                this.boardURLIndex[boardURL].splice(tmp, 1);
+              }
+            }
+          }
+
+          delete this.cache[url];
+        }
+      }
+
+      get (url:string):Entry {
+        url = app.URL.fix(url);
+
+        return this.cache[url] ? app.deepCopy(this.cache[url]) : null;
+      }
+
+      getAll ():Entry[] {
+        var key:string, res = [];
+
+        for (key in this.cache) {
+          res.push(this.cache[key]);
+        }
+
+        return app.deepCopy(res);
+      }
+
+      getAllThreads ():Entry[] {
+        var key:string, res = [];
+
+        for (key in this.cache) {
+          if (this.cache[key].type === "thread") {
+            res.push(this.cache[key]);
+          }
+        }
+
+        return app.deepCopy(res);
+      }
+
+      getAllBoards ():Entry[] {
+        var key:string, res = [];
+
+        for (key in this.cache) {
+          if (this.cache[key].type === "board") {
+            res.push(this.cache[key]);
+          }
+        }
+
+        return app.deepCopy(res);
+      }
+
+      getThreadsByBoardURL (url:string):Entry[] {
+        var res = [], key:number, threadURL:string;
+
+        url = app.URL.fix(url);
+
+        if (this.boardURLIndex[url]) {
+          for (key = 0; threadURL = this.boardURLIndex[url][key]; key++) {
+            res.push(this.get(threadURL));
+          }
+        }
+
+        return app.deepCopy(res);
+      }
+    }
   }
 }
