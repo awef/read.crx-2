@@ -77,11 +77,18 @@ def coffee(src, output)
 end
 
 def typescript(src, output)
-  if src.is_a? Array
-    src = src.join(" ")
+  unless src.is_a? Array
+    src = [src]
   end
 
-  sh "node_modules/.bin/tsc --target ES5 --out #{output} #{src}"
+  src.each {|a|
+    sh "node_modules/.bin/tsc --target ES5 #{a}"
+  }
+
+  tmp = src.map {|a| a.gsub(/\.ts$/, ".js") }
+
+  sh "cat #{tmp.join " "} > #{output}"
+  rm tmp
 end
 
 def file_ct(target, src)
