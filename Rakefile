@@ -351,6 +351,13 @@ namespace :jquery do
     end
   end
 
+  task :fix_packagejson do
+    cd "lib/jquery" do
+      sh "git cherry-pick --no-commit 8ac7fa71b5df5ff00f0212976abd8b0c80d3956f"
+      sh "git cherry-pick --no-commit 5aba2102b2f62d8a92f262fe6611f9df45088b3a"
+    end
+  end
+
   directory "debug/lib/jquery"
 
   file "debug/lib/jquery/jquery.min.js" => [
@@ -358,10 +365,11 @@ namespace :jquery do
     "lib/jquery_delegate_middle_click.patch"
   ] do
     Rake::Task["jquery:clean"].invoke
+    Rake::Task["jquery:fix_packagejson"].invoke
     cd "lib/jquery" do
       sh "git apply ../jquery_license.patch"
       sh "git apply ../jquery_delegate_middle_click.patch"
-      sh "env PATH=$PATH:node_modules/.bin/ grunt submodules selector build:*:*:-deprecated lint min"
+      sh "env PATH=$PATH:node_modules/.bin/ grunt"
       cp "dist/jquery.min.js", "../../debug/lib/jquery/"
     end
   end
