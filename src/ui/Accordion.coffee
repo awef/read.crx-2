@@ -35,11 +35,11 @@ class UI.Accordion
   update: ->
     @$element
       .find(".accordion_open + *")
-        .stop(true, true)
+        .finish()
         .show()
       .end()
       .find(":header:not(.accordion_open) + *")
-        .stop(true, true)
+        .finish()
         .hide()
     return
 
@@ -54,7 +54,7 @@ class UI.Accordion
     $(header)
       .addClass("accordion_open")
       .next()
-        .stop(true, true)
+        .finish()
         .slideDown(duration)
       .end()
       .siblings(".accordion_open")
@@ -72,7 +72,7 @@ class UI.Accordion
     $(header)
       .removeClass("accordion_open")
       .next()
-        .stop(true, true)
+        .finish()
         .slideUp(duration)
     return
 
