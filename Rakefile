@@ -344,6 +344,7 @@ namespace :jquery do
   ]
 
   task :clean do
+    rm_rf "debug/lib/jquery"
     cd "lib/jquery" do
       sh "git checkout -f"
       sh "git clean -fdx -e node_modules/"
