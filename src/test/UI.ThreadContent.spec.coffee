@@ -17,8 +17,11 @@ describe "UI.ThreadContent", ->
         $("<article>", class: "one", "data-id": "ID:iTGL5FKU").append(
           $("<header>").append(
             $("<span>", class: "num", text: "1")
+            " "
             $("<span>", class: "name", text: "名無しさん")
+            " ["
             $("<span>", class: "mail", text: "sage")
+            "] "
             $("<span>", class: "other").append(
               document.createTextNode("2010/05/14(木) 15:41:14 ")
               $("<span>", class: "id", text: "ID:iTGL5FKU(1)")
@@ -40,11 +43,15 @@ describe "UI.ThreadContent", ->
         $("<article>", class: "one", "data-id": "ID:iTGL5FKU").append(
           $("<header>").append(
             $("<span>", class: "num", text: "1")
+            " "
             $("<span>", class: "name", text: "名無しさん")
+            " ["
             $("<span>", class: "mail", text: "sage")
+            "] "
             $("<span>", class: "other").append(
               document.createTextNode("2010/05/14(木) 15:41:14 ")
               $("<span>", class: "id link", text: "ID:iTGL5FKU(2)")
+              " "
               $("<span>", class: "rep link", text: "返信 (1)")
             )
           )
@@ -53,8 +60,11 @@ describe "UI.ThreadContent", ->
         $("<article>", class: "one", "data-id": "ID:iTGL5FKU").append(
           $("<header>").append(
             $("<span>", class: "num", text: "2")
+            " "
             $("<span>", class: "name name_anchor", text: "774")
+            " ["
             $("<span>", class: "mail", text: "")
+            "] "
             $("<span>", class: "other").append(
               document.createTextNode("2010/05/14(木) 15:51:14 ")
               $("<span>", class: "id link", text: "ID:iTGL5FKU(2)")

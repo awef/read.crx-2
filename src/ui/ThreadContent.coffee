@@ -210,7 +210,7 @@ class UI.ThreadContent
         articleHtml = "<header>"
 
         #.num
-        articleHtml += """<span class="num">#{resNum}</span>"""
+        articleHtml += """<span class="num">#{resNum}</span> """
 
         #.name
         articleHtml += """<span class="name"""
@@ -225,7 +225,7 @@ class UI.ThreadContent
 
         #.mail
         tmp = res.mail.replace(/<.*?(?:>|$)/g, "")
-        articleHtml += """<span class="mail">#{tmp}</span>"""
+        articleHtml += """ [<span class="mail">#{tmp}</span>] """
 
         #.other
         tmp = (
@@ -336,6 +336,9 @@ class UI.ThreadContent
           elm.textContent = "返信 (#{resCount})"
           elm.className = if resCount >= 5 then "rep freq" else "rep link"
           if newFlg
+            res.getElementsByClassName("other")[0].appendChild(
+              document.createTextNode(" ")
+            )
             res.getElementsByClassName("other")[0].appendChild(elm)
       return
 
