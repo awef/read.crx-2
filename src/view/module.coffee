@@ -158,6 +158,8 @@ class app.view.IframeView extends app.view.View
           $a = @$element.find("h3.selected + ul a")
           if $a.length > 0
             @$element.data("accordion").select($a[0])
+      when "clearSelect"
+        @$element.find(".selected").removeClass("selected")
       when "focusUpFrame", "focusDownFrame", "focusLeftFrame", "focusRightFrame"
         app.message.send("requestFocusMove", {command}, parent)
       when "r"
@@ -262,6 +264,9 @@ class app.view.IframeView extends app.view.View
               command = "shift+enter"
             else
               command = "enter"
+          # esc
+          when 27
+            command = "clearSelect"
           # h
           when 72
             if e.shiftKey
