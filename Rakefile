@@ -160,6 +160,7 @@ rule ".png" => "src/image/svg/%{_\\d+x\\d+(?:_[a-fA-F0-9]+)?(?:_r\\-?\\d+)?$,}n.
 end
 
 directory "debug"
+directory "debug/lib"
 
 file_copy "debug/manifest.json", "src/manifest.json"
 
@@ -338,10 +339,7 @@ namespace :test do
 end
 
 namespace :jquery do
-  task :build => [
-    "debug/lib/jquery",
-    "debug/lib/jquery/jquery.min.js"
-  ]
+  task :build => "debug/lib/jquery/jquery.min.js"
 
   task :clean do
     rm_rf "debug/lib/jquery"
@@ -358,8 +356,6 @@ namespace :jquery do
     end
   end
 
-  directory "debug/lib/jquery"
-
   file "debug/lib/jquery/jquery.min.js" => [
     "lib/jquery_license.patch",
     "lib/jquery_delegate_middle_click.patch"
@@ -370,8 +366,10 @@ namespace :jquery do
       sh "git apply ../jquery_license.patch"
       sh "git apply ../jquery_delegate_middle_click.patch"
       sh "env PATH=$PATH:node_modules/.bin/ grunt"
-      cp "dist/jquery.min.js", "../../debug/lib/jquery/"
     end
+
+    mkdir "debug/lib/jquery"
+    cp "lib/jquery/dist/jquery.min.js", "debug/lib/jquery/"
   end
 end
 
