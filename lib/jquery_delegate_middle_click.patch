@@ -1,14 +1,14 @@
 diff --git a/src/event.js b/src/event.js
-index 902b2b5..4dedfdb 100644
+index 772d65e..f1c1373 100644
 --- a/src/event.js
 +++ b/src/event.js
-@@ -379,8 +379,7 @@ jQuery.event = {
- 		}
+@@ -405,8 +405,7 @@ jQuery.event = {
  
- 		// Determine handlers that should run if there are delegated events
+ 		// Find delegate handlers
+ 		// Black-hole SVG <use> instance trees (#13180)
 -		// Avoid non-left-click bubbling in Firefox (#3861)
--		if ( delegateCount && !(event.button && event.type === "click") ) {
-+		if ( delegateCount ) {
+-		if ( delegateCount && cur.nodeType && (!event.button || event.type !== "click") ) {
++		if ( delegateCount && cur.nodeType ) {
  
- 			for ( cur = event.target; cur != this; cur = cur.parentNode || this ) {
+ 			for ( ; cur != this; cur = cur.parentNode || this ) {
  
