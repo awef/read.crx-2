@@ -10,9 +10,6 @@
 [submodule "lib/jquery-mockjax"]
 	path = lib/jquery-mockjax
 	url = https://github.com/appendto/jquery-mockjax.git
-[submodule "lib/qunit-measure"]
-	path = lib/qunit-measure
-	url = https://github.com/awef/qunit-measure.git
 [submodule "lib/jasmine"]
 	path = lib/jasmine
 	url = https://github.com/pivotal/jasmine.git

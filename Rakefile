@@ -297,7 +297,6 @@ namespace :test do
     "debug/test/qunit/qunit.js",
     "debug/test/qunit/qunit.css",
     "debug/test/qunit/qunit-step.js",
-    "debug/test/qunit/qunit-measure.js",
 
     "jquery_mockjax:build",
 
@@ -333,7 +332,6 @@ namespace :test do
   file_copy "debug/test/qunit/qunit.js", "lib/qunit/qunit/qunit.js"
   file_copy "debug/test/qunit/qunit.css", "lib/qunit/qunit/qunit.css"
   file_copy "debug/test/qunit/qunit-step.js", "lib/qunit/addons/step/qunit-step.js"
-  file_copy "debug/test/qunit/qunit-measure.js", "lib/qunit-measure/qunit-measure.js"
 
   file_coffee "debug/test/test.js", FileList["src/test/test_*.coffee"]
 end
