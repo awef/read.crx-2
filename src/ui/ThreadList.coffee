@@ -351,12 +351,19 @@ class UI.ThreadList
 
   ###*
   @method select
-  @param {Element} tr
+  @param {Element|number} tr
   ###
-  select: (tr) ->
+  select: (target) ->
     @clearSelect()
-    tr.classList.add("selected")
-    tr.scrollIntoViewIfNeeded()
+
+    if typeof target is "number"
+      target = @table.querySelector("tbody > tr:nth-child(#{target}), tbody > tr:last-child")
+
+    unless target
+      return
+
+    target.classList.add("selected")
+    target.scrollIntoViewIfNeeded()
     return
 
   ###*

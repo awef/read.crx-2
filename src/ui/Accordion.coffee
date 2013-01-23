@@ -106,10 +106,13 @@ class UI.SelectableAccordion extends UI.Accordion
 
   ###*
   @method select
-  @param {Element} target
+  @param {Element|number} target
   ###
   select: (target) ->
-    @element.querySelector(".selected")?.classList.remove("selected")
+    if typeof target is "number"
+      return
+
+    @clearSelect()
 
     if target.nodeName is "H3"
       @close(target)
@@ -120,6 +123,13 @@ class UI.SelectableAccordion extends UI.Accordion
 
     target.classList.add("selected")
     target.scrollIntoViewIfNeeded()
+    return
+
+  ###*
+  @method clearSelect
+  ###
+  clearSelect: ->
+    @getSelected()?.classList.remove("selected")
     return
 
   ###*

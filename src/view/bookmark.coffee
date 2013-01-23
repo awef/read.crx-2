@@ -8,6 +8,7 @@ app.boot "/view/bookmark.html", ->
     searchbox: $view.find(".searchbox")[0]
   })
   $view.data("threadList", threadList)
+  $view.data("selectableItemList", threadList)
   $table.appendTo(".content")
   $table.find("th.res, th.unread, th.heat").attr("data-table_sort_type", "num")
   $table.find("th.unread").addClass("table_sort_desc")

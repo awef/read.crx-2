@@ -49,6 +49,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
   $content = $view.find(".content")
   threadContent = new UI.ThreadContent(view_url, $content[0])
   $view.data("threadContent", threadContent)
+  $view.data("selectableItemList", threadContent)
   $view.data("lazyload", new UI.LazyLoad($view.find(".content")[0]))
 
   new app.view.TabContentView(document.documentElement)

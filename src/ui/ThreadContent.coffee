@@ -85,9 +85,20 @@ class UI.ThreadContent
     @container.querySelector("article.selected")?.classList.remove("selected")
 
     if typeof target is "number"
-      @container.children[target - 1]?.classList.add("selected")
-    else
-      target.classList.add("selected")
+      target = @container.querySelector("article:nth-child(#{target}), article:last-child")
+
+    unless target
+      return
+
+    target.classList.add("selected")
+    @scrollTo(+target.querySelector(".num").textContent)
+    return
+
+  ###*
+  @method clearSelect
+  ###
+  clearSelect: ->
+    @getSelected()?.classList.remove("selected")
     return
 
   ###*

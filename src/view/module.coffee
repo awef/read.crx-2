@@ -128,26 +128,13 @@ class app.view.IframeView extends app.view.View
   execCommand: (command) ->
     # 数値コマンド
     if /^\d+$/.test(command)
-      if @$element.is(".view_thread")
-        target = Math.min(@$element.find(".content > article").length, +command)
-        @$element.data("threadContent").scrollTo(target)
-        @$element.data("threadContent").select(target)
+      @$element.data("selectableItemList")?.select(+command)
 
     switch command
       when "up"
-        if @$element.hasClass("view_thread")
-          @$element.data("threadContent").selectPrev()
-        else if @$element.hasClass("view_sidemenu")
-          @$element.data("accordion").selectPrev()
-        else if @$element.data("threadList")
-          @$element.data("threadList").selectPrev()
+        @$element.data("selectableItemList")?.selectPrev()
       when "down"
-        if @$element.hasClass("view_thread")
-          @$element.data("threadContent").selectNext()
-        else if @$element.hasClass("view_sidemenu")
-          @$element.data("accordion").selectNext()
-        else if @$element.data("threadList")
-          @$element.data("threadList").selectNext()
+        @$element.data("selectableItemList")?.selectNext()
       when "left"
         if @$element.hasClass("view_sidemenu")
           $a = @$element.find("li > a.selected")
@@ -159,7 +146,7 @@ class app.view.IframeView extends app.view.View
           if $a.length > 0
             @$element.data("accordion").select($a[0])
       when "clearSelect"
-        @$element.find(".selected").removeClass("selected")
+        @$element.data("selectableItemList")?.clearSelect()
       when "focusUpFrame", "focusDownFrame", "focusLeftFrame", "focusRightFrame"
         app.message.send("requestFocusMove", {command}, parent)
       when "r"

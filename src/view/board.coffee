@@ -13,6 +13,7 @@ app.boot "/view/board.html", ["board_title_solver"], (BoardTitleSolver) ->
     searchbox: $view.find(".searchbox")[0]
   })
   $view.data("threadList", threadList)
+  $view.data("selectableItemList", threadList)
   $table.table_sort()
   $table.find("th.res, th.unread, th.heat").attr("data-table_sort_type", "num")
   $table.appendTo(".content")
