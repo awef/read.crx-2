@@ -96,6 +96,27 @@ module app {
       return legacy;
     }
 
+    export function newerEntry (a:Entry, b:Entry):Entry {
+      if (a.resCount !== b.resCount) {
+        return a.resCount > b.resCount ? a : b;
+      }
+
+      if (a.readState && b.readState) {
+        if (a.readState.read !== b.readState.read) {
+          return a.readState.read > b.readState.read ? a : b;
+        }
+        else if (a.readState.received !== b.readState.received) {
+          return a.readState.received > b.readState.received ? a : b;
+        }
+        else {
+          return a;
+        }
+      }
+      else {
+        return a.readState ? a : b;
+      }
+    }
+
     export class EntryList {
       private cache: {[index:string]:Entry;} = {};
       private boardURLIndex: {[index:string]:string[];} = {};

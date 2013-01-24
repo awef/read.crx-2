@@ -229,6 +229,124 @@ describe "app.Bookmark", ->
       return
     return
 
+  describe "newerEntry", ->
+    describe "resCountの値が異なる場合", ->
+      it "resCountが大きい方のEntryを新しいと判定する", ->
+        a =
+          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+          title: "dummyA"
+          type: "thread"
+          bbsType: "2ch"
+          resCount: 123
+          readState: null
+          expired: false
+
+        b =
+          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+          title: "dummyA"
+          type: "thread"
+          bbsType: "2ch"
+          resCount: 124
+          readState: null
+          expired: false
+
+        expect(app.Bookmark.newerEntry(a, b)).toBe(b)
+        return
+      return
+
+    describe "resCountが同一の場合", ->
+      it "readStateが存在する方を新しいと判定する", ->
+        a =
+          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+          title: "dummyA"
+          type: "thread"
+          bbsType: "2ch"
+          resCount: 123
+          readState:
+            url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+            received: 100
+            read: 80
+            last: 75
+          expired: false
+
+        b =
+          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+          title: "dummyA"
+          type: "thread"
+          bbsType: "2ch"
+          resCount: 123
+          readState: null
+          expired: false
+
+        expect(app.Bookmark.newerEntry(a, b)).toBe(a)
+        return
+      return
+
+    describe "両方のEntryにreadStateが存在する場合", ->
+      it "readの値が大きい方を新しいと判定する", ->
+        a =
+          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+          title: "dummyA"
+          type: "thread"
+          bbsType: "2ch"
+          resCount: 123
+          readState:
+            url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+            received: 100
+            read: 80
+            last: 75
+          expired: false
+
+        b =
+          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+          title: "dummyA"
+          type: "thread"
+          bbsType: "2ch"
+          resCount: 123
+          readState:
+            url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+            received: 100
+            read: 81
+            last: 75
+          expired: false
+
+        expect(app.Bookmark.newerEntry(a, b)).toBe(b)
+        return
+      return
+
+    describe "readState.readが同一だった場合", ->
+      it "receivedの値が大きい方を新しいと判定する", ->
+        a =
+          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+          title: "dummyA"
+          type: "thread"
+          bbsType: "2ch"
+          resCount: 123
+          readState:
+            url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+            received: 100
+            read: 80
+            last: 75
+          expired: false
+
+        b =
+          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+          title: "dummyA"
+          type: "thread"
+          bbsType: "2ch"
+          resCount: 123
+          readState:
+            url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+            received: 101
+            read: 80
+            last: 75
+          expired: false
+
+        expect(app.Bookmark.newerEntry(a, b)).toBe(b)
+        return
+      return
+    return
+
   describe "EntryList", ->
     entry = null
     entryList = null
