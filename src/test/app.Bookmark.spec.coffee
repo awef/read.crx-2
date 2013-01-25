@@ -477,6 +477,44 @@ describe "app.Bookmark", ->
         return
       return
 
+    describe "::import", ->
+      it "thisに存在しないエントリを全てthisに追加する", ->
+        a = new app.Bookmark.EntryList()
+        a.add(entry.board0)
+        a.add(entry.thread0)
+
+        b = new app.Bookmark.EntryList()
+        b.add(entry.board0)
+        b.add(entry.board1)
+        b.add(entry.thread0)
+        b.add(entry.thread1)
+
+        a.import(b)
+
+        expect(a.get(entry.board0.url)).toEqual(entry.board0)
+        expect(a.get(entry.board1.url)).toEqual(entry.board1)
+        expect(a.get(entry.thread0.url)).toEqual(entry.thread0)
+        expect(a.get(entry.thread1.url)).toEqual(entry.thread1)
+        return
+
+      it "thisに存在するエントリの場合、より新しいと判断した場合のみ上書きする", ->
+        a = new app.Bookmark.EntryList()
+        a.add(entry.thread0)
+        a.add(entry.thread1)
+
+        b = new app.Bookmark.EntryList()
+        entry.thread0.resCount--
+        entry.thread1.resCount++
+        b.add(entry.thread0)
+        b.add(entry.thread1)
+
+        a.import(b)
+
+        expect(a.get(entry.thread0.url)).not.toEqual(entry.thread0)
+        expect(a.get(entry.thread1.url)).toEqual(entry.thread1)
+        return
+      return
+
     describe "::get", ->
       it "与えられたURLのEntryを返す", ->
         expect(entryList.get(entry.board0.url)).toEqual(entry.board0)

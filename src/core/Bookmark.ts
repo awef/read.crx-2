@@ -167,6 +167,23 @@ module app {
         }
       }
 
+      import (target:EntryList):void {
+        target.getAll().forEach((b:Entry) => {
+          var a:Entry;
+
+          if (a = this.get(b.url)) {
+            if (a.type === "thread" && b.type === "thread") {
+              if (newerEntry(a, b) === b) {
+                this.update(b);
+              }
+            }
+          }
+          else {
+            this.add(b);
+          }
+        });
+      }
+
       get (url:string):Entry {
         url = app.URL.fix(url);
 
