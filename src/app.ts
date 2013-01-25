@@ -99,7 +99,7 @@ module app {
       }
     }
 
-    remove (callback:() => any):void {
+    remove (callback:Function):void {
       var index:number;
 
       index = this._callbackStore.indexOf(callback);
@@ -113,7 +113,7 @@ module app {
     }
 
     call (...arg:any[]):void {
-      var key:number, callback:() => void, tmpCallbackStore;
+      var key:number, callback:Function, tmpCallbackStore;
 
       if (!this._config.persistent && this._latestCallArg) {
         app.log("error",
@@ -211,14 +211,14 @@ module app {
       }
     }
 
-    addListener (type:string, listener:() => void) {
+    addListener (type:string, listener:Function) {
       if (!this._listenerStore[type]) {
         this._listenerStore[type] = new app.Callbacks({persistent: true});
       }
       this._listenerStore[type].add(listener);
     }
 
-    removeListener (type:string, listener:() => void) {
+    removeListener (type:string, listener:Function) {
       if (this._listenerStore[type]) {
         this._listenerStore[type].remove(listener);
       }
