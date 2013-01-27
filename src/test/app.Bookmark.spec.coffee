@@ -427,6 +427,22 @@ describe "app.Bookmark", ->
           entry: dummyEntry.thread0
         return
 
+      it "ブックマーク変更時にcallされる(readState)", ->
+        entryA = app.deepCopy(dummyEntry.thread1)
+        entryA.readState = null
+        entryB = dummyEntry.thread1
+
+        entryList.add(entryA)
+        entryList.onChanged.add(spy)
+
+        entryList.update(entryB)
+
+        expect(spy.callCount).toBe(1)
+        expect(spy).toHaveBeenCalledWith
+          type: "READ_STATE"
+          entry: entryB
+        return
+
       it "ブックマーク変更時にcallされる(expired)", ->
         entryList.add(dummyEntry.thread0)
         entryList.onChanged.add(spy)
@@ -446,16 +462,23 @@ describe "app.Bookmark", ->
 
         dummyEntry.thread0.title += "_test"
         dummyEntry.thread0.resCount++
+        dummyEntry.thread0.readState =
+          received: 1
+          read: 1
+          last: 1
         dummyEntry.thread0.expired = true
 
         entryList.update(dummyEntry.thread0)
 
-        expect(spy.callCount).toBe(3)
+        expect(spy.callCount).toBe(4)
         expect(spy).toHaveBeenCalledWith
           type: "TITLE"
           entry: dummyEntry.thread0
         expect(spy).toHaveBeenCalledWith
           type: "RES_COUNT"
+          entry: dummyEntry.thread0
+        expect(spy).toHaveBeenCalledWith
+          type: "READ_STATE"
           entry: dummyEntry.thread0
         expect(spy).toHaveBeenCalledWith
           type: "EXPIRED"
@@ -510,6 +533,18 @@ describe "app.Bookmark", ->
 
         expect(entryList.update.callCount).toBe(1)
         expect(entryList.update).toHaveBeenCalledWith(dummyEntry.board0)
+        return
+
+      it "BoomkarkUpdateEventから、同等の操作を実行する(READ_STATE)", ->
+        dummyEvent =
+          type: "READ_STATE"
+          entry: dummyEntry.thread0
+
+        spyOn(entryList, "update")
+        entryList.manipulateByBookmarkUpdateEvent(dummyEvent)
+
+        expect(entryList.update.callCount).toBe(1)
+        expect(entryList.update).toHaveBeenCalledWith(dummyEntry.thread0)
         return
 
       it "BoomkarkUpdateEventから、同等の操作を実行する(EXPIRED)", ->
@@ -635,6 +670,19 @@ describe "app.Bookmark", ->
         expect(listA.update).toHaveBeenCalledWith(dummyEntry.thread0)
         return
 
+      it "同期中は同期対象の変更をコピーする(READ_STATE)", ->
+        listA.syncResume(listB)
+
+        spyOn(listA, "update")
+
+        listB.add(dummyEntry.thread1)
+        dummyEntry.thread1.readState.last++
+        listB.update(dummyEntry.thread1)
+
+        expect(listA.update.callCount).toBe(1)
+        expect(listA.update).toHaveBeenCalledWith(dummyEntry.thread1)
+        return
+
       it "同期中は同期対象の変更をコピーする(EXPIRED)", ->
         listA.syncResume(listB)
 
@@ -695,6 +743,19 @@ describe "app.Bookmark", ->
 
         expect(listB.update.callCount).toBe(1)
         expect(listB.update).toHaveBeenCalledWith(dummyEntry.thread0)
+        return
+
+      it "同期中は同期対象へ変更をコピーする(READ_STATE)", ->
+        listA.syncResume(listB)
+
+        spyOn(listB, "update")
+
+        listA.add(dummyEntry.thread1)
+        dummyEntry.thread1.readState.last++
+        listA.update(dummyEntry.thread1)
+
+        expect(listB.update.callCount).toBe(1)
+        expect(listB.update).toHaveBeenCalledWith(dummyEntry.thread1)
         return
 
       it "同期中は同期対象へ変更をコピーする(EXPIRED)", ->

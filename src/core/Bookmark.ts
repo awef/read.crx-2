@@ -240,7 +240,7 @@ module app {
     }
 
     export interface BookmarkUpdateEvent {
-      type: string; //ADD, RES_COUNT, EXPIRED, TITLE, DEL
+      type: string; //ADD, TITLE, RES_COUNT, READ_STATE, EXPIRED, DEL
       entry: Entry;
     }
 
@@ -288,6 +288,22 @@ module app {
           });
         }
 
+        if (
+          (!before.readState && entry.readState) ||
+          (
+            (before.readState && entry.readState) && (
+              before.readState.received !== entry.readState.received ||
+              before.readState.read !== entry.readState.read ||
+              before.readState.last !== entry.readState.last
+            )
+          )
+        ) {
+          this.onChanged.call({
+            type: "READ_STATE",
+            entry: app.deepCopy(entry)
+          });
+        }
+
         if (before.expired !== entry.expired) {
           this.onChanged.call({
             type: "EXPIRED",
@@ -318,6 +334,7 @@ module app {
             break;
           case "TITLE":
           case "RES_COUNT":
+          case "READ_STATE":
           case "EXPIRED":
             this.update(e.entry);
             break;
