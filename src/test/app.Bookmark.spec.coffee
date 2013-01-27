@@ -1,254 +1,151 @@
 describe "app.Bookmark", ->
+  dummyEntry = null
+  dummyLegacyEntry = null
+
+  beforeEach ->
+    dummyEntry =
+      board0:
+        url: "http://__dummy.2ch.net/dummy0/"
+        type: "board"
+        bbsType: "2ch"
+        title: "dummyboard0"
+        resCount: null
+        readState: null
+        expired: false
+      board1:
+        url: "http://__dummy.2ch.net/dummy2/"
+        type: "board"
+        bbsType: "2ch"
+        title: "dummyboard1"
+        resCount: null
+        readState: null
+        expired: false
+      thread0:
+        url: "http://__dummy.2ch.net/test/read.cgi/dummy0/1234567890/"
+        type: "thread"
+        bbsType: "2ch"
+        title: "dummythread0"
+        resCount: 123
+        readState: null
+        expired: false
+      thread1:
+        url: "http://__dummy.2ch.net/test/read.cgi/dummy0/1234568880/"
+        type: "thread"
+        bbsType: "2ch"
+        title: "dummythread1"
+        resCount: 222
+        readState:
+          url: "http://__dummy.2ch.net/test/read.cgi/dummy0/1234568880/"
+          received: 222
+          read: 200
+          last: 200
+        expired: false
+      thread2:
+        url: "http://__dummy.2ch.net/test/read.cgi/dummy1/1234567891/"
+        type: "thread"
+        bbsType: "2ch"
+        title: "dummythread2"
+        resCount: 10
+        readState:
+          url: "http://__dummy.2ch.net/test/read.cgi/dummy1/1234567891/"
+          received: 10
+          read: 10
+          last: 10
+        expired: true
+
+    dummyLegacyEntry =
+      board0:
+        url: "http://__dummy.2ch.net/dummy0/"
+        type: "board"
+        bbs_type: "2ch"
+        title: "dummyboard0"
+        res_count: null
+        read_state: null
+        expired: false
+      board1:
+        url: "http://__dummy.2ch.net/dummy2/"
+        type: "board"
+        bbs_type: "2ch"
+        title: "dummyboard1"
+        res_count: null
+        read_state: null
+        expired: false
+      thread0:
+        url: "http://__dummy.2ch.net/test/read.cgi/dummy0/1234567890/"
+        type: "thread"
+        bbs_type: "2ch"
+        title: "dummythread0"
+        res_count: 123
+        read_state: null
+        expired: false
+      thread1:
+        url: "http://__dummy.2ch.net/test/read.cgi/dummy0/1234568880/"
+        type: "thread"
+        bbs_type: "2ch"
+        title: "dummythread1"
+        res_count: 222
+        read_state:
+          url: "http://__dummy.2ch.net/test/read.cgi/dummy0/1234568880/"
+          received: 222
+          read: 200
+          last: 200
+        expired: false
+      thread2:
+        url: "http://__dummy.2ch.net/test/read.cgi/dummy1/1234567891/"
+        type: "thread"
+        bbs_type: "2ch"
+        title: "dummythread2"
+        res_count: 10
+        read_state:
+          url: "http://__dummy.2ch.net/test/read.cgi/dummy1/1234567891/"
+          received: 10
+          read: 10
+          last: 10
+        expired: true
+    return
+
   describe ".legacyToCurrent", ->
     it "LegacyEntryをEntryに変換する", ->
       # 板ブックマーク
-      expect(app.Bookmark.legacyToCurrent(
-        url: "http://__dummy.2ch.net/dummy/"
-        type: "board"
-        bbs_type: "2ch"
-        title: "dummy"
-        res_count: null
-        read_state: null
-        expired: false
-      )).toEqual(
-        url: "http://__dummy.2ch.net/dummy/"
-        type: "board"
-        bbsType: "2ch"
-        title: "dummy"
-        resCount: null
-        readState: null
-        expired: false
-      )
+      expect(app.Bookmark.legacyToCurrent(dummyLegacyEntry.board0))
+        .toEqual(dummyEntry.board0)
+      expect(app.Bookmark.legacyToCurrent(dummyLegacyEntry.board1))
+        .toEqual(dummyEntry.board1)
 
       # スレブックマーク
-      expect(app.Bookmark.legacyToCurrent(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbs_type: "2ch"
-        title: "dummy"
-        res_count: null
-        read_state: null
-        expired: false
-      )).toEqual(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbsType: "2ch"
-        title: "dummy"
-        resCount: null
-        readState: null
-        expired: false
-      )
-
-      # スレブックマーク（res_count）
-      expect(app.Bookmark.legacyToCurrent(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbs_type: "2ch"
-        title: "dummy"
-        res_count: 123
-        read_state: null
-        expired: false
-      )).toEqual(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbsType: "2ch"
-        title: "dummy"
-        resCount: 123
-        readState: null
-        expired: false
-      )
-
-      # スレブックマーク（res_count + read_state）
-      expect(app.Bookmark.legacyToCurrent(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbs_type: "2ch"
-        title: "dummy"
-        res_count: 123
-        read_state:
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          received: 234
-          read: 123
-          last: 23
-        expired: false
-      )).toEqual(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbsType: "2ch"
-        title: "dummy"
-        resCount: 123
-        readState:
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          received: 234
-          read: 123
-          last: 23
-        expired: false
-      )
-
-      # スレブックマーク（res_count + read_state + expired）
-      expect(app.Bookmark.legacyToCurrent(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbs_type: "2ch"
-        title: "dummy"
-        res_count: 123
-        read_state:
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          received: 234
-          read: 123
-          last: 23
-        expired: true
-      )).toEqual(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbsType: "2ch"
-        title: "dummy"
-        resCount: 123
-        readState:
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          received: 234
-          read: 123
-          last: 23
-        expired: true
-      )
+      expect(app.Bookmark.legacyToCurrent(dummyLegacyEntry.thread0))
+        .toEqual(dummyEntry.thread0)
+      expect(app.Bookmark.legacyToCurrent(dummyLegacyEntry.thread1))
+        .toEqual(dummyEntry.thread1)
+      expect(app.Bookmark.legacyToCurrent(dummyLegacyEntry.thread2))
+        .toEqual(dummyEntry.thread2)
       return
     return
 
   describe ".currentToLegacy", ->
     it "EntryをLegacyEntryに変換する", ->
       # 板ブックマーク
-      expect(app.Bookmark.currentToLegacy(
-        url: "http://__dummy.2ch.net/dummy/"
-        type: "board"
-        bbsType: "2ch"
-        title: "dummy"
-        resCount: null
-        readState: null
-        expired: false
-      )).toEqual(
-        url: "http://__dummy.2ch.net/dummy/"
-        type: "board"
-        bbs_type: "2ch"
-        title: "dummy"
-        res_count: null
-        read_state: null
-        expired: false
-      )
+      expect(app.Bookmark.currentToLegacy(dummyEntry.board0))
+        .toEqual(dummyLegacyEntry.board0)
+      expect(app.Bookmark.currentToLegacy(dummyEntry.board1))
+        .toEqual(dummyLegacyEntry.board1)
 
       # スレブックマーク
-      expect(app.Bookmark.currentToLegacy(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbsType: "2ch"
-        title: "dummy"
-        resCount: null
-        readState: null
-        expired: false
-      )).toEqual(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbs_type: "2ch"
-        title: "dummy"
-        res_count: null
-        read_state: null
-        expired: false
-      )
-
-      # スレブックマーク（resCount）
-      expect(app.Bookmark.currentToLegacy(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbsType: "2ch"
-        title: "dummy"
-        resCount: 123
-        readState: null
-        expired: false
-      )).toEqual(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbs_type: "2ch"
-        title: "dummy"
-        res_count: 123
-        read_state: null
-        expired: false
-      )
-
-      # スレブックマーク（resCount + readState）
-      expect(app.Bookmark.currentToLegacy(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbsType: "2ch"
-        title: "dummy"
-        resCount: 123
-        readState:
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          received: 234
-          read: 123
-          last: 23
-        expired: false
-      )).toEqual(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbs_type: "2ch"
-        title: "dummy"
-        res_count: 123
-        read_state:
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          received: 234
-          read: 123
-          last: 23
-        expired: false
-      )
-
-      # スレブックマーク（resCount + readState + expired）
-      expect(app.Bookmark.currentToLegacy(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbsType: "2ch"
-        title: "dummy"
-        resCount: 123
-        readState:
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          received: 234
-          read: 123
-          last: 23
-        expired: true
-      )).toEqual(
-        url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-        type: "thread"
-        bbs_type: "2ch"
-        title: "dummy"
-        res_count: 123
-        read_state:
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          received: 234
-          read: 123
-          last: 23
-        expired: true
-      )
+      expect(app.Bookmark.currentToLegacy(dummyEntry.thread0))
+        .toEqual(dummyLegacyEntry.thread0)
+      expect(app.Bookmark.currentToLegacy(dummyEntry.thread1))
+        .toEqual(dummyLegacyEntry.thread1)
+      expect(app.Bookmark.currentToLegacy(dummyEntry.thread2))
+        .toEqual(dummyLegacyEntry.thread2)
       return
     return
 
   describe "newerEntry", ->
     describe "resCountの値が異なる場合", ->
       it "resCountが大きい方のEntryを新しいと判定する", ->
-        a =
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          title: "dummyA"
-          type: "thread"
-          bbsType: "2ch"
-          resCount: 123
-          readState: null
-          expired: false
-
-        b =
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          title: "dummyA"
-          type: "thread"
-          bbsType: "2ch"
-          resCount: 124
-          readState: null
-          expired: false
+        a = dummyEntry.thread0
+        b = app.deepCopy(a)
+        b.resCount++
 
         expect(app.Bookmark.newerEntry(a, b)).toBe(b)
         return
@@ -256,27 +153,9 @@ describe "app.Bookmark", ->
 
     describe "resCountが同一の場合", ->
       it "readStateが存在する方を新しいと判定する", ->
-        a =
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          title: "dummyA"
-          type: "thread"
-          bbsType: "2ch"
-          resCount: 123
-          readState:
-            url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-            received: 100
-            read: 80
-            last: 75
-          expired: false
-
-        b =
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          title: "dummyA"
-          type: "thread"
-          bbsType: "2ch"
-          resCount: 123
-          readState: null
-          expired: false
+        a = dummyEntry.thread1
+        b = app.deepCopy(a)
+        b.readState = null
 
         expect(app.Bookmark.newerEntry(a, b)).toBe(a)
         return
@@ -284,31 +163,9 @@ describe "app.Bookmark", ->
 
     describe "両方のEntryにreadStateが存在する場合", ->
       it "readの値が大きい方を新しいと判定する", ->
-        a =
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          title: "dummyA"
-          type: "thread"
-          bbsType: "2ch"
-          resCount: 123
-          readState:
-            url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-            received: 100
-            read: 80
-            last: 75
-          expired: false
-
-        b =
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          title: "dummyA"
-          type: "thread"
-          bbsType: "2ch"
-          resCount: 123
-          readState:
-            url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-            received: 100
-            read: 81
-            last: 75
-          expired: false
+        a = dummyEntry.thread1
+        b = app.deepCopy(a)
+        b.readState.read++
 
         expect(app.Bookmark.newerEntry(a, b)).toBe(b)
         return
@@ -316,31 +173,9 @@ describe "app.Bookmark", ->
 
     describe "readState.readが同一だった場合", ->
       it "receivedの値が大きい方を新しいと判定する", ->
-        a =
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          title: "dummyA"
-          type: "thread"
-          bbsType: "2ch"
-          resCount: 123
-          readState:
-            url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-            received: 100
-            read: 80
-            last: 75
-          expired: false
-
-        b =
-          url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-          title: "dummyA"
-          type: "thread"
-          bbsType: "2ch"
-          resCount: 123
-          readState:
-            url: "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-            received: 101
-            read: 80
-            last: 75
-          expired: false
+        a = dummyEntry.thread1
+        b = app.deepCopy(a)
+        b.readState.received++
 
         expect(app.Bookmark.newerEntry(a, b)).toBe(b)
         return
@@ -348,124 +183,51 @@ describe "app.Bookmark", ->
     return
 
   describe "EntryList", ->
-    entry = null
     entryList = null
 
     beforeEach ->
-      entry = {}
-
-      entry.board0 =
-        url: "http://__dummy.2ch.net/dummy/"
-        type: "board"
-        bbsType: "2ch"
-        title: "dummy"
-        resCount: null
-        readState: null
-        expired: false
-
-      entry.board1 =
-        url: "http://__dummy.2ch.net/dummy1/"
-        type: "board"
-        bbsType: "2ch"
-        title: "dummy1"
-        resCount: null
-        readState: null
-        expired: false
-
-      entry.thread0 =
-        url: "http://__dummy.2ch.net/test/read.cgi/dummy/1234567890/"
-        type: "thread"
-        bbsType: "2ch"
-        title: "dummy"
-        resCount: 123
-        readState: null
-        expired: true
-
-      entry.thread1 =
-        url: "http://__dummy.2ch.net/test/read.cgi/dummy/1234567891/"
-        type: "thread"
-        bbsType: "2ch"
-        title: "dummy1"
-        resCount: 123
-        readState: null
-        expired: true
-
-      entry.thread2 =
-        url: "http://__dummyserver.2ch.net/test/read.cgi/dummyboard/1234567890/"
-        type: "thread"
-        bbsType: "2ch"
-        title: "dummy2"
-        resCount: 123
-        readState: null
-        expired: true
-
       entryList = new app.Bookmark.EntryList()
 
-      for key, val of entry
-        entryList.add(val)
+      for key, entry of dummyEntry
+        entryList.add(entry)
       return
 
     describe "::add", ->
       it "Entryを追加する", ->
-        a =
-          url: "http://__dummy.2ch.net/dummy1/"
-          type: "board"
-          bbsType: "2ch"
-          title: "dummy1"
-          resCount: null
-          readState: null
-          expired: false
+        dummy = app.deepCopy(dummyEntry.board0)
+        dummy.url = "http://__dummy.2ch.net/___/"
 
-        entryList.add(a)
+        entryList.add(dummy)
 
-        expect(entryList.get(a.url)).toEqual(a)
+        expect(entryList.get(dummy.url)).toEqual(dummy)
         return
       return
 
     describe "::update", ->
-      a = null
-
-      beforeEach ->
-        a =
-          url: "http://__dummy.2ch.net/dummy2/"
-          type: "board"
-          bbsType: "2ch"
-          title: "dummy1"
-          resCount: null
-          readState: null
-          expired: false
-        return
-
       it "既に格納されているEntryを更新する", ->
-        entryList.add(a)
+        entryList.add(dummyEntry.board0)
 
-        a.title = "test"
-        entryList.update(a)
+        dummyEntry.board0.title = "test"
+        entryList.update(dummyEntry.board0)
 
-        expect(entryList.get(a.url).title).toBe("test")
+        expect(entryList.get(dummyEntry.board0.url).title).toBe("test")
         return
 
       it "格納されていないEntryが渡された場合、無視する", ->
-        a.title = "test"
-        entryList.update(a)
+        dummy = app.deepCopy(dummyEntry.board0)
+        dummy.url = "http://__dummy.2ch.net/___/"
+        dummy.title = "test"
+        entryList.update(dummy)
 
-        expect(entryList.get(a.url)).toBeNull()
+        expect(entryList.get(dummy.url)).toBeNull()
         return
       return
 
     describe "::del", ->
       it "指定されたURLのEntryを削除する", ->
-        a = {}
-        for val in entryList.getAll() when val.url isnt entry.thread1.url
-          a[val.url] = val
+        entryList.del(dummyEntry.thread0.url)
 
-        entryList.del(entry.thread1.url)
-
-        b = {}
-        for val in entryList.getAll()
-          b[val.url] = val
-
-        expect(b).toEqual(a)
+        expect(entryList.get(dummyEntry.thread0.url)).toBeNull()
         return
 
       it "該当するEntryが無かった場合は何もしない", ->
@@ -480,45 +242,47 @@ describe "app.Bookmark", ->
     describe "::import", ->
       it "thisに存在しないエントリを全てthisに追加する", ->
         a = new app.Bookmark.EntryList()
-        a.add(entry.board0)
-        a.add(entry.thread0)
+        a.add(dummyEntry.board0)
+        a.add(dummyEntry.thread0)
 
         b = new app.Bookmark.EntryList()
-        b.add(entry.board0)
-        b.add(entry.board1)
-        b.add(entry.thread0)
-        b.add(entry.thread1)
+        b.add(dummyEntry.board0)
+        b.add(dummyEntry.board1)
+        b.add(dummyEntry.thread0)
+        b.add(dummyEntry.thread1)
 
         a.import(b)
 
-        expect(a.get(entry.board0.url)).toEqual(entry.board0)
-        expect(a.get(entry.board1.url)).toEqual(entry.board1)
-        expect(a.get(entry.thread0.url)).toEqual(entry.thread0)
-        expect(a.get(entry.thread1.url)).toEqual(entry.thread1)
+        expect(a.get(dummyEntry.board0.url)).toEqual(dummyEntry.board0)
+        expect(a.get(dummyEntry.board1.url)).toEqual(dummyEntry.board1)
+        expect(a.get(dummyEntry.thread0.url)).toEqual(dummyEntry.thread0)
+        expect(a.get(dummyEntry.thread1.url)).toEqual(dummyEntry.thread1)
         return
 
       it "thisに存在するエントリの場合、より新しいと判断した場合のみ上書きする", ->
         a = new app.Bookmark.EntryList()
-        a.add(entry.thread0)
-        a.add(entry.thread1)
+        a.add(dummyEntry.thread0)
+        a.add(dummyEntry.thread1)
 
         b = new app.Bookmark.EntryList()
-        entry.thread0.resCount--
-        entry.thread1.resCount++
-        b.add(entry.thread0)
-        b.add(entry.thread1)
+        dummyEntry.thread0.resCount--
+        dummyEntry.thread1.resCount++
+        b.add(dummyEntry.thread0)
+        b.add(dummyEntry.thread1)
 
         a.import(b)
 
-        expect(a.get(entry.thread0.url)).not.toEqual(entry.thread0)
-        expect(a.get(entry.thread1.url)).toEqual(entry.thread1)
+        expect(a.get(dummyEntry.thread0.url)).not.toEqual(dummyEntry.thread0)
+        expect(a.get(dummyEntry.thread1.url)).toEqual(dummyEntry.thread1)
         return
       return
 
     describe "::get", ->
       it "与えられたURLのEntryを返す", ->
-        expect(entryList.get(entry.board0.url)).toEqual(entry.board0)
-        expect(entryList.get(entry.thread0.url)).toEqual(entry.thread0)
+        expect(entryList.get(dummyEntry.board0.url))
+          .toEqual(dummyEntry.board0)
+        expect(entryList.get(dummyEntry.thread0.url))
+          .toEqual(dummyEntry.thread0)
         return
 
       it "対応するEntryが格納されていなかった場合はnullを返す", ->
@@ -529,22 +293,19 @@ describe "app.Bookmark", ->
     describe "::getAll", ->
       it "すべてのEntryを配列で返す", ->
         a = {}
-        for val in entryList.getAll()
-          a[val.url] = val
+        for entry in entryList.getAll()
+          a[entry.url] = entry
 
         b = {}
-        for key, val of entry
-          b[val.url] = val
+        for key, entry of dummyEntry
+          b[entry.url] = entry
 
         expect(a).toEqual(b)
         return
 
       it "Entryが一つも無い場合は空配列を返す", ->
-        entryList.del(entry.board0.url)
-        entryList.del(entry.board1.url)
-        entryList.del(entry.thread0.url)
-        entryList.del(entry.thread1.url)
-        entryList.del(entry.thread2.url)
+        for url in (entry.url for key, entry of dummyEntry)
+          entryList.del(url)
 
         expect(entryList.getAll()).toEqual([])
         return
@@ -553,20 +314,19 @@ describe "app.Bookmark", ->
     describe "::getAllThreads", ->
       it "すべてのスレッドを配列で返す", ->
         a = {}
-        for val in entryList.getAllThreads()
-          a[val.url] = val
+        for entry in entryList.getAllThreads()
+          a[entry.url] = entry
 
         b = {}
-        for key, val of [entry.thread0, entry.thread1, entry.thread2]
-          b[val.url] = val
+        for key, entry of dummyEntry when entry.type is "thread"
+          b[entry.url] = entry
 
         expect(a).toEqual(b)
         return
 
       it "スレッドが一つも無い場合は空配列を返す", ->
-        entryList.del(entry.thread0.url)
-        entryList.del(entry.thread1.url)
-        entryList.del(entry.thread2.url)
+        for url in (entry.url for key, entry of dummyEntry when entry.type is "thread")
+          entryList.del(url)
 
         expect(entryList.getAllThreads()).toEqual([])
         return
@@ -575,19 +335,19 @@ describe "app.Bookmark", ->
     describe "::getAllBoards", ->
       it "すべての板を配列で返す", ->
         a = {}
-        for val in entryList.getAllBoards()
-          a[val.url] = val
+        for entry in entryList.getAllBoards()
+          a[entry.url] = entry
 
         b = {}
-        for key, val of [entry.board0, entry.board1]
-          b[val.url] = val
+        for key, entry of dummyEntry when entry.type is "board"
+          b[entry.url] = entry
 
         expect(a).toEqual(b)
         return
 
       it "板が一つも無い場合は空配列を返す", ->
-        entryList.del(entry.board0.url)
-        entryList.del(entry.board1.url)
+        for url in (entry.url for key, entry of dummyEntry when entry.type is "board")
+          entryList.del(url)
 
         expect(entryList.getAllBoards()).toEqual([])
         return
@@ -596,66 +356,28 @@ describe "app.Bookmark", ->
     describe "::getThreadsByBoardURL", ->
       it "指定した板のスレッドを配列で返す", ->
         a = {}
-        for val in entryList.getThreadsByBoardURL(entry.board0.url)
-          a[val.url] = val
+        for entry in entryList.getThreadsByBoardURL(dummyEntry.board0.url)
+          a[entry.url] = entry
 
         b = {}
-        for key, val of [entry.thread0, entry.thread1]
-          b[val.url] = val
+        for key, entry of [dummyEntry.thread0, dummyEntry.thread1]
+          b[entry.url] = entry
 
         expect(a).toEqual(b)
         return
 
       it "該当するスレッドが一つも無い場合は空配列を返す", ->
-        expect(entryList.getThreadsByBoardURL(entry.board1.url)).toEqual([])
+        expect(entryList.getThreadsByBoardURL(dummyEntry.board1.url)).toEqual([])
         return
       return
     return
 
   describe "SyncableEntryList", ->
-    dummyEntry = null
     entryList = null
     listA = null
     listB = null
 
     beforeEach ->
-      dummyEntry =
-        board0:
-          url: "http://__dummy.2ch.net/dummy0/"
-          type: "board"
-          bbsType: "2ch"
-          title: "dummyboard0"
-          resCount: null
-          readState: null
-          expired: false
-        board1:
-          url: "http://__dummy.2ch.net/dummy1/"
-          type: "board"
-          bbsType: "2ch"
-          title: "dummyboard1"
-          resCount: null
-          readState: null
-          expired: false
-        thread0:
-          url: "http://__dummy.2ch.net/test/read.cgi/dummy0/1234567890/"
-          type: "thread"
-          bbsType: "2ch"
-          title: "dummythread0"
-          resCount: 123
-          readState: null
-          expired: false
-        thread1:
-          url: "http://__dummy.2ch.net/test/read.cgi/dummy1/1234567890/"
-          type: "thread"
-          bbsType: "2ch"
-          title: "dummythread1"
-          resCount: 222
-          readState:
-            received: 222
-            read: 200
-            last: 200
-          expired: false
-
       entryList = new app.Bookmark.SyncableEntryList()
       listA = new app.Bookmark.SyncableEntryList()
       listB = new app.Bookmark.SyncableEntryList()
