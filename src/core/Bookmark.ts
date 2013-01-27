@@ -238,5 +238,132 @@ module app {
         return app.deepCopy(res);
       }
     }
+
+    export interface BookmarkUpdateEvent {
+      type: string; //ADD, RES_COUNT, EXPIRED, TITLE, DEL
+      entry: Entry;
+    }
+
+    export class SyncableEntryList extends EntryList{
+      onChanged = new app.Callbacks({persistent: true});
+      private observerForSync:Function;
+
+      constructor () {
+        super();
+
+        this.observerForSync = (e:BookmarkUpdateEvent) => {
+          this.manipulateByBookmarkUpdateEvent(e);
+        };
+      }
+
+      add (entry:Entry):void {
+        if (this.get(entry.url)) {
+          return;
+        }
+
+        super.add(entry);
+
+        this.onChanged.call({
+          type: "ADD",
+          entry: app.deepCopy(entry)
+        });
+      }
+
+      update (entry:Entry):void {
+        var before = this.get(entry.url);
+
+        super.update(entry);
+
+        if (before.title !== entry.title) {
+          this.onChanged.call({
+            type: "TITLE",
+            entry: app.deepCopy(entry)
+          });
+        }
+
+        if (before.resCount !== entry.resCount) {
+          this.onChanged.call({
+            type: "RES_COUNT",
+            entry: app.deepCopy(entry)
+          });
+        }
+
+        if (before.expired !== entry.expired) {
+          this.onChanged.call({
+            type: "EXPIRED",
+            entry: app.deepCopy(entry)
+          });
+        }
+      }
+
+      del (url:string):void {
+        var entry:Entry = this.get(url);
+
+        if (!entry) {
+          return;
+        }
+
+        super.del(url);
+
+        this.onChanged.call({
+          type: "DEL",
+          entry: entry
+        });
+      }
+
+      private manipulateByBookmarkUpdateEvent (e:BookmarkUpdateEvent) {
+        switch (e.type) {
+          case "ADD":
+            this.add(e.entry);
+            break;
+          case "TITLE":
+          case "RES_COUNT":
+          case "EXPIRED":
+            this.update(e.entry);
+            break;
+          case "DEL":
+            this.del(e.entry.url);
+            break;
+        }
+      }
+
+      private followDeletion (b:EntryList):void {
+        var aList:string[], bList:string[], delList:string[];
+
+        aList = this.getAll().map(function (entry:Entry) {
+          return entry.url;
+        });
+        bList = b.getAll().map(function (entry:Entry) {
+          return entry.url;
+        });
+
+        delList = aList.filter(function (url:string) {
+          return bList.indexOf(url) === -1;
+        });
+
+        delList.forEach((url:string) => {
+          this.del(url);
+        });
+      }
+
+      syncStart (b:SyncableEntryList):void {
+        b.import(this);
+
+        this.syncResume(b);
+      }
+
+      syncResume (b:SyncableEntryList):void {
+        this.import(b);
+        this.followDeletion(b);
+
+        this.onChanged.add(b.observerForSync);
+        b.onChanged.add(this.observerForSync);
+      }
+
+      syncStop (b:SyncableEntryList):void {
+        this.onChanged.remove(b.observerForSync);
+        b.onChanged.remove(this.observerForSync);
+      }
+    }
   }
 }

@@ -611,3 +611,448 @@ describe "app.Bookmark", ->
         return
       return
     return
+
+  describe "SyncableEntryList", ->
+    dummyEntry = null
+    entryList = null
+    listA = null
+    listB = null
+
+    beforeEach ->
+      dummyEntry =
+        board0:
+          url: "http://__dummy.2ch.net/dummy0/"
+          type: "board"
+          bbsType: "2ch"
+          title: "dummyboard0"
+          resCount: null
+          readState: null
+          expired: false
+        board1:
+          url: "http://__dummy.2ch.net/dummy1/"
+          type: "board"
+          bbsType: "2ch"
+          title: "dummyboard1"
+          resCount: null
+          readState: null
+          expired: false
+        thread0:
+          url: "http://__dummy.2ch.net/test/read.cgi/dummy0/1234567890/"
+          type: "thread"
+          bbsType: "2ch"
+          title: "dummythread0"
+          resCount: 123
+          readState: null
+          expired: false
+        thread1:
+          url: "http://__dummy.2ch.net/test/read.cgi/dummy1/1234567890/"
+          type: "thread"
+          bbsType: "2ch"
+          title: "dummythread1"
+          resCount: 222
+          readState:
+            received: 222
+            read: 200
+            last: 200
+          expired: false
+
+      entryList = new app.Bookmark.SyncableEntryList()
+      listA = new app.Bookmark.SyncableEntryList()
+      listB = new app.Bookmark.SyncableEntryList()
+      return
+
+    describe ".onChanged", ->
+      spy = null
+
+      beforeEach ->
+        spy = jasmine.createSpy("onChanged")
+        return
+
+      it "ブックマーク追加時にcallされる", ->
+        entryList.onChanged.add(spy)
+
+        entryList.add(dummyEntry.board0)
+
+        expect(spy.callCount).toBe(1)
+        expect(spy).toHaveBeenCalledWith
+          type: "ADD"
+          entry: dummyEntry.board0
+        return
+
+      it "ブックマーク変更時にcallされる(title)", ->
+        entryList.add(dummyEntry.board0)
+        entryList.onChanged.add(spy)
+
+        dummyEntry.board0.title += "_test"
+        entryList.update(dummyEntry.board0)
+
+        expect(spy.callCount).toBe(1)
+        expect(spy).toHaveBeenCalledWith
+          type: "TITLE"
+          entry: dummyEntry.board0
+        return
+
+      it "ブックマーク変更時にcallされる(resCount)", ->
+        entryList.add(dummyEntry.thread0)
+        entryList.onChanged.add(spy)
+
+        dummyEntry.thread0.resCount++
+        entryList.update(dummyEntry.thread0)
+
+        expect(spy.callCount).toBe(1)
+        expect(spy).toHaveBeenCalledWith
+          type: "RES_COUNT"
+          entry: dummyEntry.thread0
+        return
+
+      it "ブックマーク変更時にcallされる(expired)", ->
+        entryList.add(dummyEntry.thread0)
+        entryList.onChanged.add(spy)
+
+        dummyEntry.thread0.expired = true
+        entryList.update(dummyEntry.thread0)
+
+        expect(spy.callCount).toBe(1)
+        expect(spy).toHaveBeenCalledWith
+          type: "EXPIRED"
+          entry: dummyEntry.thread0
+        return
+
+      it "複数の項目が変更された場合は複数回callされる", ->
+        entryList.add(dummyEntry.thread0)
+        entryList.onChanged.add(spy)
+
+        dummyEntry.thread0.title += "_test"
+        dummyEntry.thread0.resCount++
+        dummyEntry.thread0.expired = true
+
+        entryList.update(dummyEntry.thread0)
+
+        expect(spy.callCount).toBe(3)
+        expect(spy).toHaveBeenCalledWith
+          type: "TITLE"
+          entry: dummyEntry.thread0
+        expect(spy).toHaveBeenCalledWith
+          type: "RES_COUNT"
+          entry: dummyEntry.thread0
+        expect(spy).toHaveBeenCalledWith
+          type: "EXPIRED"
+          entry: dummyEntry.thread0
+        return
+
+      it "ブックマーク削除時にcallされる", ->
+        entryList.add(dummyEntry.board0)
+        entryList.onChanged.add(spy)
+
+        entryList.del(dummyEntry.board0.url)
+
+        expect(spy.callCount).toBe(1)
+        expect(spy).toHaveBeenCalledWith
+          type: "DEL"
+          entry: dummyEntry.board0
+        return
+      return
+
+    describe "manipulateByBookmarkUpdateEvent", ->
+      it "BoomkarkUpdateEventから、同等の操作を実行する(ADD)", ->
+        dummyEvent =
+          type: "ADD"
+          entry: dummyEntry.board0
+
+        spyOn(entryList, "add")
+        entryList.manipulateByBookmarkUpdateEvent(dummyEvent)
+
+        expect(entryList.add.callCount).toBe(1)
+        expect(entryList.add).toHaveBeenCalledWith(dummyEntry.board0)
+        return
+
+      it "BoomkarkUpdateEventから、同等の操作を実行する(TITLE)", ->
+        dummyEvent =
+          type: "TITLE"
+          entry: dummyEntry.board0
+
+        spyOn(entryList, "update")
+        entryList.manipulateByBookmarkUpdateEvent(dummyEvent)
+
+        expect(entryList.update.callCount).toBe(1)
+        expect(entryList.update).toHaveBeenCalledWith(dummyEntry.board0)
+        return
+
+      it "BoomkarkUpdateEventから、同等の操作を実行する(RES_COUNT)", ->
+        dummyEvent =
+          type: "RES_COUNT"
+          entry: dummyEntry.board0
+
+        spyOn(entryList, "update")
+        entryList.manipulateByBookmarkUpdateEvent(dummyEvent)
+
+        expect(entryList.update.callCount).toBe(1)
+        expect(entryList.update).toHaveBeenCalledWith(dummyEntry.board0)
+        return
+
+      it "BoomkarkUpdateEventから、同等の操作を実行する(EXPIRED)", ->
+        dummyEvent =
+          type: "EXPIRED"
+          entry: dummyEntry.board0
+
+        spyOn(entryList, "update")
+        entryList.manipulateByBookmarkUpdateEvent(dummyEvent)
+
+        expect(entryList.update.callCount).toBe(1)
+        expect(entryList.update).toHaveBeenCalledWith(dummyEntry.board0)
+        return
+
+      it "BoomkarkUpdateEventから、同等の操作を実行する(DEL)", ->
+        dummyEvent =
+          type: "DEL"
+          entry: dummyEntry.board0
+
+        spyOn(entryList, "del")
+        entryList.manipulateByBookmarkUpdateEvent(dummyEvent)
+
+        expect(entryList.del.callCount).toBe(1)
+        expect(entryList.del).toHaveBeenCalledWith(dummyEntry.board0.url)
+        return
+      return
+
+    describe "followDeletion", ->
+      it "相手のEntryListに存在しないEntryを削除する", ->
+        listA.add(dummyEntry.board0)
+        listA.add(dummyEntry.board1)
+        listA.add(dummyEntry.thread0)
+        listA.add(dummyEntry.thread1)
+
+        listB.add(dummyEntry.board0)
+        listB.add(dummyEntry.thread0)
+
+        spyOn(listA, "del")
+        listA.followDeletion(listB)
+
+        expect(listA.del.callCount).toBe(2)
+        expect(listA.del).toHaveBeenCalledWith(dummyEntry.board1.url)
+        expect(listA.del).toHaveBeenCalledWith(dummyEntry.thread1.url)
+        return
+      return
+
+    describe "syncStart", ->
+      it "同期開始処理を実行する", ->
+        spyOn(listA, "import")
+        spyOn(listA, "followDeletion")
+        spyOn(listA, "syncResume").andCallThrough()
+        spyOn(listB, "import")
+        spyOn(listB, "followDeletion")
+        spyOn(listB, "syncResume")
+
+        listA.syncStart(listB)
+
+        expect(listA.import.callCount).toBe(1)
+        expect(listA.followDeletion.callCount).toBe(1)
+        expect(listA.syncResume.callCount).toBe(1)
+        expect(listA.syncResume).toHaveBeenCalledWith(listB)
+        expect(listB.import.callCount).toBe(1)
+        expect(listB.followDeletion).not.toHaveBeenCalled()
+        expect(listB.syncResume).not.toHaveBeenCalled()
+        return
+      return
+
+    describe "syncResume", ->
+      it "同期再開処理を実行する", ->
+        spyOn(listA, "import")
+        spyOn(listA, "followDeletion")
+        spyOn(listA.onChanged, "add")
+        spyOn(listB, "import")
+        spyOn(listB, "followDeletion")
+        spyOn(listB.onChanged, "add")
+
+        listA.syncResume(listB)
+
+        expect(listA.import.callCount).toBe(1)
+        expect(listA.followDeletion.callCount).toBe(1)
+        expect(listA.onChanged.add.callCount).toBe(1)
+        expect(listA.onChanged.add).toHaveBeenCalledWith(listB.observerForSync)
+        expect(listB.import).not.toHaveBeenCalled()
+        expect(listB.followDeletion).not.toHaveBeenCalled()
+        expect(listB.onChanged.add.callCount).toBe(1)
+        expect(listB.onChanged.add).toHaveBeenCalledWith(listA.observerForSync)
+        return
+
+      it "同期中は同期対象の変更をコピーする(ADD)", ->
+        listA.syncResume(listB)
+
+        spyOn(listA, "add")
+
+        listB.add(dummyEntry.board0)
+
+        expect(listA.add.callCount).toBe(1)
+        expect(listA.add).toHaveBeenCalledWith(dummyEntry.board0)
+        return
+
+      it "同期中は同期対象の変更をコピーする(TITLE)", ->
+        listA.syncResume(listB)
+
+        spyOn(listA, "update")
+
+        listB.add(dummyEntry.board0)
+        dummyEntry.board0.title += "_modified"
+        listB.update(dummyEntry.board0)
+
+        expect(listA.update.callCount).toBe(1)
+        expect(listA.update).toHaveBeenCalledWith(dummyEntry.board0)
+        return
+
+      it "同期中は同期対象の変更をコピーする(RES_COUNT)", ->
+        listA.syncResume(listB)
+
+        spyOn(listA, "update")
+
+        listB.add(dummyEntry.thread0)
+        dummyEntry.thread0.resCount++
+        listB.update(dummyEntry.thread0)
+
+        expect(listA.update.callCount).toBe(1)
+        expect(listA.update).toHaveBeenCalledWith(dummyEntry.thread0)
+        return
+
+      it "同期中は同期対象の変更をコピーする(EXPIRED)", ->
+        listA.syncResume(listB)
+
+        spyOn(listA, "update")
+
+        listB.add(dummyEntry.thread0)
+        dummyEntry.thread0.expired = true
+        listB.update(dummyEntry.thread0)
+
+        expect(listA.update.callCount).toBe(1)
+        expect(listA.update).toHaveBeenCalledWith(dummyEntry.thread0)
+        return
+
+      it "同期中は同期対象の変更をコピーする(DEL)", ->
+        listA.syncResume(listB)
+
+        spyOn(listA, "del")
+
+        listB.add(dummyEntry.board0)
+        listB.del(dummyEntry.board0.url)
+
+        expect(listA.del.callCount).toBe(1)
+        expect(listA.del).toHaveBeenCalledWith(dummyEntry.board0.url)
+        return
+
+      it "同期中は同期対象へ変更をコピーする(ADD)", ->
+        listA.syncResume(listB)
+
+        spyOn(listB, "add")
+
+        listA.add(dummyEntry.board0)
+
+        expect(listB.add.callCount).toBe(1)
+        expect(listB.add).toHaveBeenCalledWith(dummyEntry.board0)
+        return
+
+      it "同期中は同期対象へ変更をコピーする(TITLE)", ->
+        listA.syncResume(listB)
+
+        spyOn(listB, "update")
+
+        listA.add(dummyEntry.board0)
+        dummyEntry.board0.title += "_modified"
+        listA.update(dummyEntry.board0)
+
+        expect(listB.update.callCount).toBe(1)
+        expect(listB.update).toHaveBeenCalledWith(dummyEntry.board0)
+        return
+
+      it "同期中は同期対象へ変更をコピーする(RES_COUNT)", ->
+        listA.syncResume(listB)
+
+        spyOn(listB, "update")
+
+        listA.add(dummyEntry.thread0)
+        dummyEntry.thread0.resCount++
+        listA.update(dummyEntry.thread0)
+
+        expect(listB.update.callCount).toBe(1)
+        expect(listB.update).toHaveBeenCalledWith(dummyEntry.thread0)
+        return
+
+      it "同期中は同期対象へ変更をコピーする(EXPIRED)", ->
+        listA.syncResume(listB)
+
+        spyOn(listB, "update")
+
+        listA.add(dummyEntry.thread0)
+        dummyEntry.thread0.expired = true
+        listA.update(dummyEntry.thread0)
+
+        expect(listB.update.callCount).toBe(1)
+        expect(listB.update).toHaveBeenCalledWith(dummyEntry.thread0)
+        return
+
+      it "同期中は同期対象へ変更をコピーする(DEL)", ->
+        listA.syncResume(listB)
+
+        spyOn(listB, "del")
+
+        listA.add(dummyEntry.board0)
+        listA.del(dummyEntry.board0.url)
+
+        expect(listB.del.callCount).toBe(1)
+        expect(listB.del).toHaveBeenCalledWith(dummyEntry.board0.url)
+        return
+      return
+
+    describe "syncStop", ->
+      it "同期終了処理を実行する", ->
+        spyOn(listA.onChanged, "remove")
+        spyOn(listB.onChanged, "remove")
+
+        listA.syncStop(listB)
+
+        expect(listA.onChanged.remove.callCount).toBe(1)
+        expect(listA.onChanged.remove).toHaveBeenCalledWith(listB.observerForSync)
+        expect(listB.onChanged.remove.callCount).toBe(1)
+        expect(listB.onChanged.remove).toHaveBeenCalledWith(listA.observerForSync)
+        return
+
+      it "同期終了後は同期対象の変更をコピーしない", ->
+        listA.syncResume(listB)
+        listA.syncStop(listB)
+
+        spyOn(listA, "add")
+        spyOn(listA, "update")
+        spyOn(listA, "del")
+
+        listB.add(dummyEntry.thread0)
+        dummyEntry.thread0.title += "_modified"
+        dummyEntry.thread0.resCount++
+        dummyEntry.thread0.expired = true
+        listB.update(dummyEntry.thread0)
+        listB.del(dummyEntry.thread0.url)
+
+        expect(listA.add).not.toHaveBeenCalled()
+        expect(listA.update).not.toHaveBeenCalled()
+        expect(listA.del).not.toHaveBeenCalled()
+        return
+
+      it "同期終了後は同期対象へ変更をコピーしない", ->
+        listA.syncResume(listB)
+        listA.syncStop(listB)
+
+        spyOn(listB, "add")
+        spyOn(listB, "update")
+        spyOn(listB, "del")
+
+        listA.add(dummyEntry.thread0)
+        dummyEntry.thread0.title += "_modified"
+        dummyEntry.thread0.resCount++
+        dummyEntry.thread0.expired = true
+        listA.update(dummyEntry.thread0)
+        listA.del(dummyEntry.thread0.url)
+
+        expect(listB.add).not.toHaveBeenCalled()
+        expect(listB.update).not.toHaveBeenCalled()
+        expect(listB.del).not.toHaveBeenCalled()
+        return
+      return
+    return
+  return
