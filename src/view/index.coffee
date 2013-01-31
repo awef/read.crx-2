@@ -376,40 +376,51 @@ app.main = ->
       return
 
     saveWindowSize = ->
-      app.config.set("window_width", window.outerWidth.toString(10))
-      app.config.set("window_height", window.outerHeight.toString(10))
+      chrome.windows.getCurrent (win) ->
+        app.config.set("window_width", win.width.toString(10))
+        app.config.set("window_height", win.height.toString(10))
+        return
+      return
+
+    startAutoSave = ->
+      isResized = false
+
+      saveWindowSize()
+
+      $(window).on "resize", ->
+        isResized = true
+        return
+
+      setInterval(
+        ->
+          if isResized
+            isResized = false
+            saveWindowSize()
+          return
+        1000
+      )
       return
 
     # 起動時にウィンドウサイズが極端に小さかった場合、前回終了時のサイズに復元
-    if window.outerWidth < 300 or window.outerHeight < 300
-      resizeTo(
-        +app.config.get("window_width")
-        +app.config.get("window_height")
-        ->
-          app.defer ->
-            adjustWindowSize.call()
-            return
-          return
-      )
-    else
-      adjustWindowSize.call()
-
-    # ウィンドウサイズの保存処理のセットアップ
-    saveWindowSize()
-
-    isResized = false
-    $(window).on "resize", ->
-      isResized = true
-      return
-
-    setInterval(
-      ->
-        if isResized
-          isResized = false
-          saveWindowSize()
+    chrome.windows.getCurrent(
+      {populate: true}
+      (win) ->
+        if win.tabs.length is 1 and win.width < 300 or win.height < 300
+          resizeTo(
+            +app.config.get("window_width")
+            +app.config.get("window_height")
+            ->
+              app.defer ->
+                adjustWindowSize.call()
+                return
+              return
+          )
+        else
+          adjustWindowSize.call()
         return
-      1000
     )
+
+    adjustWindowSize.add(startAutoSave)
     return
 
   #タブ・ペインセットアップ
