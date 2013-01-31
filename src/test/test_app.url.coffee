@@ -6,6 +6,7 @@ test "URLパラメータ系の関数は互換性を持つ", 1, ->
     q: "テスト"
     a: "123"
     hoge: "test"
+    empty: ""
   url = "http://example.com/?" + app.url.build_param(original_data)
   deepEqual(app.url.parse_query(url), original_data)
 

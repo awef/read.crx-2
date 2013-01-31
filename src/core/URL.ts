@@ -71,7 +71,7 @@ module app {
 
         tmp = segment.split("=");
 
-        if (tmp[1]) {
+        if (typeof tmp[1] === "string") {
           data[decodeURIComponent(tmp[0])] = decodeURIComponent(tmp[1]);
         }
         else {
