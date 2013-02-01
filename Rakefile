@@ -219,7 +219,7 @@ lambda {
     scss("src/ui/ui.scss", t.name)
   end
 
-  file_coffee "debug/ui.js", FileList["src/ui/*.coffee"]
+  file_ct "debug/ui.js", FileList["src/ui/*.coffee", "src/ui/*.ts"]
 }.call()
 
 #View

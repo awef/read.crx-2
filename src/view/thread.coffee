@@ -54,6 +54,10 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
 
   new app.view.TabContentView(document.documentElement)
 
+  searchNextThread = new UI.SearchNextThread(
+    $view.find(".next_thread_list")[0]
+  )
+
   write = (param) ->
     param or= {}
     param.url = view_url
@@ -554,29 +558,8 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
 
       #次スレ検索
       .find(".button_tool_search_next_thread, .search_next_thread").on "click", (e) ->
-        if $view.find(".next_thread_list:visible").length isnt 0
-          return
-        $div = $("#template > .next_thread_list").clone()
-        $div.find(".close").one "click", ->
-          $div.fadeOut("fast", -> $div.remove)
-          return
-        $div.find(".current").text(document.title)
-        $div.find(".status").text("検索中")
-        $div.appendTo(document.body)
-        app.util.search_next_thread(view_url, document.title)
-          .done (res) ->
-            $div.find(".status").text("")
-            $ol = $div.find("ol")
-            for thread in res
-              $("<li>", {
-                class: "open_in_rcrx"
-                text: thread.title
-                "data-href": thread.url
-              }).appendTo($ol)
-            return
-          .fail ->
-            $div.find(".status").text("次スレ検索に失敗しました")
-            return
+        searchNextThread.show()
+        searchNextThread.search(view_url, document.title)
         return
 
     app.message.add_listener "bookmark_updated", (message) ->

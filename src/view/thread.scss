@@ -218,6 +218,9 @@ header {
 
 .next_thread_list {
   @include drop-shadow;
+
+  display:none;
+
   background-color: hsla(0, 0%, 0%, 0.85);
   color: hsl(0, 0%, 100%);
 
