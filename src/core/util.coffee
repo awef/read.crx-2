@@ -130,21 +130,6 @@ app.util.get_how_to_open = (original_e) ->
   else
     def
 
-app.util.levenshtein_distance = (a, b) ->
-  table = [[0...b.length + 1]]
-  for ac in [1...a.length + 1]
-    table[ac] = [ac]
-
-  for ac in [1...a.length + 1]
-    for bc in [1...b.length + 1]
-      table[ac][bc] = Math.min(
-        table[ac - 1][bc] + 1
-        table[ac][bc - 1] + 1
-        table[ac - 1][bc - 1] + if a[ac - 1] is b[bc - 1] then 0 else 1
-      )
-
-  table[a.length][b.length]
-
 app.util.search_next_thread = (thread_url, thread_title) ->
   $.Deferred (d) ->
     thread_url = app.url.fix(thread_url)
