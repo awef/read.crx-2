@@ -262,6 +262,10 @@ header {
       &:hover {
         text-decoration: underline;
       }
+      &.bookmarked::before {
+        content: "★";
+        color: #f93;
+      }
     }
   }
 }
