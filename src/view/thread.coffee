@@ -58,6 +58,9 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
     $view.find(".next_thread_list")[0]
   )
 
+  if app.config.get("aa_font") is "aa"
+    $content.addClass("config_use_aa_font")
+
   write = (param) ->
     param or= {}
     param.url = view_url
@@ -156,10 +159,13 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
           $menu.find(".copy_selection").remove()
         return
 
-      if $article.is(".aa")
-        $menu.find(".toggle_aa_mode").text("AA表示モードを解除")
+      if $article.parent().hasClass("config_use_aa_font")
+        if $article.is(".aa")
+          $menu.find(".toggle_aa_mode").text("AA表示モードを解除")
+        else
+          $menu.find(".toggle_aa_mode").text("AA表示モードに変更")
       else
-        $menu.find(".toggle_aa_mode").text("AA表示モードに変更")
+        $menu.find(".toggle_aa_mode").remove()
 
       unless $article.attr("data-id")?
         $menu.find(".copy_id").remove()

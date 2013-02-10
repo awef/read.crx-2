@@ -230,6 +230,7 @@ module app {
 
   export class Config {
     static private _default = {
+      aa_font: "aa",
       thumbnail_supported: "on",
       always_new_tab: "on",
       layout: "pane-3",

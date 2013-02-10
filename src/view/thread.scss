@@ -90,7 +90,7 @@ header {
   text-decoration: underline;
 }
 
-.aa > .message {
+.config_use_aa_font > .aa > .message {
   @include ascii-art;
 }
 
