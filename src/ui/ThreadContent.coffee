@@ -259,6 +259,9 @@ class UI.ThreadContent
               @idIndex[fixedId].push(resNum)
 
               """#{$1}<span class="id">#{$2}</span>"""
+            #.beid
+            .replace /(^| )(BE:(\d+)\-[A-Z\d]+\(\d+\))/,
+              """$1<a class="beid" href="http://be.2ch.net/test/p.php?i=$3" target="_blank">$2</a>"""
         )
         articleHtml += """<span class="other">#{tmp}</span>"""
 

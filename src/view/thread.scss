@@ -83,6 +83,13 @@ header {
   white-space: nowrap;
 }
 
+.beid {
+  text-decoration: none;
+}
+.beid:hover {
+  text-decoration: underline;
+}
+
 .aa > .message {
   @include ascii-art;
 }
@@ -333,7 +340,7 @@ header {
     color: $res-name-ob-color;
   }
 
-  .link {
+  .link, .beid, .beid:visited {
     color: $link-color;
   }
 

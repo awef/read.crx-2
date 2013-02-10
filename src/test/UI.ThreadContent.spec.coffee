@@ -210,6 +210,24 @@ describe "UI.ThreadContent", ->
       hogehoge()
       return
 
+    it "beのプロフィールページにリンクする", ->
+      example.a.data1.other += " BE:123-ABC(10000)"
+      example.a.dom1.querySelector(".other").insertAdjacentHTML(
+        "beforeend",
+        """ <a class="beid" href="http://be.2ch.net/test/p.php?i=123" target="_blank">BE:123-ABC(10000)</a>"""
+      )
+
+      hogehoge()
+
+      example.a.data1.other = "BE:123-ABC(10000)"
+      example.a.dom1.querySelector("article").className = ""
+      example.a.dom1.querySelector("article").removeAttribute("data-id")
+      example.a.dom1.querySelector(".other").innerHTML =
+        """<a class="beid" href="http://be.2ch.net/test/p.php?i=123" target="_blank">BE:123-ABC(10000)</a>"""
+
+      hogehoge({}, {})
+      return
+
     it "名前欄のフォントタグを容認する", ->
       example.a.data1.name = "<font color=#FF0000>awef★</font>"
       example.a.dom1.querySelector(".name").innerHTML = "<font color=#FF0000>awef★</font>"
