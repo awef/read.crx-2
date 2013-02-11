@@ -80,8 +80,9 @@ class UI.ThreadContent
   ###*
   @method select
   @param {Element | Number} target
+  @param {bool} [preventScroll = false]
   ###
-  select: (target) ->
+  select: (target, preventScroll = false) ->
     @container.querySelector("article.selected")?.classList.remove("selected")
 
     if typeof target is "number"
@@ -91,7 +92,8 @@ class UI.ThreadContent
       return
 
     target.classList.add("selected")
-    @scrollTo(+target.querySelector(".num").textContent)
+    if not preventScroll
+      @scrollTo(+target.querySelector(".num").textContent)
     return
 
   ###*
@@ -116,7 +118,7 @@ class UI.ThreadContent
       )
     )
       current = @container.children[@getRead() - 1]
-      @select(current)
+      @select(current, true)
 
     target = current
 
@@ -135,7 +137,7 @@ class UI.ThreadContent
       if not target
         return
 
-      @select(target)
+      @select(target, true)
 
     if (
       @container.scrollTop + @container.offsetHeight <
@@ -169,7 +171,7 @@ class UI.ThreadContent
       )
     )
       current = @container.children[@getRead() - 1]
-      @select(current)
+      @select(current, true)
 
     target = current
 
@@ -185,7 +187,7 @@ class UI.ThreadContent
       if not target
         return
 
-      @select(target)
+      @select(target, true)
 
     if @container.scrollTop > target.offsetTop
       if target.offsetHeight >= @container.offsetHeight
