@@ -105,97 +105,117 @@ class UI.ThreadContent
 
   ###*
   @method selectNext
+  @param {number} [repeat = 1]
   ###
-  selectNext: ->
+  selectNext: (repeat = 1) ->
     current = @getSelected()
 
+    # 現在選択されているレスが表示範囲外だった場合、それを無視する
     if (
-      not current or
+      current and
       (
-        # 現在選択されているレスが表示範囲外だった場合、それを無視する
         current.offsetTop + current.offsetHeight < @container.scrollTop or
         @container.scrollTop + @container.offsetHeight < current.offsetTop
       )
     )
-      current = @container.children[@getRead() - 1]
-      @select(current, true)
+      current = null
 
-    target = current
+    unless current
+      @select(@container.children[@getRead() - 1], true)
+    else
+      target = current
 
-    if (
-      (
-        target.offsetTop + target.offsetHeight <=
-        @container.scrollTop + @container.offsetHeight
-      ) and
-      target.nextElementSibling
-    )
-      target = target.nextElementSibling
+      for [0...repeat]
+        prevTarget = target
 
-      while target and target.offsetHeight is 0
-        target = target.nextElementSibling
-
-      if not target
-        return
-
-      @select(target, true)
-
-    if (
-      @container.scrollTop + @container.offsetHeight <
-      target.offsetTop + target.offsetHeight
-    )
-      if target.offsetHeight >= @container.offsetHeight
-        @container.scrollTop += @container.offsetHeight * 0.5
-      else
-        @container.scrollTop = (
-          target.offsetTop -
-          @container.offsetHeight +
-          target.offsetHeight +
-          10
+        if (
+          (
+            target.offsetTop + target.offsetHeight <=
+            @container.scrollTop + @container.offsetHeight
+          ) and
+          target.nextElementSibling
         )
-    else if not target.nextElementSibling
-      @container.scrollTop += @container.offsetHeight * 0.5
+          target = target.nextElementSibling
+
+          while target and target.offsetHeight is 0
+            target = target.nextElementSibling
+
+        if not target
+          target = prevTarget
+          break
+
+        if (
+          @container.scrollTop + @container.offsetHeight <
+          target.offsetTop + target.offsetHeight
+        )
+          if target.offsetHeight >= @container.offsetHeight
+            @container.scrollTop += @container.offsetHeight * 0.5
+          else
+            @container.scrollTop = (
+              target.offsetTop -
+              @container.offsetHeight +
+              target.offsetHeight +
+              10
+            )
+        else if not target.nextElementSibling
+          @container.scrollTop += @container.offsetHeight * 0.5
+          if target is prevTarget
+            break
+
+      if target and target isnt current
+        @select(target, true)
     return
 
   ###*
   @method selectPrev
+  @param {number} [repeat = 1]
   ###
-  selectPrev: ->
+  selectPrev: (repeat = 1) ->
     current = @getSelected()
 
+    # 現在選択されているレスが表示範囲外だった場合、それを無視する
     if (
-      not current or
+      current and
       (
-        # 現在選択されているレスが表示範囲外だった場合、それを無視する
         current.offsetTop + current.offsetHeight < @container.scrollTop or
         @container.scrollTop + @container.offsetHeight < current.offsetTop
       )
     )
-      current = @container.children[@getRead() - 1]
-      @select(current, true)
+      current = null
 
-    target = current
+    unless current
+      @select(@container.children[@getRead() - 1], true)
+    else
+      target = current
 
-    if (
-      @container.scrollTop <= target.offsetTop and
-      target.previousElementSibling
-    )
-      target = target.previousElementSibling
+      for [0...repeat]
+        prevTarget = target
 
-      while target and target.offsetHeight is 0
-        target = target.previousElementSibling
+        if (
+          @container.scrollTop <= target.offsetTop and
+          target.previousElementSibling
+        )
+          target = target.previousElementSibling
 
-      if not target
-        return
+          while target and target.offsetHeight is 0
+            target = target.previousElementSibling
 
-      @select(target, true)
+        if not target
+          target = prevTarget
+          break
 
-    if @container.scrollTop > target.offsetTop
-      if target.offsetHeight >= @container.offsetHeight
-        @container.scrollTop -= @container.offsetHeight * 0.5
-      else
-        @container.scrollTop = target.offsetTop - 10
-    else if not target.previousElementSibling
-      @container.scrollTop -= @container.offsetHeight * 0.5
+        if @container.scrollTop > target.offsetTop
+          if target.offsetHeight >= @container.offsetHeight
+            @container.scrollTop -= @container.offsetHeight * 0.5
+          else
+            @container.scrollTop = target.offsetTop - 10
+        else if not target.previousElementSibling
+          @container.scrollTop -= @container.offsetHeight * 0.5
+          if target is prevTarget
+            break
+
+      if target and target isnt current
+        @select(target, true)
     return
 
   ###*
