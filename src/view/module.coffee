@@ -150,7 +150,7 @@ class app.view.IframeView extends app.view.View
       when "clearSelect"
         @$element.data("selectableItemList")?.clearSelect()
       when "focusUpFrame", "focusDownFrame", "focusLeftFrame", "focusRightFrame"
-        app.message.send("requestFocusMove", {command}, parent)
+        app.message.send("requestFocusMove", {command, repeatCount}, parent)
       when "r"
         @$element.trigger("request_reload")
       when "q"
@@ -307,7 +307,8 @@ class app.view.IframeView extends app.view.View
       if command?
         @execCommand(command, Math.max(1, +@_numericInput))
 
-      unless 48 <= e.which <= 57
+      # 0-9かShift以外が押された場合は数値入力を終了
+      unless 48 <= e.which <= 57 or e.which is 16
         @_numericInput = ""
       return
     return
