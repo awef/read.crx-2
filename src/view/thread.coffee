@@ -145,7 +145,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
   $view
     #レスメニュー表示
     .on "click contextmenu", "article > header", (e) ->
-      if $(e.target).is("a, .link, .freq, .name_anchor")
+      if $(e.target).is("a, .link, .freq")
         return
 
       if e.type is "contextmenu"
