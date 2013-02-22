@@ -134,52 +134,74 @@ class UI.SelectableAccordion extends UI.Accordion
 
   ###*
   @method selectNext
+  @param {number} [repeat = 1]
   ###
-  selectNext: ->
+  selectNext: (repeat = 1) ->
     if current = @getSelected()
-      if current.nodeName is "A" and current.parentNode.nextElementSibling
-        @select(current.parentNode.nextElementSibling.firstElementChild)
-      else
-        if current.nodeName is "A"
-          current = current.parentElement.parentElement.previousElementSibling
+      for [0...repeat]
+        prevCurrent = current
 
-        nextH3 = current.nextElementSibling
-        while nextH3 and nextH3.nodeName isnt "H3"
-          nextH3 = nextH3.nextElementSibling
-
-        if nextH3
-          if nextH3.classList.contains("accordion_open")
-            @select(nextH3.nextElementSibling.querySelector("li > a"))
+        if current.nodeName is "A" and current.parentNode.nextElementSibling
+          current = current.parentNode.nextElementSibling.firstElementChild
+        else
+          if current.nodeName is "A"
+            currentH3 = current.parentElement.parentElement.previousElementSibling
           else
-            @select(nextH3)
+            currentH3 = current
+
+          nextH3 = currentH3.nextElementSibling
+          while nextH3 and nextH3.nodeName isnt "H3"
+            nextH3 = nextH3.nextElementSibling
+
+          if nextH3
+            if nextH3.classList.contains("accordion_open")
+              current = nextH3.nextElementSibling.querySelector("li > a")
+            else
+              current = nextH3
+
+        if current is prevCurrent
+          break
     else
-      target = @element.querySelector(".accordion_open + ul a")
-      target or= @element.querySelector("h3")
-      @select(target)
+      current = @element.querySelector(".accordion_open + ul a")
+      current or= @element.querySelector("h3")
+
+    if current and current isnt @getSelected()
+      @select(current)
     return
 
   ###*
   @method selectPrev
+  @param {number} [repeat = 1]
   ###
-  selectPrev: ->
+  selectPrev: (repeat = 1) ->
     if current = @getSelected()
-      if current.nodeName is "A" and current.parentNode.previousElementSibling
-        @select(current.parentNode.previousElementSibling.firstElementChild)
-      else
-        if current.nodeName is "A"
-          current = current.parentElement.parentElement.previousElementSibling
+      for [0...repeat]
+        prevCurrent = current
 
-        prevH3 = current.previousElementSibling
-        while prevH3 and prevH3.nodeName isnt "H3"
-          prevH3 = prevH3.previousElementSibling
-
-        if prevH3
-          if prevH3.classList.contains("accordion_open")
-            @select(prevH3.nextElementSibling.querySelector("li:last-child > a"))
+        if current.nodeName is "A" and current.parentNode.previousElementSibling
+          current = current.parentNode.previousElementSibling.firstElementChild
+        else
+          if current.nodeName is "A"
+            currentH3 = current.parentElement.parentElement.previousElementSibling
           else
-            @select(prevH3)
+            currentH3 = current
+
+          prevH3 = currentH3.previousElementSibling
+          while prevH3 and prevH3.nodeName isnt "H3"
+            prevH3 = prevH3.previousElementSibling
+
+          if prevH3
+            if prevH3.classList.contains("accordion_open")
+              current = prevH3.nextElementSibling.querySelector("li:last-child > a")
+            else
+              current = prevH3
+
+        if current is prevCurrent
+          break
     else
-      target = @element.querySelector(".accordion_open + ul a")
-      target or= @element.querySelector("h3")
-      @select(target)
+      current = @element.querySelector(".accordion_open + ul a")
+      current or= @element.querySelector("h3")
+
+    if current and current isnt @getSelected()
+      @select(current)
     return

@@ -109,6 +109,7 @@ class app.view.IframeView extends app.view.View
 
     @_setupKeyboard()
     @_setupCommandBox()
+    @_numericInput = ""
     return
 
   ###*
@@ -124,17 +125,18 @@ class app.view.IframeView extends app.view.View
   ###*
   @method execCommand
   @param {String} command
+  @param {Number} [repeatCount]
   ###
-  execCommand: (command) ->
+  execCommand: (command, repeatCount = 1) ->
     # 数値コマンド
     if /^\d+$/.test(command)
       @$element.data("selectableItemList")?.select(+command)
 
     switch command
       when "up"
-        @$element.data("selectableItemList")?.selectPrev()
+        @$element.data("selectableItemList")?.selectPrev(repeatCount)
       when "down"
-        @$element.data("selectableItemList")?.selectNext()
+        @$element.data("selectableItemList")?.selectNext(repeatCount)
       when "left"
         if @$element.hasClass("view_sidemenu")
           $a = @$element.find("li > a.selected")
@@ -148,7 +150,7 @@ class app.view.IframeView extends app.view.View
       when "clearSelect"
         @$element.data("selectableItemList")?.clearSelect()
       when "focusUpFrame", "focusDownFrame", "focusLeftFrame", "focusRightFrame"
-        app.message.send("requestFocusMove", {command}, parent)
+        app.message.send("requestFocusMove", {command, repeatCount}, parent)
       when "r"
         @$element.trigger("request_reload")
       when "q"
@@ -297,9 +299,17 @@ class app.view.IframeView extends app.view.View
             else
               e.preventDefault()
               $(".searchbox, form.search > input[type=\"text\"]").focus()
+          else
+            # 数値
+            if 48 <= e.which <= 57
+              @_numericInput += e.which - 48
 
       if command?
-        @execCommand(command)
+        @execCommand(command, Math.max(1, +@_numericInput))
+
+      # 0-9かShift以外が押された場合は数値入力を終了
+      unless 48 <= e.which <= 57 or e.which is 16
+        @_numericInput = ""
       return
     return
 

@@ -54,6 +54,13 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
 
   new app.view.TabContentView(document.documentElement)
 
+  searchNextThread = new UI.SearchNextThread(
+    $view.find(".next_thread_list")[0]
+  )
+
+  if app.config.get("aa_font") is "aa"
+    $content.addClass("config_use_aa_font")
+
   write = (param) ->
     param or= {}
     param.url = view_url
@@ -138,7 +145,15 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
   $view
     #レスメニュー表示
     .on "click contextmenu", "article > header", (e) ->
-      if $(e.target).is("a, .link, .freq, .name_anchor")
+      if $(e.target).is("a")
+        return
+
+      # id/参照ポップアップの表示処理との競合回避
+      if (
+        e.type is "click" and
+        app.config.get("popup_trigger") is "click" and
+        $(e.target).is(".id.link, .id.freq, .rep.link, .rep.freq")
+      )
         return
 
       if e.type is "contextmenu"
@@ -152,10 +167,13 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
           $menu.find(".copy_selection").remove()
         return
 
-      if $article.is(".aa")
-        $menu.find(".toggle_aa_mode").text("AA表示モードを解除")
+      if $article.parent().hasClass("config_use_aa_font")
+        if $article.is(".aa")
+          $menu.find(".toggle_aa_mode").text("AA表示モードを解除")
+        else
+          $menu.find(".toggle_aa_mode").text("AA表示モードに変更")
       else
-        $menu.find(".toggle_aa_mode").text("AA表示モードに変更")
+        $menu.find(".toggle_aa_mode").remove()
 
       unless $article.attr("data-id")?
         $menu.find(".copy_id").remove()
@@ -554,29 +572,8 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
 
       #次スレ検索
       .find(".button_tool_search_next_thread, .search_next_thread").on "click", (e) ->
-        if $view.find(".next_thread_list:visible").length isnt 0
-          return
-        $div = $("#template > .next_thread_list").clone()
-        $div.find(".close").one "click", ->
-          $div.fadeOut("fast", -> $div.remove)
-          return
-        $div.find(".current").text(document.title)
-        $div.find(".status").text("検索中")
-        $div.appendTo(document.body)
-        app.util.search_next_thread(view_url, document.title)
-          .done (res) ->
-            $div.find(".status").text("")
-            $ol = $div.find("ol")
-            for thread in res
-              $("<li>", {
-                class: "open_in_rcrx"
-                text: thread.title
-                "data-href": thread.url
-              }).appendTo($ol)
-            return
-          .fail ->
-            $div.find(".status").text("次スレ検索に失敗しました")
-            return
+        searchNextThread.show()
+        searchNextThread.search(view_url, document.title)
         return
 
     app.message.add_listener "bookmark_updated", (message) ->

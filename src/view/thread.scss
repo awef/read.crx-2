@@ -83,7 +83,14 @@ header {
   white-space: nowrap;
 }
 
-.aa > .message {
+.beid {
+  text-decoration: none;
+}
+.beid:hover {
+  text-decoration: underline;
+}
+
+.config_use_aa_font > .aa > .message {
   @include ascii-art;
 }
 
@@ -218,6 +225,9 @@ header {
 
 .next_thread_list {
   @include drop-shadow;
+
+  display:none;
+
   background-color: hsla(0, 0%, 0%, 0.85);
   color: hsl(0, 0%, 100%);
 
@@ -258,6 +268,10 @@ header {
       cursor: pointer;
       &:hover {
         text-decoration: underline;
+      }
+      &.bookmarked::before {
+        content: "★";
+        color: #f93;
       }
     }
   }
@@ -326,7 +340,7 @@ header {
     color: $res-name-ob-color;
   }
 
-  .link {
+  .link, .beid, .beid:visited {
     color: $link-color;
   }
 

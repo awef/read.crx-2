@@ -6,7 +6,7 @@ interface SelectableItemList {
 
   clearSelect ():void;
 
-  selectPrev ():void;
+  selectPrev (repeat?:number):void;
 
-  selectNext ():void;
+  selectNext (repeat?:number):void;
 }

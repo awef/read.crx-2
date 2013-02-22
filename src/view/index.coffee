@@ -58,9 +58,9 @@ class app.view.Index extends app.view.View
         when "focusDownFrame"
           @focusDown()
         when "focusLeftFrame"
-          @focusLeft()
+          @focusLeft(message.repeatCount)
         when "focusRightFrame"
-          @focusRight()
+          @focusRight(message.repeatCount)
       return
 
     app.message.addListener "showKeyboardHelp", =>
@@ -89,50 +89,129 @@ class app.view.Index extends app.view.View
     return
 
   ###*
-  @method focusLeft
+  @method _getLeftFrame
+  @private
+  @param {Element} iframe
+  @return {Element|null} leftFrame
   ###
-  focusLeft: ->
-    if tabId = @$element.find(".iframe_focused").attr("data-tabid")
-      $li = @$element.find("li[data-tabid=\"#{tabId}\"]").prev()
-      if $li.length is 1
-        $li.closest(".tab").data("tab").update(
-          $li.attr("data-tabid"), selected: true)
-        return
+  _getLeftFrame: (iframe) ->
+    $iframe = $(iframe)
 
+    # 既に#left_paneにフォーカスが当たっている場合
+    unless $iframe.hasClass("tab_content")
+      return null
+
+    # 同一.tab内での候補探索
+    tabId = $iframe.attr("data-tabid")
+    $leftTabLi = @$element.find("li[data-tabid=\"#{tabId}\"]").prev()
+
+    if $leftTabLi.length is 1
+      leftTabId = $leftTabLi.attr("data-tabid")
+      return @$element.find(".tab_content[data-tabid=\"#{leftTabId}\"]")[0]
+
+    # 同一.tab内で候補がなかった場合
+    # 左に.tabが存在し、タブが存在する場合はそちらを優先する
     if (
       @$element.find("#body").hasClass("pane-3h") and
-      @$element.find(".iframe_focused").closest(".tab").is("#tab_b")
+      $iframe.closest(".tab").is("#tab_b")
     )
-      iframe = @$element.find("#tab_a iframe.tab_selected")[0]
-    else
-      iframe = @$element.find("#left_pane")[0]
+      return @$element.find("#tab_a .tab_content.tab_selected")[0]
 
-    if iframe
-      @focus(iframe)
+    # そうでなければ#left_paneで確定
+    @$element.find("#left_pane")[0]
+
+  ###*
+  @method focusLeft
+  @param {number} [repeat=1]
+  ###
+  focusLeft: (repeat = 1) ->
+    currentFrame = @$element.find(".iframe_focused")[0]
+    targetFrame = currentFrame
+
+    for [0...repeat]
+      prevTargetFrame = targetFrame
+      targetFrame = @_getLeftFrame(targetFrame) or targetFrame
+
+      if targetFrame is prevTargetFrame
+        break
+
+    if targetFrame isnt currentFrame
+      $targetFrame = $(targetFrame)
+
+      if $targetFrame.hasClass("tab_content")
+        targetTabId = $targetFrame.attr("data-tabid")
+
+        $targetFrame
+          .closest(".tab")
+            .data("tab")
+              .update(targetTabId, selected: true)
+      else
+        @focus(targetFrame)
     return
 
   ###*
-  @method focusRight
+  @method _getRightFrame
+  @private
+  @param {Element} iframe
+  @return {Element|null} rightFrame
   ###
-  focusRight: ->
-    if tabId = @$element.find(".iframe_focused").attr("data-tabid")
-      $li = @$element.find("li[data-tabid=\"#{tabId}\"]").next()
-      if $li.length is 1
-        $li.closest(".tab").data("tab").update(
-          $li.attr("data-tabid"), selected: true)
-        return
+  _getRightFrame: (iframe) ->
+    $iframe = $(iframe)
 
-    if (
-      @$element.find("#body").hasClass("pane-3h") and
-      @$element.find(".iframe_focused").is("#left_pane, #tab_a iframe")
-    )
-      iframe = @$element.find("#tab_a iframe.tab_selected:not(.iframe_focused), #tab_b iframe.tab_selected:not(.iframe_focused)")[0]
+    # サイドメニューにフォーカスが当たっている場合
+    if $iframe.is("#left_pane")
+      $targetFrame = @$element.find("#tab_a .tab_content.tab_selected")
+
+      if $targetFrame.length is 0
+        $targetFrame = @$element.find("#tab_b .tab_content.tab_selected")
+
+      $targetFrame[0] or null
+    # タブ内コンテンツにフォーカスが当たっている場合
     else
-      iframe = @$element.find("#tab_a iframe.tab_selected:not(.iframe_focused)")[0]
+      # 同一.tab内での候補探索
+      tabId = $iframe.attr("data-tabid")
+      $rightTabLi = @$element.find("li[data-tabid=\"#{tabId}\"]").next()
 
-    if iframe
-      @focus(iframe)
-    return
+      if $rightTabLi.length is 1
+        rightTabId = $rightTabLi.attr("data-tabid")
+        @$element.find(".tab_content[data-tabid=\"#{rightTabId}\"]")[0]
+      # タブ内で候補が見つからなかった場合
+      # 右に.tabが存在し、タブが存在する場合はそれを選択する
+      else if (
+        @$element.find("#body").hasClass("pane-3h") and
+        $iframe.closest(".tab").is("#tab_a")
+      )
+        return @$element.find("#tab_b .tab_content.tab_selected")[0] or null
+      else
+        null
+
+  ###*
+  @method focusRight
+  @param {number} [repeat = 1]
+  ###
+  focusRight: (repeat = 1) ->
+    currentFrame = @$element.find(".iframe_focused")[0]
+    targetFrame = currentFrame
+
+    for [0...repeat]
+      prevTargetFrame = targetFrame
+      targetFrame = @_getRightFrame(targetFrame) or targetFrame
+
+      if targetFrame is prevTargetFrame
+        break
+
+    if targetFrame isnt currentFrame
+      $targetFrame = $(targetFrame)
+
+      if $targetFrame.hasClass("tab_content")
+        targetTabId = $targetFrame.attr("data-tabid")
+
+        $targetFrame
+          .closest(".tab")
+            .data("tab")
+              .update(targetTabId, selected: true)
+      else
+        @focus(targetFrame)
 
   ###*
   @method focusUp
@@ -376,40 +455,51 @@ app.main = ->
       return
 
     saveWindowSize = ->
-      app.config.set("window_width", window.outerWidth.toString(10))
-      app.config.set("window_height", window.outerHeight.toString(10))
+      chrome.windows.getCurrent (win) ->
+        app.config.set("window_width", win.width.toString(10))
+        app.config.set("window_height", win.height.toString(10))
+        return
+      return
+
+    startAutoSave = ->
+      isResized = false
+
+      saveWindowSize()
+
+      $(window).on "resize", ->
+        isResized = true
+        return
+
+      setInterval(
+        ->
+          if isResized
+            isResized = false
+            saveWindowSize()
+          return
+        1000
+      )
       return
 
     # 起動時にウィンドウサイズが極端に小さかった場合、前回終了時のサイズに復元
-    if window.outerWidth < 300 or window.outerHeight < 300
-      resizeTo(
-        +app.config.get("window_width")
-        +app.config.get("window_height")
-        ->
-          app.defer ->
-            adjustWindowSize.call()
-            return
-          return
-      )
-    else
-      adjustWindowSize.call()
-
-    # ウィンドウサイズの保存処理のセットアップ
-    saveWindowSize()
-
-    isResized = false
-    $(window).on "resize", ->
-      isResized = true
-      return
-
-    setInterval(
-      ->
-        if isResized
-          isResized = false
-          saveWindowSize()
+    chrome.windows.getCurrent(
+      {populate: true}
+      (win) ->
+        if win.tabs.length is 1 and win.width < 300 or win.height < 300
+          resizeTo(
+            +app.config.get("window_width")
+            +app.config.get("window_height")
+            ->
+              app.defer ->
+                adjustWindowSize.call()
+                return
+              return
+          )
+        else
+          adjustWindowSize.call()
         return
-      1000
     )
+
+    adjustWindowSize.add(startAutoSave)
     return
 
   #タブ・ペインセットアップ
