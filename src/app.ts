@@ -388,14 +388,14 @@ module app {
   })();
 
   export function clipboardWrite (str:string):void {
-    var input:HTMLInputElement;
+    var textarea:HTMLTextAreaElement;
 
-    input = <HTMLInputElement>document.createElement("input");
-    input.value = str;
-    document.body.appendChild(input);
-    input.select();
+    textarea = <HTMLTextAreaElement>document.createElement("textarea");
+    textarea.value = str;
+    document.body.appendChild(textarea);
+    textarea.select();
     document.execCommand("copy");
-    document.body.removeChild(input);
+    document.body.removeChild(textarea);
   }
 
   export var module;
