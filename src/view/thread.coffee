@@ -145,7 +145,15 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
   $view
     #レスメニュー表示
     .on "click contextmenu", "article > header", (e) ->
-      if $(e.target).is("a, .link, .freq, .name_anchor")
+      if $(e.target).is("a")
+        return
+
+      # id/参照ポップアップの表示処理との競合回避
+      if (
+        e.type is "click" and
+        app.config.get("popup_trigger") is "click" and
+        $(e.target).is(".id.link, .id.freq, .rep.link, .rep.freq")
+      )
         return
 
       if e.type is "contextmenu"
