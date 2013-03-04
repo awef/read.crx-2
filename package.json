@@ -2,8 +2,8 @@
   "name": "read.crx-2",
   "version": "0.0.0",
   "dependencies": {
-    "coffee-script": "1.4.0",
-    "typescript": "0.8.2",
+    "coffee-script": "1.5.0",
+    "typescript": "0.8.3",
     "yuidocjs": ">=0.3.x"
   }
 }

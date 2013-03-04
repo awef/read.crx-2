@@ -85,6 +85,7 @@ module app {
     private _config: CallbacksConfiguration;
     private _callbackStore:Function[] = [];
     private _latestCallArg: any[] = null;
+    wasCalled = false;
 
     constructor (config:CallbacksConfiguration = {}) {
       this._config = config;
@@ -120,6 +121,8 @@ module app {
           "app.Callbacks: persistentでないCallbacksが複数回callされました。");
       }
       else {
+        this.wasCalled = true;
+
         this._latestCallArg = deepCopy(arg);
 
         tmpCallbackStore = this._callbackStore.slice(0);

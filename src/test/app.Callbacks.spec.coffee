@@ -38,6 +38,21 @@ describe "app.Callbacks", ->
     expect(cb0).toHaveBeenCalledWith(1, 2, 3)
     return
 
+  describe ".wasCalled", ->
+    it "一度も.callされていない場合はfalseになる", ->
+      callbacks = new app.Callbacks()
+
+      expect(callbacks.wasCalled).toBeFalsy()
+      return
+
+    it "一度でも.callされた事がある場合はtrueになる", ->
+      callbacks = new app.Callbacks()
+      callbacks.call()
+
+      expect(callbacks.wasCalled).toBeTruthy()
+      return
+    return
+
   describe "::remove", ->
     it "コールバックを削除する", ->
       callbacks = new app.Callbacks(persistent: true)
