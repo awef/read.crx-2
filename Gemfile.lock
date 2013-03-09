@@ -4,8 +4,8 @@ GEM
     haml (4.0.0)
       tilt
     rake (10.0.3)
-    sass (3.2.6)
-    tilt (1.3.3)
+    sass (3.2.7)
+    tilt (1.3.5)
 
 PLATFORMS
   ruby
