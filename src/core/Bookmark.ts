@@ -101,20 +101,21 @@ module app {
         return a.resCount > b.resCount ? a : b;
       }
 
+      if (Boolean(a.readState) !== Boolean(b.readState)) {
+        return a.readState ? a : b;
+      }
+
       if (a.readState && b.readState) {
         if (a.readState.read !== b.readState.read) {
           return a.readState.read > b.readState.read ? a : b;
         }
-        else if (a.readState.received !== b.readState.received) {
+
+        if (a.readState.received !== b.readState.received) {
           return a.readState.received > b.readState.received ? a : b;
         }
-        else {
-          return a;
-        }
       }
-      else {
-        return a.readState ? a : b;
-      }
+
+      return null;
     }
 
     export class EntryList {

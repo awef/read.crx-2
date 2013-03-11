@@ -180,6 +180,26 @@ describe "app.Bookmark", ->
         expect(app.Bookmark.newerEntry(a, b)).toBe(b)
         return
       return
+
+    describe "どちらが新しいか判定出来ない場合", ->
+      it "nullを返す", ->
+        a = dummyEntry.board0
+        b = dummyEntry.board1
+        expect(app.Bookmark.newerEntry(a, b)).toBeNull()
+
+        a = dummyEntry.thread0
+        b = dummyEntry.thread0
+        expect(app.Bookmark.newerEntry(a, b)).toBeNull()
+
+        a = dummyEntry.thread1
+        b = dummyEntry.thread1
+        expect(app.Bookmark.newerEntry(a, b)).toBeNull()
+
+        a = dummyEntry.thread2
+        b = dummyEntry.thread2
+        expect(app.Bookmark.newerEntry(a, b)).toBeNull()
+        return
+      return
     return
 
   describe "EntryList", ->
