@@ -105,9 +105,9 @@ def file_ct(target, src)
       tsSrc = src.clone
       tsSrc.reject! {|a| (/\.ts$/ =~ a) == nil }
 
-      coffee(coffeeSrc, "#{tmpdir}/coffee.js")
+      coffee(coffeeSrc, "#{tmpdir}/_coffee.js")
       typescript(tsSrc, "#{tmpdir}/ts.js")
-      sh "cat #{tmpdir}/ts.js #{tmpdir}/coffee.js > #{target}"
+      sh "cat #{tmpdir}/ts.js #{tmpdir}/_coffee.js > #{target}"
     end
   end
 end

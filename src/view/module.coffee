@@ -155,6 +155,8 @@ class app.view.IframeView extends app.view.View
         @$element.trigger("request_reload")
       when "q"
         @close()
+      when "openCommandBox"
+        @_openCommandBox()
       when "enter"
         @$element.find(".selected").trigger("click")
       when "shift+enter"
@@ -233,17 +235,6 @@ class app.view.IframeView extends app.view.View
       )
         @$element.find(".content").focus()
 
-      # : (基本的に入力欄では発動しないが、空白の入力欄に入力された場合のみ例外)
-      else if (
-        e.which is 186 and
-        (
-          not (e.target.nodeName in ["INPUT", "TEXTAREA"]) or
-          e.target.value is ""
-        )
-      )
-        e.preventDefault()
-        @_openCommandBox()
-
       # 入力欄内では発動しない系
       else if not (e.target.nodeName in ["INPUT", "TEXTAREA"])
         switch (e.which)
@@ -290,6 +281,10 @@ class app.view.IframeView extends app.view.View
             # Shift+w
             if e.shiftKey
               command = "q"
+          # :
+          when 186
+            e.preventDefault() # コマンド入力欄に:が入力されるのを防ぐため
+            command = "openCommandBox"
           # /
           when 191
             # ?
