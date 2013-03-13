@@ -358,7 +358,9 @@ module app.Bookmark {
       }
       else {
         app.log("warn", "削除しようとしたブックマークの存在が確認できません。");
-        callback(false);
+        if (callback) {
+          callback(false);
+        }
       }
     }
 
