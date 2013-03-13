@@ -355,7 +355,7 @@ namespace :jquery do
     cd "lib/jquery" do
       sh "git apply ../jquery_license.patch"
       sh "git apply ../jquery_delegate_middle_click.patch"
-      sh "env PATH=$PATH:node_modules/.bin/ grunt"
+      sh "env PATH=$PATH:../../node_modules/.bin/ grunt"
     end
 
     mkdir "debug/lib/jquery"
