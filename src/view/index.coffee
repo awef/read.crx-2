@@ -404,6 +404,20 @@ app.main = ->
   $view = $(document.documentElement)
   new app.view.Index($view[0])
 
+  app.bookmarkEntryList =
+    new app.Bookmark.WebSQLEntryList("WebSQLEntryList")
+  app.bookmark = new app.Bookmark.CompatibilityLayer(app.bookmarkEntryList)
+
+  do ->
+    if app.config.get("bookmark_id")?
+      cbel = new app.Bookmark.ChromeBookmarkEntryList(app.config.get("bookmark_id"))
+      cbel.ready.add ->
+        app.bookmarkEntryList.syncResume(cbel)
+        return
+    return
+
+  document.querySelector("#left_pane").src = "/view/sidemenu.html"
+
   document.title = app.manifest.name
 
   app.Ninja.enableAutoBackup()

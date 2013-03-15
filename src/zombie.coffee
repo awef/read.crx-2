@@ -2,6 +2,10 @@ app.boot "/zombie.html", ->
   save = ->
     array_of_read_state = JSON.parse(localStorage.zombie_read_state)
 
+    app.bookmark = new app.Bookmark.CompatibilityLayer(
+      new app.Bookmark.WebSQLEntryList("WebSQLEntryList")
+    )
+
     app.bookmark.promise_first_scan.done ->
       count = 0
       countdown = ->
