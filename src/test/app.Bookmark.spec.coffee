@@ -222,6 +222,17 @@ describe "app.Bookmark", ->
         expect(res).toBeTruthy()
         expect(entryList.get(dummy.url)).toEqual(dummy)
         return
+
+      it "既に格納されているEntryが与えられた場合、無視する", ->
+        dummy = app.deepCopy(dummyEntry.board0)
+        dummy.url = "http://__dummy.2ch.net/___/"
+
+        entryList.add(app.deepCopy(dummy))
+        res = entryList.add(dummy)
+
+        expect(res).toBeFalsy()
+        expect(entryList.get(dummy.url)).toEqual(dummy)
+        return
       return
 
     describe "::update", ->
