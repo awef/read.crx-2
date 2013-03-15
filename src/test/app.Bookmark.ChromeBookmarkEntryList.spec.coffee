@@ -1099,21 +1099,14 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
 
   describe "EntryListのEntryがupdateされた時", ->
     it "updateChromeBookmarkを呼び、onChangedによるupdateは呼ばない", ->
-      targetNode = null
+      createBookmarkRes = null
 
       cbel = new ChromeBookmarkEntryList(TEST_FOLDER_NODE_ID)
 
-      onCreated = jasmine.createSpy("onCreated")
       onChanged = jasmine.createSpy("onChanged")
 
-      chrome.bookmarks.onCreated.addListener (nodeId, node) ->
-        if node.url is dummyEntry.board0.url
-          targetNode = node
-          onCreated()
-        return
-
       chrome.bookmarks.onChanged.addListener (nodeId, changeInfo) ->
-        if nodeId is targetNode.id
+        if nodeId is createBookmarkRes.results[0].id
           onChanged()
         return
 
@@ -1121,11 +1114,11 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
         cbel.ready.wasCalled
 
       runs ->
-        cbel.createChromeBookmark(dummyEntry.board0)
+        createBookmarkRes = createBookmark(dummyEntry.board0)
         return
 
       waitsFor ->
-        onCreated.wasCalled
+        createBookmarkRes.onCreated.wasCalled
 
       runs ->
         dummyEntry.board0.title += "_modified"
@@ -1149,21 +1142,14 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
 
   describe "EntryListのEntryがdelされた時", ->
     it "removeChromeBookmarkを呼び、onRemovedによるdelは呼ばない", ->
-      targetNode = null
+      createBookmarkRes = null
 
       cbel = new ChromeBookmarkEntryList(TEST_FOLDER_NODE_ID)
 
-      onCreated = jasmine.createSpy("onCreated")
       onRemoved = jasmine.createSpy("onRemoved")
 
-      chrome.bookmarks.onCreated.addListener (nodeId, node) ->
-        if node.url is dummyEntry.board0.url
-          targetNode = node
-          onCreated()
-        return
-
       chrome.bookmarks.onRemoved.addListener (nodeId, removeInfo) ->
-        if nodeId is targetNode.id
+        if nodeId is createBookmarkRes.results[0].id
           onRemoved()
         return
 
@@ -1171,11 +1157,11 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
         cbel.ready.wasCalled
 
       runs ->
-        cbel.createChromeBookmark(dummyEntry.board0)
+        createBookmarkRes = createBookmark(dummyEntry.board0)
         return
 
       waitsFor ->
-        onCreated.wasCalled
+        createBookmarkRes.onCreated.wasCalled
 
       runs ->
         spyOn(cbel, "del").andCallThrough()
