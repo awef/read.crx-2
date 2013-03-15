@@ -364,32 +364,46 @@ module app.Bookmark {
       }
     }
 
-    add (entry:Entry, createChromeBookmark? = true):void {
+    add (entry:Entry, createChromeBookmark? = true):bool {
       entry = app.deepCopy(entry);
 
-      if (createChromeBookmark) {
-        this.createChromeBookmark(entry);
+      if (super.add(entry)) {
+        if (createChromeBookmark) {
+          this.createChromeBookmark(entry);
+        }
+        return true;
       }
-
-      super.add(entry);
+      else {
+        return false;
+      }
     }
 
-    update (entry:Entry, updateChromeBookmark? = true):void {
+    update (entry:Entry, updateChromeBookmark? = true):bool {
       entry = app.deepCopy(entry);
 
       if (updateChromeBookmark) {
         this.updateChromeBookmark(entry);
       }
 
-      super.update(entry);
+      if (super.update(entry)) {
+        return true;
+      }
+      else {
+        return false;
+      }
     }
 
-    del (url:string, removeChromeBookmark? = true):void {
+    del (url:string, removeChromeBookmark? = true):bool {
       if (removeChromeBookmark) {
         this.removeChromeBookmark(url);
       }
 
-      super.del(url);
+      if (super.del(url)) {
+        return true;
+      }
+      else {
+        return false;
+      }
     }
   }
 }

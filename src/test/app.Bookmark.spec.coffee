@@ -217,8 +217,9 @@ describe "app.Bookmark", ->
         dummy = app.deepCopy(dummyEntry.board0)
         dummy.url = "http://__dummy.2ch.net/___/"
 
-        entryList.add(dummy)
+        res = entryList.add(dummy)
 
+        expect(res).toBeTruthy()
         expect(entryList.get(dummy.url)).toEqual(dummy)
         return
       return
@@ -228,8 +229,9 @@ describe "app.Bookmark", ->
         entryList.add(dummyEntry.board0)
 
         dummyEntry.board0.title = "test"
-        entryList.update(dummyEntry.board0)
+        res = entryList.update(dummyEntry.board0)
 
+        expect(res).toBeTruthy()
         expect(entryList.get(dummyEntry.board0.url).title).toBe("test")
         return
 
@@ -237,24 +239,28 @@ describe "app.Bookmark", ->
         dummy = app.deepCopy(dummyEntry.board0)
         dummy.url = "http://__dummy.2ch.net/___/"
         dummy.title = "test"
-        entryList.update(dummy)
 
+        res = entryList.update(dummy)
+
+        expect(res).toBeFalsy()
         expect(entryList.get(dummy.url)).toBeNull()
         return
       return
 
     describe "::del", ->
       it "指定されたURLのEntryを削除する", ->
-        entryList.del(dummyEntry.thread0.url)
+        res = entryList.del(dummyEntry.thread0.url)
 
+        expect(res).toBeTruthy()
         expect(entryList.get(dummyEntry.thread0.url)).toBeNull()
         return
 
       it "該当するEntryが無かった場合は何もしない", ->
         a = entryList.getAll()
-        entryList.del("hogehoge")
+        res = entryList.del("hogehoge")
         b = entryList.getAll()
 
+        expect(res).toBeFalsy()
         expect(b).toEqual(a)
         return
       return

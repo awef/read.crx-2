@@ -122,7 +122,7 @@ module app {
       private cache: {[index:string]:Entry;} = {};
       private boardURLIndex: {[index:string]:string[];} = {};
 
-      add (entry:Entry):void {
+      add (entry:Entry):bool {
         var boardURL:string;
 
         if (!this.get(entry.url)) {
@@ -137,18 +137,24 @@ module app {
             }
             this.boardURLIndex[boardURL].push(entry.url);
           }
+          return true;
+        }
+        else {
+          return false;
         }
       }
 
-      update (entry:Entry):void {
+      update (entry:Entry):bool {
         if (this.get(entry.url)) {
-          entry = app.deepCopy(entry);
-
-          this.cache[entry.url] = entry;
+          this.cache[entry.url] = app.deepCopy(entry);
+          return true;
+        }
+        else {
+          return false;
         }
       }
 
-      del (url:string):void {
+      del (url:string):bool {
         var tmp:number, boardURL:string;
 
         url = app.URL.fix(url);
@@ -165,6 +171,10 @@ module app {
           }
 
           delete this.cache[url];
+          return true;
+        }
+        else {
+          return false;
         }
       }
 
@@ -257,75 +267,79 @@ module app {
         };
       }
 
-      add (entry:Entry):void {
-        if (this.get(entry.url)) {
-          return;
+      add (entry:Entry):bool {
+        if (super.add(entry)) {
+          this.onChanged.call({
+            type: "ADD",
+            entry: app.deepCopy(entry)
+          });
+          return true;
         }
-
-        super.add(entry);
-
-        this.onChanged.call({
-          type: "ADD",
-          entry: app.deepCopy(entry)
-        });
+        else {
+          return false;
+        }
       }
 
-      update (entry:Entry):void {
+      update (entry:Entry):bool {
         var before = this.get(entry.url);
 
-        super.update(entry);
+        if (super.update(entry)) {
+          if (before.title !== entry.title) {
+            this.onChanged.call({
+              type: "TITLE",
+              entry: app.deepCopy(entry)
+            });
+          }
 
-        if (before.title !== entry.title) {
-          this.onChanged.call({
-            type: "TITLE",
-            entry: app.deepCopy(entry)
-          });
-        }
+          if (before.resCount !== entry.resCount) {
+            this.onChanged.call({
+              type: "RES_COUNT",
+              entry: app.deepCopy(entry)
+            });
+          }
 
-        if (before.resCount !== entry.resCount) {
-          this.onChanged.call({
-            type: "RES_COUNT",
-            entry: app.deepCopy(entry)
-          });
-        }
-
-        if (
-          (!before.readState && entry.readState) ||
-          (
-            (before.readState && entry.readState) && (
-              before.readState.received !== entry.readState.received ||
-              before.readState.read !== entry.readState.read ||
-              before.readState.last !== entry.readState.last
+          if (
+            (!before.readState && entry.readState) ||
+            (
+              (before.readState && entry.readState) && (
+                before.readState.received !== entry.readState.received ||
+                before.readState.read !== entry.readState.read ||
+                before.readState.last !== entry.readState.last
+              )
             )
-          )
-        ) {
-          this.onChanged.call({
-            type: "READ_STATE",
-            entry: app.deepCopy(entry)
-          });
-        }
+          ) {
+            this.onChanged.call({
+              type: "READ_STATE",
+              entry: app.deepCopy(entry)
+            });
+          }
 
-        if (before.expired !== entry.expired) {
-          this.onChanged.call({
-            type: "EXPIRED",
-            entry: app.deepCopy(entry)
-          });
+          if (before.expired !== entry.expired) {
+            this.onChanged.call({
+              type: "EXPIRED",
+              entry: app.deepCopy(entry)
+            });
+          }
+          return true;
+        }
+        else {
+          return false;
         }
       }
 
-      del (url:string):void {
+      del (url:string):bool {
         var entry:Entry = this.get(url);
 
-        if (!entry) {
-          return;
+        if (super.del(url)) {
+          this.onChanged.call({
+            type: "DEL",
+            entry: entry
+          });
+          return true;
         }
-
-        super.del(url);
-
-        this.onChanged.call({
-          type: "DEL",
-          entry: entry
-        });
+        else {
+          return false;
+        }
       }
 
       private manipulateByBookmarkUpdateEvent (e:BookmarkUpdateEvent) {
