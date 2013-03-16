@@ -27,7 +27,7 @@ module app.Bookmark {
       this.ready.add(() => {
         //EntryListの変更をDBに反映する
         this.onChanged.add((e:BookmarkUpdateEvent) => {
-          if (e.type === "DEL") {
+          if (e.type === "REMOVE") {
             this.deleteFromDB(e.entry.url);
           }
           else {

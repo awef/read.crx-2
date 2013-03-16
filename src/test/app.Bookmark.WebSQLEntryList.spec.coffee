@@ -160,7 +160,7 @@ describe "app.Bookmark.WebSQLEntryList", ->
         expect(wsel.putToDB.callCount).toBe(2)
         expect(wsel.putToDB).toHaveBeenCalledWith(dummyEntry)
 
-        wsel.del(dummyEntry.url)
+        wsel.remove(dummyEntry.url)
 
         expect(wsel.deleteFromDB.callCount).toBe(1)
         expect(wsel.deleteFromDB).toHaveBeenCalledWith(dummyEntry.url)

@@ -58,7 +58,7 @@ module app.Bookmark {
               {type: "expired", bookmark: legacyEntry, entry: e.entry}
             );
             break;
-          case "DEL":
+          case "REMOVE":
             app.message.send(
               "bookmark_updated",
               {type: "removed", bookmark: legacyEntry, entry: e.entry}
@@ -73,7 +73,7 @@ module app.Bookmark {
 
         // 板ブックマーク更新
         if (entry = this.webSQLEntryList.get(message.before)) {
-          this.webSQLEntryList.del(message.before);
+          this.webSQLEntryList.remove(message.before);
           entry.url = message.after;
           this.webSQLEntryList.add(entry);
         }
@@ -82,7 +82,7 @@ module app.Bookmark {
         tmp = /^(http:\/\/\w+\.2ch\.net\/)/.exec(message.after)[1];
         this.webSQLEntryList.getThreadsByBoardURL(message.before)
           .forEach((entry) => {
-            this.webSQLEntryList.del(entry.url);
+            this.webSQLEntryList.remove(entry.url);
             entry.url.replace(/^(http:\/\/\w+\.2ch\.net\/)/, tmp);
             this.webSQLEntryList.add(entry);
           });
@@ -140,7 +140,7 @@ module app.Bookmark {
     }
 
     remove (url:string):void {
-      this.webSQLEntryList.del(url);
+      this.webSQLEntryList.remove(url);
     }
 
     update_read_state (readState):void {

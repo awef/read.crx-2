@@ -154,7 +154,7 @@ module app {
         }
       }
 
-      del (url:string):bool {
+      remove (url:string):bool {
         var tmp:number, boardURL:string;
 
         url = app.URL.fix(url);
@@ -251,7 +251,7 @@ module app {
     }
 
     export interface BookmarkUpdateEvent {
-      type: string; //ADD, TITLE, RES_COUNT, READ_STATE, EXPIRED, DEL
+      type: string; //ADD, TITLE, RES_COUNT, READ_STATE, EXPIRED, REMOVE
       entry: Entry;
     }
 
@@ -327,12 +327,12 @@ module app {
         }
       }
 
-      del (url:string):bool {
+      remove (url:string):bool {
         var entry:Entry = this.get(url);
 
-        if (super.del(url)) {
+        if (super.remove(url)) {
           this.onChanged.call({
-            type: "DEL",
+            type: "REMOVE",
             entry: entry
           });
           return true;
@@ -353,14 +353,14 @@ module app {
           case "EXPIRED":
             this.update(e.entry);
             break;
-          case "DEL":
-            this.del(e.entry.url);
+          case "REMOVE":
+            this.remove(e.entry.url);
             break;
         }
       }
 
       private followDeletion (b:EntryList):void {
-        var aList:string[], bList:string[], delList:string[];
+        var aList:string[], bList:string[], rmList:string[];
 
         aList = this.getAll().map(function (entry:Entry) {
           return entry.url;
@@ -369,12 +369,12 @@ module app {
           return entry.url;
         });
 
-        delList = aList.filter(function (url:string) {
+        rmList = aList.filter(function (url:string) {
           return bList.indexOf(url) === -1;
         });
 
-        delList.forEach((url:string) => {
-          this.del(url);
+        rmList.forEach((url:string) => {
+          this.remove(url);
         });
       }
 

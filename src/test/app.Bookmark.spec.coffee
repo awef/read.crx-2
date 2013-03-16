@@ -258,9 +258,9 @@ describe "app.Bookmark", ->
         return
       return
 
-    describe "::del", ->
+    describe "::remove", ->
       it "指定されたURLのEntryを削除する", ->
-        res = entryList.del(dummyEntry.thread0.url)
+        res = entryList.remove(dummyEntry.thread0.url)
 
         expect(res).toBeTruthy()
         expect(entryList.get(dummyEntry.thread0.url)).toBeNull()
@@ -268,7 +268,7 @@ describe "app.Bookmark", ->
 
       it "該当するEntryが無かった場合は何もしない", ->
         a = entryList.getAll()
-        res = entryList.del("hogehoge")
+        res = entryList.remove("hogehoge")
         b = entryList.getAll()
 
         expect(res).toBeFalsy()
@@ -342,7 +342,7 @@ describe "app.Bookmark", ->
 
       it "Entryが一つも無い場合は空配列を返す", ->
         for url in (entry.url for key, entry of dummyEntry)
-          entryList.del(url)
+          entryList.remove(url)
 
         expect(entryList.getAll()).toEqual([])
         return
@@ -363,7 +363,7 @@ describe "app.Bookmark", ->
 
       it "スレッドが一つも無い場合は空配列を返す", ->
         for url in (entry.url for key, entry of dummyEntry when entry.type is "thread")
-          entryList.del(url)
+          entryList.remove(url)
 
         expect(entryList.getAllThreads()).toEqual([])
         return
@@ -384,7 +384,7 @@ describe "app.Bookmark", ->
 
       it "板が一つも無い場合は空配列を返す", ->
         for url in (entry.url for key, entry of dummyEntry when entry.type is "board")
-          entryList.del(url)
+          entryList.remove(url)
 
         expect(entryList.getAllBoards()).toEqual([])
         return
@@ -526,11 +526,11 @@ describe "app.Bookmark", ->
         entryList.add(dummyEntry.board0)
         entryList.onChanged.add(spy)
 
-        entryList.del(dummyEntry.board0.url)
+        entryList.remove(dummyEntry.board0.url)
 
         expect(spy.callCount).toBe(1)
         expect(spy).toHaveBeenCalledWith
-          type: "DEL"
+          type: "REMOVE"
           entry: dummyEntry.board0
         return
       return
@@ -596,16 +596,16 @@ describe "app.Bookmark", ->
         expect(entryList.update).toHaveBeenCalledWith(dummyEntry.board0)
         return
 
-      it "BoomkarkUpdateEventから、同等の操作を実行する(DEL)", ->
+      it "BoomkarkUpdateEventから、同等の操作を実行する(REMOVE)", ->
         dummyEvent =
-          type: "DEL"
+          type: "REMOVE"
           entry: dummyEntry.board0
 
-        spyOn(entryList, "del")
+        spyOn(entryList, "remove")
         entryList.manipulateByBookmarkUpdateEvent(dummyEvent)
 
-        expect(entryList.del.callCount).toBe(1)
-        expect(entryList.del).toHaveBeenCalledWith(dummyEntry.board0.url)
+        expect(entryList.remove.callCount).toBe(1)
+        expect(entryList.remove).toHaveBeenCalledWith(dummyEntry.board0.url)
         return
       return
 
@@ -619,12 +619,12 @@ describe "app.Bookmark", ->
         listB.add(dummyEntry.board0)
         listB.add(dummyEntry.thread0)
 
-        spyOn(listA, "del")
+        spyOn(listA, "remove")
         listA.followDeletion(listB)
 
-        expect(listA.del.callCount).toBe(2)
-        expect(listA.del).toHaveBeenCalledWith(dummyEntry.board1.url)
-        expect(listA.del).toHaveBeenCalledWith(dummyEntry.thread1.url)
+        expect(listA.remove.callCount).toBe(2)
+        expect(listA.remove).toHaveBeenCalledWith(dummyEntry.board1.url)
+        expect(listA.remove).toHaveBeenCalledWith(dummyEntry.thread1.url)
         return
       return
 
@@ -733,16 +733,16 @@ describe "app.Bookmark", ->
         expect(listA.update).toHaveBeenCalledWith(dummyEntry.thread0)
         return
 
-      it "同期中は同期対象の変更をコピーする(DEL)", ->
+      it "同期中は同期対象の変更をコピーする(REMOVE)", ->
         listA.syncResume(listB)
 
-        spyOn(listA, "del")
+        spyOn(listA, "remove")
 
         listB.add(dummyEntry.board0)
-        listB.del(dummyEntry.board0.url)
+        listB.remove(dummyEntry.board0.url)
 
-        expect(listA.del.callCount).toBe(1)
-        expect(listA.del).toHaveBeenCalledWith(dummyEntry.board0.url)
+        expect(listA.remove.callCount).toBe(1)
+        expect(listA.remove).toHaveBeenCalledWith(dummyEntry.board0.url)
         return
 
       it "同期中は同期対象へ変更をコピーする(ADD)", ->
@@ -808,16 +808,16 @@ describe "app.Bookmark", ->
         expect(listB.update).toHaveBeenCalledWith(dummyEntry.thread0)
         return
 
-      it "同期中は同期対象へ変更をコピーする(DEL)", ->
+      it "同期中は同期対象へ変更をコピーする(REMOVE)", ->
         listA.syncResume(listB)
 
-        spyOn(listB, "del")
+        spyOn(listB, "remove")
 
         listA.add(dummyEntry.board0)
-        listA.del(dummyEntry.board0.url)
+        listA.remove(dummyEntry.board0.url)
 
-        expect(listB.del.callCount).toBe(1)
-        expect(listB.del).toHaveBeenCalledWith(dummyEntry.board0.url)
+        expect(listB.remove.callCount).toBe(1)
+        expect(listB.remove).toHaveBeenCalledWith(dummyEntry.board0.url)
         return
       return
 
@@ -840,18 +840,18 @@ describe "app.Bookmark", ->
 
         spyOn(listA, "add")
         spyOn(listA, "update")
-        spyOn(listA, "del")
+        spyOn(listA, "remove")
 
         listB.add(dummyEntry.thread0)
         dummyEntry.thread0.title += "_modified"
         dummyEntry.thread0.resCount++
         dummyEntry.thread0.expired = true
         listB.update(dummyEntry.thread0)
-        listB.del(dummyEntry.thread0.url)
+        listB.remove(dummyEntry.thread0.url)
 
         expect(listA.add).not.toHaveBeenCalled()
         expect(listA.update).not.toHaveBeenCalled()
-        expect(listA.del).not.toHaveBeenCalled()
+        expect(listA.remove).not.toHaveBeenCalled()
         return
 
       it "同期終了後は同期対象へ変更をコピーしない", ->
@@ -860,18 +860,18 @@ describe "app.Bookmark", ->
 
         spyOn(listB, "add")
         spyOn(listB, "update")
-        spyOn(listB, "del")
+        spyOn(listB, "remove")
 
         listA.add(dummyEntry.thread0)
         dummyEntry.thread0.title += "_modified"
         dummyEntry.thread0.resCount++
         dummyEntry.thread0.expired = true
         listA.update(dummyEntry.thread0)
-        listA.del(dummyEntry.thread0.url)
+        listA.remove(dummyEntry.thread0.url)
 
         expect(listB.add).not.toHaveBeenCalled()
         expect(listB.update).not.toHaveBeenCalled()
-        expect(listB.del).not.toHaveBeenCalled()
+        expect(listB.remove).not.toHaveBeenCalled()
         return
       return
     return

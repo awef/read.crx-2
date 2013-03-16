@@ -153,7 +153,7 @@ module app.Bookmark {
             delete this.nodeIdStore[url];
             this.nodeIdStore[url] = nodeId;
 
-            this.del(entry.url, false);
+            this.remove(entry.url, false);
             this.add(newEntry, false);
           }
         }
@@ -172,7 +172,7 @@ module app.Bookmark {
       if (url !== null) {
         delete this.nodeIdStore[url];
 
-        this.del(url, false);
+        this.remove(url, false);
       }
     }
 
@@ -252,7 +252,7 @@ module app.Bookmark {
     private loadFromChromeBookmark (callback?:Function):void {
       // EntryListクリア
       this.getAll().forEach((entry:Entry) => {
-        this.del(entry.url, false);
+        this.remove(entry.url, false);
       });
 
       // ロード
@@ -393,12 +393,12 @@ module app.Bookmark {
       }
     }
 
-    del (url:string, removeChromeBookmark? = true):bool {
+    remove (url:string, removeChromeBookmark? = true):bool {
       if (removeChromeBookmark) {
         this.removeChromeBookmark(url);
       }
 
-      if (super.del(url)) {
+      if (super.remove(url)) {
         return true;
       }
       else {

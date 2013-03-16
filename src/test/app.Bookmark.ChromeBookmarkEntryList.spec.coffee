@@ -536,12 +536,12 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
 
       runs ->
         spyOn(cbel, "createChromeBookmark")
-        spyOn(cbel, "del")
+        spyOn(cbel, "remove")
         cbel.add(dummyEntry.thread0)
         cbel.loadFromChromeBookmark()
 
-        expect(cbel.del.callCount).toBe(1)
-        expect(cbel.del).toHaveBeenCalledWith(dummyEntry.thread0.url, false)
+        expect(cbel.remove.callCount).toBe(1)
+        expect(cbel.remove).toHaveBeenCalledWith(dummyEntry.thread0.url, false)
         return
       return
 
@@ -821,7 +821,7 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
         runs ->
           spyOn(cbel, "add").andCallThrough()
           spyOn(cbel, "update").andCallThrough()
-          spyOn(cbel, "del").andCallThrough()
+          spyOn(cbel, "remove").andCallThrough()
           spyOn(cbel, "createChromeBookmark")
           spyOn(cbel, "updateChromeBookmark")
           spyOn(cbel, "removeChromeBookmark")
@@ -837,7 +837,7 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
           return
 
         waitsFor ->
-          cbel.add.wasCalled and cbel.del.wasCalled
+          cbel.add.wasCalled and cbel.remove.wasCalled
 
         runs ->
           expect(cbel.add.callCount).toBe(1)
@@ -845,8 +845,8 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
 
           expect(cbel.update).not.toHaveBeenCalled()
 
-          expect(cbel.del.callCount).toBe(1)
-          expect(cbel.del).toHaveBeenCalledWith(dummyEntry.thread0.url, false)
+          expect(cbel.remove.callCount).toBe(1)
+          expect(cbel.remove).toHaveBeenCalledWith(dummyEntry.thread0.url, false)
 
           expect(cbel.createChromeBookmark).not.toHaveBeenCalled()
           expect(cbel.updateChromeBookmark).not.toHaveBeenCalled()
@@ -902,13 +902,13 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
     return
 
   describe "監視ノード直下のブックマークが削除された時", ->
-    it "delを呼び、removeChromeBookmarkは呼ばない", ->
+    it "removeを呼び、removeChromeBookmarkは呼ばない", ->
       targetNode = null
 
       cbel = new ChromeBookmarkEntryList(TEST_FOLDER_NODE_ID)
 
       spyOn(cbel, "add").andCallThrough()
-      spyOn(cbel, "del").andCallThrough()
+      spyOn(cbel, "remove").andCallThrough()
       spyOn(cbel, "removeChromeBookmark").andCallThrough()
 
       chrome.bookmarks.create({
@@ -928,23 +928,23 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
         return
 
       waitsFor ->
-        cbel.del.wasCalled
+        cbel.remove.wasCalled
 
       runs ->
-        expect(cbel.del.callCount).toBe(1)
-        expect(cbel.del).toHaveBeenCalledWith(dummyEntry.board0.url, false)
+        expect(cbel.remove.callCount).toBe(1)
+        expect(cbel.remove).toHaveBeenCalledWith(dummyEntry.board0.url, false)
         expect(cbel.removeChromeBookmark).not.toHaveBeenCalled()
         return
       return
     return
 
   describe "監視ノード直下以外のブックマークが削除された時", ->
-    it "何もしない（delを呼ばない）", ->
+    it "何もしない（removeを呼ばない）", ->
       targetNode = null
 
       cbel = new ChromeBookmarkEntryList(TEST_FOLDER_NODE_ID)
 
-      spyOn(cbel, "del")
+      spyOn(cbel, "remove")
       onRemoved = jasmine.createSpy("onRemoved")
 
       chrome.bookmarks.onRemoved.addListener (nodeId, removeInfo) ->
@@ -973,7 +973,7 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
         onRemoved.wasCalled
 
       runs ->
-        expect(cbel.del).not.toHaveBeenCalled()
+        expect(cbel.remove).not.toHaveBeenCalled()
         return
       return
     return
@@ -1050,16 +1050,16 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
         cbel.ready.wasCalled
 
       runs ->
-        spyOn(cbel, "del")
+        spyOn(cbel, "remove")
         chrome.bookmarks.move(tmp.results[0].id, parentId: folderId)
         return
 
       waitsFor ->
-        cbel.del.wasCalled
+        cbel.remove.wasCalled
 
       runs ->
-        expect(cbel.del.callCount).toBe(1)
-        expect(cbel.del).toHaveBeenCalledWith(dummyEntry.thread0.url, false)
+        expect(cbel.remove.callCount).toBe(1)
+        expect(cbel.remove).toHaveBeenCalledWith(dummyEntry.thread0.url, false)
         return
       return
       return
@@ -1140,8 +1140,8 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
       return
     return
 
-  describe "EntryListのEntryがdelされた時", ->
-    it "removeChromeBookmarkを呼び、onRemovedによるdelは呼ばない", ->
+  describe "EntryListのEntryがremoveされた時", ->
+    it "removeChromeBookmarkを呼び、onRemovedによるremoveは呼ばない", ->
       createBookmarkRes = null
 
       cbel = new ChromeBookmarkEntryList(TEST_FOLDER_NODE_ID)
@@ -1164,17 +1164,17 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
         createBookmarkRes.onCreated.wasCalled
 
       runs ->
-        spyOn(cbel, "del").andCallThrough()
+        spyOn(cbel, "remove").andCallThrough()
         spyOn(cbel, "removeChromeBookmark").andCallThrough()
 
-        cbel.del(dummyEntry.board0.url)
+        cbel.remove(dummyEntry.board0.url)
         return
 
       waitsFor ->
         onRemoved.wasCalled
 
       runs ->
-        expect(cbel.del.callCount).toBe(1)
+        expect(cbel.remove.callCount).toBe(1)
         expect(cbel.removeChromeBookmark.callCount).toBe(1)
         expect(cbel.removeChromeBookmark)
           .toHaveBeenCalledWith(dummyEntry.board0.url)
