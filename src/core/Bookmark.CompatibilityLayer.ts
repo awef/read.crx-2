@@ -21,49 +21,49 @@ module app.Bookmark {
 
       this.cbel.ready.add(() => {
         this.firstScan.resolve();
-      });
 
-      this.cbel.onChanged.add((e) => {
-        var legacyEntry: LegacyEntry = app.Bookmark.currentToLegacy(e.entry);
+        this.cbel.onChanged.add((e) => {
+          var legacyEntry: LegacyEntry = app.Bookmark.currentToLegacy(e.entry);
 
-        switch (e.type) {
-          case "ADD":
-            app.message.send(
-              "bookmark_updated",
-              {type: "added", bookmark: legacyEntry, entry: e.entry}
-            );
-            break;
-          case "TITLE":
-            app.message.send(
-              "bookmark_updated",
-              {type: "title", bookmark: legacyEntry, entry: e.entry}
-            );
-            break;
-          case "RES_COUNT":
-            app.message.send(
-              "bookmark_updated",
-              {type: "res_count", bookmark: legacyEntry, entry: e.entry}
-            );
-            break;
-          case "READ_STATE":
-            app.message.send("read_state_updated", {
-              "board_url": app.URL.threadToBoard(e.entry.url),
-              "read_state": e.entry.readState
-            });
-            break;
-          case "EXPIRED":
-            app.message.send(
-              "bookmark_updated",
-              {type: "expired", bookmark: legacyEntry, entry: e.entry}
-            );
-            break;
-          case "REMOVE":
-            app.message.send(
-              "bookmark_updated",
-              {type: "removed", bookmark: legacyEntry, entry: e.entry}
-            );
-            break;
-        }
+          switch (e.type) {
+            case "ADD":
+              app.message.send(
+                "bookmark_updated",
+                {type: "added", bookmark: legacyEntry, entry: e.entry}
+              );
+              break;
+            case "TITLE":
+              app.message.send(
+                "bookmark_updated",
+                {type: "title", bookmark: legacyEntry, entry: e.entry}
+              );
+              break;
+            case "RES_COUNT":
+              app.message.send(
+                "bookmark_updated",
+                {type: "res_count", bookmark: legacyEntry, entry: e.entry}
+              );
+              break;
+            case "READ_STATE":
+              app.message.send("read_state_updated", {
+                "board_url": app.URL.threadToBoard(e.entry.url),
+                "read_state": e.entry.readState
+              });
+              break;
+            case "EXPIRED":
+              app.message.send(
+                "bookmark_updated",
+                {type: "expired", bookmark: legacyEntry, entry: e.entry}
+              );
+              break;
+            case "REMOVE":
+              app.message.send(
+                "bookmark_updated",
+                {type: "removed", bookmark: legacyEntry, entry: e.entry}
+              );
+              break;
+          }
+        });
       });
 
       // 鯖移転検出時処理
