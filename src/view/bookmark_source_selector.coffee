@@ -25,7 +25,7 @@ app.boot "/view/bookmark_source_selector.html", ->
               .find(".node.selected")
                 .attr("data-bookmark_id")
         )
-        app.bookmark.change_source(bookmark_id)
+        app.bookmarkEntryList.setRootNodeId(bookmark_id)
         parent.postMessage(JSON.stringify(type: "request_killme"), location.origin)
         return
 
