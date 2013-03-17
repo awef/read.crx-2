@@ -314,6 +314,35 @@ describe "app.Bookmark", ->
         return
       return
 
+    describe "::serverMove", ->
+      it "EntryList内のEntryを新サーバーへ移行させる", ->
+        entryList.serverMove(
+          "http://__dummy.2ch.net/dummy0/"
+          "http://__newdummy.2ch.net/dummy0/"
+        )
+
+        dummy = app.deepCopy(dummyEntry)
+        dummy.board0.url = "http://__newdummy.2ch.net/dummy0/"
+        dummy.thread0.url =
+          "http://__newdummy.2ch.net/test/read.cgi/dummy0/1234567890/"
+        dummy.thread1.url =
+          dummy.thread1.readState.url =
+            "http://__newdummy.2ch.net/test/read.cgi/dummy0/1234568880/"
+
+        expect(entryList.get("http://__dummy.2ch.net/dummy0/")).toBeNull()
+        expect(entryList.get("http://__newdummy.2ch.net/dummy0/"))
+          .toEqual(dummy.board0)
+
+        expect(entryList.getThreadsByBoardURL("http://__dummy.2ch.net/dummy0/"))
+          .toEqual([])
+
+        expect(
+          entryList.getThreadsByBoardURL("http://__newdummy.2ch.net/dummy0/")
+        )
+          .toEqual([dummy.thread0, dummy.thread1])
+        return
+      return
+
     describe "::get", ->
       it "与えられたURLのEntryを返す", ->
         expect(entryList.get(dummyEntry.board0.url))

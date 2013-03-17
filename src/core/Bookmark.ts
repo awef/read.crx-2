@@ -195,6 +195,30 @@ module app {
         });
       }
 
+      serverMove (from:string, to:string):void {
+        var entry:Entry, tmp;
+
+        // 板ブックマーク移行
+        if (entry = this.get(from)) {
+          this.remove(entry.url);
+          entry.url = to;
+          this.add(entry);
+        }
+
+        tmp = /^http:\/\/[\w\.]+\//.exec(to)[0];
+        // スレブックマーク移行
+        this.getThreadsByBoardURL(from).forEach((entry) => {
+          this.remove(entry.url);
+
+          entry.url = entry.url.replace(/^http:\/\/[\w\.]+\//, tmp);
+          if (entry.readState) {
+            entry.readState.url = entry.url;
+          }
+
+          this.add(entry);
+        });
+      }
+
       get (url:string):Entry {
         url = app.URL.fix(url);
 
