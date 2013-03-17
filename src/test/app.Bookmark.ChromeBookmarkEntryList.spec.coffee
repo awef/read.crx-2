@@ -1182,6 +1182,33 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
       return
     return
 
+  describe "add直後にremoveを行った場合", ->
+    it "removeChromeBookmarkに失敗する", ->
+      removeCallback = jasmine.createSpy("removeCallback")
+
+      cbel = new ChromeBookmarkEntryList(TEST_FOLDER_NODE_ID)
+
+      spyOn(cbel, "removeChromeBookmark").andCallFake (url, callback) ->
+        cbel.removeChromeBookmark.originalValue.call(cbel, url, removeCallback)
+        return
+
+      cbel.add(dummyEntry.thread0)
+
+      expect(cbel.get(dummyEntry.thread0.url)).toEqual(dummyEntry.thread0)
+
+      cbel.remove(dummyEntry.thread0.url)
+
+      expect(cbel.get(dummyEntry.thread0.url)).toBeNull()
+
+      waitsFor ->
+        removeCallback.wasCalled
+
+      runs ->
+        expect(removeCallback).toHaveBeenCalledWith(false)
+        return
+      return
+    return
+
   describe "addによるブックマーク作成完了後にremoveを行った場合", ->
     it "特に問題なし", ->
       createCallback = jasmine.createSpy("createCallback")
