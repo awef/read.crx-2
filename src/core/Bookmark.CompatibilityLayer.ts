@@ -68,23 +68,7 @@ module app.Bookmark {
 
       // 鯖移転検出時処理
       app.message.addListener("detected_ch_server_move", (message) => {
-        var entry:Entry, tmp;
-
-        // 板ブックマーク更新
-        if (entry = this.cbel.get(message.before)) {
-          this.cbel.remove(message.before);
-          entry.url = message.after;
-          this.cbel.add(entry);
-        }
-
-        // スレブックマーク更新
-        tmp = /^(http:\/\/\w+\.2ch\.net\/)/.exec(message.after)[1];
-        this.cbel.getThreadsByBoardURL(message.before)
-          .forEach((entry) => {
-            this.cbel.remove(entry.url);
-            entry.url.replace(/^(http:\/\/\w+\.2ch\.net\/)/, tmp);
-            this.cbel.add(entry);
-          });
+        this.cbel.serverMove(message.before, message.after);
       });
     }
 
