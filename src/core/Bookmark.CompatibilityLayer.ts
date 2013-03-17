@@ -1,7 +1,6 @@
 ///<reference path="../app.ts" />
 ///<reference path="URL.ts" />
 ///<reference path="Bookmark.ts" />
-///<reference path="Bookmark.WebSQLEntryList.ts" />
 ///<reference path="Bookmark.ChromeBookmarkEntryList.ts" />
 
 declare interface app {
@@ -12,19 +11,19 @@ module app.Bookmark {
   "use strict";
 
   export class CompatibilityLayer {
-    private webSQLEntryList: WebSQLEntryList;
+    private cbel: ChromeBookmarkEntryList;
     private firstScan = $.Deferred();
     promise_first_scan;
 
-    constructor (webSQLEntryList: WebSQLEntryList) {
-      this.webSQLEntryList = webSQLEntryList;
+    constructor (cbel: ChromeBookmarkEntryList) {
+      this.cbel = cbel;
       this.promise_first_scan = this.firstScan.promise();
 
-      this.webSQLEntryList.ready.add(() => {
+      this.cbel.ready.add(() => {
         this.firstScan.resolve();
       });
 
-      this.webSQLEntryList.onChanged.add((e) => {
+      this.cbel.onChanged.add((e) => {
         var legacyEntry: LegacyEntry = app.Bookmark.currentToLegacy(e.entry);
 
         switch (e.type) {
@@ -72,25 +71,25 @@ module app.Bookmark {
         var entry:Entry, tmp;
 
         // 板ブックマーク更新
-        if (entry = this.webSQLEntryList.get(message.before)) {
-          this.webSQLEntryList.remove(message.before);
+        if (entry = this.cbel.get(message.before)) {
+          this.cbel.remove(message.before);
           entry.url = message.after;
-          this.webSQLEntryList.add(entry);
+          this.cbel.add(entry);
         }
 
         // スレブックマーク更新
         tmp = /^(http:\/\/\w+\.2ch\.net\/)/.exec(message.after)[1];
-        this.webSQLEntryList.getThreadsByBoardURL(message.before)
+        this.cbel.getThreadsByBoardURL(message.before)
           .forEach((entry) => {
-            this.webSQLEntryList.remove(entry.url);
+            this.cbel.remove(entry.url);
             entry.url.replace(/^(http:\/\/\w+\.2ch\.net\/)/, tmp);
-            this.webSQLEntryList.add(entry);
+            this.cbel.add(entry);
           });
       });
     }
 
     get (url:string):app.Bookmark.LegacyEntry {
-      var entry = this.webSQLEntryList.get(url);
+      var entry = this.cbel.get(url);
 
       if (entry) {
         return app.Bookmark.currentToLegacy(entry);
@@ -102,7 +101,7 @@ module app.Bookmark {
 
     get_by_board (boardURL:string):LegacyEntry[] {
       return (
-        this.webSQLEntryList.getThreadsByBoardURL(boardURL)
+        this.cbel.getThreadsByBoardURL(boardURL)
           .map(function (entry:Entry):LegacyEntry {
             return app.Bookmark.currentToLegacy(entry);
           })
@@ -111,7 +110,7 @@ module app.Bookmark {
 
     get_all ():LegacyEntry[] {
       return (
-        this.webSQLEntryList.getAll()
+        this.cbel.getAll()
           .map(function (entry:Entry):LegacyEntry {
             return app.Bookmark.currentToLegacy(entry);
           })
@@ -135,38 +134,38 @@ module app.Bookmark {
           entry.resCount = entry.readState.received;
         }
 
-        this.webSQLEntryList.add(entry);
+        this.cbel.add(entry);
       });
     }
 
     remove (url:string):void {
-      this.webSQLEntryList.remove(url);
+      this.cbel.remove(url);
     }
 
     update_read_state (readState):void {
-      var entry = this.webSQLEntryList.get(readState.url);
+      var entry = this.cbel.get(readState.url);
 
       if (entry) {
         entry.readState = readState;
-        this.webSQLEntryList.update(entry);
+        this.cbel.update(entry);
       }
     }
 
     update_res_count (url:string, resCount:number):void {
-      var entry = this.webSQLEntryList.get(url);
+      var entry = this.cbel.get(url);
 
       if (entry) {
         entry.resCount = resCount;
-        this.webSQLEntryList.update(entry);
+        this.cbel.update(entry);
       }
     }
 
     update_expired (url:string, expired:bool):void {
-      var entry = this.webSQLEntryList.get(url);
+      var entry = this.cbel.get(url);
 
       if (entry) {
         entry.expired = expired;
-        this.webSQLEntryList.update(entry);
+        this.cbel.update(entry);
       }
     }
   }

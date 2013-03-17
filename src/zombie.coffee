@@ -3,7 +3,7 @@ app.boot "/zombie.html", ->
     array_of_read_state = JSON.parse(localStorage.zombie_read_state)
 
     app.bookmark = new app.Bookmark.CompatibilityLayer(
-      new app.Bookmark.WebSQLEntryList("WebSQLEntryList")
+      new app.Bookmark.ChromeBookmarkEntryList(app.config.get("bookmark_id"))
     )
 
     app.bookmark.promise_first_scan.done ->
