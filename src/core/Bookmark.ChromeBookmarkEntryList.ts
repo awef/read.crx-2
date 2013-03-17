@@ -117,6 +117,10 @@ module app.Bookmark {
             this.nodeIdStore[entry.url] = node.id;
             this.update(entry, false);
           }
+          // addによりcreateChromeBookmarkが呼ばれた場合
+          else if (!this.nodeIdStore[entry.url]) {
+            this.nodeIdStore[entry.url] = node.id;
+          }
         }
         else {
           this.nodeIdStore[entry.url] = node.id;

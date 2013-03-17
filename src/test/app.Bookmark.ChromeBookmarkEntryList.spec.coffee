@@ -1181,4 +1181,43 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
         return
       return
     return
+
+  describe "addによるブックマーク作成完了後にremoveを行った場合", ->
+    it "特に問題なし", ->
+      createCallback = jasmine.createSpy("createCallback")
+      removeCallback = jasmine.createSpy("removeCallback")
+
+      cbel = new ChromeBookmarkEntryList(TEST_FOLDER_NODE_ID)
+
+      spyOn(cbel, "createChromeBookmark").andCallFake (entry, callback) ->
+        cbel.createChromeBookmark.originalValue.call(cbel, entry, createCallback)
+        return
+
+      spyOn(cbel, "removeChromeBookmark").andCallFake (url, callback) ->
+        cbel.removeChromeBookmark.originalValue.call(cbel, url, removeCallback)
+        return
+
+      cbel.add(dummyEntry.thread0)
+
+      expect(cbel.get(dummyEntry.thread0.url)).toEqual(dummyEntry.thread0)
+
+      waitsFor ->
+        createCallback.wasCalled
+
+      runs ->
+        expect(createCallback).toHaveBeenCalledWith(true)
+
+        cbel.remove(dummyEntry.thread0.url)
+
+        expect(cbel.get(dummyEntry.thread0.url)).toBeNull()
+        return
+
+      waitsFor ->
+        removeCallback.wasCalled
+
+      runs ->
+        expect(removeCallback).toHaveBeenCalledWith(true)
+        return
+      return
+    return
   return
