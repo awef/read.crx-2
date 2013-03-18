@@ -98,7 +98,6 @@ module app.Bookmark {
 
       this.setRootNodeId(rootNodeId);
       this.setUpChromeBookmarkWatcher();
-      //TODO entrylist -> chromebookmark
     }
 
     private applyNodeAddToEntryList (node:BookmarkTreeNode):void {
