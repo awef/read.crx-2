@@ -72,6 +72,18 @@ module app.Bookmark {
       });
     }
 
+    url_to_bookmark (url:string):LegacyEntry {
+      return app.Bookmark.currentToLegacy(
+        app.Bookmark.ChromeBookmarkEntryList.URLToEntry(url)
+      );
+    }
+
+    bookmark_to_url (entry:LegacyEntry):string {
+      return app.Bookmark.ChromeBookmarkEntryList.entryToURL(
+        app.Bookmark.legacyToCurrent(entry)
+      );
+    }
+
     get (url:string):app.Bookmark.LegacyEntry {
       var entry = this.cbel.get(url);
 
@@ -101,8 +113,9 @@ module app.Bookmark {
       );
     }
 
-    add (url:string, title:string, resCount?:number):void {
-      var entry = app.Bookmark.ChromeBookmarkEntryList.URLToEntry(url);
+    add (url:string, title:string, resCount?:number) {
+      var deferred = $.Deferred(),
+        entry = app.Bookmark.ChromeBookmarkEntryList.URLToEntry(url);
 
       entry.title = title;
 
@@ -118,39 +131,65 @@ module app.Bookmark {
           entry.resCount = entry.readState.received;
         }
 
-        this.cbel.add(entry);
+        this.cbel.add(entry, undefined, function (res) {
+          deferred[res ? "resolve" : "reject"]();
+        });
       });
+
+      return deferred.promise();
     }
 
-    remove (url:string):void {
-      this.cbel.remove(url);
+    remove (url:string) {
+      var deferred = $.Deferred();
+
+      this.cbel.remove(url, undefined, function (res) {
+        deferred[res ? "resolve" : "reject"]();
+      });
+
+      return deferred.promise();
     }
 
-    update_read_state (readState):void {
-      var entry = this.cbel.get(readState.url);
+    update_read_state (readState) {
+      // TODO
+      var deferred = $.Deferred(),
+        entry = this.cbel.get(readState.url);
 
       if (entry) {
         entry.readState = readState;
-        this.cbel.update(entry);
+        this.cbel.update(entry, undefined, function (res) {
+          deferred[res ? "resolve" : "reject"]();
+        });
       }
+
+      return deferred.promise();
     }
 
-    update_res_count (url:string, resCount:number):void {
-      var entry = this.cbel.get(url);
+    update_res_count (url:string, resCount:number) {
+      var deferred = $.Deferred(),
+        entry = this.cbel.get(url);
 
       if (entry) {
         entry.resCount = resCount;
-        this.cbel.update(entry);
+        this.cbel.update(entry, undefined, function (res) {
+          deferred[res ? "resolve" : "reject"]();
+        });
       }
+
+      return deferred.promise();
     }
 
-    update_expired (url:string, expired:bool):void {
-      var entry = this.cbel.get(url);
+    update_expired (url:string, expired:bool) {
+      var deferred = $.Deferred(),
+        entry = this.cbel.get(url);
 
       if (entry) {
         entry.expired = expired;
-        this.cbel.update(entry);
+        this.cbel.update(entry, undefined, function (res) {
+          deferred[res ? "resolve" : "reject"]();
+        });
       }
+
+      return deferred.promise();
     }
   }
 }

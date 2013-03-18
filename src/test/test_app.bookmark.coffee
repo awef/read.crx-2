@@ -1,4 +1,132 @@
-module("app.bookmark.url_to_bookmark")
+do ->
+  last_bookmark_updated = 0
+
+  cbel = new app.Bookmark.ChromeBookmarkEntryList("dummy")
+  app.bookmark = new app.Bookmark.CompatibilityLayer(cbel)
+
+  chrome.bookmarks.create(
+    {title: "test forlder for Bookmark.CompatibilityLayer"}
+    (node) ->
+      cbel.setRootNodeId(node.id)
+      return
+  )
+
+  module "app.bookmark",
+    setup: ->
+      @one = (type, listener) ->
+        wrapper = ->
+          listener.apply(this, arguments)
+          app.message.remove_listener(type, wrapper)
+        app.message.add_listener(type, wrapper)
+
+      @start = app.bookmark.promise_first_scan
+
+        .pipe ->
+          $.Deferred (deferred) ->
+            setTimeout ->
+              deferred.resolve()
+            , 300
+
+        .promise()
+
+      @last_updated = ->
+        last_bookmark_updated
+
+  app.message.add_listener "bookmark_updated", ->
+    last_bookmark_updated = Date.now()
+
+test "ブックマークオブジェクトをURLに変換する", 10, ->
+  fixed_url = "http://__dummy.2ch.net/dummy/"
+  base_bookmark =
+    type: "board"
+    bbs_type: "2ch"
+    url: fixed_url
+    title: fixed_url
+    res_count: null
+    read_state: null
+    expired: false
+
+  bookmark = app.deep_copy(base_bookmark)
+  strictEqual(
+    app.bookmark.bookmark_to_url(bookmark)
+    fixed_url
+    "板ブックマーク"
+  )
+
+  fixed_url = "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
+  base_bookmark =
+    type: "thread"
+    bbs_type: "2ch"
+    url: fixed_url
+    title: fixed_url
+    res_count: null
+    read_state: null
+    expired: false
+
+  bookmark = app.deep_copy(base_bookmark)
+  strictEqual(
+    app.bookmark.bookmark_to_url(bookmark)
+    fixed_url
+    "スレブックマーク"
+  )
+
+  bookmark = app.deep_copy(base_bookmark)
+  bookmark.res_count = 123
+  strictEqual(
+    app.bookmark.bookmark_to_url(bookmark)
+    fixed_url + "#res_count=123"
+    "スレブックマーク(res_count)"
+  )
+
+  bookmark = app.deep_copy(base_bookmark)
+  bookmark.expired = true
+  strictEqual(
+    app.bookmark.bookmark_to_url(bookmark)
+    fixed_url + "#expired"
+    "スレブックマーク(expired)"
+  )
+
+  bookmark = app.deep_copy(base_bookmark)
+  bookmark.read_state =
+    url: fixed_url
+    last: 123
+    read: 234
+    received: 345
+  result = app.bookmark.bookmark_to_url(bookmark)
+  deepEqual(
+    app.url.parse_hashquery(result), {
+      last: "123", read: "234", received: "345"
+    }, "スレブックマーク(read_state)")
+  strictEqual(app.url.fix(result), fixed_url, "スレブックマーク(read_state)")
+
+  bookmark = app.deep_copy(base_bookmark)
+  bookmark.read_state =
+    url: fixed_url
+    last: 123
+    read: 234
+    received: 345
+  bookmark.expired = true
+  result = app.bookmark.bookmark_to_url(bookmark)
+  deepEqual(
+    app.url.parse_hashquery(result), {
+      last: "123", read: "234", received: "345", expired: true
+    }, "スレブックマーク(read_state)")
+  strictEqual(app.url.fix(result), fixed_url, "スレブックマーク(res_count + read_state)")
+
+  bookmark = app.deep_copy(base_bookmark)
+  bookmark.read_state =
+    url: fixed_url
+    last: 123
+    read: 234
+    received: 345
+  bookmark.expired = true
+  bookmark.res_count = 456
+  result = app.bookmark.bookmark_to_url(bookmark)
+  deepEqual(
+    app.url.parse_hashquery(result), {
+      last: "123", read: "234", received: "345", expired: true, res_count: "456"
+    }, "スレブックマーク(read_state)")
+  strictEqual(app.url.fix(result), fixed_url, "スレブックマーク(res_count + read_state + res_count)")
 
 test "URLからブックマークオブジェクトを作成する", 16, ->
   fixed_url = "http://__dummy.2ch.net/dummy/"
@@ -243,128 +371,6 @@ test "URLからブックマークオブジェクトを作成する", 16, ->
     "スレURL + read_state + res_count + expired + 無関係なオプション"
   )
 
-module("app.bookmark.bookmark_to_url")
-
-test "ブックマークオブジェクトをURLに変換する", 10, ->
-  fixed_url = "http://__dummy.2ch.net/dummy/"
-  base_bookmark =
-    type: "board"
-    bbs_type: "2ch"
-    url: fixed_url
-    title: fixed_url
-    res_count: null
-    read_state: null
-    expired: false
-
-  bookmark = app.deep_copy(base_bookmark)
-  strictEqual(
-    app.bookmark.bookmark_to_url(bookmark)
-    fixed_url
-    "板ブックマーク"
-  )
-
-  fixed_url = "http://__dummy_server.2ch.net/test/read.cgi/__dummy_board/1234567890/"
-  base_bookmark =
-    type: "thread"
-    bbs_type: "2ch"
-    url: fixed_url
-    title: fixed_url
-    res_count: null
-    read_state: null
-    expired: false
-
-  bookmark = app.deep_copy(base_bookmark)
-  strictEqual(
-    app.bookmark.bookmark_to_url(bookmark)
-    fixed_url
-    "スレブックマーク"
-  )
-
-  bookmark = app.deep_copy(base_bookmark)
-  bookmark.res_count = 123
-  strictEqual(
-    app.bookmark.bookmark_to_url(bookmark)
-    fixed_url + "#res_count=123"
-    "スレブックマーク(res_count)"
-  )
-
-  bookmark = app.deep_copy(base_bookmark)
-  bookmark.expired = true
-  strictEqual(
-    app.bookmark.bookmark_to_url(bookmark)
-    fixed_url + "#expired"
-    "スレブックマーク(expired)"
-  )
-
-  bookmark = app.deep_copy(base_bookmark)
-  bookmark.read_state =
-    url: fixed_url
-    last: 123
-    read: 234
-    received: 345
-  result = app.bookmark.bookmark_to_url(bookmark)
-  deepEqual(
-    app.url.parse_hashquery(result), {
-      last: "123", read: "234", received: "345"
-    }, "スレブックマーク(read_state)")
-  strictEqual(app.url.fix(result), fixed_url, "スレブックマーク(read_state)")
-
-  bookmark = app.deep_copy(base_bookmark)
-  bookmark.read_state =
-    url: fixed_url
-    last: 123
-    read: 234
-    received: 345
-  bookmark.expired = true
-  result = app.bookmark.bookmark_to_url(bookmark)
-  deepEqual(
-    app.url.parse_hashquery(result), {
-      last: "123", read: "234", received: "345", expired: true
-    }, "スレブックマーク(read_state)")
-  strictEqual(app.url.fix(result), fixed_url, "スレブックマーク(res_count + read_state)")
-
-  bookmark = app.deep_copy(base_bookmark)
-  bookmark.read_state =
-    url: fixed_url
-    last: 123
-    read: 234
-    received: 345
-  bookmark.expired = true
-  bookmark.res_count = 456
-  result = app.bookmark.bookmark_to_url(bookmark)
-  deepEqual(
-    app.url.parse_hashquery(result), {
-      last: "123", read: "234", received: "345", expired: true, res_count: "456"
-    }, "スレブックマーク(read_state)")
-  strictEqual(app.url.fix(result), fixed_url, "スレブックマーク(res_count + read_state + res_count)")
-
-do ->
-  last_bookmark_updated = 0
-
-  module "app.bookmark",
-    setup: ->
-      @one = (type, listener) ->
-        wrapper = ->
-          listener.apply(this, arguments)
-          app.message.remove_listener(type, wrapper)
-        app.message.add_listener(type, wrapper)
-
-      @start = app.bookmark.promise_first_scan
-
-        .pipe ->
-          $.Deferred (deferred) ->
-            setTimeout ->
-              deferred.resolve()
-            , 300
-
-        .promise()
-
-      @last_updated = ->
-        last_bookmark_updated
-
-  app.message.add_listener "bookmark_updated", ->
-    last_bookmark_updated = Date.now()
-
 test "ブックマークされていないURLを取得しようとした時は、nullを返す", 1, ->
   strictEqual(app.bookmark.get("http://__dummy.2ch.net/dummy/"), null)
 
@@ -385,6 +391,7 @@ asyncTest "板のブックマークを保存/取得/削除出来る", 6, ->
       #追加
       deferred_on_added = $.Deferred()
       that.one "bookmark_updated", (message) ->
+        delete message.entry
         deepEqual(message, {type: "added", bookmark: expect_bookmark})
         deferred_on_added.resolve()
       $.when(app.bookmark.add(url, title), deferred_on_added)
@@ -392,7 +399,7 @@ asyncTest "板のブックマークを保存/取得/削除出来る", 6, ->
       #取得確認
       $.Deferred (deferred) ->
         deepEqual(app.bookmark.get(url), expect_bookmark)
-        chrome.bookmarks.getChildren app.config.get("bookmark_id"), (array_of_tree) ->
+        chrome.bookmarks.getChildren app.bookmark.cbel.rootNodeId, (array_of_tree) ->
           if array_of_tree.some((tree) -> tree.url is url)
             ok(true)
             deferred.resolve()
@@ -403,6 +410,7 @@ asyncTest "板のブックマークを保存/取得/削除出来る", 6, ->
       #削除
       deferred_on_removed = $.Deferred()
       that.one "bookmark_updated", (message) ->
+        delete message.entry
         deepEqual(message, {type: "removed", bookmark: expect_bookmark})
         deferred_on_removed.resolve()
       $.when(app.bookmark.remove(url), deferred_on_removed)
@@ -410,7 +418,7 @@ asyncTest "板のブックマークを保存/取得/削除出来る", 6, ->
       #削除確認
       $.Deferred (deferred) ->
         strictEqual(app.bookmark.get(url), null)
-        chrome.bookmarks.getChildren app.config.get("bookmark_id"), (array_of_tree) ->
+        chrome.bookmarks.getChildren app.bookmark.cbel.rootNodeId, (array_of_tree) ->
           if array_of_tree.some((tree) -> tree.url is url)
             ok(false)
             deferred.resolve()
@@ -438,6 +446,7 @@ asyncTest "スレのブックマークを保存/取得/削除出来る", 33, ->
   get_deferred_on_message = (type, label) ->
     $.Deferred (deferred) ->
       that.one "bookmark_updated", (message) ->
+        delete message.entry
         deepEqual(message, {type: type, bookmark: expect_bookmark}, label)
         deferred.resolve()
 
@@ -471,7 +480,7 @@ asyncTest "スレのブックマークを保存/取得/削除出来る", 33, ->
     .pipe ->
       $.Deferred (deferred) ->
         chrome.bookmarks.create({
-          parentId: app.config.get("bookmark_id")
+          parentId: app.bookmark.cbel.rootNodeId
           url: url
           title: "重複テスト"
         }, ((node) -> deferred.resolve(node)))
@@ -663,7 +672,7 @@ asyncTest "スレのブックマークを保存/取得/削除出来る", 33, ->
     .pipe ->
       deferred = $.Deferred (deferred) ->
         strictEqual(app.bookmark.get(url), null)
-        chrome.bookmarks.getChildren app.config.get("bookmark_id"), (array_of_tree) ->
+        chrome.bookmarks.getChildren app.bookmark.cbel.rootNodeId, (array_of_tree) ->
           if(array_of_tree.some((tree) -> tree.url is url))
             ok(false, "削除確認")
             deferred.reject()
@@ -708,12 +717,13 @@ asyncTest "パラメータ付きのスレURLも認識出来る", 2, ->
     .pipe ->
       deferred_added_message = $.Deferred (deferred) ->
         that.one "bookmark_updated", (message) ->
+          delete message.entry
           deepEqual(message, {type: "added", bookmark: expect_bookmark})
           deferred.resolve()
 
       deferred_create = $.Deferred (deferred) ->
         chrome.bookmarks.create {
-            parentId: app.config.get("bookmark_id")
+            parentId: app.bookmark.cbel.rootNodeId
             url: url
             title: title
           }, (node) ->
@@ -724,6 +734,7 @@ asyncTest "パラメータ付きのスレURLも認識出来る", 2, ->
     .pipe ->
       deferred_removed_message = $.Deferred (deferred) ->
         that.one "bookmark_updated", (message) ->
+          delete message.entry
           deepEqual(message, {type: "removed", bookmark: expect_bookmark})
           deferred.resolve()
 
@@ -759,12 +770,13 @@ asyncTest "ノードのURL変更にも追随する", 4, ->
     .pipe ->
       deferred_added_message = $.Deferred (deferred) ->
         that.one "bookmark_updated", (message) ->
+          delete message.entry
           deepEqual(message, {type: "added", bookmark: expect_bookmark})
           deferred.resolve()
 
       deferred_create = $.Deferred (deferred) ->
         chrome.bookmarks.create {
-            parentId: app.config.get("bookmark_id")
+            parentId: app.bookmark.cbel.rootNodeId
             url: url
             title: title
           }, (node) ->
@@ -790,6 +802,7 @@ asyncTest "ノードのURL変更にも追随する", 4, ->
       deferred_on_removed = $.Deferred (deferred) ->
         tmp = (message) ->
           if message.type is "removed"
+            delete message.entry
             deepEqual(message, {type: "removed", bookmark: old_expect})
             app.message.remove_listener("bookmark_updated", tmp)
             deferred.resolve()
@@ -798,6 +811,7 @@ asyncTest "ノードのURL変更にも追随する", 4, ->
       deferred_on_added = $.Deferred (deferred) ->
         tmp = (message) ->
           if message.type is "added"
+            delete message.entry
             deepEqual(message, {type: "added", bookmark: expect_bookmark})
             app.message.remove_listener("bookmark_updated", tmp)
             deferred.resolve()
@@ -807,8 +821,9 @@ asyncTest "ノードのURL変更にも追随する", 4, ->
 
       $.when(deferred_on_removed, deferred_on_added)
     .pipe ->
-     deferred_removed_message = $.Deferred (deferred) ->
+      deferred_removed_message = $.Deferred (deferred) ->
         that.one "bookmark_updated", (message) ->
+          delete message.entry
           deepEqual(message, {type: "removed", bookmark: expect_bookmark})
           deferred.resolve()
 
@@ -851,10 +866,11 @@ asyncTest "detected_ch_server_moveメッセージを受信すると、板やス�
   after_thread_expect_bookmark.url = after_thread_url
 
   @start
-   #板ブックマーク追加
+    #板ブックマーク追加
     .pipe ->
       deferred_added_message = $.Deferred (deferred) ->
         that.one "bookmark_updated", (message) ->
+          delete message.entry
           deepEqual(message, {type: "added", bookmark: before_board_expect_bookmark})
           deferred.resolve()
       app.bookmark.add(before_board_url, board_title)
@@ -863,6 +879,7 @@ asyncTest "detected_ch_server_moveメッセージを受信すると、板やス�
     .pipe ->
       deferred_added_message = $.Deferred (deferred) ->
         that.one "bookmark_updated", (message) ->
+          delete message.entry
           deepEqual(message, {type: "added", bookmark: before_thread_expect_bookmark})
           deferred.resolve()
       app.bookmark.add(before_thread_url, thread_title)
@@ -870,6 +887,7 @@ asyncTest "detected_ch_server_moveメッセージを受信すると、板やス�
     #板ブックマーク移転確認
     .pipe ->
       message_check = (message) ->
+        delete message.entry
         if message.type is "removed"
           if message.bookmark.title is board_title
             deepEqual(message, {type: "removed", bookmark: before_board_expect_bookmark})
@@ -896,6 +914,7 @@ asyncTest "detected_ch_server_moveメッセージを受信すると、板やス�
     .pipe ->
       deferred_removed_message = $.Deferred (deferred) ->
         that.one "bookmark_updated", (message) ->
+          delete message.entry
           deepEqual(message, {type: "removed", bookmark: after_board_expect_bookmark})
           deferred.resolve()
       app.bookmark.remove(after_board_url)
@@ -904,6 +923,7 @@ asyncTest "detected_ch_server_moveメッセージを受信すると、板やス�
     .pipe ->
       deferred_removed_message = $.Deferred (deferred) ->
         that.one "bookmark_updated", (message) ->
+          delete message.entry
           deepEqual(message, {type: "removed", bookmark: after_thread_expect_bookmark})
           deferred.resolve()
       app.bookmark.remove(after_thread_url)
@@ -930,12 +950,13 @@ asyncTest "ノードのフォルダ内での移動は無視する", 2, ->
     .pipe ->
       deferred_added_message = $.Deferred (deferred) ->
         that.one "bookmark_updated", (message) ->
+          delete message.entry
           deepEqual(message, {type: "added", bookmark: expect_bookmark})
           deferred.resolve()
 
       deferred_create = $.Deferred (deferred) ->
         chrome.bookmarks.create {
-            parentId: app.config.get("bookmark_id")
+            parentId: app.bookmark.cbel.rootNodeId
             url: url
             title: title
           }, (node) ->
@@ -946,11 +967,12 @@ asyncTest "ノードのフォルダ内での移動は無視する", 2, ->
     .pipe ->
       deferred_removed_message = $.Deferred (deferred) ->
         that.one "bookmark_updated", (message) ->
+          delete message.entry
           deepEqual(message, {type: "removed", bookmark: expect_bookmark})
           deferred.resolve()
 
       $.Deferred (deferred) ->
-        chrome.bookmarks.move node_id, {parentId: app.config.get("bookmark_id"), index: 0}, ->
+        chrome.bookmarks.move node_id, {parentId: app.bookmark.cbel.rootNodeId, index: 0}, ->
           deferred.resolve()
       .done ->
         chrome.bookmarks.remove(node_id)
@@ -974,7 +996,7 @@ asyncTest "ブックマークフォルダ中のフォルダに関する変更は
     #フォルダ作成
     .pipe => $.Deferred (deferred) =>
       chrome.bookmarks.create {
-          parentId: app.config.get("bookmark_id")
+          parentId: app.bookmark.cbel.rootNodeId
           title: "ダミースレ"
         }, (tree) =>
           node_id = tree.id
@@ -993,7 +1015,7 @@ asyncTest "ブックマークフォルダ中のフォルダに関する変更は
     #フォルダ移動（外部→ブックマークフォルダ）
     .pipe => $.Deferred (deferred) =>
       chrome.bookmarks.move node_id, {
-          parentId: app.config.get("bookmark_id")
+          parentId: app.bookmark.cbel.rootNodeId
         }, =>
           fn(deferred)
 
@@ -1001,7 +1023,7 @@ asyncTest "ブックマークフォルダ中のフォルダに関する変更は
     #TODO: 予めフォルダ内にブックマークが存在している事前提なのをなんとかする
     .pipe => $.Deferred (deferred) =>
       chrome.bookmarks.move node_id, {
-          parentId: app.config.get("bookmark_id")
+          parentId: app.bookmark.cbel.rootNodeId
           index: 0
         }, =>
           fn(deferred)
@@ -1013,4 +1035,3 @@ asyncTest "ブックマークフォルダ中のフォルダに関する変更は
 
     .done ->
       start()
-

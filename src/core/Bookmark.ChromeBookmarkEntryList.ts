@@ -155,7 +155,7 @@ module app.Bookmark {
           // ノードのURLが他の板/スレを示す物に変更された時
           else {
             delete this.nodeIdStore[url];
-            this.nodeIdStore[url] = nodeId;
+            this.nodeIdStore[newEntry.url] = nodeId;
 
             this.remove(entry.url, false);
             this.add(newEntry, false);
@@ -306,18 +306,10 @@ module app.Bookmark {
       var id:string, changes;
 
       if (id = this.nodeIdStore[entry.url]) {
-        changes = {};
-
-        if (entry.title !== this.get(entry.url).title) {
-          changes.title = entry.title;
-        }
-
-        if (
-          ChromeBookmarkEntryList.entryToURL(entry) !==
-          ChromeBookmarkEntryList.entryToURL(this.get(entry.url))
-        ) {
-          changes.url = ChromeBookmarkEntryList.entryToURL(entry)
-        }
+        changes = {
+          title: entry.title,
+          url: ChromeBookmarkEntryList.entryToURL(entry)
+        };
 
         chrome.bookmarks.update(
           id,
@@ -368,44 +360,73 @@ module app.Bookmark {
       }
     }
 
-    add (entry:Entry, createChromeBookmark? = true):bool {
+    add (entry:Entry, createChromeBookmark? = true, callback?:Function):bool {
       entry = app.deepCopy(entry);
 
       if (super.add(entry)) {
         if (createChromeBookmark) {
-          this.createChromeBookmark(entry);
+          if (callback) {
+            this.createChromeBookmark(entry, callback);
+          }
+          else {
+            this.createChromeBookmark(entry);
+          }
+        }
+        else if (callback) {
+          callback(true);
         }
         return true;
       }
       else {
+        if (callback) {
+          callback(false);
+        }
         return false;
       }
     }
 
-    update (entry:Entry, updateChromeBookmark? = true):bool {
+    update (entry:Entry, updateChromeBookmark? = true, callback?:Function):bool {
       entry = app.deepCopy(entry);
 
-      if (updateChromeBookmark) {
-        this.updateChromeBookmark(entry);
-      }
-
       if (super.update(entry)) {
+        if (updateChromeBookmark) {
+          if (callback) {
+            this.updateChromeBookmark(entry, callback);
+          }
+          else {
+            this.updateChromeBookmark(entry);
+          }
+        }
+        else if (callback) {
+          callback(true);
+        }
         return true;
       }
       else {
+        if (callback) {
+          callback(false);
+        }
         return false;
       }
     }
 
-    remove (url:string, removeChromeBookmark? = true):bool {
-      if (removeChromeBookmark) {
-        this.removeChromeBookmark(url);
-      }
-
+    remove (url:string, removeChromeBookmark? = true, callback?:Function):bool {
       if (super.remove(url)) {
+        if (removeChromeBookmark) {
+          if (callback) {
+            this.removeChromeBookmark(url, callback);
+          }
+          else {
+            this.removeChromeBookmark(url);
+          }
+        }
+        else if (callback) {
+          callback(true);
+        }
         return true;
       }
-      else {
+      else if (callback) {
+        callback(false);
         return false;
       }
     }

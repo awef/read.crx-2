@@ -648,7 +648,7 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
         expect(chrome.bookmarks.update.callCount).toBe(1)
         expect(chrome.bookmarks.update).toHaveBeenCalledWith(
           jasmine.any(String)
-          {title: dummyEntry.board0.title}
+          {title: dummyEntry.board0.title, url: dummyEntry.board0.url}
           jasmine.any(Function)
         )
         return
