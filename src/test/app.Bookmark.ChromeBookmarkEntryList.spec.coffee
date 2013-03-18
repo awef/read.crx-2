@@ -648,9 +648,36 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
         expect(chrome.bookmarks.update.callCount).toBe(1)
         expect(chrome.bookmarks.update).toHaveBeenCalledWith(
           jasmine.any(String)
-          {title: dummyEntry.board0.title, url: dummyEntry.board0.url}
+          {title: dummyEntry.board0.title}
           jasmine.any(Function)
         )
+        return
+      return
+
+    it "必要の無い時はブックマーク更新処理を実行しない", ->
+      spyOn(chrome.bookmarks, "update").andCallThrough()
+
+      onCreated = createBookmark(dummyEntry.board0).onCreated
+
+      updateCallback = jasmine.createSpy("updateCallback")
+
+      cbel = new ChromeBookmarkEntryList(TEST_FOLDER_NODE_ID)
+
+      waitsFor ->
+        onCreated.wasCalled
+
+      runs ->
+        cbel.updateChromeBookmark(dummyEntry.board0, updateCallback)
+        return
+
+      waitsFor ->
+        updateCallback.wasCalled
+
+      runs ->
+        expect(updateCallback.callCount).toBe(1)
+        expect(updateCallback).toHaveBeenCalledWith(true)
+
+        expect(chrome.bookmarks.update).not.toHaveBeenCalled()
         return
       return
     return

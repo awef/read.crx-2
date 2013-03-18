@@ -301,34 +301,51 @@ module app.Bookmark {
       });
     }
 
-    private updateChromeBookmark (entry:Entry, callback?:Function):void {
-      var id:string, changes;
+    private updateChromeBookmark (newEntry:Entry, callback?:Function):void {
+      var id:string;
 
-      if (id = this.nodeIdStore[entry.url]) {
-        changes = {
-          title: entry.title,
-          url: ChromeBookmarkEntryList.entryToURL(entry)
-        };
+      if (id = this.nodeIdStore[newEntry.url]) {
+        chrome.bookmarks.get(id, (res:BookmarkTreeNode[]) => {
+          var changes:any = {},
+            node = res[0],
+            newURL = ChromeBookmarkEntryList.entryToURL(newEntry),
+            currentEntry = ChromeBookmarkEntryList.URLToEntry(node.url);
 
-        chrome.bookmarks.update(
-          id,
-          changes,
-          (res:BookmarkTreeNode) => {
-            if (res) {
-              if (callback) {
-                callback(true);
-              }
-            }
-            else {
-              app.log("error", "Chromeのブックマーク更新に失敗しました");
-              this.validateRootNodeSettings();
+          if (node.title !== newEntry.title) {
+            changes.title = newEntry.title;
+          }
 
-              if (callback) {
-                callback(false);
-              }
+          if (node.url !== newURL) {
+            changes.url = newURL;
+          }
+
+          if (Object.keys(changes).length === 0) {
+            if (callback) {
+              callback(true);
             }
           }
-        );
+          else {
+            chrome.bookmarks.update(
+              id,
+              changes,
+              (res:BookmarkTreeNode) => {
+                if (res) {
+                  if (callback) {
+                    callback(true);
+                  }
+                }
+                else {
+                  app.log("error", "Chromeのブックマーク更新に失敗しました");
+                  this.validateRootNodeSettings();
+
+                  if (callback) {
+                    callback(false);
+                  }
+                }
+              }
+            );
+          }
+        });
       }
       else {
         if (callback) {
