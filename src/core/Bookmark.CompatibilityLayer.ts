@@ -160,6 +160,9 @@ module app.Bookmark {
           deferred[res ? "resolve" : "reject"]();
         });
       }
+      else {
+        deferred.reject();
+      }
 
       return deferred.promise();
     }
