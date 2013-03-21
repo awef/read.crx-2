@@ -418,7 +418,9 @@ app.main = ->
     app.bookmark = new app.Bookmark.CompatibilityLayer(cbel)
     return
 
-  document.querySelector("#left_pane").src = "/view/sidemenu.html"
+  app.bookmarkEntryList.ready.add ->
+    document.querySelector("#left_pane").src = "/view/sidemenu.html"
+    return
 
   document.title = app.manifest.name
 
@@ -573,20 +575,22 @@ app.main = ->
       .on("mouseenter", "li", -> @classList.add("hover"))
       .on("mouseleave", "li", -> @classList.remove("hover"))
 
-  #タブ復元
-  if localStorage.tab_state?
-    for tab in JSON.parse(localStorage.tab_state)
-      is_restored = true
-      app.message.send("open", {
-        url: tab.url
-        title: tab.title
-        lazy: not tab.selected
-        new_tab: true
-      })
+  app.bookmarkEntryList.ready.add ->
+    #タブ復元
+    if localStorage.tab_state?
+      for tab in JSON.parse(localStorage.tab_state)
+        is_restored = true
+        app.message.send("open", {
+          url: tab.url
+          title: tab.title
+          lazy: not tab.selected
+          new_tab: true
+        })
 
-  #もし、タブが一つも復元されなかったらブックマークタブを開く
-  unless is_restored
-    app.message.send("open", url: "bookmark")
+    #もし、タブが一つも復元されなかったらブックマークタブを開く
+    unless is_restored
+      app.message.send("open", url: "bookmark")
+    return
 
   #終了時にタブの状態を保存する
   window.addEventListener "unload", ->
