@@ -404,6 +404,24 @@ app.main = ->
   $view = $(document.documentElement)
   new app.view.Index($view[0])
 
+  do ->
+    # bookmark_idが未設定の場合、わざと無効な値を渡してneedReconfigureRootNodeId
+    # をcallさせる。
+    cbel = new app.Bookmark.ChromeBookmarkEntryList(
+      app.config.get("bookmark_id") or "dummy"
+    )
+    cbel.needReconfigureRootNodeId.add ->
+      app.message.send("open", url: "bookmark_source_selector")
+      return
+
+    app.bookmarkEntryList = cbel
+    app.bookmark = new app.Bookmark.CompatibilityLayer(cbel)
+    return
+
+  app.bookmarkEntryList.ready.add ->
+    document.querySelector("#left_pane").src = "/view/sidemenu.html"
+    return
+
   document.title = app.manifest.name
 
   app.Ninja.enableAutoBackup()
@@ -557,20 +575,22 @@ app.main = ->
       .on("mouseenter", "li", -> @classList.add("hover"))
       .on("mouseleave", "li", -> @classList.remove("hover"))
 
-  #タブ復元
-  if localStorage.tab_state?
-    for tab in JSON.parse(localStorage.tab_state)
-      is_restored = true
-      app.message.send("open", {
-        url: tab.url
-        title: tab.title
-        lazy: not tab.selected
-        new_tab: true
-      })
+  app.bookmarkEntryList.ready.add ->
+    #タブ復元
+    if localStorage.tab_state?
+      for tab in JSON.parse(localStorage.tab_state)
+        is_restored = true
+        app.message.send("open", {
+          url: tab.url
+          title: tab.title
+          lazy: not tab.selected
+          new_tab: true
+        })
 
-  #もし、タブが一つも復元されなかったらブックマークタブを開く
-  unless is_restored
-    app.message.send("open", url: "bookmark")
+    #もし、タブが一つも復元されなかったらブックマークタブを開く
+    unless is_restored
+      app.message.send("open", url: "bookmark")
+    return
 
   #終了時にタブの状態を保存する
   window.addEventListener "unload", ->
@@ -624,11 +644,6 @@ app.main = ->
           .find("iframe[data-tabid=\"#{tabId}\"]")
             .attr("data-url", iframe_info.url)
     return
-
-  #初回スキャンに失敗した場合、タイミングの問題でopenメッセージを取得できな
-  #いので、promiseを見てview_bookmark_source_selectorを呼び出す
-  app.bookmark.promise_first_scan.fail ->
-    app.message.send("open", url: "bookmark_source_selector")
 
   #openリクエストの監視
   chrome.extension.onRequest.addListener (request) ->

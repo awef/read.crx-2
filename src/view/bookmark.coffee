@@ -41,7 +41,7 @@ app.boot "/view/bookmark.html", ->
     })
 
     board_list = []
-    for bookmark in app.bookmark.get_all() when bookmark.type is "thread"
+    for bookmark in app.bookmarkEntryList.getAllThreads()
       board_url = app.url.thread_to_board(bookmark.url)
       unless board_url in board_list
         board_list.push(board_url)
@@ -102,11 +102,11 @@ app.boot "/view/bookmark.html", ->
     return
 
   threadList.addItem(
-    for a in app.bookmark.get_all() when a.type is "thread"
+    for a in app.bookmarkEntryList.getAllThreads()
       title: a.title
       url: a.url
-      res_count: a.res_count or 0
-      read_state: a.read_state or {url: a.url, read: 0, received: 0, last: 0}
+      res_count: a.resCount or 0
+      read_state: a.readState or {url: a.url, read: 0, received: 0, last: 0}
       created_at: /\/(\d+)\/$/.exec(a.url)[1] * 1000
       expired: a.expired
   )

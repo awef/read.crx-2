@@ -16,8 +16,8 @@ app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
     li.appendChild(a)
     li
 
-  bookmark_to_li = (bookmark) ->
-    li = board_to_li(bookmark)
+  entry_to_li = (entry) ->
+    li = board_to_li(entry)
     li.classList.add("bookmark")
     li
 
@@ -38,12 +38,11 @@ app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
   #ブックマーク関連
   do ->
     #初回ブックマーク表示構築
-    app.bookmark.promise_first_scan.done ->
+    app.bookmarkEntryList.ready.add ->
       frag = document.createDocumentFragment()
 
-      for bookmark in app.bookmark.get_all()
-        if bookmark.type is "board"
-          frag.appendChild(bookmark_to_li(bookmark))
+      for entry in app.bookmarkEntryList.getAllBoards()
+        frag.appendChild(entry_to_li(entry))
 
       $view.find("ul:first-of-type").append(frag)
       accordion.update()
@@ -52,23 +51,23 @@ app.boot "/view/sidemenu.html", ["bbsmenu"], (BBSMenu) ->
 
     #ブックマーク更新時処理
     app.message.add_listener "bookmark_updated", (message) ->
-      return if message.bookmark.type isnt "board"
+      return if message.entry.type isnt "board"
 
       switch message.type
         when "added"
-          if $view.find("li.bookmark > a[href=\"#{message.bookmark.url}\"]").length is 0
+          if $view.find("li.bookmark > a[href=\"#{message.entry.url}\"]").length is 0
             $view
               .find("ul:first-of-type")
-                .append(bookmark_to_li(message.bookmark))
+                .append(entry_to_li(message.entry))
         when "removed"
           $view
-            .find("li.bookmark > a[href=\"#{message.bookmark.url}\"]")
+            .find("li.bookmark > a[href=\"#{message.entry.url}\"]")
               .parent()
                 .remove()
         when "title"
           $view
-            .find("li.bookmark > a[href=\"#{message.bookmark.url}\"]")
-              .text(message.bookmark.title)
+            .find("li.bookmark > a[href=\"#{message.entry.url}\"]")
+              .text(message.entry.title)
 
   #板覧関連
   do ->

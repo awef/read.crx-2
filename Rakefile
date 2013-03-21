@@ -86,6 +86,7 @@ def typescript(src, output)
   }
 
   tmp = src.map {|a| a.gsub(/\.ts$/, ".js") }
+  tmp = tmp.sort {|a, b| a.split(".").length - b.split(".").length }
 
   sh "cat #{tmp.join " "} > #{output}"
   rm tmp

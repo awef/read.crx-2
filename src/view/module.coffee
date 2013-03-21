@@ -5,6 +5,7 @@ do ->
       "Thread"
       "board"
       "bookmark"
+      "bookmarkEntryList"
       "config"
       "module"
       "Ninja"
