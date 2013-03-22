@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "devDependencies": {
     "grunt-cli": "*",
-    "coffee-script": "1.6.1",
+    "coffee-script": "1.6.2",
     "typescript": "0.8.3",
     "yuidocjs": ">=0.3.x"
   }
