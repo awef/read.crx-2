@@ -4,7 +4,9 @@
   "devDependencies": {
     "grunt-cli": "*",
     "coffee-script": "1.6.2",
-    "typescript": "0.8.3",
+    "typescript": "0.8.3"
+  },
+  "optionalDependencies": {
     "yuidocjs": ">=0.3.x"
   }
 }
