@@ -3,7 +3,7 @@ GEM
   specs:
     haml (4.0.1)
       tilt
-    rake (10.0.3)
+    rake (10.0.4)
     sass (3.2.7)
     tilt (1.3.6)
 
