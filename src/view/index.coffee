@@ -61,6 +61,16 @@ class app.view.Index extends app.view.View
           @focusLeft(message.repeatCount)
         when "focusRightFrame"
           @focusRight(message.repeatCount)
+
+      $target = @$element.find(".iframe_focused")
+
+      $target.contents().find(".view").addClass("focus_effect")
+      setTimeout(
+        ->
+          $target.contents().find(".view").removeClass("focus_effect")
+          return
+        200
+      )
       return
 
     app.message.addListener "showKeyboardHelp", =>
