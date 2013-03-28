@@ -1,12 +1,13 @@
+///<reference path="../../lib/DefinitelyTyped/jquery/jquery.d.ts" />
+
 module UI {
   "use strict";
 
-  declare var $: any;
   declare var app: any;
 
   export class SearchNextThread {
     private element:HTMLElement;
-    private $element;
+    private $element:JQuery;
 
     constructor (element:HTMLElement) {
       this.element = element;

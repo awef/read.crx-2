@@ -1,3 +1,5 @@
+///<reference path="../lib/DefinitelyTyped/jquery/jquery.d.ts" />
+
 declare interface Window {
   chrome: any;
 }
@@ -8,7 +10,6 @@ declare interface Location {
 
 declare var webkitNotifications: any;
 declare var chrome: any;
-declare var $: any;
 
 module app {
   "use strict";
