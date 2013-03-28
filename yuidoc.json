@@ -1,7 +1,0 @@
-{
-  "name": "read.crx 2",
-  "options": {
-    "paths": ["debug"],
-    "exclude": "lib,test"
-  }
-}

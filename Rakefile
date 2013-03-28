@@ -25,10 +25,6 @@ task :clean do
   Rake::Task["jquery_mockjax:clean"].invoke
 end
 
-task :doc do
-  sh "node_modules/.bin/yuidoc -q --server 4001"
-end
-
 task :pack do
   require "json"
 
