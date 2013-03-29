@@ -78,6 +78,10 @@ module app.HTTP {
         callback(new Response(xhr.status, resonseHeaders, xhr.responseText));
       });
 
+      xhr.addEventListener("abort", function () {
+        callback(new Response(0));
+      });
+
       xhr.send();
 
       this.xhr = xhr;
