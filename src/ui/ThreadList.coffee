@@ -207,10 +207,15 @@ class UI.ThreadList
               e.preventDefault()
 
             app.defer =>
-              $menu = $("#template > .thread_list_contextmenu")
-                .clone()
-                  .data("contextmenu_source", @)
-                  .appendTo($table.closest(".view"))
+              $menu = $(
+                $("#template_thread_list_contextmenu")
+                  .prop("content")
+                    .querySelector(".thread_list_contextmenu")
+              ).clone()
+
+              $menu
+                .data("contextmenu_source", @)
+                .appendTo($table.closest(".view"))
 
               url = @getAttribute("data-href")
               if app.bookmark.get(@getAttribute("data-href"))

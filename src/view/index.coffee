@@ -733,7 +733,11 @@ app.main = ->
     e.preventDefault()
 
     $source = $(e.target).closest(".tab_tabbar, li")
-    $menu = $("#template > .tab_contextmenu").clone()
+    $menu = $(
+      $("#template_tab_contextmenu")
+        .prop("content")
+          .querySelector(".tab_contextmenu")
+    ).clone()
 
     if $source.is("li")
       sourceTabId = $source.attr("data-tabid")

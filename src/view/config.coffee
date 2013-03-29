@@ -82,7 +82,11 @@ app.boot "/view/config.html", ["cache", "bbsmenu"], (Cache, BBSMenu) ->
               hasBackup: true
 
         for siteId, item of data
-          $div = $("#template > .ninja_item").clone()
+          $div = $(
+            $("#template_ninja_item")
+              .prop("content")
+                .querySelector(".ninja_item")
+          ).clone()
 
           $div.attr("data-siteid", item.site.siteId)
           $div.find(".site_name").text(item.site.siteName)

@@ -160,7 +160,10 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
         e.preventDefault()
 
       $article = $(@).parent()
-      $menu = $("#template > .res_menu").clone().hide().appendTo($article)
+      $menu = $(
+        $("#template_res_menu").prop("content").querySelector(".res_menu")
+      ).clone()
+      $menu.hide().appendTo($article)
 
       app.defer ->
         if getSelection().toString().length is 0
