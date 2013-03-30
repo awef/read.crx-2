@@ -94,6 +94,34 @@ describe "app.Callbacks", ->
       return
     return
 
+  describe "::destroy", ->
+    it "すべてのコールバックを::removeする", ->
+      callbacks = new app.Callbacks(persistent: true)
+      spyOn(callbacks, "remove").andCallThrough()
+      cb0 = jasmine.createSpy("cb0")
+      cb1 = jasmine.createSpy("cb1")
+      cb2 = jasmine.createSpy("cb2")
+
+      callbacks.add(cb0)
+      callbacks.add(cb1)
+      callbacks.add(cb2)
+      callbacks.call(1)
+
+      callbacks.destroy()
+
+      callbacks.call(2)
+      callbacks.call(3)
+
+      expect(cb0.callCount).toBe(1)
+      expect(cb1.callCount).toBe(1)
+      expect(cb2.callCount).toBe(1)
+      expect(callbacks.remove.callCount).toBe(3)
+      expect(callbacks.remove).toHaveBeenCalledWith(cb0)
+      expect(callbacks.remove).toHaveBeenCalledWith(cb1)
+      expect(callbacks.remove).toHaveBeenCalledWith(cb2)
+      return
+    return
+
   describe "config.persistentがtrueの時", ->
     it "callを何回でも受け付ける", ->
       callbacks = new app.Callbacks(persistent: true)
