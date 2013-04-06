@@ -81,7 +81,7 @@ $z-index-notification: 9;
 @mixin button {
   border: 1px solid #aaa;
   border-radius: 3px;
-  background: -webkit-linear-gradient(#eee, #d5d5d5);
+  background: linear-gradient(#eee, #d5d5d5);
   color: #222;
   padding: 5px;
   &:not([disabled]) {
@@ -90,7 +90,7 @@ $z-index-notification: 9;
       border-color: #777;
     }
     &:active {
-      background: -webkit-linear-gradient(#ddd, #c5c5c5);
+      background: linear-gradient(#ddd, #c5c5c5);
       box-shadow: 0 1px 1px #999 inset;
     }
   }

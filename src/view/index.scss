@@ -130,7 +130,7 @@ iframe {
   z-index: $z-index-notification;
   > div {
     @include drop-shadow;
-    background-image: -webkit-linear-gradient(transparent, rgba(black, 0.25));
+    background-image: linear-gradient(transparent, rgba(black, 0.25));
     border-radius: 5px;
     color: #eeeeee;
     font-size: 14px;
