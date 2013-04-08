@@ -126,8 +126,8 @@ $z-index-notification: 9;
   }
   body {
     margin: 0;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
+    display: -webkit-flex;
+    -webkit-flex-flow: column;
   }
   .message_bar {
     font-size: 13px;
@@ -140,6 +140,7 @@ $z-index-notification: 9;
     }
   }
   .nav_bar {
+    height: 27px;
     border-bottom: 2px solid hsla(0, 0%, 0%, 0.2);
     z-index: $z-index-tabbed-view-nav-bar;
     position: relative;
@@ -255,7 +256,8 @@ $z-index-notification: 9;
     }
   }
   .content {
-    -webkit-box-flex: 1;
+    height: 0;
+    -webkit-flex-grow: 1;
     overflow-x: hidden;
     overflow-y: scroll;
     position: relative;

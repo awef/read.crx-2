@@ -47,12 +47,16 @@ header {
 section {
   padding: 1rem;
 
-  display: -webkit-box;
+  display: -webkit-flex;
   > div {
-    -webkit-box-flex: 1;
+    -webkit-flex-grow: 1;
   }
   &:not(:first-child) {
     border-top: 1px dashed hsl(0, 0%, 80%);
+  }
+
+  ul {
+    margin: 0;
   }
 }
 
@@ -83,11 +87,11 @@ section button {
   border-radius: 3px;
   border: 1px solid #aaaaaa;
 
-  display: -webkit-box;
+  display: -webkit-flex;
 }
 
 .version_text {
-  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
 }
 
 .version_copy {

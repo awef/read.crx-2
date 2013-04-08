@@ -43,7 +43,7 @@ a {
 }
 
 .search {
-  display: -webkit-box;
+  display: -webkit-flex;
   padding: 2px;
   overflow: hidden;
   > input:not([type="hidden"]) {
@@ -56,7 +56,8 @@ a {
     padding: 0;
   }
   > input[type="text"] {
-    -webkit-box-flex: 1;
+    width: 0;
+    -webkit-flex-grow: 1;
     border-right: none;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;

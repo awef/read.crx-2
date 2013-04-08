@@ -198,7 +198,7 @@ header {
   bottom: 0;
   left: 0;
   right: 75px;
-  display: -webkit-box;
+  display: -webkit-flex;
   > .loading_indicator, > .next_unread, > .search_next_thread {
     display: none;
     margin: 10px;
@@ -212,7 +212,8 @@ header {
     color: hsl(0, 0%, 100%);
   }
   > .next_unread {
-    -webkit-box-flex: 1;
+    width: 0;
+    -webkit-flex-grow: 1;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;

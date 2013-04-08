@@ -15,7 +15,7 @@ html {
 }
 
 form {
-  display: -webkit-box;
+  display: -webkit-flex;
 }
 
 input {
@@ -26,7 +26,8 @@ input {
 
 input:first-child {
   @include input-text;
-  -webkit-box-flex: 1;
+  width: 0;
+  -webkit-flex-grow: 1;
   margin-right: 10px;
 }
 
