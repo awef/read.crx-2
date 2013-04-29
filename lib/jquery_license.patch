@@ -1,13 +1,12 @@
 diff --git a/Gruntfile.js b/Gruntfile.js
-index 4058871..a1de294 100644
+index 5d41d71..bba35a5 100644
 --- a/Gruntfile.js
 +++ b/Gruntfile.js
-@@ -99,7 +99,7 @@ module.exports = function( grunt ) {
- 					"dist/jquery.min.js": [ "dist/jquery.js" ]
- 				},
- 				options: {
--					banner: "/*! jQuery v<%= pkg.version %> | (c) 2005, 2012 jQuery Foundation, Inc. | jquery.org/license */",
-+					banner: "/*! jQuery v<%= pkg.version %> | (c) 2005, 2012 jQuery Foundation, Inc. | jquery.org/license */\n/* Modified by awef. */",
- 					sourceMap: "dist/jquery.min.map",
- 					compress: {
- 						hoist_funs: false,
+@@ -114,6 +114,7 @@ module.exports = function( grunt ) {
+ 					banner: "/*! jQuery v<%= pkg.version %> | " +
+ 						"(c) 2005, 2013 jQuery Foundation, Inc. | " +
+ 						"jquery.org/license\n" +
++						"\n Modified by awef \n" +
+ 						"//@ sourceMappingURL=jquery.min.map\n" +
+ 						"*/"
+ 				}
