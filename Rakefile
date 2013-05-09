@@ -369,14 +369,5 @@ namespace :jquery_mockjax do
     end
   end
 
-  file "debug/test/jquery.mockjax.js" => [
-    "lib/jquery-mockjax/jquery.mockjax.js",
-    "lib/jquery-mockjax_cancelable_etag.patch"
-  ] do
-    Rake::Task["jquery_mockjax:clean"].invoke
-    cd "lib/jquery-mockjax" do
-      sh "git apply ../jquery-mockjax_cancelable_etag.patch"
-    end
-    cp "lib/jquery-mockjax/jquery.mockjax.js", "debug/test/jquery.mockjax.js"
-  end
+  file_copy "debug/test/jquery.mockjax.js", "lib/jquery-mockjax/jquery.mockjax.js"
 end

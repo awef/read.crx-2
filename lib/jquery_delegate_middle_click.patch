@@ -1,8 +1,8 @@
 diff --git a/src/event.js b/src/event.js
-index 772d65e..f1c1373 100644
+index 97a4088..3479c94 100644
 --- a/src/event.js
 +++ b/src/event.js
-@@ -405,8 +405,7 @@ jQuery.event = {
+@@ -402,8 +402,7 @@ jQuery.event = {
  
  		// Find delegate handlers
  		// Black-hole SVG <use> instance trees (#13180)
@@ -10,5 +10,5 @@ index 772d65e..f1c1373 100644
 -		if ( delegateCount && cur.nodeType && (!event.button || event.type !== "click") ) {
 +		if ( delegateCount && cur.nodeType ) {
  
- 			for ( ; cur != this; cur = cur.parentNode || this ) {
+ 			for ( ; cur !== this; cur = cur.parentNode || this ) {
  
