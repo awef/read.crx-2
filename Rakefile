@@ -22,7 +22,6 @@ task :clean do
   rm_f "./read.crx_2.zip"
   rm_rf "debug"
   Rake::Task["jquery:clean"].invoke
-  Rake::Task["jquery_mockjax:clean"].invoke
 end
 
 task :pack do
@@ -295,7 +294,7 @@ namespace :test do
     "debug/test/qunit/qunit.css",
     "debug/test/qunit/qunit-step.js",
 
-    "jquery_mockjax:build",
+    "debug/test/jquery.mockjax.js",
 
     "debug/test/test.html",
     "debug/test/jasmine-exec.js",
@@ -317,6 +316,8 @@ namespace :test do
   end
 
   directory "debug/test"
+
+  file_copy "debug/test/jquery.mockjax.js", "lib/jquery-mockjax/jquery.mockjax.js"
 
   directory "debug/test/jasmine"
   file_copy "debug/test/jasmine/jasmine.js", "lib/jasmine/lib/jasmine-core/jasmine.js"
@@ -358,16 +359,4 @@ namespace :jquery do
     mkdir "debug/lib/jquery"
     cp "lib/jquery/dist/jquery.min.js", "debug/lib/jquery/"
   end
-end
-
-namespace :jquery_mockjax do
-  task :build => ["debug/test/jquery.mockjax.js"]
-
-  task :clean do
-    cd "lib/jquery-mockjax" do
-      sh "git checkout -f"
-    end
-  end
-
-  file_copy "debug/test/jquery.mockjax.js", "lib/jquery-mockjax/jquery.mockjax.js"
 end
