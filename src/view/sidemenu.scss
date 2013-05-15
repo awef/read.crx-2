@@ -56,8 +56,8 @@ a {
     padding: 0;
   }
   > input[type="text"] {
-    width: 0;
     -webkit-flex-grow: 1;
+    width: 0%;
     border-right: none;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
