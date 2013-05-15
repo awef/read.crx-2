@@ -45,7 +45,6 @@ a {
 .search {
   display: -webkit-flex;
   padding: 2px;
-  overflow: hidden;
   > input:not([type="hidden"]) {
     display: block;
     box-sizing: content-box;
