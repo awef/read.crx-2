@@ -59,7 +59,7 @@ class app.History
   @return {Promise}
   ###
   @get: (offset = -1, limit = -1) ->
-    if app.assert_arg("History.get", ["number", "number"], arguments)
+    if app.assert_arg("History.get", ["number", "number"], [offset, limit])
       return $.Deferred().reject().promise()
 
     @_openDB().pipe((db) -> $.Deferred (d) ->
