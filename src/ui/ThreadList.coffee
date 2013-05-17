@@ -155,6 +155,13 @@ class UI.ThreadList
             tr.classList.remove("updated")
         return
 
+      app.message.add_listener "read_state_removed", (msg) ->
+        tr = table.querySelector("tr[data-href=\"#{msg.url}\"]")
+        if tr
+          tr.querySelector(selector.unread).textContent = ""
+          tr.classList.remove("updated")
+        return
+
     #リスト内検索
     if typeof option.searchbox is "object"
       title_index = $table.find("th.title").index()
