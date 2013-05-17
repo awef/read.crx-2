@@ -163,6 +163,10 @@ app.read_state.remove = (url) ->
         , ->
           deferred.resolve()
 
+    .done ->
+      app.message.send("read_state_removed", url: url.original)
+      return
+
     .promise()
 
 app.read_state.clear = ->
