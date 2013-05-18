@@ -50,6 +50,8 @@ class UI.ThreadList
       createdDate: "作成日時"
       viewedDate: "閲覧日時"
 
+    that = @
+
     table = @table
     $table = $(table)
     $thead = $("<thead>").appendTo($table)
@@ -204,6 +206,9 @@ class UI.ThreadList
             app.bookmark.add(threadURL, threadTitle, threadRes)
           else if $this.hasClass("del_bookmark")
             app.bookmark.remove(threadURL)
+          else if $this.hasClass("del_read_state")
+            app.read_state.remove(threadURL)
+            app.History.remove(threadURL)
 
           $this.parent().remove()
           return
@@ -229,6 +234,13 @@ class UI.ThreadList
                 $menu.find(".add_bookmark").remove()
               else
                 $menu.find(".del_bookmark").remove()
+
+              if (
+                not that._flg.unread or
+                not /^\d+$/.test(@querySelector(selector.unread).textContent) or
+                app.bookmark.get(url)?
+              )
+                $menu.find(".del_read_state").remove()
 
               $menu.one("click", "li", onClick)
 
