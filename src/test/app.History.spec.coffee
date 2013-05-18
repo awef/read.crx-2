@@ -190,4 +190,65 @@ describe "app.History", ->
         return
       return
     return
+
+  describe "::remove", ->
+    it "与えられたURLの閲覧履歴を削除する", ->
+      data1[3].url = "http://example.com/2"
+
+      addPromise = data1add().promise()
+      removePromise = null
+      getPromise = null
+
+      waitsFor ->
+        addPromise.state() is "resolved"
+
+      runs ->
+        removePromise = app.History.remove("http://example.com/2")
+        return
+
+      waitsFor ->
+        removePromise.state() is "resolved"
+
+      runs ->
+        getPromise = app.History.get(0, data1.length - 2)
+        return
+
+      waitsFor ->
+        getPromise.state() is "resolved"
+
+      runs ->
+        getPromise.done (res) ->
+          data1.splice(1, 1)
+          data1.splice(3 - 1, 1)
+          expect(res).toEqual(data1)
+          return
+        return
+      return
+
+    it "期待されない引数が与えられた場合、rejectする", ->
+      expect(app.History.remove().state()).toBe("rejected")
+      expect(app.History.remove(1).state()).toBe("rejected")
+      expect(app.History.remove(null).state()).toBe("rejected")
+      return
+
+    it "SQLインジェクションを引き起こす文字列も問題なく扱える", ->
+      data1[3].url = "'; DELETE FROM History --"
+
+      test =
+        data1add()
+          .pipe ->
+            app.History.remove(data1[3].url)
+          .pipe ->
+            app.History.get(0, data1.length - 1)
+          .pipe (res) ->
+            $.Deferred (deferred) ->
+              data1.splice(3, 1)
+              expect(res).toEqual(data1)
+              deferred.resolve()
+              return
+
+      waitsFor ->
+        test.state() is "resolved"
+      return
+    return
   return

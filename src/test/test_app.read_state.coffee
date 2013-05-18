@@ -6,7 +6,7 @@ module "app.read_state",
         app.message.remove_listener(type, wrapper)
       app.message.add_listener(type, wrapper)
 
-asyncTest "read_stateの保存/更新/取得/削除が出来る", 21, ->
+asyncTest "read_stateの保存/更新/取得/削除が出来る", 23, ->
   original_read_state_1 =
     url: "http://dummyserver.2ch.net/test/read.cgi/dummyboard/1234/"
     last: 123
@@ -65,10 +65,25 @@ asyncTest "read_stateの保存/更新/取得/削除が出来る", 21, ->
     ok(true, "get: 成功")
     deepEqual(res, original_read_state_1, "get: 取得結果の確認")
     app.read_state.get_by_board(app.url.thread_to_board(original_read_state_1.url))
-  .pipe (res) ->
+  .pipe (res) =>
     ok(true, "get_by_board: 成功")
     deepEqual(res, [original_read_state_1], "get_by_board: 取得結果の確認")
-    app.read_state.remove(original_read_state_1.url)
+
+    removePromise = app.read_state.remove(original_read_state_1.url)
+
+    messagePromise = (
+      $.Deferred (deferred) =>
+        @one "read_state_removed", (message) ->
+          ok(true, "メッセージ到達")
+          deepEqual(message, {
+            url: original_read_state_1.url
+          }, "メッセージのチェック")
+          deferred.resolve()
+      .promise()
+    )
+
+    $.when(removePromise, messagePromise)
+
   .pipe ->
     ok(true, "remove: 成功")
     app.read_state.get(original_read_state_1.url)

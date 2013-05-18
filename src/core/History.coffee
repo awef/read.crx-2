@@ -52,6 +52,27 @@ class app.History
     )
     .promise()
 
+  @remove: (url) ->
+    if app.assert_arg("History.remove", ["string"], arguments)
+      return $.Deferred().reject().promise()
+
+    @_openDB().pipe((db) -> $.Deferred (d) ->
+      db.transaction(
+        (transaction) ->
+          transaction.executeSql("DELETE FROM History WHERE url = ?", [url])
+          return
+        ->
+          app.log("error", "app.history.remove: トランザクション中断")
+          d.reject()
+          return
+        ->
+          d.resolve()
+          return
+      )
+      return
+    )
+    .promise()
+
   ###*
   @method get
   @param {Number} offset
@@ -59,7 +80,7 @@ class app.History
   @return {Promise}
   ###
   @get: (offset = -1, limit = -1) ->
-    if app.assert_arg("History.get", ["number", "number"], arguments)
+    if app.assert_arg("History.get", ["number", "number"], [offset, limit])
       return $.Deferred().reject().promise()
 
     @_openDB().pipe((db) -> $.Deferred (d) ->
