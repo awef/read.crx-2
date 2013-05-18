@@ -230,7 +230,8 @@ class UI.ThreadList
                 .appendTo($table.closest(".view"))
 
               url = @getAttribute("data-href")
-              if app.bookmark.get(@getAttribute("data-href"))
+
+              if app.bookmark.get(url)
                 $menu.find(".add_bookmark").remove()
               else
                 $menu.find(".del_bookmark").remove()
