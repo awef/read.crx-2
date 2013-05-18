@@ -670,7 +670,7 @@ app.main = ->
 
   #viewからのメッセージを監視
   window.addEventListener "message", (e) ->
-    return if e.origin isnt location.origin
+    return if e.origin isnt location.origin or typeof e.data isnt "string"
 
     $iframe = $(e.source.frameElement)
     return if $iframe.length isnt 1

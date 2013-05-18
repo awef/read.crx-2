@@ -154,10 +154,22 @@ module app {
       window.addEventListener("message", (e:MessageEvent) => {
         if (e.origin !== location.origin) return;
 
-        var data = JSON.parse(e.data), iframes, key:number,
-          iframe:HTMLIFrameElement;
+        var data, iframes, key:number, iframe:HTMLIFrameElement;
 
-        if (data.type !== "app.message") return;
+        if (typeof e.data === "string") {
+          try {
+            data = JSON.parse(e.data);
+          }
+          catch (e) {
+          }
+        }
+        else {
+          data = e.data;
+        }
+
+        if (typeof data !== "object" || data.type !== "app.message") {
+          return;
+        }
 
         if (data.propagation !== false) {
           iframes = document.getElementsByTagName("iframe");
@@ -196,26 +208,26 @@ module app {
     }
 
     send (type:string, message:any, targetWindow?:Window):void {
-      var json:string, iframes, key:number, iframe:HTMLIFrameElement;
+      var data: Object, iframes, key:number, iframe:HTMLIFrameElement;
 
-      json = JSON.stringify({
+      data = {
         type: "app.message",
         message_type: type,
         message: message,
         propagation: !targetWindow
-      });
+      };
 
       if (targetWindow) {
-        targetWindow.postMessage(json, location.origin);
+        targetWindow.postMessage(data, location.origin);
       }
       else {
         if (parent !== window) {
-          parent.postMessage(json, location.origin);
+          parent.postMessage(data, location.origin);
         }
 
         iframes = document.getElementsByTagName("iframe");
         for (key = 0; iframe = iframes[key]; key++) {
-          iframe.contentWindow.postMessage(json, location.origin);
+          iframe.contentWindow.postMessage(data, location.origin);
         }
         this._fire(type, message);
       }

@@ -76,7 +76,7 @@ class UI.Tab
     new UI.VirtualNotch(@element.querySelector(".tab_tabbar"))
 
     window.addEventListener "message", (e) =>
-      return if e.origin isnt location.origin
+      return if e.origin isnt location.origin or typeof e.data isnt "string"
 
       message = JSON.parse(e.data)
 

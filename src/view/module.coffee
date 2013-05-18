@@ -331,7 +331,7 @@ class app.view.PaneContentView extends app.view.IframeView
   ###
   _setupEventConverter: ->
     window.addEventListener "message", (e) =>
-      if e.origin is location.origin
+      if e.origin is location.origin and typeof e.data is "string"
         message = JSON.parse(e.data)
 
         # request_reload(postMessage) -> request_reload(event) 翻訳処理
@@ -434,7 +434,7 @@ class app.view.TabContentView extends app.view.PaneContentView
     )
 
     window.addEventListener "message", (e) =>
-      if e.origin is location.origin
+      if e.origin is location.origin and typeof e.data is "string"
         message = JSON.parse(e.data)
         if message.type is "responseTabHistory"
           if message.history.current > 0
