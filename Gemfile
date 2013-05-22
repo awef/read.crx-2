@@ -1,6 +1,12 @@
 ruby "2.0.0"
 
 source "https://rubygems.org"
-gem "rake"
-gem "haml"
-gem "sass"
+
+group :development do
+  gem "guard"
+  gem "guard-rake"
+  gem "rb-readline"
+  gem "rake"
+  gem "haml"
+  gem "sass"
+end

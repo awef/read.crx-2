@@ -228,6 +228,34 @@ describe "UI.ThreadList", ->
       return
     return
 
+  it "read_state_removedメッセージを受けて未読数表示を更新する", ->
+    threadList = new UI.ThreadList(table, th: ["res", "unread"])
+    threadList.addItem(
+      url: dummyURL0
+      title: "dummy0"
+      res_count: 4
+      read_state: {
+        url: dummyURL0
+        last: 1
+        read: 2
+        received: 4
+      }
+    )
+
+    unread = table.querySelector("td:nth-child(2)")
+
+    expect(unread.textContent).toBe("2")
+
+    app.message.send("read_state_removed", url: dummyURL0)
+
+    waitsFor ->
+      unread.textContent is ""
+
+    runs ->
+      expect(unread.textContent).toBe("")
+      return
+    return
+
   describe "::addItem", ->
     now = Date.now()
 
