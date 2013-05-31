@@ -309,9 +309,9 @@ describe "UI.ThreadContent", ->
       return
 
     it "本文中のID表記をIDリンクに置換する", ->
-      example.a.data1.message = "test ID:iTGL5FKU test"
+      example.a.data1.message = "test ID:iTGL5FKU test ID:iTGL5FK! test"
       example.a.dom1.querySelector(".message").innerHTML = """
-        test <a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a> test
+        test <a href="javascript:undefined;" class="anchor_id">ID:iTGL5FKU</a> test <a href="javascript:undefined;" class="anchor_id">ID:iTGL5FK!</a> test
       """
 
       hogehoge()

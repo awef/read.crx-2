@@ -328,7 +328,7 @@ class UI.ThreadContent
               (if disabled then " disabled\" data-disabled_reason=\"#{disabledReason}\"" else "\"") +
               ">#{$0}</a>"
             #IDリンク
-            .replace /id:(?:[a-hj-z\d_\+\/\.]|i(?!d:))+/ig, ($0) ->
+            .replace /id:(?:[a-hj-z\d_\+\/\.\!]|i(?!d:))+/ig, ($0) ->
               "<a href=\"javascript:undefined;\" class=\"anchor_id\">#{$0}</a>"
         )
         articleHtml += """<div class="message">#{tmp}</div>"""
