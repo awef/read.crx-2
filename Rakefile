@@ -9,11 +9,11 @@ task :default => [
   "debug/app.js",
   "debug/app_core.js",
   "debug/cs_addlink.js",
-  :img,
-  :ui,
-  :view,
-  :zombie,
-  :write,
+  "img:build",
+  "ui:build",
+  "view:build",
+  "zombie:build",
+  "write:build",
   "test:build",
   "jquery:build"
 ]
@@ -165,8 +165,8 @@ file_typescript "debug/app.js", "src/app.ts"
 file_ct "debug/app_core.js", FileList["src/core/*.coffee", "src/core/*.ts"]
 
 #img
-lambda {
-  task :img => [
+namespace :img do
+  task :build => [
     "debug/img",
     "debug/img/read.crx_128x128.png",
     "debug/img/read.crx_48x48.png",
@@ -205,21 +205,21 @@ lambda {
   end
 
   file_copy "debug/img/loading.svg", "src/image/svg/loading.svg"
-}.call()
+end
 
 #ui
-lambda {
-  task :ui => ["debug/ui.css", "debug/ui.js"]
+namespace :ui do
+  task :build => ["debug/ui.css", "debug/ui.js"]
 
   file "debug/ui.css" => FileList["src/common.scss"].include("src/ui/*.scss") do |t|
     scss("src/ui/ui.scss", t.name)
   end
 
   file_ct "debug/ui.js", FileList["src/ui/*.coffee", "src/ui/*.ts"]
-}.call()
+end
 
 #View
-lambda {
+namespace :view do
   directory "debug/view"
 
   view = [
@@ -243,15 +243,17 @@ lambda {
     end
   }
 
-  task :view => view
-}.call()
+  task :build => view
+end
 
 #Zombie
-task :zombie => ["debug/zombie.html", "debug/zombie.js"]
+namespace :zombie do
+  task :build => ["debug/zombie.html", "debug/zombie.js"]
+end
 
 #Write
-lambda {
-  task :write => [
+namespace :write do
+  task :build => [
     "debug/write",
     "debug/write/write.html",
     "debug/write/write.css",
@@ -279,7 +281,7 @@ lambda {
     "src/core/URL.ts",
     "src/write/cs_write.coffee"
   ]
-}.call()
+end
 
 namespace :test do
   task :build => [
