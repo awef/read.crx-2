@@ -345,15 +345,12 @@ namespace :jquery do
     end
   end
 
-  file "debug/lib/jquery/jquery.min.js" => [
-    "lib/jquery_license.patch",
-    "lib/jquery_delegate_middle_click.patch"
-  ] do
+  file "debug/lib/jquery/jquery.min.js" => "lib/jquery_delegate_middle_click.patch" do
     Rake::Task["jquery:clean"].invoke
     cd "lib/jquery" do
-      sh "git apply ../jquery_license.patch"
       sh "git apply ../jquery_delegate_middle_click.patch"
       sh "env PATH=$PATH:../../node_modules/.bin/ grunt"
+      sh "sed -i -e \"3a /* このファイルはread.crx 2用にawefが改造した物です */\" dist/jquery.min.js"
     end
 
     mkdir "debug/lib/jquery"
