@@ -168,6 +168,7 @@ file_ct "debug/app_core.js", FileList["src/core/*.coffee", "src/core/*.ts"]
 namespace :img do
   task :build => [
     "debug/img",
+    "debug/img/favicon.ico",
     "debug/img/read.crx_128x128.png",
     "debug/img/read.crx_48x48.png",
     "debug/img/read.crx_16x16.png",
@@ -195,6 +196,14 @@ namespace :img do
   ]
 
   directory "debug/img"
+
+  file "debug/img/favicon.ico" => "src/image/svg/read.crx.svg"do |t|
+    sh "convert #{t.prerequisites[0]}\
+        \\( -clone 0 -resize 16x16 \\)\
+        \\( -clone 0 -resize 32x32 \\)\
+        -delete 0\
+        #{t.name}"
+  end
 
   file "debug/img/read.crx_128x128.png" => "src/image/svg/read.crx.svg" do |t|
     sh "convert\
