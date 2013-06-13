@@ -75,6 +75,11 @@ module "cache",
       etag: "'; DELETE FROM History --"
       res_length: 123
       dat_size: 1234
+    #\u0000を含むパターン
+    @cache_specialcharacter =
+      url: "specialcharacter"
+      data: "hoge\u0000\u0000hoge"
+      last_updated: (new Date("2010-01-01T05:00")).getTime()
 
 asyncTest "キャッシュの保存/取得/更新/削除が出来る", ->
   expect(@cache_pattern.length + 1)
@@ -110,6 +115,22 @@ asyncTest "キャッシュの保存/取得/更新/削除が出来る", ->
                 strictEqual(before_count - after_count, 1)
                 start()
     fn()
+
+asyncTest "put時、\\u0000を\\u0020に置換する", 1, ->
+  app.module null, ["jquery", "cache"], ($, Cache) =>
+    pattern = @cache_specialcharacter
+
+    cache = new Cache(pattern.url)
+    for key, val of pattern
+      cache[key] = val
+    cache.put().done ->
+      cache = new Cache(pattern.url)
+
+      cache.get().done ->
+        strictEqual(cache.data, "hoge\u0020\u0020hoge")
+        cache.delete().done ->
+          start()
+  return
 
 asyncTest "設定されていない項目にアクセスした場合、nullを返す", 10, ->
   app.module null, ["jquery", "cache"], ($, Cache) =>
