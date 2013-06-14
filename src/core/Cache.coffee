@@ -146,6 +146,8 @@ class app.Cache
     Cache._db_open.pipe (db) => $.Deferred (d) =>
       db.transaction(
         (tr) =>
+          @data = @data.replace(/\u0000/g, "\u0020")
+
           tr.executeSql(
             "INSERT OR REPLACE INTO Cache values(?, ?, ?, ?, ?, ?, ?)"
             [
