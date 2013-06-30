@@ -22,7 +22,7 @@ module app.Bookmark {
     ready = new app.Callbacks();
     needReconfigureRootNodeId = new app.Callbacks({persistent: true});
 
-    private static entryToURL (entry:Entry):string {
+    static entryToURL (entry:Entry):string {
       var url:string, param:any, hash:string;
 
       url = app.URL.fix(entry.url);
@@ -48,7 +48,7 @@ module app.Bookmark {
       return url + (hash ? "#" + hash : "");
     }
 
-    private static URLToEntry (url:string):Entry {
+    static URLToEntry (url:string):Entry {
       var fixedURL:string, guessRes:app.URL.GuessResult, arg, entry:Entry;
 
       fixedURL = app.URL.fix(url);
@@ -396,7 +396,7 @@ module app.Bookmark {
       );
     }
 
-    add (entry:Entry, createChromeBookmark? = true, callback?:Function):bool {
+    add (entry:Entry, createChromeBookmark = true, callback?:Function):bool {
       entry = app.deepCopy(entry);
 
       if (super.add(entry)) {
@@ -421,7 +421,7 @@ module app.Bookmark {
       }
     }
 
-    update (entry:Entry, updateChromeBookmark? = true, callback?:Function):bool {
+    update (entry:Entry, updateChromeBookmark = true, callback?:Function):bool {
       entry = app.deepCopy(entry);
 
       if (super.update(entry)) {
@@ -446,7 +446,7 @@ module app.Bookmark {
       }
     }
 
-    remove (url:string, removeChromeBookmark? = true, callback?:Function):bool {
+    remove (url:string, removeChromeBookmark = true, callback?:Function):bool {
       if (super.remove(url)) {
         if (removeChromeBookmark) {
           if (callback) {
