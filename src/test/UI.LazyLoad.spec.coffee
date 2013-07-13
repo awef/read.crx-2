@@ -24,7 +24,7 @@ describe "UI.LazyLoad", ->
     return
 
   afterEach ->
-    lazyLoad._unwatch()
+    lazyLoad.unwatch()
 
     UI.LazyLoad.UPDATE_INTERVAL = UI.LazyLoad.__UPDATE_INTERVAL
     delete UI.LazyLoad.__UPDATE_INTERVAL
@@ -39,12 +39,12 @@ describe "UI.LazyLoad", ->
     return
 
   describe "::update", ->
-    it "遅延ロード対象が無い場合は::_unwatchを呼ぶ", ->
-      spyOn(lazyLoad, "_unwatch").andCallThrough()
+    it "遅延ロード対象が無い場合は::unwatchを呼ぶ", ->
+      spyOn(lazyLoad, "unwatch").andCallThrough()
 
       lazyLoad.update()
 
-      expect(lazyLoad._unwatch).toHaveBeenCalled()
+      expect(lazyLoad.unwatch).toHaveBeenCalled()
       return
 
     it "遅延ロード対象のロード判定を行う", ->
@@ -59,7 +59,7 @@ describe "UI.LazyLoad", ->
       img3.style.position = "absolute"
       img3.style.top = "200px"
       spyOn(lazyLoad, "update").andCallThrough()
-      spyOn(lazyLoad, "_load").andCallThrough()
+      spyOn(lazyLoad, "load").andCallThrough()
 
       waitsFor ->
         (
@@ -74,14 +74,14 @@ describe "UI.LazyLoad", ->
         expect(lazyLoad.update.callCount).toBe(1)
         return
 
-      waitsFor -> lazyLoad._load.wasCalled
+      waitsFor -> lazyLoad.load.wasCalled
 
       runs ->
-        expect(lazyLoad._load).toHaveBeenCalledWith(img2)
+        expect(lazyLoad.load).toHaveBeenCalledWith(img2)
         return
       return
 
-    it "::_loadに渡したimgは_imgsから削除する", ->
+    it "::loadに渡したimgはimgsから削除する", ->
       div.style.position = "relative"
       div.appendChild(img1 = getDummyIMG())
       img1.style.position = "absolute"
@@ -93,7 +93,7 @@ describe "UI.LazyLoad", ->
       img3.style.position = "absolute"
       img3.style.top = "200px"
       spyOn(lazyLoad, "update").andCallThrough()
-      spyOn(lazyLoad, "_load").andCallThrough()
+      spyOn(lazyLoad, "load").andCallThrough()
 
       waitsFor ->
         (
@@ -106,22 +106,22 @@ describe "UI.LazyLoad", ->
         lazyLoad.scan()
         return
 
-      waitsFor -> lazyLoad._load.wasCalled
+      waitsFor -> lazyLoad.load.wasCalled
 
       runs ->
-        expect(lazyLoad._imgs).toEqual([img2, img3])
+        expect(lazyLoad.imgs).toEqual([img2, img3])
         return
       return
     return
 
-  describe "::_watch", ->
+  describe "::watch", ->
     it "スクロール検出時に::updateを呼ぶようにする", ->
       spyOn(lazyLoad, "update").andCallThrough()
 
-      lazyLoad._watch()
-      lazyLoad._onScroll()
+      lazyLoad.watch()
+      lazyLoad.onScroll()
 
-      expect(lazyLoad._updateInterval).toEqual(jasmine.any(Number))
+      expect(lazyLoad.updateInterval).toEqual(jasmine.any(Number))
 
       waitsFor -> lazyLoad.update.wasCalled
 
@@ -133,26 +133,26 @@ describe "UI.LazyLoad", ->
     it "::updateを呼んだ後、スクロールフラグをクリアする", ->
       spyOn(lazyLoad, "update").andCallThrough()
 
-      lazyLoad._watch()
-      lazyLoad._onScroll()
+      lazyLoad.watch()
+      lazyLoad.onScroll()
 
       waitsFor -> lazyLoad.update.wasCalled
 
       runs ->
-        expect(lazyLoad._scroll).toBe(false)
+        expect(lazyLoad.scroll).toBe(false)
         return
       return
     return
 
-  describe "::_unwatch", ->
+  describe "::unwatch", ->
     it "スクロールの監視を解除する", ->
       spyOn(lazyLoad, "update").andCallThrough()
 
-      lazyLoad._watch()
-      lazyLoad._unwatch()
-      lazyLoad._onScroll()
+      lazyLoad.watch()
+      lazyLoad.unwatch()
+      lazyLoad.onScroll()
 
-      expect(lazyLoad._updateInterval).toBe(null)
+      expect(lazyLoad.updateInterval).toBe(null)
 
       timeout = false
       setTimeout((-> timeout = true; return), UI.LazyLoad.UPDATE_INTERVAL * 1.2)
@@ -165,43 +165,43 @@ describe "UI.LazyLoad", ->
     return
 
   describe "::scan", ->
-    it "遅延ロード対象のimgを@_imgsに格納する", ->
+    it "遅延ロード対象のimgを@imgsに格納する", ->
       div.appendChild(img1 = getDummyIMG())
       div.appendChild(img2 = getDummyIMG())
       div.appendChild(img3 = getDummyIMG())
 
       lazyLoad.scan()
 
-      expect(lazyLoad._imgs).toEqual([img1, img2, img3])
+      expect(lazyLoad.imgs).toEqual([img1, img2, img3])
       return
 
     it "遅延ロード対象を見つけた場合は即座に::updateを呼び、監視を開始する", ->
       spyOn(lazyLoad, "update").andCallThrough()
-      spyOn(lazyLoad, "_watch").andCallThrough()
+      spyOn(lazyLoad, "watch").andCallThrough()
 
       img = getDummyIMG()
       div.appendChild(img)
       lazyLoad.scan()
 
       expect(lazyLoad.update.callCount).toBe(1)
-      expect(lazyLoad._watch.callCount).toBe(1)
+      expect(lazyLoad.watch.callCount).toBe(1)
       return
 
     it "遅延ロード対象が無い場合は監視を停止する", ->
-      spyOn(lazyLoad, "_unwatch").andCallThrough()
+      spyOn(lazyLoad, "unwatch").andCallThrough()
 
       lazyLoad.scan()
 
-      expect(lazyLoad._unwatch.callCount).toBe(1)
+      expect(lazyLoad.unwatch.callCount).toBe(1)
       return
     return
 
-  describe "::_load", ->
+  describe "::load", ->
     it "遅延ロード対象のimgのロードを開始する", ->
       div.appendChild(img = getDummyIMG())
       src = img.getAttribute("data-src")
 
-      lazyLoad._load(img)
+      lazyLoad.load(img)
 
       waitsFor -> img.parentNode isnt div
 
@@ -215,7 +215,7 @@ describe "UI.LazyLoad", ->
       div.appendChild(img = getDummyIMG())
       src = img.getAttribute("data-src")
 
-      lazyLoad._load(img)
+      lazyLoad.load(img)
       expect(img.getAttribute("src")).toBe("/img/loading.svg")
       return
 
@@ -224,7 +224,7 @@ describe "UI.LazyLoad", ->
       onLazyloadLoad = jasmine.createSpy("onLazyloadLoad")
       $(div).on("lazyload-load", onLazyloadLoad)
 
-      lazyLoad._load(img)
+      lazyLoad.load(img)
 
       waitsFor -> onLazyloadLoad.wasCalled
 
@@ -239,7 +239,7 @@ describe "UI.LazyLoad", ->
       img1.className = "icon"
       img1.setAttribute("data-test", "12345")
 
-      lazyLoad._load(img1)
+      lazyLoad.load(img1)
 
       waitsFor -> img1.parentNode isnt div
 
