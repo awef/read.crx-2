@@ -1,10 +1,10 @@
 ///<reference path="../lib/DefinitelyTyped/jquery/jquery.d.ts" />
 
-declare interface Window {
+interface Window {
   chrome: any;
 }
 
-declare interface Location {
+interface Location {
   origin: string;
 }
 
@@ -251,7 +251,7 @@ module app {
   (<any>message).remove_listener = message.removeListener;
 
   export class Config {
-    static private _default = {
+    private static _default = {
       aa_font: "aa",
       thumbnail_supported: "on",
       always_new_tab: "on",

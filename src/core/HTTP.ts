@@ -1,4 +1,4 @@
-declare interface XMLHttpRequest {
+interface XMLHttpRequest {
   overrideMimeType: (mimetype: string) => void;
 }
 
@@ -17,7 +17,7 @@ module app.HTTP {
     constructor (
       method: string,
       url: string,
-      params?: {
+      params: {
         mimeType?: string;
         headers?: {[index:string]: string;};
         timeout?: number;

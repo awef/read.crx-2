@@ -3,8 +3,8 @@
 ///<reference path="Bookmark.ts" />
 ///<reference path="Bookmark.ChromeBookmarkEntryList.ts" />
 
-declare interface app {
-  read_state: any;
+declare module app {
+  var read_state: any;
 }
 
 module app.Bookmark {

@@ -22,7 +22,7 @@ module app.Bookmark {
     ready = new app.Callbacks();
     needReconfigureRootNodeId = new app.Callbacks({persistent: true});
 
-    private static entryToURL (entry:Entry):string {
+    static entryToURL (entry:Entry):string {
       var url:string, param:any, hash:string;
 
       url = app.URL.fix(entry.url);
@@ -48,7 +48,7 @@ module app.Bookmark {
       return url + (hash ? "#" + hash : "");
     }
 
-    private static URLToEntry (url:string):Entry {
+    static URLToEntry (url:string):Entry {
       var fixedURL:string, guessRes:app.URL.GuessResult, arg, entry:Entry;
 
       fixedURL = app.URL.fix(url);
@@ -354,29 +354,49 @@ module app.Bookmark {
       }
     }
 
-    private removeChromeBookmark (url:string, callback?:Function):void {
-      var id:string;
-
-      url = app.URL.fix(url);
-
-      if (id = this.nodeIdStore[url]) {
+    private removeChromeBookmark (url: string, callback?: Function): void {
+      if (url in this.nodeIdStore) {
         delete this.nodeIdStore[url];
-        chrome.bookmarks.remove(id, function () {
-          if (callback) {
-            //TODO 失敗検出
-            callback(true);
+      }
+
+      chrome.bookmarks.getChildren(
+        this.rootNodeId,
+        (res: BookmarkTreeNode[]) => {
+          var removeIdList: string[] = [], removedCount = 0;
+
+          if (res) {
+            res.forEach((node) => {
+              var entry:Entry;
+
+              if (node.url && node.title) {
+                entry = ChromeBookmarkEntryList.URLToEntry(node.url);
+
+                if (entry.url === url) {
+                  removeIdList.push(node.id);
+                }
+              }
+            });
           }
-        });
-      }
-      else {
-        app.log("warn", "削除しようとしたブックマークの存在が確認できません。");
-        if (callback) {
-          callback(false);
+
+          if (removeIdList.length === 0 && callback) {
+            callback(false);
+          }
+
+          removeIdList.forEach((id: string) => {
+            chrome.bookmarks.remove(id, function () {
+              //TODO 失敗検出
+              removedCount++;
+
+              if (removedCount === removeIdList.length && callback) {
+                callback(true);
+              }
+            });
+          });
         }
-      }
+      );
     }
 
-    add (entry:Entry, createChromeBookmark? = true, callback?:Function):bool {
+    add (entry:Entry, createChromeBookmark = true, callback?:Function):bool {
       entry = app.deepCopy(entry);
 
       if (super.add(entry)) {
@@ -401,7 +421,7 @@ module app.Bookmark {
       }
     }
 
-    update (entry:Entry, updateChromeBookmark? = true, callback?:Function):bool {
+    update (entry:Entry, updateChromeBookmark = true, callback?:Function):bool {
       entry = app.deepCopy(entry);
 
       if (super.update(entry)) {
@@ -426,7 +446,7 @@ module app.Bookmark {
       }
     }
 
-    remove (url:string, removeChromeBookmark? = true, callback?:Function):bool {
+    remove (url:string, removeChromeBookmark = true, callback?:Function):bool {
       if (super.remove(url)) {
         if (removeChromeBookmark) {
           if (callback) {
