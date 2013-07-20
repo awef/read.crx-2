@@ -354,46 +354,26 @@ module app.Bookmark {
       }
     }
 
-    private removeChromeBookmark (url: string, callback?: Function): void {
-      if (url in this.nodeIdStore) {
+    private removeChromeBookmark (url:string, callback?:Function):void {
+      var id:string;
+
+      url = app.URL.fix(url);
+
+      if (id = this.nodeIdStore[url]) {
         delete this.nodeIdStore[url];
+        chrome.bookmarks.remove(id, function () {
+          if (callback) {
+            //TODO 失敗検出
+            callback(true);
+          }
+        });
       }
-
-      chrome.bookmarks.getChildren(
-        this.rootNodeId,
-        (res: BookmarkTreeNode[]) => {
-          var removeIdList: string[] = [], removedCount = 0;
-
-          if (res) {
-            res.forEach((node) => {
-              var entry:Entry;
-
-              if (node.url && node.title) {
-                entry = ChromeBookmarkEntryList.URLToEntry(node.url);
-
-                if (entry.url === url) {
-                  removeIdList.push(node.id);
-                }
-              }
-            });
-          }
-
-          if (removeIdList.length === 0 && callback) {
-            callback(false);
-          }
-
-          removeIdList.forEach((id: string) => {
-            chrome.bookmarks.remove(id, function () {
-              //TODO 失敗検出
-              removedCount++;
-
-              if (removedCount === removeIdList.length && callback) {
-                callback(true);
-              }
-            });
-          });
+      else {
+        app.log("warn", "削除しようとしたブックマークの存在が確認できません。");
+        if (callback) {
+          callback(false);
         }
-      );
+      }
     }
 
     add (entry:Entry, createChromeBookmark = true, callback?:Function):bool {
