@@ -696,25 +696,28 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
       expect(chrome.bookmarks.remove).not.toHaveBeenCalled()
       return
 
-    it "与えられたURLに対応するブックマークを全て削除する", ->
+    it "与えられたURLに対応するブックマークを削除する", ->
       spyOn(chrome.bookmarks, "remove").andCallThrough()
 
-      targetNodeId0 = null
-      targetNodeId1 = null
-      removeCallback = jasmine.createSpy("removeCallback")
+      onCreated = jasmine.createSpy("onCreated")
+      targetNodeId = null
+
+      chrome.bookmarks.onCreated.addListener (nodeId, node) ->
+        if node.url is dummyEntry.board0.url
+          targetNodeId = nodeId
+          onCreated()
+        return
+
+      removeCallback = jasmine.createSpy("updateCallback")
 
       cbel = new ChromeBookmarkEntryList(TEST_FOLDER_NODE_ID)
-
-      dummyEntry.thread0.url = dummyEntry.thread1.url
-      res = createBookmark([dummyEntry.thread0, dummyEntry.thread1])
+      cbel.createChromeBookmark(dummyEntry.board0)
 
       waitsFor ->
-        res.onCreated.wasCalled
+        onCreated.wasCalled
 
       runs ->
-        targetNodeId0 = res.results[0].id
-        targetNodeId1 = res.results[1].id
-        cbel.removeChromeBookmark(dummyEntry.thread0.url, removeCallback)
+        cbel.removeChromeBookmark(dummyEntry.board0.url, removeCallback)
         return
 
       waitsFor ->
@@ -724,13 +727,9 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
         expect(removeCallback.callCount).toBe(1)
         expect(removeCallback).toHaveBeenCalledWith(true)
 
-        expect(chrome.bookmarks.remove.callCount).toBe(2)
+        expect(chrome.bookmarks.remove.callCount).toBe(1)
         expect(chrome.bookmarks.remove).toHaveBeenCalledWith(
-          targetNodeId0
-          jasmine.any(Function)
-        )
-        expect(chrome.bookmarks.remove).toHaveBeenCalledWith(
-          targetNodeId1
+          targetNodeId
           jasmine.any(Function)
         )
         return
@@ -1206,6 +1205,33 @@ describe "app.Bookmark.ChromeBookmarkEntryList", ->
         expect(cbel.removeChromeBookmark.callCount).toBe(1)
         expect(cbel.removeChromeBookmark)
           .toHaveBeenCalledWith(dummyEntry.board0.url)
+        return
+      return
+    return
+
+  describe "add直後にremoveを行った場合", ->
+    it "removeChromeBookmarkに失敗する", ->
+      removeCallback = jasmine.createSpy("removeCallback")
+
+      cbel = new ChromeBookmarkEntryList(TEST_FOLDER_NODE_ID)
+
+      spyOn(cbel, "removeChromeBookmark").andCallFake (url, callback) ->
+        cbel.removeChromeBookmark.originalValue.call(cbel, url, removeCallback)
+        return
+
+      cbel.add(dummyEntry.thread0)
+
+      expect(cbel.get(dummyEntry.thread0.url)).toEqual(dummyEntry.thread0)
+
+      cbel.remove(dummyEntry.thread0.url)
+
+      expect(cbel.get(dummyEntry.thread0.url)).toBeNull()
+
+      waitsFor ->
+        removeCallback.wasCalled
+
+      runs ->
+        expect(removeCallback).toHaveBeenCalledWith(false)
         return
       return
     return
