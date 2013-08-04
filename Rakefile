@@ -2,6 +2,10 @@
 
 require "tmpdir"
 
+task :watch do
+  sh "bundle exec guard"
+end
+
 task :default => [
   "debug",
   "debug/manifest.json",
