@@ -4,6 +4,6 @@
   "devDependencies": {
     "grunt-cli": "*",
     "coffee-script": "1.6.3",
-    "typescript": "0.9.0-1"
+    "typescript": "0.9.1"
   }
 }

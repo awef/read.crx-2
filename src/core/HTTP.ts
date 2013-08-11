@@ -1,7 +1,3 @@
-interface XMLHttpRequest {
-  overrideMimeType: (mimetype: string) => void;
-}
-
 module app.HTTP {
   "use strict";
 
@@ -11,7 +7,7 @@ module app.HTTP {
     mimeType: string;
     timeout: number;
     headers: {[index:string]: string;};
-    preventCache: bool;
+    preventCache: boolean;
     private xhr: XMLHttpRequest;
 
     constructor (
@@ -21,7 +17,7 @@ module app.HTTP {
         mimeType?: string;
         headers?: {[index:string]: string;};
         timeout?: number;
-        preventCache?: bool;
+        preventCache?: boolean;
       } = {}
     ) {
       this.method = method;

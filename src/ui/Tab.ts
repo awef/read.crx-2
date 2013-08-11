@@ -155,7 +155,7 @@ module UI {
 
     add (
       url: string,
-      param: {title?: string; selected?: bool; lazy?: bool} =
+      param: {title?: string; selected?: boolean; lazy?: boolean} =
         {title: undefined, selected: undefined, lazy: undefined}
     ): string {
       var tabId: string;
@@ -201,8 +201,8 @@ module UI {
       param: {
         url?: string;
         title?: string;
-        selected?: bool;
-        _internal?: bool;
+        selected?: boolean;
+        _internal?: boolean;
       }
     ): void {
       var history, $iframe: JQuery, tmp;

@@ -376,7 +376,7 @@ module app.Bookmark {
       }
     }
 
-    add (entry:Entry, createChromeBookmark = true, callback?:Function):bool {
+    add (entry:Entry, createChromeBookmark = true, callback?:Function):boolean {
       entry = app.deepCopy(entry);
 
       if (super.add(entry)) {
@@ -401,7 +401,7 @@ module app.Bookmark {
       }
     }
 
-    update (entry:Entry, updateChromeBookmark = true, callback?:Function):bool {
+    update (entry:Entry, updateChromeBookmark = true, callback?:Function):boolean {
       entry = app.deepCopy(entry);
 
       if (super.update(entry)) {
@@ -426,7 +426,7 @@ module app.Bookmark {
       }
     }
 
-    remove (url:string, removeChromeBookmark = true, callback?:Function):bool {
+    remove (url:string, removeChromeBookmark = true, callback?:Function):boolean {
       if (super.remove(url)) {
         if (removeChromeBookmark) {
           if (callback) {
