@@ -307,6 +307,7 @@ header {
   $link-color,
   $freq-color,
   $anchor-color,
+  $anchor-active-color,
   $anchor-visited-color,
   $anchor-disabled-color,
   $one-color,
@@ -328,6 +329,9 @@ header {
 
   a {
     color: $anchor-color;
+    &:active {
+      color: $anchor-active-color;
+    }
     &:visited {
       color: $anchor-visited-color;
     }
@@ -397,6 +401,7 @@ header {
     $link-color: #00a,
     $freq-color: #a00,
     $anchor-color: #00e,
+    $anchor-active-color: hsl(10, 50%, 50%),
     $anchor-visited-color: #551A8B,
     $anchor-disabled-color: #666,
     $one-color: #a40000,
@@ -419,6 +424,7 @@ header {
     $link-color: #69d,
     $freq-color: #d99,
     $anchor-color: #6af,
+    $anchor-active-color: hsl(30, 50%, 50%),
     $anchor-visited-color: #99f,
     $anchor-disabled-color: #999,
     $one-color: #fe6,

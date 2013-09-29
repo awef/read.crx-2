@@ -181,7 +181,7 @@ module app.Bookmark {
       return deferred.promise();
     }
 
-    update_expired (url:string, expired:bool) {
+    update_expired (url:string, expired:boolean) {
       var deferred = $.Deferred(),
         entry = this.cbel.get(url);
 

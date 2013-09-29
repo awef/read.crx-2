@@ -66,7 +66,7 @@ module app {
     setTimeout(fn, 0);
   }
 
-  export function assert_arg (name:string, rule:string[], arg:any[]):bool {
+  export function assert_arg (name:string, rule:string[], arg:any[]):boolean {
     var key:number, val:any;
 
     for (key = 0; val = rule[key]; key++) {
@@ -80,7 +80,7 @@ module app {
   }
 
   export interface CallbacksConfiguration {
-    persistent?: bool;
+    persistent?: boolean;
   }
   export class Callbacks {
     private _config: CallbacksConfiguration;
@@ -396,7 +396,7 @@ module app {
     return /^https?:\/\//.test(url) ? url : "/view/empty.html";
   }
 
-  export var manifest;
+  export var manifest: any;
 
   (function () {
     var xhr:XMLHttpRequest;

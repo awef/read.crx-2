@@ -19,7 +19,7 @@ module app {
       bbsType: string;
       resCount: number;
       readState: ReadState;
-      expired: bool;
+      expired: boolean;
     }
 
     export interface LegacyEntry {
@@ -29,7 +29,7 @@ module app {
       bbs_type: string;
       res_count: number;
       read_state: ReadState;
-      expired: bool;
+      expired: boolean;
     }
 
     export function legacyToCurrent (legacy:LegacyEntry):Entry {
@@ -122,7 +122,7 @@ module app {
       private cache: {[index:string]:Entry;} = {};
       private boardURLIndex: {[index:string]:string[];} = {};
 
-      add (entry:Entry):bool {
+      add (entry:Entry):boolean {
         var boardURL:string;
 
         if (!this.get(entry.url)) {
@@ -144,7 +144,7 @@ module app {
         }
       }
 
-      update (entry:Entry):bool {
+      update (entry:Entry):boolean {
         if (this.get(entry.url)) {
           this.cache[entry.url] = app.deepCopy(entry);
           return true;
@@ -154,7 +154,7 @@ module app {
         }
       }
 
-      remove (url:string):bool {
+      remove (url:string):boolean {
         var tmp:number, boardURL:string;
 
         url = app.URL.fix(url);
@@ -291,7 +291,7 @@ module app {
         };
       }
 
-      add (entry:Entry):bool {
+      add (entry:Entry):boolean {
         if (super.add(entry)) {
           this.onChanged.call({
             type: "ADD",
@@ -304,7 +304,7 @@ module app {
         }
       }
 
-      update (entry:Entry):bool {
+      update (entry:Entry):boolean {
         var before = this.get(entry.url);
 
         if (super.update(entry)) {
@@ -351,7 +351,7 @@ module app {
         }
       }
 
-      remove (url:string):bool {
+      remove (url:string):boolean {
         var entry:Entry = this.get(url);
 
         if (super.remove(url)) {

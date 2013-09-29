@@ -24,7 +24,7 @@ describe "UI.Tab", ->
     expect(div.outerHTML).toEqual(tmp)
     return
 
-  describe "@_historyStore", ->
+  describe "@historyStore", ->
     it "タブ毎の履歴が格納される", ->
       tmp = {}
 
@@ -37,7 +37,7 @@ describe "UI.Tab", ->
           {url: url1, title: url1}
         ]
       }
-      expect(tab._historyStore).toEqual(tmp)
+      expect(tab.historyStore).toEqual(tmp)
 
       # タブ追加（タイトル指定）
       url2 = getDummyURL()
@@ -48,73 +48,73 @@ describe "UI.Tab", ->
           {url: url2, title: "test"}
         ]
       }
-      expect(tab._historyStore).toEqual(tmp)
+      expect(tab.historyStore).toEqual(tmp)
 
       # タイトル変更
       tab.update(tabId1, title: "test2")
       tmp[tabId1].stack[0].title = "test2"
-      expect(tab._historyStore).toEqual(tmp)
+      expect(tab.historyStore).toEqual(tmp)
 
       # URL変更
       url3 = getDummyURL()
       tab.update(tabId1, url: url3)
       tmp[tabId1].current++
       tmp[tabId1].stack.push(url: url3, title: url3)
-      expect(tab._historyStore).toEqual(tmp)
+      expect(tab.historyStore).toEqual(tmp)
 
       # URL変更（タイトル指定）
       url4 = getDummyURL()
       tab.update(tabId1, url: url4, title: "test3")
       tmp[tabId1].current++
       tmp[tabId1].stack.push(url: url4, title: "test3")
-      expect(tab._historyStore).toEqual(tmp)
+      expect(tab.historyStore).toEqual(tmp)
 
       # URL変更
       url5 = getDummyURL()
       tab.update(tabId1, url: url5, title: "test4")
       tmp[tabId1].current++
       tmp[tabId1].stack.push(url: url5, title: "test4")
-      expect(tab._historyStore).toEqual(tmp)
+      expect(tab.historyStore).toEqual(tmp)
 
       # requestTabBack時と同等の処理
-      tab._historyStore[tabId1].current--
+      tab.historyStore[tabId1].current--
       tmp[tabId1].current--
       tab.update(tabId1, {
-        title: tab._historyStore[tabId1].stack[tab._historyStore[tabId1].current].title
-        url: tab._historyStore[tabId1].stack[tab._historyStore[tabId1].current].url
+        title: tab.historyStore[tabId1].stack[tab.historyStore[tabId1].current].title
+        url: tab.historyStore[tabId1].stack[tab.historyStore[tabId1].current].url
         _internal: true
       })
-      expect(tab._historyStore).toEqual(tmp)
+      expect(tab.historyStore).toEqual(tmp)
 
       # requestTabForward時と同等の処理
-      tab._historyStore[tabId1].current++
+      tab.historyStore[tabId1].current++
       tmp[tabId1].current++
       tab.update(tabId1, {
-        title: tab._historyStore[tabId1].stack[tab._historyStore[tabId1].current].title
-        url: tab._historyStore[tabId1].stack[tab._historyStore[tabId1].current].url
+        title: tab.historyStore[tabId1].stack[tab.historyStore[tabId1].current].title
+        url: tab.historyStore[tabId1].stack[tab.historyStore[tabId1].current].url
         _internal: true
       })
-      expect(tab._historyStore).toEqual(tmp)
+      expect(tab.historyStore).toEqual(tmp)
 
       # requestTabBack時と同等の処理
-      tab._historyStore[tabId1].current--
+      tab.historyStore[tabId1].current--
       tmp[tabId1].current--
       tab.update(tabId1, {
-        title: tab._historyStore[tabId1].stack[tab._historyStore[tabId1].current].title
-        url: tab._historyStore[tabId1].stack[tab._historyStore[tabId1].current].url
+        title: tab.historyStore[tabId1].stack[tab.historyStore[tabId1].current].title
+        url: tab.historyStore[tabId1].stack[tab.historyStore[tabId1].current].url
         _internal: true
       })
-      expect(tab._historyStore).toEqual(tmp)
+      expect(tab.historyStore).toEqual(tmp)
 
       # requestTabBack時と同等の処理
-      tab._historyStore[tabId1].current--
+      tab.historyStore[tabId1].current--
       tmp[tabId1].current--
       tab.update(tabId1, {
-        title: tab._historyStore[tabId1].stack[tab._historyStore[tabId1].current].title
-        url: tab._historyStore[tabId1].stack[tab._historyStore[tabId1].current].url
+        title: tab.historyStore[tabId1].stack[tab.historyStore[tabId1].current].title
+        url: tab.historyStore[tabId1].stack[tab.historyStore[tabId1].current].url
         _internal: true
       })
-      expect(tab._historyStore).toEqual(tmp)
+      expect(tab.historyStore).toEqual(tmp)
 
       # requestTabBack処理後に移動した場合
       url6 = getDummyURL()
@@ -122,14 +122,14 @@ describe "UI.Tab", ->
       tmp[tabId1].stack.splice(tmp[tabId1].current + 1)
       tmp[tabId1].current++
       tmp[tabId1].stack.push(url: url6, title: url6)
-      expect(tab._historyStore).toEqual(tmp)
+      expect(tab.historyStore).toEqual(tmp)
       return
 
     it "閉じたタブの履歴は五十個まで保持する", ->
       for [0...55]
         tab.remove(tab.add(getDummyURL()))
 
-      expect(Object.keys(tab._historyStore).length).toBe(50)
+      expect(Object.keys(tab.historyStore).length).toBe(50)
       return
 
     return

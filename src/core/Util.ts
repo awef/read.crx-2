@@ -4,7 +4,7 @@ module app.Util {
   export function levenshteinDistance (
     a:string,
     b:string,
-    allowReplace:bool = true
+    allowReplace:boolean = true
   ):number {
     var repCost:number, table:number[][], c:number, ac:number, bc:number;
 
