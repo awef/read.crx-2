@@ -31,8 +31,16 @@ class app.view.View
   constructor: (@element) ->
     @$element = $(@element)
 
+    @_disableAutoScroll()
     @_setupTheme()
     @_setupOpenInRcrx()
+    return
+
+  _disableAutoScroll: ->
+    @$element.on "mousedown", (e) ->
+      if e.button is 1
+        e.preventDefault()
+      return
     return
 
   ###*
