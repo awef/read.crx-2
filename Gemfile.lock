@@ -4,11 +4,11 @@ GEM
     celluloid (0.15.2)
       timers (~> 1.1.0)
     coderay (1.0.9)
-    ffi (1.9.0)
+    ffi (1.9.3)
     formatador (0.2.4)
-    guard (2.0.5)
+    guard (2.2.2)
       formatador (>= 0.2.4)
-      listen (~> 2.0)
+      listen (~> 2.1)
       lumberjack (~> 1.0)
       pry (>= 0.9.12)
       thor (>= 0.18.1)
@@ -17,7 +17,7 @@ GEM
       rake
     haml (4.0.3)
       tilt
-    listen (2.1.0)
+    listen (2.2.0)
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
