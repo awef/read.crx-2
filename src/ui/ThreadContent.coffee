@@ -416,7 +416,7 @@ class UI.ThreadContent
         #サムネイル表示(対応サイト)
         if configThumbnailSupported
           #YouTube
-          if res = /// ^http://
+          if res = /// ^https?://
               (?:www\.youtube\.com/watch\?(?:.+&)?v=|youtu\.be/)
               ([\w\-]+).*
             ///.exec(a.href)
