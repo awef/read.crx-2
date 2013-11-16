@@ -52,6 +52,7 @@
     }
   ],
   "web_accessible_resources": [
+    "/view/index.html",
     "/view/board.html",
     "/view/bookmark.html",
     "/view/bookmark_source_selector.html",
