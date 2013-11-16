@@ -105,6 +105,7 @@ header {
   display: inline-block;
   margin: 10px;
   height: $container-height;
+
   > a {
     $a-padding: 3px;
     position: relative;
@@ -112,6 +113,7 @@ header {
     background-color: white;
     padding: $a-padding;
     box-shadow: 0 1px 3px 0px rgba(black, 0.4);
+
     > img {
       display: block;
       max-width: 150px;
@@ -120,6 +122,29 @@ header {
         width: 50px;
         height: 50px;
       }
+    }
+
+    &::after {
+      @include drop-shadow;
+      position: absolute;
+      right: -4px;
+      bottom: -4px;
+
+      width: 16px;
+      height: 16px;
+      padding: 2px;
+
+      background: hsl(0, 0%, 97.5%);
+      border-radius: 2px;
+    }
+
+    &[href^="http://www.nicovideo.jp/watch/"]::after {
+      content: url(http://www.nicovideo.jp/favicon.ico);
+    }
+
+    &[href^="http://youtu.be/"]::after,
+    &[href^="http://www.youtube.com/watch?"]::after {
+      content: url(http://www.youtube.com/favicon.ico);
     }
   }
 }

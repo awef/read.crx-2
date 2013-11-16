@@ -436,6 +436,8 @@ describe "UI.ThreadContent", ->
         http://www.youtube.com/watch?v=BlpKiZI_iL8<br>
         http://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8<br>
         http://youtu.be/BlpKiZI_iL8<br>
+        https://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8<br>
+        https://youtu.be/BlpKiZI_iL8<br>
         http://www.nicovideo.jp/watch/sm4362091<br>
         http://nico.ms/sm4362091
       """.replace(/\n/g, "")
@@ -446,7 +448,7 @@ describe "UI.ThreadContent", ->
         <br>
         <div class="thumbnail">
           <a href="http://www.youtube.com/watch?v=BlpKiZI_iL8" target="_blank">
-            <img src="/img/dummy_1x1.png" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+            <img src="/img/dummy_1x1.png" data-src="https://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
           </a>
         </div>
         <br>
@@ -456,7 +458,7 @@ describe "UI.ThreadContent", ->
         <br>
         <div class="thumbnail">
           <a href="http://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8" target="_blank">
-            <img src="/img/dummy_1x1.png" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+            <img src="/img/dummy_1x1.png" data-src="https://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
           </a>
         </div>
         <br>
@@ -466,7 +468,27 @@ describe "UI.ThreadContent", ->
         <br>
         <div class="thumbnail">
           <a href="http://youtu.be/BlpKiZI_iL8" target="_blank">
-            <img src="/img/dummy_1x1.png" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+            <img src="/img/dummy_1x1.png" data-src="https://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+          </a>
+        </div>
+        <br>
+        <a href="https://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8" target="_blank" class="has_thumbnail">
+          https://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8
+        </a>
+        <br>
+        <div class="thumbnail">
+          <a href="https://www.youtube.com/watch?gl=JP&v=BlpKiZI_iL8" target="_blank">
+            <img src="/img/dummy_1x1.png" data-src="https://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+          </a>
+        </div>
+        <br>
+        <a href="https://youtu.be/BlpKiZI_iL8" target="_blank" class="has_thumbnail">
+          https://youtu.be/BlpKiZI_iL8
+        </a>
+        <br>
+        <div class="thumbnail">
+          <a href="https://youtu.be/BlpKiZI_iL8" target="_blank">
+            <img src="/img/dummy_1x1.png" data-src="https://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
           </a>
         </div>
         <br>
@@ -621,7 +643,7 @@ describe "UI.ThreadContent", ->
         <br>
         <div class="thumbnail">
           <a href="http://youtu.be/BlpKiZI_iL8" target="_blank">
-            <img src="/img/dummy_1x1.png" data-src="http://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
+            <img src="/img/dummy_1x1.png" data-src="https://img.youtube.com/vi/BlpKiZI_iL8/default.jpg" />
           </a>
         </div>
         <div class="thumbnail">

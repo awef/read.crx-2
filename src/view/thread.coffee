@@ -544,7 +544,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
     search_next_thread =
       _elm: $view.find(".search_next_thread")[0]
       show: ->
-        if content.childNodes.length >= 1000
+        if content.childNodes.length >= 1000 or $view.find(".message_bar").hasClass("error")
           @_elm.style["display"] = "block"
         else
           @hide()

@@ -14,10 +14,6 @@ read.crx 2は[Google Chrome][chrome]アプリとして作られた2chブラウ�
     npm install
     bundle install
     
-    cd lib/jquery
-    npm install
-    cd ../..
-    
     bundle exec rake
 
 # 商用利用時の注意
