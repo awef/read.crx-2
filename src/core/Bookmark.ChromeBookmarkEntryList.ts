@@ -371,7 +371,7 @@ module app.Bookmark {
               if (node.url && node.title) {
                 entry = ChromeBookmarkEntryList.URLToEntry(node.url);
 
-                if (entry.url === url) {
+                if (entry && entry.url === url) {
                   removeIdList.push(node.id);
                 }
               }
