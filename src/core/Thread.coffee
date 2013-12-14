@@ -21,7 +21,7 @@ class app.Thread
     xhrCharset = xhrInfo.charset
 
     getCachedInfo = $.Deferred (d) =>
-      if app.url.tsld(@url) in ["livedoor.jp", "machi.to"]
+      if app.url.tsld(@url) in ["shitaraba.net", "machi.to"]
         app.Board.get_cached_res_count(@url)
           .done (res) ->
             d.resolve(res)
@@ -56,7 +56,7 @@ class app.Thread
     #通信
     .pipe null, =>
       $.Deferred (d) =>
-        if app.url.tsld(@url) in ["livedoor.jp", "machi.to"]
+        if app.url.tsld(@url) in ["shitaraba.net", "machi.to"]
           if promiseCacheGet.state() is "resolved"
             deltaFlg = true
             xhrPath += (+cache.res_length + 1) + "-"
@@ -250,8 +250,8 @@ class app.Thread
       when "machi.to"
         path: "http://#{tmp[1]}/bbs/offlaw.cgi/#{tmp[3]}/#{tmp[4]}/",
         charset: "Shift_JIS"
-      when "livedoor.jp"
-        path: "http://jbbs.livedoor.jp/" +
+      when "shitaraba.net"
+        path: "http://jbbs.shitaraba.net/" +
             "bbs/rawmode.cgi/#{tmp[3]}/#{tmp[4]}/#{tmp[5]}/",
         charset: "EUC-JP"
       else
@@ -271,7 +271,7 @@ class app.Thread
         null
       when "machi.to"
         Thread._parseMachi(text)
-      when "livedoor.jp"
+      when "shitaraba.net"
         Thread._parseJbbs(text)
       else
         Thread._parseCh(text)

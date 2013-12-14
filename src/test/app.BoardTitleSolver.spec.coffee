@@ -90,10 +90,10 @@ describe "app.BoardTitleSolver", ->
     completed = false
 
     $.mockjax
-      url: "http://jbbs.livedoor.jp/bbs/api/setting.cgi/__dummy/01234/"
+      url: "http://jbbs.shitaraba.net/bbs/api/setting.cgi/__dummy/01234/"
       status: 200
       responseText: """
-        TOP=http://jbbs.livedoor.jp/__dummy/01234/
+        TOP=http://jbbs.shitaraba.net/__dummy/01234/
         DIR=__dummy
         BBS=01234
         CATEGORY=ダミーカテゴリ
@@ -106,7 +106,7 @@ describe "app.BoardTitleSolver", ->
       """
 
     app.BoardTitleSolver
-      .ask(url: "http://jbbs.livedoor.jp/__dummy/01234/", offline: false)
+      .ask(url: "http://jbbs.shitaraba.net/__dummy/01234/", offline: false)
       .done (title) ->
         expect(title).toBe("ダミー板")
         completed = true

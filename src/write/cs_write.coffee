@@ -45,7 +45,7 @@ do ->
         send_message_error()
 
     #したらば投稿確認
-    else if ///^http://jbbs\.livedoor\.jp/bbs/write.cgi/\w+/\d+/\d+/$///.test(location.href)
+    else if ///^http://jbbs\.shitaraba\.net/bbs/write.cgi/\w+/\d+/\d+/$///.test(location.href)
       if /書きこみました/.test(document.title)
         send_message_success()
       else if /ERROR/.test(document.title)
