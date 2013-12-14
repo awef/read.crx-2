@@ -6,10 +6,16 @@ module app {
           // スレ系 誤爆する事は考えられないので、パラメータ部分をバッサリ切ってしまう
           .replace(/^(http:\/\/[\w\.]+\/test\/read\.cgi\/\w+\/\d+).*?$/, "$1/")
           .replace(/^(http:\/\/\w+\.machi\.to\/bbs\/read\.cgi\/\w+\/\d+).*?$/, "$1/")
-          .replace(/^(http:\/\/jbbs\.livedoor\.jp\/bbs\/read\.cgi\/\w+\/\d+\/\d+).*?$/, "$1/")
+          .replace(
+            /^http:\/\/jbbs\.(?:livedoor\.jp|shitaraba\.net)\/(bbs\/read\.cgi\/\w+\/\d+\/\d+).*?$/,
+            "http://jbbs.shitaraba.net/$1/"
+          )
           // 板系 完全に誤爆を少しでも減らすために、パラメータ形式も限定する
           .replace(/^(http:\/\/[\w\.]+\/\w+\/)(?:#.*)?$/, "$1")
-          .replace(/^(http:\/\/jbbs\.livedoor\.jp\/\w+\/\d+\/)(?:#.*)?$/, "$1")
+          .replace(
+            /^http:\/\/jbbs\.(?:livedoor\.jp|shitaraba\.net)\/(\w+\/\d+\/)(?:#.*)?$/,
+            "http://jbbs.shitaraba.net/$1"
+          )
       );
     }
 
@@ -20,10 +26,10 @@ module app {
     export function guessType (url:string):GuessResult {
       url = fix(url);
 
-      if (/^http:\/\/jbbs\.livedoor\.jp\/bbs\/read\.cgi\/\w+\/\d+\/\d+\/$/.test(url)) {
+      if (/^http:\/\/jbbs\.shitaraba\.net\/bbs\/read\.cgi\/\w+\/\d+\/\d+\/$/.test(url)) {
         return {type: "thread", bbsType: "jbbs"};
       }
-      else if (/^http:\/\/jbbs\.livedoor\.jp\/\w+\/\d+\/$/.test(url)) {
+      else if (/^http:\/\/jbbs\.shitaraba\.net\/\w+\/\d+\/$/.test(url)) {
         return {type: "board", bbsType: "jbbs"};
       }
       else if (/^http:\/\/\w+\.machi\.to\/bbs\/read\.cgi\/\w+\/\d+\/$/.test(url)) {
@@ -57,7 +63,7 @@ module app {
       return (
         fix(url)
           .replace(/^http:\/\/([\w\.]+)\/(?:test|bbs)\/read\.cgi\/(\w+)\/\d+\/$/, "http://$1/$2/")
-          .replace(/^http:\/\/jbbs\.livedoor\.jp\/bbs\/read\.cgi\/(\w+)\/(\d+)\/\d+\/$/, "http://jbbs.livedoor.jp/$1/$2/")
+          .replace(/^http:\/\/jbbs\.shitaraba\.net\/bbs\/read\.cgi\/(\w+)\/(\d+)\/\d+\/$/, "http://jbbs.shitaraba.net/$1/$2/")
       );
     }
 

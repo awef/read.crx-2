@@ -82,7 +82,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
       return
     $.popup($view, $popup, e.clientX, e.clientY, that)
 
-  if app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"]
+  if app.url.tsld(view_url) in ["2ch.net", "shitaraba.net"]
     $view.find(".button_write").bind "click", ->
       write()
       return
@@ -181,7 +181,7 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
       unless $article.attr("data-id")?
         $menu.find(".copy_id").remove()
 
-      unless app.url.tsld(view_url) in ["2ch.net", "livedoor.jp"]
+      unless app.url.tsld(view_url) in ["2ch.net", "shitaraba.net"]
         $menu.find(".res_to_this, .res_to_this2").remove()
 
       unless $article.is(".popup > article")

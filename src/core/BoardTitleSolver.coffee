@@ -102,7 +102,7 @@ class app.BoardTitleSolver
   ###
   @searchFromJbbsAPI: (url) ->
     tmp = url.split("/")
-    ajax_path = "http://jbbs.livedoor.jp/bbs/api/setting.cgi/#{tmp[3]}/#{tmp[4]}/"
+    ajax_path = "http://jbbs.shitaraba.net/bbs/api/setting.cgi/#{tmp[3]}/#{tmp[4]}/"
 
     $.ajax(ajax_path, {
       dataType: "text"
