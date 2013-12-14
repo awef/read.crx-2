@@ -34,7 +34,7 @@
     {
       "matches" : [
         "http://*.2ch.net/*",
-        "http://jbbs.livedoor.jp/*",
+        "http://jbbs.shitaraba.net/*",
         "http://*.machi.to/*"
       ],
       "js" : ["/cs_addlink.js"]
