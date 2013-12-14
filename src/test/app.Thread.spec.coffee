@@ -51,7 +51,7 @@ describe "app.Thread", ->
 
     runs ->
       cacheGetDeferred.reject()
-      if app.url.tsld(config.data.url) in ["livedoor.jp", "machi.to"]
+      if app.url.tsld(config.data.url) in ["shitaraba.net", "machi.to"]
         expect(app.Board.get_cached_res_count).toHaveBeenCalled()
         getCachedResCountDeferred
           .resolve(res_count: config.data.expected.res.length)
@@ -96,7 +96,7 @@ describe "app.Thread", ->
 
     runs ->
       cacheGetDeferred.reject()
-      if app.url.tsld(config.data.url) in ["livedoor.jp", "machi.to"]
+      if app.url.tsld(config.data.url) in ["shitaraba.net", "machi.to"]
         expect(app.Board.get_cached_res_count).toHaveBeenCalled()
         getCachedResCountDeferred.reject()
       else
@@ -152,7 +152,7 @@ describe "app.Thread", ->
       cache.dat_size = null
       cacheGetDeferred.resolve()
 
-      if app.url.tsld(config.data.url) in ["livedoor.jp", "machi.to"]
+      if app.url.tsld(config.data.url) in ["shitaraba.net", "machi.to"]
         expect(app.Board.get_cached_res_count).toHaveBeenCalled()
         getCachedResCountDeferred
           .resolve(res_count: config.data.expected.res.length)
@@ -218,7 +218,7 @@ describe "app.Thread", ->
       cache.dat_size = null
       cacheGetDeferred.resolve()
 
-      if app.url.tsld(config.data.url) in ["livedoor.jp", "machi.to"]
+      if app.url.tsld(config.data.url) in ["shitaraba.net", "machi.to"]
         expect(app.Board.get_cached_res_count).toHaveBeenCalled()
         getCachedResCountDeferred
           .resolve(res_count: config.data.expected.res.length)
@@ -448,8 +448,8 @@ describe "app.Thread", ->
 
   # したらば
   data.jbbs =
-    url: "http://jbbs.livedoor.jp/bbs/read.cgi/__dummy/42710/1310968239/"
-    datURL: "http://jbbs.livedoor.jp/bbs/rawmode.cgi/__dummy/42710/1310968239/"
+    url: "http://jbbs.shitaraba.net/bbs/read.cgi/__dummy/42710/1310968239/"
+    datURL: "http://jbbs.shitaraba.net/bbs/rawmode.cgi/__dummy/42710/1310968239/"
     dat: """
     1<><font color=#FF0000>awef★</font><><>2011/07/18(月) 14:50:39<>テスト<>削除レスとかの動作を確認するためのスレ<>???
     2<><font color=#FF0000>awef★</font><><>2011/07/18(月) 14:51:47<>テスト2<><>???
@@ -531,8 +531,8 @@ describe "app.Thread", ->
 
   # したらば（存在しないスレッド）
   data.jbbs404 =
-    url: "http://jbbs.livedoor.jp/bbs/read.cgi/__dummy/42710/404/"
-    datURL: "http://jbbs.livedoor.jp/bbs/rawmode.cgi/__dummy/42710/404/"
+    url: "http://jbbs.shitaraba.net/bbs/read.cgi/__dummy/42710/404/"
+    datURL: "http://jbbs.shitaraba.net/bbs/rawmode.cgi/__dummy/42710/404/"
     dat: ""
 
   # BBSPINK

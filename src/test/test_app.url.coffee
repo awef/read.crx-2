@@ -15,14 +15,14 @@ module "app.url.fix",
     @fixed_board_url = [
       "http://qb5.2ch.net/operate/"
       "http://www.machi.to/tawara/"
-      "http://jbbs.livedoor.jp/computer/42710/"
+      "http://jbbs.shitaraba.net/computer/42710/"
       "http://pele.bbspink.com/erobbs/"
       "http://ex14.vip2ch.com/part4vip/"
     ]
     @fixed_thread_url = [
       "http://pc11.2ch.net/test/read.cgi/hp/1277348045/"
       "http://www.machi.to/bbs/read.cgi/tawara/511234524356/"
-      "http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273802908/"
+      "http://jbbs.shitaraba.net/bbs/read.cgi/computer/42710/1273802908/"
       "http://pele.bbspink.com/test/read.cgi/erobbs/9241103704/"
       "http://ex14.vip2ch.com/test/read.cgi/part4vip/1291628400/"
     ]
@@ -77,7 +77,7 @@ test "スレURLのURLオプションを削除する", ->
 
 module("app.url.guess_type")
 
-test "URLを解析して、その情報を返す", 15, ->
+test "URLを解析して、その情報を返す", 17, ->
   test = (url, expected) ->
     deepEqual(app.url.guess_type(url), expected)
   test("http://qb5.2ch.net/operate/",
@@ -91,6 +91,10 @@ test "URLを解析して、その情報を返す", 15, ->
   test("http://jbbs.livedoor.jp/computer/42710/",
     {type: "board", bbs_type: "jbbs"})
   test("http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273802908/",
+    {type: "thread", bbs_type: "jbbs"})
+  test("http://jbbs.shitaraba.net/computer/42710/",
+    {type: "board", bbs_type: "jbbs"})
+  test("http://jbbs.shitaraba.net/bbs/read.cgi/computer/42710/1273802908/",
     {type: "thread", bbs_type: "jbbs"})
   test("http://pele.bbspink.com/erobbs/",
     {type: "board", bbs_type: "2ch"})

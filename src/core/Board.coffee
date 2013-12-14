@@ -180,8 +180,8 @@ class app.Board
       when "machi.to"
         path: "http://#{tmp[1]}/bbs/offlaw.cgi/#{tmp[3]}/"
         charset: "Shift_JIS"
-      when "livedoor.jp"
-        path: "http://jbbs.livedoor.jp/#{tmp[3]}/#{tmp[4]}/subject.txt"
+      when "livedoor.jp", "shitaraba.net"
+        path: "http://jbbs.shitaraba.net/#{tmp[3]}/#{tmp[4]}/subject.txt"
         charset: "EUC-JP"
       else
         path: "http://#{tmp[1]}/#{tmp[3]}/subject.txt"
@@ -201,10 +201,10 @@ class app.Board
         bbs_type = "machi"
         reg = /^\d+<>(\d+)<>(.+)\((\d+)\)$/gm
         base_url = "http://#{tmp[1]}/bbs/read.cgi/#{tmp[3]}/"
-      when "livedoor.jp"
+      when "shitaraba.net"
         bbs_type = "jbbs"
         reg = /^(\d+)\.cgi,(.+)\((\d+)\)$/gm
-        base_url = "http://jbbs.livedoor.jp/bbs/read.cgi/#{tmp[3]}/#{tmp[4]}/"
+        base_url = "http://jbbs.shitaraba.net/bbs/read.cgi/#{tmp[3]}/#{tmp[4]}/"
       else
         bbs_type = "2ch"
         reg = /^(\d+)\.dat<>(.+) \((\d+)\)$/gm

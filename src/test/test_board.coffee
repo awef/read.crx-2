@@ -1,6 +1,6 @@
 module("Board._get_xhr_info")
 
-asyncTest "板のURLから、データのパスと文字コードを返す", 5, ->
+asyncTest "板のURLから、データのパスと文字コードを返す", 6, ->
   app.module null, ["board"], (Board) ->
     pattern = [
       {
@@ -18,7 +18,13 @@ asyncTest "板のURLから、データのパスと文字コードを返す", 5, 
       {
         message: "したらば"
         url: "http://jbbs.livedoor.jp/computer/42710/"
-        path: "http://jbbs.livedoor.jp/computer/42710/subject.txt"
+        path: "http://jbbs.shitaraba.net/computer/42710/subject.txt"
+        charset: "EUC-JP"
+      }
+      {
+        message: "したらば"
+        url: "http://jbbs.shitaraba.net/computer/42710/"
+        path: "http://jbbs.shitaraba.net/computer/42710/subject.txt"
         charset: "EUC-JP"
       }
       {
@@ -141,7 +147,7 @@ asyncTest "まちBBSのスレ覧をパース出来る", 1, ->
   return
 
 asyncTest "したらばのスレ覧をパース出来る", 1, ->
-  url = "http://jbbs.livedoor.jp/computer/42710/"
+  url = "http://jbbs.shitaraba.net/computer/42710/"
   text = """
     1290070091.cgi,read.crx総合 part2(354)
     1290070123.cgi,read.crx CSSスレ(31)
@@ -152,31 +158,31 @@ asyncTest "したらばのスレ覧をパース出来る", 1, ->
   """
   expected = [
     {
-      url: "http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1290070091/"
+      url: "http://jbbs.shitaraba.net/bbs/read.cgi/computer/42710/1290070091/"
       title: "read.crx総合 part2"
       res_count: 354
       created_at: 1290070091000
     }
     {
-      url: "http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1290070123/"
+      url: "http://jbbs.shitaraba.net/bbs/read.cgi/computer/42710/1290070123/"
       title: "read.crx CSSスレ"
       res_count: 31
       created_at: 1290070123000
     }
     {
-      url: "http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273802908/"
+      url: "http://jbbs.shitaraba.net/bbs/read.cgi/computer/42710/1273802908/"
       title: "read.crx総合"
       res_count: 1000
       created_at: 1273802908000
     }
     {
-      url: "http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273732874/"
+      url: "http://jbbs.shitaraba.net/bbs/read.cgi/computer/42710/1273732874/"
       title: "テストスレ"
       res_count: 413
       created_at: 1273732874000
     }
     {
-      url: "http://jbbs.livedoor.jp/bbs/read.cgi/computer/42710/1273734819/"
+      url: "http://jbbs.shitaraba.net/bbs/read.cgi/computer/42710/1273734819/"
       title: "スレスト"
       res_count: 1
       created_at: 1273734819000
@@ -536,19 +542,19 @@ asyncTest "したらばの板の取得/更新テスト", 19, ->
   """
   expected1 = [
     {
-      url: "http://jbbs.livedoor.jp/bbs/read.cgi/__computer/42710/1290070091/"
+      url: "http://jbbs.shitaraba.net/bbs/read.cgi/__computer/42710/1290070091/"
       title: "read.crx総合 part2"
       res_count: 354
       created_at: 1290070091000
     }
     {
-      url: "http://jbbs.livedoor.jp/bbs/read.cgi/__computer/42710/1290070123/"
+      url: "http://jbbs.shitaraba.net/bbs/read.cgi/__computer/42710/1290070123/"
       title: "read.crx CSSスレ"
       res_count: 31
       created_at: 1290070123000
     }
     {
-      url: "http://jbbs.livedoor.jp/bbs/read.cgi/__computer/42710/1273802908/"
+      url: "http://jbbs.shitaraba.net/bbs/read.cgi/__computer/42710/1273802908/"
       title: "read.crx総合"
       res_count: 1000
       created_at: 1273802908000
@@ -556,20 +562,20 @@ asyncTest "したらばの板の取得/更新テスト", 19, ->
   ]
   expected2 = app.deep_copy(expected1)
   expected2.push {
-    url: "http://jbbs.livedoor.jp/bbs/read.cgi/__computer/42710/1273732874/"
+    url: "http://jbbs.shitaraba.net/bbs/read.cgi/__computer/42710/1273732874/"
     title: "テストスレ"
     res_count: 413
     created_at: 1273732874000
   }
   expected2.push {
-    url: "http://jbbs.livedoor.jp/bbs/read.cgi/__computer/42710/1273734819/"
+    url: "http://jbbs.shitaraba.net/bbs/read.cgi/__computer/42710/1273734819/"
     title: "スレスト"
     res_count: 1
     created_at: 1273734819000
   }
   @test {
-    url: "http://jbbs.livedoor.jp/__computer/42710/"
-    dat_url: "http://jbbs.livedoor.jp/__computer/42710/subject.txt"
+    url: "http://jbbs.shitaraba.net/__computer/42710/"
+    dat_url: "http://jbbs.shitaraba.net/__computer/42710/subject.txt"
     dat1
     expected1
     dat2
