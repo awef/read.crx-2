@@ -42,7 +42,7 @@
     {
       "matches" : [
         "http://*.2ch.net/test/bbs.cgi*",
-        "http://jbbs.livedoor.jp/bbs/write.cgi/*",
+        "http://jbbs.shitaraba.net/bbs/write.cgi/*",
         "http://*.p2.2ch.net/p2/post_form.php?*",
         "http://*.p2.2ch.net/p2/post.php?*"
       ],

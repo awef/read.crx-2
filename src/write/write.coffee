@@ -29,7 +29,7 @@ app.boot "/write/write.html", ->
         if req.method is "POST" and is_same_origin
           if (
             ///^http://\w+\.2ch\.net/test/bbs\.cgi ///.test(req.url) or
-            ///^http://jbbs\.livedoor\.jp/bbs/write\.cgi/ ///.test(req.url)
+            ///^http://jbbs\.shitaraba\.net/bbs/write\.cgi/ ///.test(req.url)
           )
             req.requestHeaders.push(name: "Referer", value: arg.url)
             return requestHeaders: req.requestHeaders
@@ -39,7 +39,7 @@ app.boot "/write/write.html", ->
         types: ["sub_frame"]
         urls: [
           "http://*.2ch.net/test/bbs.cgi*"
-          "http://jbbs.livedoor.jp/bbs/write.cgi/*"
+          "http://jbbs.shitaraba.net/bbs/write.cgi/*"
         ]
       }
       ["requestHeaders", "blocking"]
@@ -147,8 +147,8 @@ app.boot "/write/write.html", ->
         iframe_arg.host = res[1]
         iframe_arg.bbs = res[2]
         iframe_arg.key = res[3]
-      else if res = ///^http://jbbs\.livedoor\.jp/bbs/read\.cgi/(\w+)/(\d+)/(\d+)///.exec(arg.url)
-        iframe_arg.host = "jbbs.livedoor.jp/#{res[1]}"
+      else if res = ///^http://jbbs\.shitaraba\.net/bbs/read\.cgi/(\w+)/(\d+)/(\d+)///.exec(arg.url)
+        iframe_arg.host = "jbbs.shitaraba.net/#{res[1]}"
         iframe_arg.bbs = res[2]
         iframe_arg.key = res[3]
 
@@ -179,7 +179,7 @@ app.boot "/write/write.html", ->
         else if guess_res.bbs_type is "jbbs"
           tmp = arg.url.split("/")
           form_data =
-            action: "http://jbbs.livedoor.jp/bbs/write.cgi/#{tmp[5]}/#{tmp[6]}/#{tmp[7]}/"
+            action: "http://jbbs.shitaraba.net/bbs/write.cgi/#{tmp[5]}/#{tmp[6]}/#{tmp[7]}/"
             charset: "EUC-JP"
             input:
               TIME: Math.floor(Date.now() / 1000) - 60
