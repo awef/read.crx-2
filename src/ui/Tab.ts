@@ -29,7 +29,7 @@ module UI {
 
             e.preventDefault();
 
-            if (e.originalEvent.wheelDelta > 0) {
+            if ((<any>e.originalEvent).wheelDelta > 0) {
               tmp = "previousSibling";
             }
             else {
@@ -120,7 +120,7 @@ module UI {
       });
     }
 
-    getAll (): Array {
+    getAll (): any {
       var li: HTMLLIElement, key: number, tmp: NodeList, res = [];
 
       tmp = this.element.querySelectorAll("li");
@@ -306,7 +306,7 @@ module UI {
         .remove();
     }
 
-    getRecentClosed (): Array {
+    getRecentClosed (): any {
       return app.deepCopy(this.recentClosed);
     }
 
