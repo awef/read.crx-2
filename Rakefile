@@ -350,7 +350,10 @@ namespace :test do
 end
 
 namespace :jquery do
-  task :build => "debug/lib/jquery/jquery.min.js"
+  task :build => [
+    "debug/lib/jquery",
+    "debug/lib/jquery/jquery.min.js"
+  ]
 
   task :clean do
     rm_rf "debug/lib/jquery"
@@ -359,6 +362,8 @@ namespace :jquery do
       sh "git clean -fdx -e node_modules/"
     end
   end
+
+  directory "debug/lib/jquery"
 
   file "debug/lib/jquery/jquery.min.js" => "lib/jquery_delegate_middle_click.patch" do
     Rake::Task["jquery:clean"].invoke
