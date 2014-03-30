@@ -18,9 +18,7 @@ app.boot "/view/search.html", ["euc_jp_escape", "thread_search"], (euc_jp_escape
   document.title = "検索:#{query}"
   app.History.add($view.attr("data-url"), document.title, opened_at)
 
-  euc_jp_escape.escape(query).done (q) ->
-    $view.find(".button_link > a").attr("href", "http://find.2ch.net/index.php?BBS=2ch&TYPE=TITLE&SORT=CREATED&STR=" + q)
-    return
+  $view.find(".button_link > a").attr("href", "http://search.2ch.net/search?q=" + encodeURIComponent(query))
 
   $table = $("<table>")
   threadList = new UI.ThreadList($table[0], {
@@ -45,19 +43,14 @@ app.boot "/view/search.html", ["euc_jp_escape", "thread_search"], (euc_jp_escape
 
         threadList.addItem(result)
 
-        $view.find(".more").text("更に読み込む")
-
-        if result.length isnt 10
-          $view.find(".more").hide()
-
         $view.removeClass("loading")
         return
       .fail (res) ->
         $message_bar.addClass("error").text(res.message)
-        $view.find(".more").hide()
         $view.removeClass("loading")
         return
       .always ->
+        $view.find(".more").hide()
         setTimeout((-> $button_reload.removeClass("disabled"); return), 5000)
         return
     return
@@ -69,6 +62,5 @@ app.boot "/view/search.html", ["euc_jp_escape", "thread_search"], (euc_jp_escape
     load()
     return
 
-  $view.find(".more").on("click", load)
   load()
   return
