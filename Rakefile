@@ -350,10 +350,7 @@ namespace :test do
 end
 
 namespace :jquery do
-  task :build => [
-    "debug/lib/jquery",
-    "debug/lib/jquery/jquery.min.js"
-  ]
+  task :build => "debug/lib/jquery/jquery.min.js"
 
   task :clean do
     rm_rf "debug/lib/jquery"
@@ -362,8 +359,6 @@ namespace :jquery do
       sh "git clean -fdx -e node_modules/"
     end
   end
-
-  directory "debug/lib/jquery"
 
   file "debug/lib/jquery/jquery.min.js" => "lib/jquery_delegate_middle_click.patch" do
     Rake::Task["jquery:clean"].invoke
@@ -374,7 +369,7 @@ namespace :jquery do
       sh "sed -i -e \"3a /* このファイルはread.crx 2用にawefが改造した物です */\" dist/jquery.min.js"
     end
 
-    mkdir "debug/lib/jquery"
-    cp "lib/jquery/dist/jquery.min.js", "debug/lib/jquery/"
+    mkdir_p "debug/lib/jquery"
+    cp "lib/jquery/dist/jquery.min.js", "debug/lib/jquery/jquery.min.js"
   end
 end
