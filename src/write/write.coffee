@@ -137,76 +137,55 @@ app.boot "/write/write.html", ->
       rcrx_mail: $view.find(".mail").val()
       rcrx_message: $view.find(".message").val()
 
-    #p2
-    if app.config.get("p2_write") is "on" and ((guess_res.bbs_type is "2ch" and app.url.tsld(arg.url) is "2ch.net") or guess_res.bbs_type is "jbbs")
-      if not /^w\d+\.p2\.2ch\.net$/.test(app.config.get("p2_server"))
-        on_error("p2のサーバー設定が誤っています")
-        return
-
-      if res = ///^http://(\w+\.2ch\.net)/test/read\.cgi/(\w+)/(\d+)///.exec(arg.url)
-        iframe_arg.host = res[1]
-        iframe_arg.bbs = res[2]
-        iframe_arg.key = res[3]
-      else if res = ///^http://jbbs\.shitaraba\.net/bbs/read\.cgi/(\w+)/(\d+)/(\d+)///.exec(arg.url)
-        iframe_arg.host = "jbbs.shitaraba.net/#{res[1]}"
-        iframe_arg.bbs = res[2]
-        iframe_arg.key = res[3]
-
-      iframe_url = "http://#{app.config.get("p2_server")}"
-      iframe_url += "/p2/post_form.php?"
-      iframe_arg.expected_url = iframe_url
-      iframe_url += app.url.build_param(iframe_arg)
-
-    $iframe = $("<iframe>", src: iframe_url or "/view/empty.html")
-    unless iframe_url?
-      $iframe.one "load", ->
-        #2ch
-        if guess_res.bbs_type is "2ch"
-          tmp = arg.url.split("/")
-          form_data =
-            action: "http://#{tmp[2]}/test/bbs.cgi"
-            charset: "Shift_JIS"
-            input:
-              submit: "書きこむ"
-              time: Math.floor(Date.now() / 1000) - 60
-              bbs: tmp[5]
-              key: tmp[6]
-              FROM: iframe_arg.rcrx_name
-              mail: iframe_arg.rcrx_mail
-            textarea:
-              MESSAGE: iframe_arg.rcrx_message
-        #したらば
-        else if guess_res.bbs_type is "jbbs"
-          tmp = arg.url.split("/")
-          form_data =
-            action: "http://jbbs.shitaraba.net/bbs/write.cgi/#{tmp[5]}/#{tmp[6]}/#{tmp[7]}/"
-            charset: "EUC-JP"
-            input:
-              TIME: Math.floor(Date.now() / 1000) - 60
-              DIR: tmp[5]
-              BBS: tmp[6]
-              KEY: tmp[7]
-              NAME: iframe_arg.rcrx_name
-              MAIL: iframe_arg.rcrx_mail
-            textarea:
-              MESSAGE: iframe_arg.rcrx_message
-        #フォーム生成
-        form = @contentWindow.document.createElement("form")
-        form.setAttribute("accept-charset", form_data.charset)
-        form.action = form_data.action
-        form.method = "POST"
-        for key, val of form_data.input
-          input = @contentWindow.document.createElement("input")
-          input.name = key
-          input.setAttribute("value", val)
-          form.appendChild(input)
-        for key, val of form_data.textarea
-          textarea = @contentWindow.document.createElement("textarea")
-          textarea.name = key
-          textarea.textContent = val
-          form.appendChild(textarea)
-        form.__proto__.submit.call(form)
-        return
+    $iframe = $("<iframe>", src: "/view/empty.html")
+    $iframe.one "load", ->
+      #2ch
+      if guess_res.bbs_type is "2ch"
+        tmp = arg.url.split("/")
+        form_data =
+          action: "http://#{tmp[2]}/test/bbs.cgi"
+          charset: "Shift_JIS"
+          input:
+            submit: "書きこむ"
+            time: Math.floor(Date.now() / 1000) - 60
+            bbs: tmp[5]
+            key: tmp[6]
+            FROM: iframe_arg.rcrx_name
+            mail: iframe_arg.rcrx_mail
+          textarea:
+            MESSAGE: iframe_arg.rcrx_message
+      #したらば
+      else if guess_res.bbs_type is "jbbs"
+        tmp = arg.url.split("/")
+        form_data =
+          action: "http://jbbs.shitaraba.net/bbs/write.cgi/#{tmp[5]}/#{tmp[6]}/#{tmp[7]}/"
+          charset: "EUC-JP"
+          input:
+            TIME: Math.floor(Date.now() / 1000) - 60
+            DIR: tmp[5]
+            BBS: tmp[6]
+            KEY: tmp[7]
+            NAME: iframe_arg.rcrx_name
+            MAIL: iframe_arg.rcrx_mail
+          textarea:
+            MESSAGE: iframe_arg.rcrx_message
+      #フォーム生成
+      form = @contentWindow.document.createElement("form")
+      form.setAttribute("accept-charset", form_data.charset)
+      form.action = form_data.action
+      form.method = "POST"
+      for key, val of form_data.input
+        input = @contentWindow.document.createElement("input")
+        input.name = key
+        input.setAttribute("value", val)
+        form.appendChild(input)
+      for key, val of form_data.textarea
+        textarea = @contentWindow.document.createElement("textarea")
+        textarea.name = key
+        textarea.textContent = val
+        form.appendChild(textarea)
+      form.__proto__.submit.call(form)
+      return
     $iframe.appendTo(".iframe_container")
 
     write_timer.wake()
