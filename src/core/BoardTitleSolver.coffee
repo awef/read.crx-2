@@ -151,5 +151,6 @@ class app.BoardTitleSolver
       .promise()
 
 app.module "board_title_solver", [], (callback) ->
+  app.BoardTitleSolver.getBBSMenu()
   callback(app.BoardTitleSolver)
   return
