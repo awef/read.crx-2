@@ -37,6 +37,8 @@ describe "app.BoardTitleSolver", ->
   it "BBSMenuから板名を取得する", ->
     completed = false
 
+    app.BoardTitleSolver._bbsmenu = null
+
     app.BoardTitleSolver.ask(url: "http://dummy.2ch.net/dummy/", offline: true)
       .done (title) ->
         expect(title).toBe("ダミー板")
@@ -49,6 +51,8 @@ describe "app.BoardTitleSolver", ->
 
   it "ブックマークから板名を取得する", ->
     completed = false
+
+    app.BoardTitleSolver._bbsmenu = null
 
     app.BoardTitleSolver.ask(url: "http://aaaaa.2ch.net/bbbbb/", offline: true)
       .done (title) ->

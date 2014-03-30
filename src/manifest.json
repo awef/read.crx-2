@@ -1,6 +1,6 @@
 {
   "name" : "read.crx 2",
-  "version" : "0.82",
+  "version" : "0.83",
   "update_url": "http://idawef.com/crx/crx.xml",
   "homepage_url": "http://idawef.com/read.crx-2/",
   "description" : "2chブラウザ",
@@ -42,9 +42,7 @@
     {
       "matches" : [
         "http://*.2ch.net/test/bbs.cgi*",
-        "http://jbbs.shitaraba.net/bbs/write.cgi/*",
-        "http://*.p2.2ch.net/p2/post_form.php?*",
-        "http://*.p2.2ch.net/p2/post.php?*"
+        "http://jbbs.shitaraba.net/bbs/write.cgi/*"
       ],
       "js" : ["/write/cs_write.js"],
       "run_at" : "document_end",

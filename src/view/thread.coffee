@@ -163,7 +163,8 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
       $menu = $(
         $("#template_res_menu").prop("content").querySelector(".res_menu")
       ).clone()
-      $menu.hide().appendTo($article)
+      # 何故かjQuery 2.1.0で例外が発生するので.hideを使わない
+      $menu.css("display": "none").appendTo($article)
 
       app.defer ->
         if getSelection().toString().length is 0

@@ -51,32 +51,6 @@ do ->
       else if /ERROR/.test(document.title)
         send_message_error()
 
-    #p2
-    else if ///^http://w\d+\.p2\.2ch\.net/p2/post_form\.php///.test(location.href)
-      if form = document.getElementById("resform")
-        arg = app.url.parse_query(location.href)
-
-        if arg.expected_url isnt location.href.slice(0, arg.expected_url.length)
-          send_message_error("error: unexpected url")
-          return
-
-        form.FROM.value = arg.rcrx_name
-        form.mail.value = arg.rcrx_mail
-        form.MESSAGE.value = arg.rcrx_message
-        form.__proto__.submit.call(form)
-
-      else
-        send_message_error("p2にログインしていません。ログインしていてもこのメッセージが出る場合、p2サーバーの設定が間違っている可能性が有ります。その場合はオプションページから修正して下さい。")
-
-    else if ///^http://w\d+\.p2\.2ch\.net/p2/post\.php///.test(location.href)
-      if /書きこみました/.test(document.title)
-        send_message_success()
-      else if document.querySelector("meta[http-equiv=\"refresh\"]")
-        send_message_error(document.body.innerText)
-        location.href = "about:blank"
-      else
-        send_message_error()
-
   boot = ->
     window.addEventListener "message", (e) ->
       if e.origin is origin and e.data is "write_iframe_pong"

@@ -6,11 +6,8 @@
 Accordionと違って汎用性が無い。
 */
 
-interface Node {
+interface Element {
   scrollIntoViewIfNeeded: Function;
-  nextElementSibling: HTMLElement;
-  previousElementSibling: HTMLElement;
-  firstElementChild: HTMLElement;
 }
 
 module UI {
@@ -69,8 +66,8 @@ module UI {
         for (key = 0; key < repeat; key++) {
           prevCurrent = current;
 
-          if (current.nodeName === "A" && current.parentNode.nextElementSibling) {
-            current = current.parentNode.nextElementSibling.firstElementChild;
+          if (current.nodeName === "A" && current.parentElement.nextElementSibling) {
+            current = <HTMLElement>current.parentElement.nextElementSibling.firstElementChild;
           }
           else {
             if (current.nodeName === "A") {
@@ -80,9 +77,9 @@ module UI {
               currentH3 = current;
             }
 
-            nextH3 = currentH3.nextElementSibling;
+            nextH3 = <HTMLElement>currentH3.nextElementSibling;
             while (nextH3 && nextH3.nodeName !== "H3") {
-              nextH3 = nextH3.nextElementSibling;
+              nextH3 = <HTMLElement>nextH3.nextElementSibling;
             }
 
             if (nextH3) {
@@ -121,20 +118,20 @@ module UI {
         for (key = 0; key < repeat; key++) {
           prevCurrent = current;
 
-          if (current.nodeName === "A" && current.parentNode.previousElementSibling) {
-            current = current.parentNode.previousElementSibling.firstElementChild;
+          if (current.nodeName === "A" && current.parentElement.previousElementSibling) {
+            current = <HTMLElement>current.parentElement.previousElementSibling.firstElementChild;
           }
           else {
             if (current.nodeName === "A") {
-              currentH3 = current.parentElement.parentElement.previousElementSibling;
+              currentH3 = <HTMLElement>current.parentElement.parentElement.previousElementSibling;
             }
             else {
               currentH3 = current;
             }
 
-            prevH3 = currentH3.previousElementSibling;
+            prevH3 = <HTMLElement>currentH3.previousElementSibling;
             while (prevH3 && prevH3.nodeName !== "H3") {
-              prevH3 = prevH3.previousElementSibling;
+              prevH3 = <HTMLElement>prevH3.previousElementSibling;
             }
 
             if (prevH3) {

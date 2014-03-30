@@ -369,7 +369,7 @@ namespace :jquery do
       sh "sed -i -e \"3a /* このファイルはread.crx 2用にawefが改造した物です */\" dist/jquery.min.js"
     end
 
-    mkdir "debug/lib/jquery"
-    cp "lib/jquery/dist/jquery.min.js", "debug/lib/jquery/"
+    mkdir_p "debug/lib/jquery"
+    cp "lib/jquery/dist/jquery.min.js", "debug/lib/jquery/jquery.min.js"
   end
 end

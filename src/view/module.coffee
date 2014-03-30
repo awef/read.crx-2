@@ -574,14 +574,19 @@ class app.view.TabContentView extends app.view.PaneContentView
       url = @$element.attr("data-url")
 
       if url is "bookmark"
-        url = "chrome-extension://eemcgdkfndhakfknompkggombfjjjeno/"
-        url += "main.html##{app.config.get("bookmark_id")}"
+        url = "chrome://bookmarks/##{app.config.get("bookmark_id")}"
       else if /^search:/.test(url)
         return
       else
         url = app.safe_href(url)
 
-      @$element.find(".button_link > a").attr("href", url)
+      @$element
+        .find(".button_link > a")
+          .on "click", (e) ->
+            e.preventDefault()
+
+            chrome.tabs.create url: url
+            return
       return
 
     # タイトルをコピー
