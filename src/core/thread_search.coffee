@@ -1,19 +1,15 @@
-app.module "thread_search", ["euc_jp_escape"], (euc_jp_escape, callback) ->
+app.module "thread_search", [], (callback) ->
   class ThreadSearch
     constructor: (@_query) ->
-      @_escape = euc_jp_escape.escape(@_query)
       return
-    read: ->
-      @_escape
-        .pipe (query) =>
-          url = "http://search.2ch.net/search.json?q=#{encodeURIComponent(query)}&size=100"
 
-          $.ajax({
-            url
-            cache: false
-            dataType: "text"
-            timeout: 1000 * 30
-          })
+    read: ->
+      $.ajax({
+        url: "http://search.2ch.net/search.json?q=#{encodeURIComponent(@_query)}&size=100"
+        cache: false
+        dataType: "text"
+        timeout: 1000 * 30
+      })
         .pipe(((responseText) => $.Deferred (d) =>
           try
             result = JSON.parse(responseText)
