@@ -840,7 +840,7 @@ describe "app.Thread", ->
       cacheGetDeferred.reject()
 
       expect(app.HTTP.Request::send).toHaveBeenCalled()
-      expect(request.preventCache).toBeTruthy()
+      expect(request.preventCache).toBeFalsy()
       expect(request.url).toBe(data.ch.datURL)
       expect(request.mimeType).toBe("text/plain; charset=Shift_JIS")
       expect(request.headers).toEqual({})
