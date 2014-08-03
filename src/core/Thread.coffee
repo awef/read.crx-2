@@ -62,7 +62,7 @@ class app.Thread
             xhrPath += (+cache.res_length + 1) + "-"
 
         request = new app.HTTP.Request("GET", xhrPath, {
-          preventCache: true
+          preventCache: false
           timeout: 30 * 1000
           mimeType: "text/plain; charset=#{xhrCharset}"
         })
