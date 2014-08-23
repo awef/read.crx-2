@@ -228,6 +228,9 @@ class UI.ThreadContent
 
     resNum = @container.children.length
 
+    ngWords = app.util.normalize(app.config.get('ngwords') or "").split('\n')
+    ngWords = ngWords.filter (word) -> word
+
     do =>
       html = ""
 
@@ -236,6 +239,12 @@ class UI.ThreadContent
 
         articleClass = []
         articleDataId = null
+
+        tmpTxt = app.util.normalize(res.name + " " + res.mail + " " + res.other + " " + res.message)
+        for ngWord in ngWords
+          if tmpTxt.indexOf(ngWord) isnt -1
+            articleClass.push("ng")
+            break
 
         if /(?:\u3000{5}|\u3000\u0020|[^>]\u0020\u3000)(?!<br>|$)/i.test(res.message)
           articleClass.push("aa")

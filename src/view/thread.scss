@@ -30,6 +30,28 @@ html {
 
 article {
   padding: 0 5px 20px 5px;
+  &.ng {
+    display: none;
+
+    .popup & {
+      display: block;
+      color: #666;
+      border: 1px dashed;
+      padding: 5px;
+      margin: 5px;
+
+      &::after {
+        display: block;
+        min-width: 10em;
+        content: "NG";
+        text-align: center;
+      }
+
+      > header, > .message {
+        display: none;
+      }
+    }
+  }
   &:first-child {
     padding-top: 10px;
   }
