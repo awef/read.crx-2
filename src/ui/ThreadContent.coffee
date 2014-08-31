@@ -46,6 +46,10 @@ class UI.ThreadContent
     target = @container.childNodes[resNum - 1]
     if target
       return if @container.classList.contains("searching") and not target.classList.contains("search_hit")
+
+      if target.classList.contains("ng")
+        target = $(target).prev(":not(.ng)")[0]
+
       if animate
         @_$container.animate(scrollTop: target.offsetTop + offset)
       else
