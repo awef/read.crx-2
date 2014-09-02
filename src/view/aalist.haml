@@ -1,0 +1,29 @@
+!!! 5
+%html.view.view_aalist(data-app-version="#{MANIFEST["version"]}" tabindex="-1")
+  %head
+    %meta(charset="utf-8")
+    %meta(name="referrer" content="never")
+    %meta(http-equiv="X-Frame-Options" content="SAMEORIGIN")
+    %title AA List
+    %link(rel="stylesheet" href="/ui.css?v=#{MANIFEST["version"]}")
+    %link(rel="stylesheet" href="aalist.css?v=#{MANIFEST["version"]}")
+    %script(src="/lib/jquery/jquery.min.js?v=#{MANIFEST["version"]}")
+    %script(src="/ui.js?v=#{MANIFEST["version"]}")
+    %script(src="/app.js?v=#{MANIFEST["version"]}")
+    %script(src="module.js?v=#{MANIFEST["version"]}")
+    %script(src="aalist.js?v=#{MANIFEST["version"]}")
+  %body
+    %nav.nav_bar
+      // TODO: IMPLEMENT SEARCH_BOX
+      // %label
+      //   %input.searchbox
+      //   %span.hit_count
+      .button.button_back.disabled
+      .button.button_forward.disabled
+      .button.button_reload
+      .button.button_add_aa +
+      .button.button_tool
+        %ul
+          %li.button_add_aa AAを追加
+    .content(tabindex="0")
+    .loading_overlay Loading...
