@@ -1,0 +1,26 @@
+!!! 5
+%html.view.view_editaa(data-app-version="#{MANIFEST["version"]}")
+  %head
+    %meta(charset="utf-8")
+    %meta(name="referrer" content="never")
+    %meta(http-equiv="X-Frame-Options" content="SAMEORIGIN")
+    %title AAを追加
+    %link(rel="stylesheet" href="/ui.css?v=#{MANIFEST["version"]}")
+    %link(rel="stylesheet" href="editaa.css?v=#{MANIFEST["version"]}")
+    %script(src="/lib/jquery/jquery.min.js?v=#{MANIFEST["version"]}")
+    %script(src="/ui.js?v=#{MANIFEST["version"]}")
+    %script(src="/app.js?v=#{MANIFEST["version"]}")
+    %script(src="/app_core.js?v=#{MANIFEST["version"]}")
+    %script(src="module.js?v=#{MANIFEST["version"]}")
+    %script(src="editaa.js?v=#{MANIFEST["version"]}")
+  %body
+    .control
+      .top_control
+        %input(id="title" placeholder="タイトル" autofocus tabindex="1")
+        .button_group
+          %button#remove(tabindex="6" disabled="disabled") 削除
+          %button#copy(tabindex="5") コピー
+          %button#cancel(tabindex="4") キャンセル
+          %button#save(tabindex="3") 保 存
+      %textarea(id="content" placeholder="AA" tabindex="2" required)
+    #notify

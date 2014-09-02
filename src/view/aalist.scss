@@ -1,0 +1,21 @@
+@import "../common.scss";
+
+@include common;
+@include tab-content;
+@include content-table;
+
+@media (max-width: 500px) {
+  th.viewed_date {
+    width: 0;
+  }
+}
+
+.content {
+  tbody:empty {
+    display: block;
+    &:after {
+      content: "AA List は空です。\A\A左上のボタンから追加することができます。";
+      white-space: pre;
+    }
+  }
+}
