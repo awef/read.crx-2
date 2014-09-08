@@ -61,6 +61,8 @@
     "/view/search.html",
     "/view/sidemenu.html",
     "/view/thread.html",
+    "/view/aalist.html",
+    "/view/editaa.html",
     "/test/message_test.html"
   ]
 }

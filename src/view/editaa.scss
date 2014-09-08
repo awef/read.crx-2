@@ -1,0 +1,115 @@
+@import "../common.scss";
+
+@include common;
+@include tab-content;
+
+html {
+  overflow: auto;
+  background-color: #f5f5f5;
+  color: #444;
+  font-size: 16px;
+}
+
+body {
+    padding: 8px;
+    display: -webkit-flex;
+    -webkit-flex-flow: column;
+}
+
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.container {
+  padding: 10px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+input, button {
+  display: block;
+  height: 1em;
+  box-sizing: content-box;
+}
+
+button {
+    @include button;
+    font-family: inherit;
+    height: 20px;
+}
+
+input:first-child {
+  @include input-text;
+  width: 0;
+  -webkit-flex-grow: 1;
+  margin-right: 10px;
+}
+
+.notice {
+  display: none;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.view.theme_default {
+  .container {
+    background-color: #fff;
+  }
+}
+.view.theme_dark {
+  .container {
+    background-color: #444;
+    color: #fff;
+  }
+
+}
+
+.control {
+    margin: 0;
+    height: 100%;
+    -webkit-flex-flow: column;
+    display: -webkit-flex;
+    -webkit-flex-grow: 1;
+}
+
+.top_control {
+    margin: 0 0 5px 0;
+    display: inline-flex;
+    width: 100%;
+}
+
+#title, #content {
+    -webkit-flex-grow: 1;
+}
+
+#title {
+    -webkit-flex-grow: 1;
+    margin: 0;
+    font-size: large;
+}
+
+#content, textarea {
+    font-family: "MS PGothic", "IPAMonaPGothic", "Konatu", "Monapo", "Textar"!important;
+    display: block;
+    -webkit-flex-grow: 1;
+    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    padding: 4px;
+    box-shadow: 0 1px 1px #ccc inset;
+    white-space: pre;
+    word-wrap: normal;
+    width: 100%;
+    font-size: 16px;
+}
+
+.button_group {
+    display: -webkit-inline-box;
+}
+
