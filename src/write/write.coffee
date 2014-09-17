@@ -217,4 +217,32 @@ app.boot "/write/write.html", ->
         return
       return
     return
+
+  
+  # AA を挿入セレクトボックス
+
+  app.AA.getList().done (data) ->
+    $("#aa_selectbox").find("option").remove()
+    $op = $("<option>AAを挿入</option>").val("")
+    $("#aa_selectbox").append($op)
+
+    for item in data
+      $op = $("<option>#{item.title}</option>").val(item.id)
+      $("#aa_selectbox").append($op)
+
+  $("#aa_selectbox").change () ->
+    unless $("#aa_selectbox").val() == ""
+      app.AA.get($("#aa_selectbox").val()).done( (data) ->
+        current = $(".message").val()
+        pos = $(".message").get(0).selectionStart
+        $(".message").val(current.substr(0, pos) + data.content + current.substr(pos))
+        $(".message")[0].setSelectionRange(pos, pos + data.content.length)
+        $(".message")[0].focus()
+        return
+      )
+      .fail () ->
+        $view.find(".notice").text(
+          "ERROR: AAの取得に失敗しました: #{$.data("#aa_selectbox", "id")}")
+        return
+
   return

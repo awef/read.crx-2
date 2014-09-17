@@ -222,6 +222,10 @@ app.boot "/view/thread.html", ["board_title_solver"], (BoardTitleSolver) ->
       else if $this.hasClass("toggle_aa_mode")
         $res.toggleClass("aa")
 
+      else if $this.hasClass("add_aa")
+        app.AA.openEditPopup(undefined, undefined, 
+        $res.find(".message").html().replace(/<br>/g, "\n"))
+
       else if $this.hasClass("res_permalink")
         open(app.safe_href(view_url + $res.find(".num").text()))
 
