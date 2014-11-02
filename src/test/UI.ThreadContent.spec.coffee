@@ -235,6 +235,13 @@ describe "UI.ThreadContent", ->
       hogehoge()
       return
 
+    it "名前欄のフォントタグを容認する（したらば新形式）", ->
+      example.a.data1.name = "<font color=\"#FF0000\">awef★</font>"
+      example.a.dom1.querySelector(".name").innerHTML = "<font color=\"#FF0000\">awef★</font>"
+
+      hogehoge()
+      return
+
     it "本文中のbr, hr, bタグを容認する", ->
       example.a.data1.message = """
         test<hr><br><b>test</b><b></b><br><br>test<BR>t<hr><hr><b></b>est
