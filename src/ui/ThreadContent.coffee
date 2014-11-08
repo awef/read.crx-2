@@ -44,12 +44,16 @@ class UI.ThreadContent
   ###
   scrollTo: (resNum, animate = false, offset = 0) ->
     target = @container.childNodes[resNum - 1]
+
+    # 検索中で、ターゲットが非ヒット項目で非表示の場合、スクロールを中断
+    if target and @container.classList.contains("searching") and not target.classList.contains("search_hit")
+      target = null
+
+    # もしターゲットがNGだった場合、その直前の非NGレスをターゲットに変更する
+    if target and target.classList.contains("ng")
+      target = $(target).prev(":not(.ng)")[0]
+
     if target
-      return if @container.classList.contains("searching") and not target.classList.contains("search_hit")
-
-      if target.classList.contains("ng")
-        target = $(target).prev(":not(.ng)")[0]
-
       if animate
         @_$container.animate(scrollTop: target.offsetTop + offset)
       else
@@ -264,7 +268,7 @@ class UI.ThreadContent
           articleHtml += " name_anchor"
         tmp = (
           res.name
-            .replace(/<(?!(?:\/?b|\/?font(?: color=[#a-zA-Z0-9]+)?)>)/g, "&lt;")
+            .replace(/<(?!(?:\/?b|\/?font(?: color="?[#a-zA-Z0-9]+"?)?)>)/g, "&lt;")
             .replace(/<\/b>(.*?)<b>/g, """<span class="ob">$1</span>""")
         )
         articleHtml += """">#{tmp}</span>"""
