@@ -373,3 +373,21 @@ namespace :jquery do
     cp "lib/jquery/dist/jquery.min.js", "debug/lib/jquery/jquery.min.js"
   end
 end
+
+namespace :ng do
+  namespace :core do
+    task :build => ["ng:core:build_lib"]
+
+    task :build_lib do
+      sh "./node_modules/.bin/bower install"
+
+      {
+        "debug/ng/lib/angular/angular.min.js" => "bower_components/angular/angular.min.js"
+      }.each do |dist, src|
+        mkdir_p File.dirname(dist)
+        cp src, dist
+      end
+    end
+  end
+end
+
