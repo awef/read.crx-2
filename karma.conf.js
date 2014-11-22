@@ -3,14 +3,18 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['jasmine'],
     files: [
-      "bin/lib/angularjs/angular.min.js",
-      "bin/script.js",
+      "bower_components/angular/angular.min.js",
       "bower_components/angular-mocks/angular-mocks.js",
-      "spec/**/*.coffee"
+      "debug/ng/script.js",
+      "ng-spec/**/*.coffee",
+      {pattern: 'debug/manifest.json', included: false, served: true}
     ],
+    proxies: {
+      "/manifest.json": "http://localhost:9876/base/debug/manifest.json"
+    },
     preprocessors: {
       '**/*.coffee': ['coffee'],
-      "bin/script.js": ['coverage']
+      "debug/ng/script.js": ['coverage']
     },
     coffeePreprocessor: {
       options: {

@@ -376,7 +376,15 @@ end
 
 namespace :ng do
   namespace :core do
-    task :build => ["ng:core:build_lib"]
+    task :build => [
+      "debug/ng",
+      "build_lib",
+      "debug/ng/index.html",
+      "debug/ng/script.js",
+      "build_view",
+    ]
+
+    directory "bin"
 
     task :build_lib do
       sh "./node_modules/.bin/bower install"
@@ -387,6 +395,49 @@ namespace :ng do
         mkdir_p File.dirname(dist)
         cp src, dist
       end
+    end
+
+    file "debug/ng/index.html" => "ng-src/index.haml" do |t|
+      haml t.prerequisites[0], t.name
+    end
+
+    file "debug/ng/script.js" => FileList["ng-src/**/*.ts"] do |t|
+     sh "node_modules/.bin/tsc --target ES5 --out #{t.name} ng-src/script.ts"
+    end
+
+    lambda {
+      files = []
+
+      FileList["ng-src/view/*.haml"].each do |haml_path|
+        html_path = haml_path
+          .gsub("ng-src/view/", "debug/ng/view/")
+          .gsub(".haml", ".html")
+
+        dir_path = File.dirname html_path
+        directory dir_path
+        files.push dir_path
+
+        file html_path => haml_path do |t|
+          haml t.prerequisites[0], t.name
+        end
+        files.push html_path
+      end
+
+      task :build_view => files
+    }.call
+  end
+
+  namespace :test do
+    task :run do
+      sh "node_modules/.bin/karma start --single-run"
+    end
+
+    task :ci do
+      sh "node_modules/.bin/karma start --single-run --browsers PhantomJS"
+    end
+
+    task :watch do
+      sh "node_modules/.bin/karma start"
     end
   end
 end

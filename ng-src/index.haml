@@ -1,0 +1,12 @@
+!!! 5
+%html(data-ng-app="app" data-ng-csp)
+  %head
+    %meta(charset="utf-8")
+    %meta(name="referrer" content="never")
+    %meta(http-equiv="X-Frame-Options" content="SAMEORIGIN")
+    %meta(name="viewport" content="width=device-width")
+    %title read.crx 2
+    %script(src="lib/angular/angular.min.js?v=#{Random.rand}")
+    %script(src="script.js?v=#{Random.rand}")
+  %body
+    %div(data-ng-include="\"view/config.html\"")
