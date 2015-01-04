@@ -1,44 +1,36 @@
 app.module "thread_search", [], (callback) ->
   class ThreadSearch
-    constructor: (@_query) ->
+    constructor: (@query) ->
+      @offset = 0
       return
 
     read: ->
       $.ajax({
-        url: "http://search.2ch.net/search.json?q=#{encodeURIComponent(@_query)}&size=100"
+        url: "http://dig.2ch.net/?keywords=#{encodeURI(@query)}&maxResult=500"
         cache: false
         dataType: "text"
         timeout: 1000 * 30
       })
-        .pipe(((responseText) => $.Deferred (d) =>
-          try
-            result = JSON.parse(responseText)
-          catch
-            d.reject(message: "通信エラー（JSONパースエラー）")
-            return
+      .pipe(((responseText) => $.Deferred (d) =>
+        # UA次第で別サイトのURLが返される場合が有るため対策
+        responseText = responseText.replace(/http:\/\/bintan\.ula\.cc\/test\/read\.cgi\/([\w\.]+)\/(\w+)\/(\d+)\/\w*/g, "http://$1/test/read.cgi/$2/$3/")
 
-          data = []
+        reg = /<span class="itashibori">([^<]+)<\/span>[\s\S]*?<a href="(http:\/\/\w+\.\w+\.\w+\/test\/read\.cgi\/\w*\/(\d+)\/)\w*">([^<]+?)\((\d+)\)<\/a>/g
+        data = []
+        while x = reg.exec(responseText)
+          data.push
+            url: x[2]
+            created_at: +x[3] * 1000
+            title: x[4]
+            res_count: +x[5]
+            board_url: null
+            board_title: x[1]
 
-          result.results.forEach (entry) =>
-            thread =
-              url: "http://#{entry.source.server}.#{entry.source.host}/test/read.cgi/#{entry.source.board}/#{entry.source.thread_id}/"
-              created_at: Date.parse(entry.source.date)
-              title: entry.source.title
-              res_count: entry.source.comment_count
-              board_url: "http://#{entry.source.server}.#{entry.source.host}/#{entry.source.board}/"
-              board_title: ""
-
-            app.BoardTitleSolver.ask(url: thread.board_url, offline: true).done (result) =>
-              thread.board_title = result
-              return
-
-            data.push thread
-            return
-
-          d.resolve(data)
-          return
-        ), (=> $.Deferred (d) => d.reject(message: "通信エラー"); return))
-        .promise()
+        @offset += data.length
+        d.resolve(data)
+        return
+      ), (=> $.Deferred (d) => d.reject(message: "通信エラー"); return))
+      .promise()
 
   callback(ThreadSearch)
   return
