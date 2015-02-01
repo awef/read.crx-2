@@ -25,7 +25,7 @@ app.boot "/write/write.html", ->
     chrome.webRequest.onBeforeSendHeaders.addListener(
       (req) ->
         origin = chrome.extension.getURL("")[...-1]
-        is_same_origin = req.requestHeaders.some((header) -> header.name is "Origin" and header.value is origin)
+        is_same_origin = req.requestHeaders.some((header) -> header.name is "Origin" and (header.value is origin or header.value is "null"))
         if req.method is "POST" and is_same_origin
           if (
             ///^http://\w+\.2ch\.net/test/bbs\.cgi ///.test(req.url) or
